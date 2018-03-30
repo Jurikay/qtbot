@@ -1,0 +1,557 @@
+
+QToolTip {
+    border: 1px solid #76797C;
+    background-color: #5A7566;
+    color: white;
+    padding: 0px;                /*remove padding, for fix combobox tooltip.*/
+    opacity: 200;
+}
+QWidget {
+    background-color: #262d33;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    color: #f3f3f3;
+}
+
+#spread_area, #spread_area QLabel {
+  background-color: #2e363d;
+}
+
+QTableWidget#tradeTable, #bids_table, #asks_table {
+  background-color: #20262b;
+  color: #f3f3f3;
+  border: 0px solid transparent;
+  margin: 0;
+  padding: 0;
+}
+
+QTableWidget{
+  alternate-background-color: #2e363d;
+  color: #999;
+}
+QTabBar::tab:selected:first {
+  border-left: 1px solid #151a1e;
+
+}
+
+QTabBar::tab:selected {
+  color: #f3ba2e;
+  /* font-weight: bold; */
+  background: #262d33;
+  padding: 10px 15px;
+  border: 1px solid #151a1e;
+  border-bottom: none;
+  border-left: none;
+  /* border-left: none; */
+}
+QTabBar::tab:top:!selected {
+  border-right: 1px solid #151a1e;
+  border-bottom: 1px solid #151a1e;
+}
+QTabBar::tab:top:!selected:last {
+  border-right: 1px solid transparent;
+}
+QTabBar::tab:top:!selected:hover {
+    background-color: #2e363d;
+    /* border: 1px solid transparent; */
+    /* border: none; */
+}
+
+
+QTabBar::tab {
+  padding: 10px 15px;
+  /* font-weight: bold; */
+  border: none;
+  background: #20262b;
+  border-bottom: 1px solid #20262b;
+  border-right: 1px solid #20262b;
+  border-top:1px solid #20262b;
+  margin: 0;
+
+}
+
+QLineEdit {
+  color: white;
+}
+QLabel {
+  color: #999;
+}
+
+#limit_buy_total, #limit_sell_total, #limit_buy_label, #limit_sell_label, #limit_total_btc, #limit_total_coin {
+  color: white;
+}
+
+/* QDoubleSpinBox { border: 3px outset grey;padding-right: 40px;}
+
+QDoubleSpinBox::up-button { subcontrol-position: right; right: 40px; width: 40px; height: 35px;}
+
+QDoubleSpinBox::down-button { subcontrol-position: right; width: 40px; height: 35px;} */
+
+QTabWidget {
+     color: green;
+     font-size: 18;
+     border: 0px solid transparent;
+}
+QHeaderView{
+  text-align: left;
+
+}
+
+QHeaderView::section {
+    background-color: #2e363d;
+    /* color: #eff0f1; */
+    padding: 5px 0px;
+    /* margin: 5px 10px; */
+    border-right: 1px solid #20262b;
+    border-radius: 0px;
+    text-align: left;
+    /* min-width: 100px; */
+}
+QHeaderView::section::vertical:first,
+QHeaderView::section::vertical::only-one {
+    border-top: 1px solid #76797C;
+}
+
+QHeaderView::section::vertical {
+    border-top: transparent;
+}
+
+QHeaderView::section::horizontal:first,
+QHeaderView::section::horizontal::only-one {
+    /* border-left: 1px solid #76797C; */
+}
+QHeaderView::section::horizontal:last {
+  border: 0px solid transparent;
+}
+QHeaderView::section::horizontal {
+    border-left: transparent;
+}
+
+QHeaderView::section:checked {
+    color: white;
+    background-color: #334e5e;
+}
+
+
+/* style the sort indicator */
+
+QHeaderView::down-arrow {
+    image: none;
+}
+
+QHeaderView::up-arrow {
+    image: none;
+}
+
+
+
+ QPushButton {
+     border: 1px dotted grey;
+     padding: 5px;
+     color: #cdcdcd;
+}
+ QPushButton#limit_buy_button {
+     background-color: #70a800;
+     border: 2px solid transparent;
+     font-family: Arial;
+     font-weight: bold;
+     font-size: 14px;
+     color: #f3f3f3;
+     border-radius: 5px;
+}
+ QPushButton#limit_sell_button {
+     background-color: #ff007a;
+     border: 2px solid transparent;
+     font-family: Arial;
+     font-weight: bold;
+     font-size: 14px;
+     color: #f3f3f3;
+     border-radius: 5px;
+}
+ QPushButton#limit_buy_button:hover {
+     background-color: #5e8701;
+     /* border: 2px solid white; */
+     color: white;
+}
+ QPushButton#limit_sell_button:hover {
+     background-color: #bd3273;
+     /* border: 2px solid white; */
+     color: white
+}
+ QLineEdit, QDoubleSpinBox {
+     background-color: #424c55;
+     border: 1px, solid, grey;
+     height: 25px;
+}
+ QPushButton:hover {
+     border: 1px solid #f3ba2e;
+     color: #f3ba2e;
+}
+QPushButton#limit_buy_button::pressed {
+    /* border: 2px solid orange; */
+    color: white;
+    background-color: #9ccd3b;
+}
+QPushButton#limit_sell_button::pressed {
+    /* border: 2px solid orange; */
+    color: white;
+    background-color: #ff52a3;
+}
+
+
+/* QComboBox {
+     width: 90%;
+     color: red;
+     background-color: green;
+}
+ */
+/* #coin_selector {
+     background-color: purple;
+}
+ */
+ QLineEdit {
+     outline: none;
+     border: 1px solid transparent;
+}
+/* *:focus {
+     border: none;
+     outline: none;
+}
+ */
+ QLineEdit:hover, QDoubleSpinBox:hover, QLineEdit:focus, QDoubleSpinBox:focus {
+     border: 1px solid #f3ba2e;
+}
+ QLabel#SVGLogo {
+    background-image: url('bender3.svg');
+     border: none;
+}
+/* QSlider {
+     margin-top: -5px;
+     margin-bottom: -5px;
+     height: 15px;
+}
+ */
+ QSlider::groove:horizontal {
+     border: 0px solid black;
+     background: #1d2327;
+     height: 125px;
+}
+ QSlider::sub-page:horizontal {
+     background: #f3ba2e;
+     border: 0px solid #777;
+}
+ QSlider::add-page:horizontal {
+     background: #1d2327;
+     border: 0px solid #777;
+     height: 5px;
+}
+ QSlider::handle:horizontal {
+     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc);
+     border: 0px solid #777;
+     width: 13px;
+    /* margin-top: -2px;
+     margin-bottom: -2px;
+     */
+    /* border-radius: 4px;
+     */
+}
+ QSlider::handle:horizontal:hover {
+     background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #fff, stop:1 #ddd);
+     border: 0px solid #444;
+    /* border-radius: 4px;
+     */
+}
+ QPushButton[active=True] {
+     border: 3px solid gold;
+     color: red;
+}
+ QPushButton[active="False"] {
+     border: 1px solid black;
+}
+ QGroupBox, QVBoxLayout {
+     background: #262d33;
+}
+ /* QComboBox {
+     height: 25px;
+} */
+ /* QTableWidget {
+     gridline-color: transparent;
+     border: none font-size: 12pt;
+} */
+ QWebEngineView {
+     color: black;
+     background-color: black;
+}
+ QGroupBox {
+     background: grey;
+     border: 0;
+}
+ /* QTableWidget::item {
+     border: 0;
+     font-size: 16px;
+} */
+ QLabel#last_price {
+     font-size: 17px;
+}
+ /* #tab_6 {
+     background-color: red;
+     background: blue;
+} */
+ QTreeView::item:hover{
+    background-color:#FFFF00;
+}
+ /* QTableWidget::item:hover{
+    background-color:#FFFF00;
+} */
+ QComboBox::drop-down {
+     font-size: 16px;
+
+}
+
+
+QScrollBar:horizontal {
+    height: 15px;
+    margin: 3px 15px 3px 15px;
+    border: 1px transparent #1d2327;
+    border-radius: 4px;
+    background-color: #1d2327;
+}
+
+QScrollBar::handle:horizontal {
+    background-color: #424c55;
+    min-width: 5px;
+    border-radius: 4px;
+}
+
+QScrollBar::add-line:horizontal {
+    margin: 0px 3px 0px 3px;
+    border-image: url(qss_icons/rc/right_arrow_disabled.png);
+    width: 10px;
+    height: 10px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal {
+    margin: 0px 3px 0px 3px;
+    border-image: url(qss_icons/rc/left_arrow_disabled.png);
+    height: 10px;
+    width: 10px;
+    subcontrol-position: left;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:horizontal:hover,
+QScrollBar::add-line:horizontal:on {
+    border-image: url(qss_icons/rc/right_arrow.png);
+    height: 10px;
+    width: 10px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:horizontal:hover,
+QScrollBar::sub-line:horizontal:on {
+    border-image: url(qss_icons/rc/left_arrow.png);
+    height: 10px;
+    width: 10px;
+    subcontrol-position: left;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::up-arrow:horizontal,
+QScrollBar::down-arrow:horizontal {
+    background: none;
+}
+
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal {
+    background: none;
+}
+
+QScrollBar:vertical {
+    background-color: #1d2327;
+    width: 15px;
+    margin: 15px 3px 15px 3px;
+    border: 1px transparent #1d2327;
+    border-radius: 4px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #424c55;
+    min-height: 5px;
+    border-radius: 4px;
+}
+
+QScrollBar::sub-line:vertical {
+    margin: 3px 0px 3px 0px;
+    border-image: url(qss_icons/rc/up_arrow_disabled.png);
+    height: 10px;
+    width: 10px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:vertical {
+    margin: 3px 0px 3px 0px;
+    border-image: url(qss_icons/rc/down_arrow_disabled.png);
+    height: 10px;
+    width: 10px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::sub-line:vertical:hover,
+QScrollBar::sub-line:vertical:on {
+    border-image: url(qss_icons/rc/up_arrow.png);
+    height: 10px;
+    width: 10px;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:vertical:hover,
+QScrollBar::add-line:vertical:on {
+    border-image: url(qss_icons/rc/down_arrow.png);
+    height: 10px;
+    width: 10px;
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::up-arrow:vertical,
+QScrollBar::down-arrow:vertical {
+    background: none;
+}
+
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:vertical {
+    background: none;
+}
+
+
+QPushButton:checked {
+    background-color: #76797C;
+    border-color: #6A6969;
+}
+
+/* QComboBox:hover, */
+QPushButton:hover,
+QAbstractSpinBox:hover,
+QLineEdit:hover,
+QTextEdit:hover,
+QPlainTextEdit:hover,
+QAbstractView:hover,
+QTreeView:hover {
+    border: 1px solid #f3ba2e;
+    color: white;
+}
+
+QPushButton:pressed {
+    border: 1px solid white;
+    color: white;
+}
+
+
+
+QComboBox {
+    selection-background-color: #f3ba2e;
+    border-style: solid;
+    border: 1px solid transparent;
+    border-radius: 0px;
+    /* padding-bottom: 50px; */
+    min-width: 75px;
+    background: #424c55;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+
+
+QComboBox QAbstractItemView {
+    background-color: #262d33;
+    border-radius: 2px;
+    border: 1px solid #76797C;
+    selection-background-color: #f3ba2e;
+    /* margin-bottom: 50px; */
+    selection-color: black;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 15px;
+    border-left-width: 0px;
+    border-left-color: darkgray;
+    border-left-style: solid;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+
+
+    /* margin-bottom: 50px; */
+}
+
+QComboBox::down-arrow {
+    image: url(qss_icons/rc/down_arrow_disabled.png);
+}
+
+QComboBox::down-arrow:on,
+QComboBox::down-arrow:hover,
+QComboBox::down-arrow:focus {
+    image: url(qss_icons/rc/down_arrow.png);
+}
+QAbstractSpinBox {
+    padding: 2px;
+    /* border: 1px solid #76797C; */
+    /* background-color: #232629; */
+    /* color: #eff0f1; */
+    border-radius: 0px;
+    /* min-width: 75px; */
+}
+
+QAbstractSpinBox:up-button {
+    background-color: transparent;
+    subcontrol-origin: border;
+    subcontrol-position: top right;
+}
+
+QAbstractSpinBox:down-button {
+    background-color: transparent;
+    subcontrol-origin: border;
+    subcontrol-position: bottom right;
+}
+
+QAbstractSpinBox::up-arrow,
+QAbstractSpinBox::up-arrow:disabled,
+QAbstractSpinBox::up-arrow:off {
+    image: url(qss_icons/rc/up_arrow_disabled.png);
+    width: 10px;
+    height: 10px;
+}
+
+QAbstractSpinBox::up-arrow:hover {
+    image: url(qss_icons/rc/up_arrow.png);
+}
+
+QAbstractSpinBox::down-arrow,
+QAbstractSpinBox::down-arrow:disabled,
+QAbstractSpinBox::down-arrow:off {
+    image: url(qss_icons/rc/down_arrow_disabled.png);
+    width: 10px;
+    height: 10px;
+}
+
+QAbstractSpinBox::down-arrow:hover {
+    image: url(qss_icons/rc/down_arrow.png);
+}
+#holdings_table QPushButton{
+  /* color: #f3ba2e; */
+  margin: 1px;
+  /* border: 1px solid g; */
+  background: transparent;
+}
+#holdings_table QPushButton:hover{
+  color: white;
+  margin: 1px;
+  border: 1px solid #f3ba2e;
+}
