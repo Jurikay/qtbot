@@ -7,12 +7,13 @@ import os.path
 import configparser
 
 
-val = defaultdict(dict)
+val = dict()
 val["test"] = "hi"
 
 val["globalList"] = list()
 val["tradeHistory"] = list()
 
+val["ticker"] = dict()
 proxies = {
     'http': 'http://10.10.1.10:3128',
     'https': 'http://10.10.1.10:1080'

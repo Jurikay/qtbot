@@ -1541,6 +1541,9 @@ p, li { white-space: pre-wrap; }
             </property>
             <item>
              <widget class="QComboBox" name="comboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                 <horstretch>0</horstretch>
@@ -1802,6 +1805,9 @@ p, li { white-space: pre-wrap; }
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="text">
                    <string>outbid</string>
                   </property>
@@ -1814,6 +1820,9 @@ p, li { white-space: pre-wrap; }
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
                   </property>
                   <property name="text">
                    <string>daily low</string>
@@ -1855,7 +1864,7 @@ p, li { white-space: pre-wrap; }
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap>../img/cart.png</pixmap>
+                   <pixmap>../images/assets/cart.png</pixmap>
                   </property>
                   <property name="scaledContents">
                    <bool>true</bool>
@@ -1897,6 +1906,9 @@ p, li { white-space: pre-wrap; }
                <layout class="QHBoxLayout" name="horizontalLayout_31">
                 <item>
                  <widget class="QDoubleSpinBox" name="limit_buy_amount">
+                  <property name="cursor">
+                   <cursorShape>SizeVerCursor</cursorShape>
+                  </property>
                   <property name="alignment">
                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                   </property>
@@ -1939,6 +1951,9 @@ p, li { white-space: pre-wrap; }
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="text">
                    <string>10%</string>
                   </property>
@@ -1961,6 +1976,9 @@ p, li { white-space: pre-wrap; }
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="text">
                    <string>25%</string>
                   </property>
@@ -1979,6 +1997,9 @@ p, li { white-space: pre-wrap; }
                     <width>46</width>
                     <height>16777215</height>
                    </size>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
                   </property>
                   <property name="text">
                    <string>33%</string>
@@ -1999,6 +2020,9 @@ p, li { white-space: pre-wrap; }
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="text">
                    <string>50%</string>
                   </property>
@@ -2018,6 +2042,9 @@ p, li { white-space: pre-wrap; }
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="text">
                    <string>100%</string>
                   </property>
@@ -2032,6 +2059,9 @@ p, li { white-space: pre-wrap; }
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="cursor">
+                 <cursorShape>SizeVerCursor</cursorShape>
                 </property>
                 <property name="maximum">
                  <double>1.000000000000000</double>
@@ -2065,6 +2095,9 @@ p, li { white-space: pre-wrap; }
                   <height>45</height>
                  </size>
                 </property>
+                <property name="cursor">
+                 <cursorShape>ForbiddenCursor</cursorShape>
+                </property>
                 <property name="styleSheet">
                  <string notr="true"/>
                 </property>
@@ -2077,6 +2110,9 @@ p, li { white-space: pre-wrap; }
                <layout class="QHBoxLayout" name="horizontalLayout_6">
                 <item>
                  <widget class="QSlider" name="limit_buy_slider">
+                  <property name="cursor">
+                   <cursorShape>SizeHorCursor</cursorShape>
+                  </property>
                   <property name="maximum">
                    <number>100</number>
                   </property>
@@ -2149,6 +2185,9 @@ p, li { white-space: pre-wrap; }
                <layout class="QHBoxLayout" name="horizontalLayout_14">
                 <item>
                  <widget class="QSlider" name="limit_sell_slider">
+                  <property name="cursor">
+                   <cursorShape>SizeHorCursor</cursorShape>
+                  </property>
                   <property name="maximum">
                    <number>100</number>
                   </property>
@@ -2192,6 +2231,9 @@ p, li { white-space: pre-wrap; }
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="cursor">
+                 <cursorShape>SizeVerCursor</cursorShape>
+                </property>
                 <property name="maximum">
                  <double>1.000000000000000</double>
                 </property>
@@ -2227,6 +2269,9 @@ p, li { white-space: pre-wrap; }
                   <height>45</height>
                  </size>
                 </property>
+                <property name="cursor">
+                 <cursorShape>ForbiddenCursor</cursorShape>
+                </property>
                 <property name="styleSheet">
                  <string notr="true"/>
                 </property>
@@ -2255,7 +2300,7 @@ p, li { white-space: pre-wrap; }
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap>../img/bag.png</pixmap>
+                   <pixmap>../images/assets/bag.png</pixmap>
                   </property>
                   <property name="scaledContents">
                    <bool>true</bool>
@@ -2316,6 +2361,9 @@ p, li { white-space: pre-wrap; }
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="text">
                    <string>undercut</string>
                   </property>
@@ -2328,6 +2376,9 @@ p, li { white-space: pre-wrap; }
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
                   </property>
                   <property name="text">
                    <string>daily high</string>
@@ -2359,6 +2410,9 @@ p, li { white-space: pre-wrap; }
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="text">
                    <string>10%</string>
                   </property>
@@ -2377,6 +2431,9 @@ p, li { white-space: pre-wrap; }
                     <width>46</width>
                     <height>16777215</height>
                    </size>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
                   </property>
                   <property name="styleSheet">
                    <string notr="true"/>
@@ -2400,6 +2457,9 @@ p, li { white-space: pre-wrap; }
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="text">
                    <string>33%</string>
                   </property>
@@ -2418,6 +2478,9 @@ p, li { white-space: pre-wrap; }
                     <width>46</width>
                     <height>16777215</height>
                    </size>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
                   </property>
                   <property name="text">
                    <string>50%</string>
@@ -2438,6 +2501,9 @@ p, li { white-space: pre-wrap; }
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="cursor">
+                   <cursorShape>PointingHandCursor</cursorShape>
+                  </property>
                   <property name="text">
                    <string>100%</string>
                   </property>
@@ -2449,6 +2515,9 @@ p, li { white-space: pre-wrap; }
                <layout class="QHBoxLayout" name="horizontalLayout_32">
                 <item>
                  <widget class="QDoubleSpinBox" name="limit_sell_amount">
+                  <property name="cursor">
+                   <cursorShape>SizeVerCursor</cursorShape>
+                  </property>
                   <property name="maximum">
                    <double>9999999.000000000000000</double>
                   </property>
@@ -3044,8 +3113,11 @@ p, li { white-space: pre-wrap; }
        </sizepolicy>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_15">
-       <property name="topMargin">
+       <property name="leftMargin">
         <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
        </property>
        <property name="rightMargin">
         <number>5</number>
@@ -3113,14 +3185,14 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QLabel" name="total_btc_label">
          <property name="text">
-          <string> </string>
+          <string/>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="total_usd_label">
          <property name="text">
-          <string> </string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -3226,8 +3298,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButton_16</tabstop>
   <tabstop>lineEdit_14</tabstop>
  </tabstops>
- <resources>
-  <include location="resource.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
