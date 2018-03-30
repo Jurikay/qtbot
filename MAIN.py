@@ -354,80 +354,117 @@ class beeserBot(QMainWindow):
 
     def print_output(self, s):
         # print(s["lastPrice"])
+        print("print_")
         print(s)
 
 
+    def add_to_open_orders(self, order):
+
+        # only add to open orders table if the coin is currently selected.
+        if order["symbol"] == val["pair"]:
+            self.open_orders.insertRow(0)
+            self.open_orders.setItem(0, 0, QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
+            self.open_orders.setItem(0, 1, QTableWidgetItem(order["symbol"]))
+            self.open_orders.setItem(0, 2, QTableWidgetItem(order["type"]))
+            self.open_orders.setItem(0, 3, QTableWidgetItem(order["side"]))
+            price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
+            self.open_orders.setItem(0, 4, QTableWidgetItem(price))
+            qty = '{number:.{digits}f}'.format(number=float(order["origQty"]), digits=val["assetDecimals"]) + " " + val["coin"]
+            self.open_orders.setItem(0, 5, QTableWidgetItem(qty))
+
+            filled_percent = '{number:.{digits}f}'.format(number=float(order["executedQty"]) / float(order["origQty"]), digits=2) + "%"
+
+            self.open_orders.setItem(0, 6, QTableWidgetItem(filled_percent))
+
+            total_btc = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
+
+
+            self.open_orders.setItem(0, 7, QTableWidgetItem(total_btc))
+
+            self.open_orders.setItem(0, 8, QTableWidgetItem(str(order["orderId"])))
+
+            self.open_orders.setItem(0, 9, QTableWidgetItem("cancel"))
+
+            self.open_orders.item(0, 9).setForeground(QColor(color_yellow))
+
+            if order["side"] == "BUY":
+                self.open_orders.item(0, 3).setForeground(QColor(color_green))
+            else:
+                self.open_orders.item(0, 3).setForeground(QColor(color_pink))
+
+
+    def remove_from_open_orders(self, order):
+        if order["symbol"] == val["pair"]:
+            for row in range(self.open_orders.rowCount()):
+                try:
+                    if str(self.open_orders.item(row, 8).text()) == str(order["orderId"]):
+
+                        self.open_orders.removeRow(row)
+
+                except (AttributeError, TypeError):
+                    pass
+
+    def add_to_history(self, order):
+        if order["symbol"] == val["pair"]:
+            self.history_table.insertRow(0)
+            self.history_table.setItem(0, 0, QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
+            self.history_table.setItem(0, 1, QTableWidgetItem(order["symbol"]))
+
+            self.history_table.setItem(0, 2, QTableWidgetItem(order["side"]))
+
+
+            price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
+            self.history_table.setItem(0, 3, QTableWidgetItem(price))
+
+            qty = '{number:.{digits}f}'.format(number=float(order["executedQty"]), digits=val["assetDecimals"]) + " " + val["coin"]
+            self.history_table.setItem(0, 4, QTableWidgetItem(qty))
+
+
+            total = '{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8)
+
+            self.history_table.setItem(0, 5, QTableWidgetItem('{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8) + " BTC"))
+
+            if order["side"] == "BUY":
+                self.history_table.item(0, 2).setForeground(QColor(color_green))
+            else:
+                self.history_table.item(0, 2).setForeground(QColor(color_pink))
+
+    def check_add_to_holdings(self, order):
+        """Check if the coin has to be added to the holdings table"""
+        pair = order["symbol"]
+        symbol = pair.replace("BTC", "")
+        holdings = list()
+
+        # collect holdings from table
+        for i in range(self.holdings_table.rowCount()):
+            holdings.append(self.holdings_table.item(i, 1).text())
+
+        # check if the symbol of the order is in the holdings table
+        if not any(symbol in s for s in holdings):
+            # if not, rebuild holdings table
+            build_holdings(self)
+
+    # remove canceled order from open orders table
+
+
+
+
+
+
+
+
     # callback function to draw order history
-    def orders_finished(self, payload):
-
-
-        for i, order in enumerate(payload["orders"]):
-            # print(order)
+    def orders_received(self, orders):
+        for i, order in enumerate(orders):
             if order["symbol"] == val["pair"]:
                 if order["status"] == "FILLED":
-                    color = color_grey
-
-
-                    self.history_table.insertRow(0)
-                    self.history_table.setItem(0, 0, QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
-                    self.history_table.setItem(0, 1, QTableWidgetItem(order["symbol"]))
-
-                    self.history_table.setItem(0, 2, QTableWidgetItem(order["side"]))
-
-
-                    price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
-                    self.history_table.setItem(0, 3, QTableWidgetItem(price))
-
-                    qty = '{number:.{digits}f}'.format(number=float(order["executedQty"]), digits=val["assetDecimals"]) + " " + val["coin"]
-                    self.history_table.setItem(0, 4, QTableWidgetItem(qty))
-
-
-                    total = '{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8)
-
-                    self.history_table.setItem(0, 5, QTableWidgetItem('{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8) + " BTC"))
-
-                    if order["side"] == "BUY":
-                        self.history_table.item(0, 2).setForeground(QColor(color_green))
-                    else:
-                        self.history_table.item(0, 2).setForeground(QColor(color_pink))
+                    self.add_to_history(order)
 
                 # handle open orders
                 # Date	Pair	Type	Side	Price	Amount	Filled%	Total	Trigger Conditions
                 elif order["status"] == "NEW":
-                    self.open_orders.insertRow(0)
-                    self.open_orders.setItem(0, 0, QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
-                    self.open_orders.setItem(0, 1, QTableWidgetItem(order["symbol"]))
 
-                    self.open_orders.setItem(0, 2, QTableWidgetItem(order["type"]))
-
-
-
-                    self.open_orders.setItem(0, 3, QTableWidgetItem(order["side"]))
-                    price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
-                    self.open_orders.setItem(0, 4, QTableWidgetItem(price))
-
-                    qty = '{number:.{digits}f}'.format(number=float(order["origQty"]), digits=val["assetDecimals"]) + " " + val["coin"]
-                    self.open_orders.setItem(0, 5, QTableWidgetItem(qty))
-
-                    filled_percent = '{number:.{digits}f}'.format(number=float(order["executedQty"]) / float(order["origQty"]), digits=2) + "%"
-
-                    self.open_orders.setItem(0, 6, QTableWidgetItem(filled_percent))
-
-                    total_btc = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
-
-
-                    self.open_orders.setItem(0, 7, QTableWidgetItem(total_btc))
-
-                    self.open_orders.setItem(0, 8, QTableWidgetItem(str(order["orderId"])))
-
-                    self.open_orders.setItem(0, 9, QTableWidgetItem("cancel"))
-
-                    self.open_orders.item(0, 9).setForeground(QColor(color_yellow))
-
-                    if order["side"] == "BUY":
-                        self.open_orders.item(0, 3).setForeground(QColor(color_green))
-                    else:
-                        self.open_orders.item(0, 3).setForeground(QColor(color_pink))
+                    self.add_to_open_orders(order)
 
 
             self.history_table.scrollToTop()
@@ -688,7 +725,7 @@ class beeserBot(QMainWindow):
     def sell_slider(self):
         # Text to value
         print("ich slide")
-        print(val["accHoldings"][val["coin"]]["free"])
+        # print(val["accHoldings"][val["coin"]]["free"])
         sell_percent = str(self.limit_sell_slider.value())
 
         sell_size = self.round_sell_amount(sell_percent)
@@ -698,10 +735,12 @@ class beeserBot(QMainWindow):
 
         self.sell_slider_label.setText(sell_percent + "%")
 
-        value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(sell_percent), val["assetDecimals"])
-
-        order_cost = float(value) * float(self.limit_sell_input.value())
-        self.limit_sell_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC")
+        # value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_sell_input.value(), int(sell_percent), val["assetDecimals"])
+        #
+        # print(str(value))
+        #
+        # order_cost = float(value) * float(self.limit_sell_amount.value())
+        # self.limit_sell_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC")
 
         # if order_cost < 0.002:
         #     self.limit_sell_button.setStyleSheet("border: 2px solid orange;")
@@ -796,7 +835,7 @@ class beeserBot(QMainWindow):
         self.threadpool.start(worker)
 
         worker = Worker(self.api_order_history)
-        worker.signals.progress.connect(self.orders_finished)
+        worker.signals.progress.connect(self.orders_received)
         self.threadpool.start(worker)
 
     def api_history(self, progress_callback):
@@ -812,7 +851,7 @@ class beeserBot(QMainWindow):
 
     def api_order_history(self, progress_callback):
         orders = getOrders(client, val["pair"])
-        progress_callback.emit({"orders": orders})
+        progress_callback.emit(orders)
 
 
     # threaded orders
@@ -821,7 +860,7 @@ class beeserBot(QMainWindow):
     def cancel_order_byId(self, id, symbol):
 
         worker = Worker(partial(self.api_cancel_order, id, symbol))
-        worker.signals.progress.connect(self.cancel_callback)
+        # worker.signals.progress.connect(self.cancel_callback)
         self.threadpool.start(worker)
 
     # cancel the order and call the callback when done
@@ -835,22 +874,6 @@ class beeserBot(QMainWindow):
         # not needed since user socket handles this
         # progress_callback.emit(result)
 
-    # remove canceled order from open orders table
-    def cancel_callback(self, payload):
-
-        for row in range(self.open_orders.rowCount()):
-            try:
-                if str(self.open_orders.item(row, 8).text()) == str(payload["orderId"]):
-
-                    self.open_orders.removeRow(row)
-
-            except AttributeError:
-                pass
-
-
-
-
-
     def create_buy_order(self):
         if val["buyEnabled"] is True:
             pair = val["pair"]
@@ -860,7 +883,7 @@ class beeserBot(QMainWindow):
             side = "Buy"
 
             worker = Worker(partial(self.api_create_order, side, pair, price, amount))
-            worker.signals.progress.connect(self.create_order_callback)
+            # worker.signals.progress.connect(self.create_order_callback)
             self.threadpool.start(worker)
 
     def create_sell_order(self):
@@ -872,7 +895,7 @@ class beeserBot(QMainWindow):
         side = "Sell"
 
         worker = Worker(partial(self.api_create_order, side, pair, price, amount))
-        worker.signals.progress.connect(self.create_order_callback)
+        # worker.signals.progress.connect(self.create_order_callback)
         self.threadpool.start(worker)
 
 
@@ -895,9 +918,6 @@ class beeserBot(QMainWindow):
             print("create order failed")
 
 
-    def create_order_callback(self, payload):
-        print("order created!")
-        print(payload)
 
 
     def check_for_update(self, progress_callback):
@@ -1010,33 +1030,50 @@ class beeserBot(QMainWindow):
     def socket_orderbook(self, depth, progress_callback):
         progress_callback.emit(depth)
 
-    def add_open_order(self, order, progress_callback):
-        progress_callback.emit({"orders": order})
+    def socket_order(self, order, progress_callback):
+        progress_callback.emit(order)
 
     def update_holdings(self, progress_callback):
         progress_callback.emit("update")
 
 
     def holding_updated(self):
-
+        print("holding updated")
         self.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
         self.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
 
-        print("Porcc")
+        total_btc_value = self.total_btc()
+
+        self.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
+
+        total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(val["tether"]["lastPrice"]), digits=2) + "$"
+
         for i in range(self.holdings_table.rowCount()):
-            coin = self.holdings_table.item(i, 1).text()
-            free = val["accHoldings"][coin]["free"]
-            locked = val["accHoldings"][coin]["locked"]
-            total = float(free) + float(locked)
-            # self.holdings_table.setItem(i, 3, QTableWidgetItem(total))
-            # self.holdings_table.setItem(i, 4, QTableWidgetItem(free))
-            # self.holdings_table.setItem(i, 5, QTableWidgetItem(locked))
+            try:
+                coin = self.holdings_table.item(i, 1).text()
+                print(coin)
+                free = val["accHoldings"][coin]["free"]
+                print(str(free))
+                locked = val["accHoldings"][coin]["locked"]
+                total = '{number:.{digits}f}'.format(number=float(free) + float(locked), digits=8)
 
-            self.holdings_table.item(i, 3).setText(str(total))
-            self.holdings_table.item(i, 4).setText(str(free))
-            self.holdings_table.item(i, 5).setText(str(locked))
+                if coin != "BTC":
+                    price = val["coins"][coin + "BTC"]["close"]
+                elif coin == "BTC":
+                    price = 1
 
+                total_btc = float(total) * float(price)
+                total_btc_formatted = '{number:.{digits}f}'.format(number=total_btc, digits=8)
 
+                self.holdings_table.item(i, 3).setText(str(total))
+                self.holdings_table.item(i, 4).setText(str(free))
+                self.holdings_table.item(i, 5).setText(str(locked))
+                self.holdings_table.setItem(i, 6, QTableWidgetItem(total_btc_formatted))
+
+                if float(total) * float(price) < 0.001:
+                    self.holdings_table.removeRow(i)
+            except AttributeError:
+                print("attr error: " + str(i))
 
     def total_btc(self):
         total_btc = 0
@@ -1045,7 +1082,7 @@ class beeserBot(QMainWindow):
             locked = val["accHoldings"][holding]["locked"]
             total = float(free) + float(locked)
             try:
-                if holding != "BTC" and total * float(val["coins"][holding+"BTC"]["close"]) > 0.002:
+                if holding != "BTC" and total * float(val["coins"][holding+"BTC"]["close"]) > 0.001:
 
                     coin_total = total * float(val["coins"][holding+"BTC"]["close"])
                     total_btc += coin_total
@@ -1115,6 +1152,7 @@ def initial_values(self):
 
 
 def build_holdings(self, *args):
+    self.holdings_table.setRowCount(0)
     for holding in val["accHoldings"]:
 
         try:
@@ -1155,7 +1193,7 @@ def build_holdings(self, *args):
                 self.holdings_table.setCellWidget(0,7,self.btn_sell)
 
 
-            elif float(total) * float(val["coins"][holding + "BTC"]["close"]) >= 0.002:
+            elif float(total) * float(val["coins"][holding + "BTC"]["close"]) >= 0.001:
                 icon = QIcon("ico/" + str(holding) + ".svg")
 
                 icon_item = QTableWidgetItem()
@@ -1250,38 +1288,49 @@ def userCallback(self, msg):
 
         # update holdings table in a separate thread
         worker = Worker(self.update_holdings)
+
+        # update values in holdings table
         worker.signals.progress.connect(self.holding_updated)
         self.threadpool.start(worker)
 
     elif userMsg["e"] == "executionReport":
+
+            # prepare order dictionary
             order = dict()
-            order = [{"symbol": userMsg["s"], "price": userMsg["p"], "origQty": userMsg["q"], "side": userMsg["S"], "orderId": userMsg["i"], "status": userMsg["X"], "time": userMsg["T"], "type": userMsg["o"], "executedQty": userMsg["z"]}]
+            order = {"symbol": userMsg["s"], "price": userMsg["p"], "origQty": userMsg["q"], "side": userMsg["S"], "orderId": userMsg["i"], "status": userMsg["X"], "time": userMsg["T"], "type": userMsg["o"], "executedQty": userMsg["z"]}
 
-            print("user msg procc")
-
+            # propagate order
+            worker = Worker(partial(self.socket_order, order))
 
             if userMsg["X"] == "NEW":
-
-
-
-
-
-                worker = Worker(partial(self.add_open_order, order))
-                worker.signals.progress.connect(self.orders_finished)
-                self.threadpool.start(worker)
+                worker.signals.progress.connect(self.add_to_open_orders)
 
             elif userMsg["X"] == "CANCELED":
-                self.cancel_callback(order[0])
+                worker.signals.progress.connect(self.remove_from_open_orders)
 
             elif userMsg["X"] == "FILLED":
-                self.cancel_callback(order[0])
+                worker.signals.progress.connect(self.remove_from_open_orders)
+                worker.signals.progress.connect(self.add_to_history)
+                worker.signals.progress.connect(self.check_add_to_holdings)
                 print("filled order!")
-                print(order)
-                worker = Worker(partial(self.add_open_order, order))
-                worker.signals.progress.connect(self.orders_finished)
-                self.threadpool.start(worker)
-
-
+                print(str(order))
+                # self.cancel_callback(order[0])
+                # print("filled order!")
+                # print(order)
+                #
+                # # send order
+                # worker = Worker(partial(self.api_remove_order, order))
+                #
+                # # remove filled order from open orders
+                # worker.signals.progress.connect(self.cancel_callback)
+                #
+                # # create new table entry in holdings (wip)
+                # worker.signals.progress.connect(self.filled_order_callback)
+                #
+                # worker.signals.progress.connect(self.orders_finished)
+                # self.threadpool.start(worker)
+                #
+            self.threadpool.start(worker)
 
 
 

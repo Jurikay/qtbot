@@ -66,4 +66,4 @@ orderList = list()
 
 price = '{number:.{digits}f}'.format(number=val["coins"]["BNBBTC"]["minQty"], digits=8)
 
-print(val["tether"])
+print(val["coins"]["ETHBTC"])
