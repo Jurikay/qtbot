@@ -9,6 +9,19 @@ def getHoldings(client):
 
     return accHoldings
 
+
+def getTickers(client):
+    """Make an initial API call to get ticker data."""
+    ticker = client.get_ticker()
+    # print(str(ticker))
+    all_tickers = dict()
+    for i, ticker_data in enumerate(ticker):
+        if "BTC" in ticker_data["symbol"]:
+            # print(str(ticker_data))
+            all_tickers[ticker_data["symbol"]] = ticker_data
+
+    return all_tickers
+
 def getTradehistory(client, pair):
     """Make an initial API call to get the trade history of a given pair. This is used until updated by websocket data"""
     # API call
