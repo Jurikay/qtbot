@@ -6,12 +6,12 @@
 
 from binance.client import Client
 # from config import binance_credentials
-from init import val, proxies, read_config
+from init import val, read_config
 
 from apiFunctions import *
-from binance.depthcache import DepthCacheManager
-
-from binance.websockets import BinanceSocketManager
+# from binance.depthcache import DepthCacheManager
+#
+# from binance.websockets import BinanceSocketManager
 
 from binance.exceptions import BinanceAPIException
 
@@ -63,9 +63,9 @@ try:
 
     set_pair_values()
 
-except (BinanceAPIException, NameError):
+except (BinanceAPIException, NameError) as e:
     print("API ERROR")
-
+    print(str(e))
 
 
 #

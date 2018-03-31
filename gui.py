@@ -1,25 +1,13 @@
-import sys
-import traceback
 import time
 import configparser
 from functools import partial
 from datetime import datetime
-from PyQt5.QtCore import pyqtSlot, QThreadPool, QTimer, QObject, QRunnable, pyqtSignal, QSize, Qt
-from PyQt5.QtWidgets import QApplication, QDialog, QWidget, QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtGui import QColor, QPalette, QIcon, QStandardItem, QPixmap, QFont, QFontDatabase, QCursor
-from PyQt5.uic import loadUi
+
 
 from init import val
 from initApi import *
-from charts import build_chart, build_chart2, welcome_page
 from callbacks import *
-
-color_pink = "#ff007a"
-color_yellow = "#f3ba2e"
-color_green = "#94c940"
-color_lightgrey = "#cdcdcd"
-color_grey = "#999"
+from gui_functions import *
 
 
 
@@ -48,7 +36,7 @@ class beeserBot(QMainWindow):
 
         # THREADING
         self.threadpool = QThreadPool()
-        print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
+        print("Multithreading with a maximum of %d threads" % self.threadpool.maxThreadCount())
 
 
 
@@ -114,7 +102,15 @@ class beeserBot(QMainWindow):
             self.percent_5.setText(str(int(val["buttonPercentage"][4])))
             self.set_button_text()
 
-            self.default_timeframe.setText(str(val["defaultTimeframe"]))
+            # self.default_timeframe.setText(str(val["defaultTimeframe"]))
+
+            raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, "1w"]
+
+            dtf = self.dtf_selector.currentText()
+            for i, tf in enumerate(raw_timeframes):
+                if val["defaultTimeframe"] == str(tf):
+                    self.dtf_selector.setCurrentIndex(i)
+
 
         except (TypeError, KeyError):
             pass
@@ -140,13 +136,13 @@ class beeserBot(QMainWindow):
             self.api_secret.setStyleSheet("border: 2px solid #f3ba2e;")
 
 
-        for i in range(20):
+        for _ in range(20):
             self.bids_table.insertRow(0)
             self.asks_table.insertRow(0)
             self.new_table.insertRow(0)
 
 
-        for i in range(50):
+        for _ in range(50):
             self.tradeTable.insertRow(0)
 
 
@@ -386,7 +382,7 @@ class beeserBot(QMainWindow):
             self.history_table.setItem(0, 4, QTableWidgetItem(qty))
 
 
-            total = '{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8)
+            # total = '{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8)
 
             self.history_table.setItem(0, 5, QTableWidgetItem('{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8) + " BTC"))
 
@@ -740,7 +736,7 @@ class beeserBot(QMainWindow):
 
         except ValueError:
             print("val error")
-            pass
+            # pass
         self.calc_total_sell()
 
     def check_buy_ammount(self):
@@ -801,33 +797,20 @@ class beeserBot(QMainWindow):
 
 
     def api_calls(self):
-        worker = Worker(self.api_history)
+        worker = Worker(api_history)
         worker.signals.progress.connect(self.progress_fn)
         self.threadpool.start(worker)
 
-        worker = Worker(self.api_depth)
+        worker = Worker(api_depth)
         worker.signals.progress.connect(self.progress_fn)
         worker.signals.finished.connect(self.t_complete)
         self.threadpool.start(worker)
 
-        worker = Worker(self.api_order_history)
+        worker = Worker(api_order_history)
         worker.signals.progress.connect(self.orders_received)
         self.threadpool.start(worker)
 
-    def api_history(self, progress_callback):
-        val["globalList"] = getTradehistory(client, val["pair"])
-        progress_callback.emit({"history": val["globalList"]})
 
-    def api_depth(self, progress_callback):
-        depth = getDepth(client, val["pair"])
-        val["asks"] = depth["asks"]
-        progress_callback.emit({"asks": val["asks"]})
-        val["bids"] = depth["bids"]
-        progress_callback.emit({"bids": val["bids"]})
-
-    def api_order_history(self, progress_callback):
-        orders = getOrders(client, val["pair"])
-        progress_callback.emit(orders)
 
 
     # threaded orders
@@ -957,7 +940,19 @@ class beeserBot(QMainWindow):
         key = self.api_key.text()
         secret = self.api_secret.text()
         defaultPair = self.default_pair.text()
-        defaultTimeframe = self.default_timeframe.text()
+        # defaultTimeframe = self.default_timeframe.text()
+
+        raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, "1w"]
+
+        dtf = self.dtf_selector.currentText()
+        for i, tf in enumerate(val["validTimeframes"]):
+            if str(dtf) == str(tf):
+                # self.dtf_selector.setCurrentIndex(i)
+                tf_index = i
+
+
+
+
 
         copy_price = self.copy_price_box.isChecked()
         copy_qty = self.copy_qty_box.isChecked()
@@ -993,7 +988,7 @@ class beeserBot(QMainWindow):
 
         config['CONFIG'] = {'DefaultPair': defaultPair,
                             'ButtonPercentages': percent[0] + ", " + percent[1] + ", " + percent[2] + ", " + percent[3] + ", " + percent[4],
-                            'DefaultTimeframe': defaultTimeframe,
+                            'DefaultTimeframe': raw_timeframes[tf_index],
                             'CopyPrice': copy_price,
                             'CopyQuantity': copy_qty,
                             }
@@ -1005,17 +1000,7 @@ class beeserBot(QMainWindow):
         read_config()
         self.set_button_text()
 
-    def socket_history(self, history, progress_callback):
-        progress_callback.emit(history)
 
-    def socket_orderbook(self, depth, progress_callback):
-        progress_callback.emit(depth)
-
-    def socket_order(self, order, progress_callback):
-        progress_callback.emit(order)
-
-    def update_holdings(self, progress_callback):
-        progress_callback.emit("update")
 
 
     def holding_updated(self):
@@ -1028,15 +1013,13 @@ class beeserBot(QMainWindow):
         for i in range(self.holdings_table.rowCount()):
             try:
                 coin = self.holdings_table.item(i, 1).text()
-                print(coin)
                 free = val["accHoldings"][coin]["free"]
-                print(str(free))
                 locked = val["accHoldings"][coin]["locked"]
                 total = '{number:.{digits}f}'.format(number=float(free) + float(locked), digits=8)
 
                 if coin != "BTC":
                     price = val["coins"][coin + "BTC"]["close"]
-                    print("wavg: " + str(wAvg))
+                    # print("wavg: " + str(wAvg))
                 elif coin == "BTC":
                     price = 1
                     wAvg = 1
@@ -1069,199 +1052,3 @@ class beeserBot(QMainWindow):
         self.limit_sbutton3.setText(str(val["buttonPercentage"][3]) + "%")
         self.limit_sbutton4.setText(str(val["buttonPercentage"][4]) + "%")
 ####################################################################
-
-def initial_values(self):
-    self.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
-    self.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
-
-    self.limit_buy_label.setText("<span style='font-weight: bold;'>Buy " + val["coin"] + "</span>")
-    self.limit_sell_label.setText("<span style='font-weight: bold;'>Sell " + val["coin"] + "</span>")
-
-    # self.limit_buy_input.setText("kernoschmaus")
-    self.limit_buy_input.setDecimals(val["decimals"])
-    self.limit_buy_input.setSingleStep(float(val["coins"][val["pair"]]["tickSize"]))
-
-    self.limit_sell_input.setDecimals(val["decimals"])
-    self.limit_sell_input.setSingleStep(float(val["coins"][val["pair"]]["tickSize"]))
-
-    self.limit_buy_amount.setDecimals(val["assetDecimals"])
-    self.limit_buy_amount.setSingleStep(float(val["coins"][val["pair"]]["minTrade"]))
-
-    self.limit_sell_amount.setDecimals(val["assetDecimals"])
-    self.limit_sell_amount.setSingleStep(float(val["coins"][val["pair"]]["minTrade"]))
-
-    self.buy_asset.setText(val["coin"])
-    self.sell_asset.setText(val["coin"])
-
-
-    self.chart.setHtml(build_chart2(val["pair"], val["defaultTimeframe"]))
-    self.chart.show()
-
-    bids_header = self.bids_table.horizontalHeader()
-    asks_header = self.asks_table.horizontalHeader()
-    bids_header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-    bids_header.setSectionResizeMode(1, QHeaderView.Fixed)
-    bids_header.setSectionResizeMode(2, QHeaderView.Fixed)
-
-    asks_header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-    asks_header.setSectionResizeMode(1, QHeaderView.Fixed)
-    asks_header.setSectionResizeMode(2, QHeaderView.Fixed)
-
-
-
-
-
-def build_holdings(self, *args):
-    self.holdings_table.setRowCount(0)
-    for holding in val["accHoldings"]:
-
-        try:
-            name = val["coins"][holding + "BTC"]["baseAssetName"]
-        except KeyError:
-            name = "Bitcoin"
-        free = val["accHoldings"][holding]["free"]
-        locked = val["accHoldings"][holding]["locked"]
-        total = float(free) + float(locked)
-        total_formatted = '{number:.{digits}f}'.format(number=total, digits=8)
-
-        bold_font = QFont()
-        bold_font.setBold(True)
-
-        try:
-            if holding == "BTC":
-                icon = QIcon("images/ico/" + str(holding) + ".svg")
-
-                icon_item = QTableWidgetItem()
-                icon_item.setIcon(icon)
-                self.holdings_table.insertRow(0)
-                self.holdings_table.setItem(0, 0, icon_item)
-
-                self.holdings_table.setItem(0, 1, QTableWidgetItem(holding))
-                self.holdings_table.setItem(0, 2, QTableWidgetItem(name))
-                self.holdings_table.setItem(0, 3, QTableWidgetItem(total_formatted))
-                self.holdings_table.setItem(0, 4, QTableWidgetItem(free))
-                self.holdings_table.setItem(0, 5, QTableWidgetItem(locked))
-                self.holdings_table.setItem(0, 6, QTableWidgetItem(total_formatted))
-
-                self.holdings_table.item(0, 6).setFont(bold_font)
-                self.holdings_table.item(0, 6).setForeground(QColor(color_lightgrey))
-
-                self.btn_sell = QPushButton('Trade' + " BTC")
-                self.btn_sell.setEnabled(False)
-                self.btn_sell.setStyleSheet("color: #666;")
-                self.btn_sell.clicked.connect(self.gotoTradeButtonClicked)
-                self.holdings_table.setCellWidget(0,7,self.btn_sell)
-
-
-
-            elif float(total) * float(val["coins"][holding + "BTC"]["close"]) >= 0.001:
-                icon = QIcon("images/ico/" + str(holding) + ".svg")
-
-                icon_item = QTableWidgetItem()
-                icon_item.setIcon(icon)
-
-                total_btc = total * float(val["coins"][holding + "BTC"]["close"])
-                total_btc_formatted = '{number:.{digits}f}'.format(number=total_btc, digits=8)
-
-
-                self.holdings_table.insertRow(1)
-                self.holdings_table.setItem(1, 0, icon_item)
-
-                self.holdings_table.setItem(1, 1, QTableWidgetItem(holding))
-                self.holdings_table.setItem(1, 2, QTableWidgetItem(name))
-                self.holdings_table.setItem(1, 3, QTableWidgetItem(total_formatted))
-                self.holdings_table.setItem(1, 4, QTableWidgetItem(free))
-                self.holdings_table.setItem(1, 5, QTableWidgetItem(locked))
-                self.holdings_table.setItem(1, 6, QTableWidgetItem(total_btc_formatted))
-
-                self.holdings_table.item(1, 6).setFont(bold_font)
-                self.holdings_table.item(1, 6).setForeground(QColor(color_lightgrey))
-
-                self.btn_sell = QPushButton('Trade ' + str(holding))
-                self.btn_sell.clicked.connect(self.gotoTradeButtonClicked)
-                self.holdings_table.setCellWidget(1,7,self.btn_sell)
-
-        except KeyError:
-            pass
-
-        header = self.holdings_table.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        # header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
-
-        self.holdings_table.setIconSize(QSize(25, 25))
-
-
-def calc_total_btc():
-    total_btc_val = 0
-    for holding in val["accHoldings"]:
-        free = val["accHoldings"][holding]["free"]
-        locked = val["accHoldings"][holding]["locked"]
-        total = float(free) + float(locked)
-
-        try:
-            if holding != "BTC" and total * float(val["tickers"][holding+"BTC"]["lastPrice"]) > 0.001:
-
-                coin_total = total * float(val["tickers"][holding+"BTC"]["lastPrice"])
-                total_btc_val += coin_total
-
-
-            elif holding == "BTC":
-                print(holding)
-                total_btc_val += total
-        except KeyError:
-            # print("error")
-            # HIER!
-            pass
-    total_formatted = '{number:.{digits}f}'.format(number=float(total_btc_val), digits=8) + " BTC"
-
-    return total_formatted
-
-
-def calc_wavg():
-    coin = val["coin"]
-    current_free = val["accHoldings"][coin]["free"]
-    current_locked = val["accHoldings"][coin]["locked"]
-    current_total = float(current_free) + float(current_locked)
-
-    remaining = current_total
-    total_cost = 0.0
-    wAvg = 0.0
-    sumTraded = 0.0
-    print("calculating wAvg for " + str(coin))
-    print("currently holding " + str(remaining))
-    try:
-        for i, order in enumerate(val["history"]):
-            print(str(order))
-            if order["side"] == "BUY":
-                sumTraded += float(order["executedQty"])
-                remaining -= float(order["executedQty"])
-                total_cost += float(order["price"]) * float(order["executedQty"])
-
-                wAvg = total_cost/(sumTraded)
-
-                print(str(i))
-                print("sum traded: " + str(sumTraded))
-                print("remainign: " + str(remaining))
-                print("exec qty: " + str(order["executedQty"]))
-                # print(str(i) + ". buy: " + str(total_cost) + " remaining: " + str(remaining) + " wAvg; " + str(wAvg))
-            elif order["side"] == "SELL":
-                print(str(i))
-                if wAvg != 0:
-                    sumTraded -= float(order["executedQty"])
-                    print(str(i) + ". Sell: " + str(total_cost) + " remaining: " + str(remaining) + " wAvg; " + str(wAvg))
-                    remaining += float(order["executedQty"])
-                    total_cost -= float(order["executedQty"]) * wAvg
-
-
-            if coin != "BTC":
-                if remaining <= float(val["coins"][coin+"BTC"]["minTrade"]):
-
-
-                    if current_total > 0:
-                        print("ENOUGH! " + str(total_cost / (current_total-remaining)))
-                        final = ('{number:,.{digits}f}'.format(number=total_cost / (current_total-remaining), digits=8))
-                        return str(final)
-                    else:
-                        return ""
-    except KeyError:
-        pass

@@ -17,7 +17,7 @@ def directCallback(self, msg):
 
 
     history = {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]}
-    worker = Worker(partial(self.socket_history, history))
+    worker = Worker(partial(socket_history, history))
     worker.signals.progress.connect(self.progress_history)
     # worker.signals.finished.connect(self.t_complete)
     self.threadpool.start(worker)
@@ -31,12 +31,12 @@ def depthCallback(self, msg):
     val["asks"] = msg["asks"]
 
     if old_bids != val["bids"]:
-        worker = Worker(partial(self.socket_orderbook, msg["bids"]))
+        worker = Worker(partial(socket_orderbook, msg["bids"]))
         worker.signals.progress.connect(self.progress_bids)
         # worker.signals.finished.connect(self.t_complete)
         self.threadpool.start(worker)
     if old_asks != val["asks"]:
-        worker = Worker(partial(self.socket_orderbook, msg["asks"]))
+        worker = Worker(partial(socket_orderbook, msg["asks"]))
         worker.signals.progress.connect(self.progress_asks)
         # worker.signals.finished.connect(self.t_complete)
         self.threadpool.start(worker)
@@ -62,7 +62,7 @@ def userCallback(self, msg):
 
 
         # update holdings table in a separate thread
-        worker = Worker(self.update_holdings)
+        worker = Worker(update_holdings)
 
         # update values in holdings table
         worker.signals.progress.connect(self.holding_updated)
@@ -75,7 +75,7 @@ def userCallback(self, msg):
             order = {"symbol": userMsg["s"], "price": userMsg["p"], "origQty": userMsg["q"], "side": userMsg["S"], "orderId": userMsg["i"], "status": userMsg["X"], "time": userMsg["T"], "type": userMsg["o"], "executedQty": userMsg["z"]}
 
             # propagate order
-            worker = Worker(partial(self.socket_order, order))
+            worker = Worker(partial(socket_order, order))
 
             if userMsg["X"] == "NEW":
                 worker.signals.progress.connect(self.add_to_open_orders)
@@ -117,3 +117,31 @@ def tickerCallback(self, msg):
     # print(msg)
     # with open("tickerMsg.txt", "w") as f:
     #     f.write(str(msg))
+
+
+def api_history(progress_callback):
+    val["globalList"] = getTradehistory(client, val["pair"])
+    progress_callback.emit({"history": val["globalList"]})
+
+def api_depth(progress_callback):
+    depth = getDepth(client, val["pair"])
+    val["asks"] = depth["asks"]
+    progress_callback.emit({"asks": val["asks"]})
+    val["bids"] = depth["bids"]
+    progress_callback.emit({"bids": val["bids"]})
+
+def api_order_history(progress_callback):
+    orders = getOrders(client, val["pair"])
+    progress_callback.emit(orders)
+
+def socket_history(history, progress_callback):
+    progress_callback.emit(history)
+
+def socket_orderbook(depth, progress_callback):
+    progress_callback.emit(depth)
+
+def socket_order(order, progress_callback):
+    progress_callback.emit(order)
+
+def update_holdings(progress_callback):
+    progress_callback.emit("update")

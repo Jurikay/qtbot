@@ -20,15 +20,13 @@ val["sellAllowed"] = False
 val["history"] = dict()
 val["timeRunning"] = 0
 
+val["validTimeframes"] = ["1m", "3m", "5m", "15m", "30m", "45m", "1h", "2h", "3h", "4h", "1d", "1w"]
+
 val["ticker"] = dict()
 proxies = {
     'http': 'http://10.10.1.10:3128',
     'https': 'http://10.10.1.10:1080'
 }
-
-# def read_config():
-#     if os.path.isfile("config.ini"):
-#
 
 
 def read_config():
@@ -43,7 +41,7 @@ def read_config():
     else:
         config['CONFIG'] = {'DefaultPair': 'BNBBTC',
                             'ButtonPercentages': '10, 25, 33, 50, 100',
-                            'DefaultTimeframe': '15',
+                            'DefaultTimeframe': 15,
                             'CopyPrice': True,
                             'CopyQuantity': False,
                             }
