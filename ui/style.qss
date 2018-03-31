@@ -183,7 +183,7 @@ QHeaderView::up-arrow {
      /* border: 2px solid white; */
      color: white
 }
- QLineEdit, QDoubleSpinBox {
+ QLineEdit, QDoubleSpinBox, QComboBox {
      background-color: #424c55;
      border: 1px, solid, grey;
      height: 25px;

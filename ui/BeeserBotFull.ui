@@ -3019,13 +3019,6 @@ p, li { white-space: pre-wrap; }
               </property>
              </spacer>
             </item>
-            <item row="2" column="3">
-             <widget class="QLineEdit" name="default_pair">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
             <item row="12" column="3">
              <widget class="QPushButton" name="save_config">
               <property name="text">
@@ -3096,6 +3089,24 @@ p, li { white-space: pre-wrap; }
                </property>
               </item>
              </widget>
+            </item>
+            <item row="2" column="3">
+             <layout class="QHBoxLayout" name="horizontalLayout_20">
+              <item>
+               <widget class="QCheckBox" name="checkBox">
+                <property name="text">
+                 <string>Remember last</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="default_pair">
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -3432,7 +3443,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>percent_4</tabstop>
   <tabstop>percent_5</tabstop>
   <tabstop>copy_qty_box</tabstop>
-  <tabstop>default_pair</tabstop>
   <tabstop>lineEdit_5</tabstop>
   <tabstop>lineEdit_6</tabstop>
   <tabstop>lineEdit_12</tabstop>
