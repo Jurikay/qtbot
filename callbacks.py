@@ -44,6 +44,7 @@ def depthCallback(self, msg):
 
 
 def userCallback(self, msg):
+
     # print("user callback")
     # print("####################")
     # print(str(self))
@@ -87,8 +88,13 @@ def userCallback(self, msg):
                 worker.signals.progress.connect(self.add_to_history)
                 worker.signals.progress.connect(self.check_add_to_holdings)
 
+
+            else:
+                print(msg)
             self.threadpool.start(worker)
 
+    else:
+        print(msg)
 def tickerCallback(self, msg):
     # print("TICKER:" + str(dt.datetime.now()))
     ticker = dict()

@@ -1094,7 +1094,7 @@ def initial_values(self):
     self.sell_asset.setText(val["coin"])
 
 
-    self.chart.setHtml(build_chart2(val["pair"]))
+    self.chart.setHtml(build_chart2(val["pair"], val["defaultTimeframe"]))
     self.chart.show()
 
     bids_header = self.bids_table.horizontalHeader()

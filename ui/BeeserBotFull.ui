@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1420</width>
+    <width>1528</width>
     <height>800</height>
    </rect>
   </property>
@@ -521,7 +521,7 @@ p, li { white-space: pre-wrap; }
             </size>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>2</number>
            </property>
            <property name="movable">
             <bool>false</bool>
@@ -1066,23 +1066,82 @@ p, li { white-space: pre-wrap; }
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_13">
           <item>
-           <widget class="QPushButton" name="pushButton_7">
+           <widget class="QLabel" name="label_27">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>PushButton</string>
+             <string>TextLabel</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_6">
+           <widget class="QLabel" name="label_30">
             <property name="text">
-             <string>PushButton</string>
+             <string>TextLabel</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QLabel" name="label_23">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>PushButton</string>
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_31">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_22">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_45">
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_44">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_24">
+            <property name="text">
+             <string>TextLabel</string>
             </property>
            </widget>
           </item>
@@ -1715,7 +1774,7 @@ p, li { white-space: pre-wrap; }
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>4</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -2899,7 +2958,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="7" column="4">
+            <item row="8" column="4">
              <widget class="QLabel" name="restart_warning">
               <property name="enabled">
                <bool>true</bool>
@@ -2916,14 +2975,14 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
+            <item row="6" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
                <string>Copy on click:</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="4">
+            <item row="6" column="4">
              <layout class="QHBoxLayout" name="horizontalLayout_24">
               <item>
                <widget class="QCheckBox" name="copy_price_box">
@@ -2951,7 +3010,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="8" column="4">
+            <item row="9" column="4">
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -2974,11 +3033,75 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="12" column="4">
+            <item row="13" column="4">
              <widget class="QPushButton" name="save_config">
               <property name="text">
                <string>save</string>
               </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QComboBox" name="comboBox_2">
+              <item>
+               <property name="text">
+                <string>1m</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>3m</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>5m</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>15m</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>30m</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>45m</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>1h</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>2h</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>3h</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>4h</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>1d</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>1w</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
@@ -3239,7 +3362,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1420</width>
+     <width>1528</width>
      <height>22</height>
     </rect>
    </property>
@@ -3270,9 +3393,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>debugPlain</tabstop>
   <tabstop>button_wavg</tabstop>
   <tabstop>pushButton_8</tabstop>
-  <tabstop>pushButton_7</tabstop>
-  <tabstop>pushButton_6</tabstop>
-  <tabstop>pushButton_2</tabstop>
   <tabstop>coin_selector</tabstop>
   <tabstop>comboBox</tabstop>
   <tabstop>bot_tabs</tabstop>

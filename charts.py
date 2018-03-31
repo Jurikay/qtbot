@@ -25,7 +25,7 @@ def build_chart(exchange, pair):
     return tradingview
 
 
-def build_chart2(pair):
+def build_chart2(pair, timeframe):
     chart = """
     <!-- TradingView Widget BEGIN -->
 <style>
@@ -134,7 +134,7 @@ def build_chart2(pair):
     	symbol: 'BINANCE:""" + pair + """',
         autosize: true,
         timezone: "Europe/Berlin",
-    	interval: '15',
+    	interval: '""" + timeframe + """',
     	toolbar_bg: '#333333',
     	allow_symbol_change: false,
     	container_id: "tv_chart_container",

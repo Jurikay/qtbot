@@ -43,7 +43,7 @@ def read_config():
     else:
         config['CONFIG'] = {'DefaultPair': 'BNBBTC',
                             'ButtonPercentages': '10, 25, 33, 50, 100',
-                            'DefaultTimeframe': '15m',
+                            'DefaultTimeframe': '15',
                             'CopyPrice': True,
                             'CopyQuantity': False,
                             }
