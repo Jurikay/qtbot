@@ -2958,7 +2958,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="8" column="3">
+            <item row="7" column="3">
              <widget class="QLabel" name="restart_warning">
               <property name="enabled">
                <bool>true</bool>
@@ -2975,14 +2975,14 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
+            <item row="5" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
                <string>Copy on click:</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="3">
+            <item row="5" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_24">
               <item>
                <widget class="QCheckBox" name="copy_price_box">
@@ -3003,7 +3003,7 @@ p, li { white-space: pre-wrap; }
               </item>
              </layout>
             </item>
-            <item row="9" column="3">
+            <item row="8" column="3">
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -3026,7 +3026,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="13" column="3">
+            <item row="12" column="3">
              <widget class="QPushButton" name="save_config">
               <property name="text">
                <string>save</string>
@@ -3095,13 +3095,6 @@ p, li { white-space: pre-wrap; }
                 <string>1w</string>
                </property>
               </item>
-             </widget>
-            </item>
-            <item row="5" column="3">
-             <widget class="QLineEdit" name="default_timeframe">
-              <property name="text">
-               <string/>
-              </property>
              </widget>
             </item>
            </layout>
