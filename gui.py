@@ -114,10 +114,6 @@ class beeserBot(QMainWindow):
         except (TypeError, KeyError):
             pass
 
-
-
-
-
         # check if coin is an empty dict. If yes, api calls have not been answered.
         current_coin = val.get("coin", None)
         if current_coin is not None:
@@ -158,14 +154,8 @@ class beeserBot(QMainWindow):
         self.coin_selector.model().sort(0)
         self.coin_selector.setIconSize(QSize(25, 25))
 
-
-
-
         coinIndex = self.coin_selector.findText(val["coin"])
-
-
         self.coin_selector.setCurrentIndex(coinIndex)
-
 
         initial_values(self)
 
@@ -174,8 +164,6 @@ class beeserBot(QMainWindow):
         self.schedule_work()
 
         build_holdings(self)
-
-
 
         self.timer = QTimer()
         self.timer.setInterval(200)
@@ -696,18 +684,6 @@ class beeserBot(QMainWindow):
 
         self.sell_slider_label.setText(sell_percent + "%")
 
-        # value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_sell_input.value(), int(sell_percent), val["assetDecimals"])
-        #
-        # print(str(value))
-        #
-        # order_cost = float(value) * float(self.limit_sell_amount.value())
-        # self.limit_sell_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC")
-
-        # if order_cost < 0.002:
-        #     self.limit_sell_button.setStyleSheet("border: 2px solid orange;")
-        # else:
-        #     self.limit_sell_button.setStyleSheet("border: 2px solid #151a1e;")
-
 
     ####################################
     ########## VALIDATATION
@@ -775,20 +751,14 @@ class beeserBot(QMainWindow):
         # Any other args, kwargs are passed to the run function
         worker.signals.result.connect(self.print_output)
         worker.signals.progress.connect(self.tick)
-        # worker.signals.finished.connect(self.t_complete)
 
-        # worker.signals.progress.connect(self.progress_fn)
-
-        # Execute
         self.threadpool.start(worker)
 
 
     def schedule_websockets(self):
             # Pass the function to execute
             worker = Worker(self.start_sockets)
-            # Any other args, kwargs are passed to the run function
-            # worker.signals.result.connect(self.print_output)
-            # worker.signals.finished.connect(self.t_complete)
+
             worker.signals.progress.connect(self.progress_fn)
 
             # Execute
@@ -884,17 +854,6 @@ class beeserBot(QMainWindow):
         while True:
             # print("check")
             try:
-                # # print("check hist")
-                # if current_history != val["tradeHistory"]:
-                #     progress_callback.emit({"history": val["tradeHistory"][:]})
-                #
-                #
-                # if current_bids != val["bids"]:
-                #     progress_callback.emit({"bids": val["bids"][:]})
-                #
-                #
-                # if current_asks != val["asks"]:
-                #     progress_callback.emit({"asks": val["asks"][:]})
 
                 if current_height != self.frameGeometry().height():
                     progress_callback.emit(15)
@@ -903,9 +862,6 @@ class beeserBot(QMainWindow):
             except (KeyError, UnboundLocalError):
                 pass
 
-            # current_bids = val["bids"]
-            # current_asks = val["asks"]
-            # current_history = val["tradeHistory"]
             current_height = self.frameGeometry().height()
 
             progress_callback.emit(1)
@@ -950,17 +906,10 @@ class beeserBot(QMainWindow):
                 tf_index = i
 
 
-
-
-
         copy_price = self.copy_price_box.isChecked()
         copy_qty = self.copy_qty_box.isChecked()
         print("checkbox state:" + str(copy_price) + " " + str(copy_qty))
-        # percent_1 = self.percent_1.text()
-        # percent_2 = self.percent_2.text()
-        # percent_3 = self.percent_3.text()
-        # percent_4 = self.percent_4.text()
-        # percent_5 = self.percent_5.text()
+
 
         percent_texts = [self.percent_1, self.percent_2, self.percent_3, self.percent_4, self.percent_5]
         percent = val["buttonPercentage"]
@@ -999,15 +948,10 @@ class beeserBot(QMainWindow):
         read_config()
         self.set_button_text()
 
-
-
-
     def holding_updated(self):
         print("holding updated")
         self.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
         self.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
-
-
 
         for i in range(self.holdings_table.rowCount()):
             try:
