@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1528</width>
+    <width>1420</width>
     <height>800</height>
    </rect>
   </property>
@@ -2879,10 +2879,10 @@ p, li { white-space: pre-wrap; }
             <string>Config</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_8">
-            <item row="0" column="4">
+            <item row="0" column="3">
              <widget class="QLineEdit" name="api_key"/>
             </item>
-            <item row="1" column="4">
+            <item row="1" column="3">
              <widget class="QLineEdit" name="api_secret"/>
             </item>
             <item row="1" column="0">
@@ -2899,7 +2899,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="3" column="4">
+            <item row="3" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_22">
               <property name="topMargin">
                <number>0</number>
@@ -2958,7 +2958,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="8" column="4">
+            <item row="8" column="3">
              <widget class="QLabel" name="restart_warning">
               <property name="enabled">
                <bool>true</bool>
@@ -2982,7 +2982,7 @@ p, li { white-space: pre-wrap; }
               </property>
              </widget>
             </item>
-            <item row="6" column="4">
+            <item row="6" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_24">
               <item>
                <widget class="QCheckBox" name="copy_price_box">
@@ -3003,14 +3003,7 @@ p, li { white-space: pre-wrap; }
               </item>
              </layout>
             </item>
-            <item row="4" column="4">
-             <widget class="QLineEdit" name="default_timeframe">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="4">
+            <item row="9" column="3">
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -3026,22 +3019,22 @@ p, li { white-space: pre-wrap; }
               </property>
              </spacer>
             </item>
-            <item row="2" column="4">
+            <item row="2" column="3">
              <widget class="QLineEdit" name="default_pair">
               <property name="text">
                <string/>
               </property>
              </widget>
             </item>
-            <item row="13" column="4">
+            <item row="13" column="3">
              <widget class="QPushButton" name="save_config">
               <property name="text">
                <string>save</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="1">
-             <widget class="QComboBox" name="comboBox_2">
+            <item row="4" column="3">
+             <widget class="QComboBox" name="dtf_selector">
               <item>
                <property name="text">
                 <string>1m</string>
@@ -3102,6 +3095,13 @@ p, li { white-space: pre-wrap; }
                 <string>1w</string>
                </property>
               </item>
+             </widget>
+            </item>
+            <item row="5" column="3">
+             <widget class="QLineEdit" name="default_timeframe">
+              <property name="text">
+               <string/>
+              </property>
              </widget>
             </item>
            </layout>
@@ -3362,7 +3362,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1528</width>
+     <width>1420</width>
      <height>22</height>
     </rect>
    </property>
@@ -3438,7 +3438,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>percent_3</tabstop>
   <tabstop>percent_4</tabstop>
   <tabstop>percent_5</tabstop>
-  <tabstop>default_timeframe</tabstop>
   <tabstop>copy_qty_box</tabstop>
   <tabstop>default_pair</tabstop>
   <tabstop>lineEdit_5</tabstop>
