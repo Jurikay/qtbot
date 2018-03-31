@@ -54,6 +54,7 @@ try:
 
     val["tether"] = get_tether(client)
 
+    val["tickers"] = getTickers(client)
 
 
 

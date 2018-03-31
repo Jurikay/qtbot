@@ -90,7 +90,7 @@ def userCallback(self, msg):
             self.threadpool.start(worker)
 
 def tickerCallback(self, msg):
-    print("TICKER:" + str(dt.datetime.now()))
+    # print("TICKER:" + str(dt.datetime.now()))
     ticker = dict()
     for key, value in enumerate(msg):
         # ticker[key] = value
@@ -99,15 +99,15 @@ def tickerCallback(self, msg):
         # print("ticker: " + str(ticker))
         if "BTC" in value["s"]:
             ticker_data = {'symbol': value["s"], 'priceChange': value["p"], 'priceChangePercent': value["P"], 'weightedAvgPrice': value["w"], 'prevClosePrice': value["x"], 'lastPrice': value["c"], 'lastQty': value["Q"], 'bidPrice': value["b"], 'bidQty': value["B"], 'askPrice': value["a"], 'askQty': value["A"], 'openPrice': value["o"], 'highPrice': value["h"], 'lowPrice': value["l"], 'volume': value["v"], 'quoteVolume': value["q"], 'openTime': value["O"], 'closeTime': value["C"], 'firstId': value["F"], 'lastId': value["L"], 'count': value["n"]}
-            print(str(ticker_data))
+            # print(str(ticker_data))
 
-            val["ticker"][value["s"]] = ticker_data
+            val["tickers"][value["s"]] = ticker_data
 
         #
         # if "BTC" in coin["s"]:
         #     if coin["s"] == "BNBBTC":
         #         print(coin)
-    print("###########")
+    # print("###########")
     # print(msg)
     # with open("tickerMsg.txt", "w") as f:
     #     f.write(str(msg))

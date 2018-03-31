@@ -90,10 +90,15 @@ class beeserBot(QMainWindow):
         self.limit_sell_amount.valueChanged.connect(self.check_sell_ammount)
         self.limit_buy_amount.valueChanged.connect(self.check_buy_ammount)
 
+        self.limit_sell_input.valueChanged.connect(self.check_sell_ammount)
+        self.limit_buy_input.valueChanged.connect(self.check_buy_ammount)
+
+
 
         self.limit_buy_button.clicked.connect(self.create_buy_order)
         self.limit_sell_button.clicked.connect(self.create_sell_order)
 
+        self.button_wavg.clicked.connect(calc_wavg)
 
         # set config values
         try:
@@ -119,7 +124,8 @@ class beeserBot(QMainWindow):
 
 
         # check if coin is an empty dict. If yes, api calls have not been answered.
-        if val["coin"] != dict():
+        current_coin = val.get("coin", None)
+        if current_coin is not None:
             print("authenticated!")
 
             self.initialize()
@@ -175,13 +181,14 @@ class beeserBot(QMainWindow):
         build_holdings(self)
 
 
+
         self.timer = QTimer()
         self.timer.setInterval(200)
         self.timer.timeout.connect(self.delayed_stuff)
         self.timer.start()
 
     def delayed_stuff(self):
-        self.asks_table.scrollToBottom()
+
         print("delayed")
 
         self.asks_table.setColumnWidth(1, 75)
@@ -200,16 +207,14 @@ class beeserBot(QMainWindow):
         self.holdings_table.setColumnWidth(1, 75)
         self.holdings_table.setColumnWidth(7, 120)
 
-        total_btc_value = self.total_btc()
 
-        self.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
-
-        total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(val["tether"]["lastPrice"]), digits=2) + "$"
+        self.check_buy_ammount()
+        self.check_sell_ammount()
 
 
 
-
-        self.total_usd_label.setText(total_usd_value)
+        print("scroll")
+        self.asks_table.scrollToBottom()
 
         self.timer.stop()
 
@@ -229,6 +234,7 @@ class beeserBot(QMainWindow):
 
             self.history_table.setRowCount(0)
             self.open_orders.setRowCount(0)
+            val["history"] = dict()
 
 
             self.api_calls()
@@ -290,10 +296,31 @@ class beeserBot(QMainWindow):
 
 
     def print_output(self, s):
-        # print(s["lastPrice"])
-        print("print_")
-        print(s)
+        print("scroll print_o")
+        self.asks_table.scrollToBottom()
 
+    def tick(self, payload):
+        if payload == 1:
+            self.debug.setText(str(dt.timedelta(seconds=val["timeRunning"])))
+            val["timeRunning"] += 1
+
+            total_btc_value = calc_total_btc()
+            self.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
+
+            total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2) + "$"
+
+            self.total_usd_label.setText(total_usd_value)
+
+            self.btc_price_label.setText('{number:,.{digits}f}'.format(number=float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2) + "$")
+
+            operator = ""
+            percent_change = float(val["tickers"]["BTCUSDT"]["priceChangePercent"])
+            if percent_change > 0:
+                operator = "+"
+
+            btc_percent = operator + '{number:,.{digits}f}'.format(number=percent_change, digits=2) + "%"
+
+            self.btc_percent_label.setText(btc_percent)
 
     def add_to_open_orders(self, order):
 
@@ -343,6 +370,8 @@ class beeserBot(QMainWindow):
 
     def add_to_history(self, order):
         if order["symbol"] == val["pair"]:
+
+
             self.history_table.insertRow(0)
             self.history_table.setItem(0, 0, QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
             self.history_table.setItem(0, 1, QTableWidgetItem(order["symbol"]))
@@ -693,11 +722,24 @@ class beeserBot(QMainWindow):
         # total = float(self.limit_sell_amount.text()) *
 
         try:
-            if float(self.limit_sell_amount.text()) > float(val["accHoldings"][val["coin"]]["free"]):
-                self.limit_sell_button.setStyleSheet("border: 2px solid red;")
+            print("chck sell")
+            sell_amount = float(self.limit_sell_amount.text())
+            free_amount = float(val["accHoldings"][val["coin"]]["free"])
+            sell_price = float(self.limit_sell_input.text())
+
+            if sell_amount > free_amount or sell_amount * sell_price < 0.001:
+                print("fist if case")
+                self.limit_sell_button.setStyleSheet("border: 2px solid transparent; background: #ff077a; color: #f3f3f3;")
+                self.limit_sell_button.setCursor(QCursor(Qt.ForbiddenCursor))
+                val["sellAllowed"] = False
             else:
-                self.limit_sell_button.setStyleSheet("border: 2px solid #151a1e;")
+                print("2nd if case")
+                self.limit_sell_button.setStyleSheet("border: 2px solid transparent;")
+                self.limit_sell_button.setCursor(QCursor(Qt.PointingHandCursor))
+                val["sellAllowed"] = True
+
         except ValueError:
+            print("val error")
             pass
         self.calc_total_sell()
 
@@ -719,12 +761,12 @@ class beeserBot(QMainWindow):
             if total > float(val["accHoldings"]["BTC"]["free"]) or total < 0.001:
                 self.limit_buy_button.setStyleSheet("border: 2px solid transparent; background: #70a800; color: #f3f3f3;")
                 self.limit_buy_button.setCursor(QCursor(Qt.ForbiddenCursor))
-                val["buyEnabled"] = False
+                val["buyAllowed"] = False
 
             else:
                 self.limit_buy_button.setCursor(QCursor(Qt.PointingHandCursor))
                 self.limit_buy_button.setStyleSheet("border: 2px solid transparent;")
-                val["buyEnabled"] = True
+                val["buyAllowed"] = True
 
         except ValueError:
             pass
@@ -737,9 +779,10 @@ class beeserBot(QMainWindow):
         worker = Worker(self.check_for_update)
         # Any other args, kwargs are passed to the run function
         worker.signals.result.connect(self.print_output)
+        worker.signals.progress.connect(self.tick)
         # worker.signals.finished.connect(self.t_complete)
 
-        worker.signals.progress.connect(self.progress_fn)
+        # worker.signals.progress.connect(self.progress_fn)
 
         # Execute
         self.threadpool.start(worker)
@@ -749,7 +792,7 @@ class beeserBot(QMainWindow):
             # Pass the function to execute
             worker = Worker(self.start_sockets)
             # Any other args, kwargs are passed to the run function
-            worker.signals.result.connect(self.print_output)
+            # worker.signals.result.connect(self.print_output)
             # worker.signals.finished.connect(self.t_complete)
             worker.signals.progress.connect(self.progress_fn)
 
@@ -808,7 +851,7 @@ class beeserBot(QMainWindow):
         # progress_callback.emit(result)
 
     def create_buy_order(self):
-        if val["buyEnabled"] is True:
+        if val["buyAllowed"] is True:
             pair = val["pair"]
             price = '{number:.{digits}f}'.format(number=self.limit_buy_input.value(), digits=val["decimals"])
 
@@ -820,16 +863,17 @@ class beeserBot(QMainWindow):
             self.threadpool.start(worker)
 
     def create_sell_order(self):
-        pair = val["pair"]
-        price = '{number:.{digits}f}'.format(number=self.limit_sell_input.value(), digits=val["decimals"])
+        if val["sellAllowed"] is True:
+            pair = val["pair"]
+            price = '{number:.{digits}f}'.format(number=self.limit_sell_input.value(), digits=val["decimals"])
 
-        amount = '{number:.{digits}f}'.format(number=self.limit_sell_amount.value(), digits=val["assetDecimals"])
+            amount = '{number:.{digits}f}'.format(number=self.limit_sell_amount.value(), digits=val["assetDecimals"])
 
-        side = "Sell"
+            side = "Sell"
 
-        worker = Worker(partial(self.api_create_order, side, pair, price, amount))
-        # worker.signals.progress.connect(self.create_order_callback)
-        self.threadpool.start(worker)
+            worker = Worker(partial(self.api_create_order, side, pair, price, amount))
+            # worker.signals.progress.connect(self.create_order_callback)
+            self.threadpool.start(worker)
 
 
     def api_create_order(self, side, pair, price, amount, progress_callback):
@@ -855,34 +899,36 @@ class beeserBot(QMainWindow):
 
     def check_for_update(self, progress_callback):
 
-        while 2<1:
+        while True:
             # print("check")
             try:
-                # print("check hist")
-                if current_history != val["tradeHistory"]:
-                    progress_callback.emit({"history": val["tradeHistory"][:]})
-
-
-                if current_bids != val["bids"]:
-                    progress_callback.emit({"bids": val["bids"][:]})
-
-
-                if current_asks != val["asks"]:
-                    progress_callback.emit({"asks": val["asks"][:]})
+                # # print("check hist")
+                # if current_history != val["tradeHistory"]:
+                #     progress_callback.emit({"history": val["tradeHistory"][:]})
+                #
+                #
+                # if current_bids != val["bids"]:
+                #     progress_callback.emit({"bids": val["bids"][:]})
+                #
+                #
+                # if current_asks != val["asks"]:
+                #     progress_callback.emit({"asks": val["asks"][:]})
 
                 if current_height != self.frameGeometry().height():
-                    self.asks_table.scrollToBottom()
+                    progress_callback.emit(15)
 
 
             except (KeyError, UnboundLocalError):
                 pass
 
-            current_bids = val["bids"]
-            current_asks = val["asks"]
-            current_history = val["tradeHistory"]
+            # current_bids = val["bids"]
+            # current_asks = val["asks"]
+            # current_history = val["tradeHistory"]
             current_height = self.frameGeometry().height()
 
-            time.sleep(0.05)
+            progress_callback.emit(1)
+
+            time.sleep(1)
 
 
 
@@ -977,11 +1023,7 @@ class beeserBot(QMainWindow):
         self.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
         self.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
 
-        total_btc_value = self.total_btc()
 
-        self.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
-
-        total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(val["tether"]["lastPrice"]), digits=2) + "$"
 
         for i in range(self.holdings_table.rowCount()):
             try:
@@ -994,8 +1036,10 @@ class beeserBot(QMainWindow):
 
                 if coin != "BTC":
                     price = val["coins"][coin + "BTC"]["close"]
+                    print("wavg: " + str(wAvg))
                 elif coin == "BTC":
                     price = 1
+                    wAvg = 1
 
                 total_btc = float(total) * float(price)
                 total_btc_formatted = '{number:.{digits}f}'.format(number=total_btc, digits=8)
@@ -1007,29 +1051,10 @@ class beeserBot(QMainWindow):
 
                 if float(total) * float(price) < 0.001:
                     self.holdings_table.removeRow(i)
+
+
             except AttributeError:
                 print("attr error: " + str(i))
-
-    def total_btc(self):
-        total_btc = 0
-        for holding in val["accHoldings"]:
-            free = val["accHoldings"][holding]["free"]
-            locked = val["accHoldings"][holding]["locked"]
-            total = float(free) + float(locked)
-            try:
-                if holding != "BTC" and total * float(val["coins"][holding+"BTC"]["close"]) > 0.001:
-
-                    coin_total = total * float(val["coins"][holding+"BTC"]["close"])
-                    total_btc += coin_total
-
-
-                elif holding == "BTC":
-                    total_btc += total
-            except KeyError:
-                pass
-        total_formatted = '{number:.{digits}f}'.format(number=float(total_btc), digits=8) + " BTC"
-
-        return total_formatted
 
     def set_button_text(self):
         self.limit_button0.setText(str(val["buttonPercentage"][0]) + "%")
@@ -1128,6 +1153,7 @@ def build_holdings(self, *args):
                 self.holdings_table.setCellWidget(0,7,self.btn_sell)
 
 
+
             elif float(total) * float(val["coins"][holding + "BTC"]["close"]) >= 0.001:
                 icon = QIcon("images/ico/" + str(holding) + ".svg")
 
@@ -1163,3 +1189,79 @@ def build_holdings(self, *args):
         # header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
 
         self.holdings_table.setIconSize(QSize(25, 25))
+
+
+def calc_total_btc():
+    total_btc_val = 0
+    for holding in val["accHoldings"]:
+        free = val["accHoldings"][holding]["free"]
+        locked = val["accHoldings"][holding]["locked"]
+        total = float(free) + float(locked)
+
+        try:
+            if holding != "BTC" and total * float(val["tickers"][holding+"BTC"]["lastPrice"]) > 0.001:
+
+                coin_total = total * float(val["tickers"][holding+"BTC"]["lastPrice"])
+                total_btc_val += coin_total
+
+
+            elif holding == "BTC":
+                print(holding)
+                total_btc_val += total
+        except KeyError:
+            # print("error")
+            # HIER!
+            pass
+    total_formatted = '{number:.{digits}f}'.format(number=float(total_btc_val), digits=8) + " BTC"
+
+    return total_formatted
+
+
+def calc_wavg():
+    coin = val["coin"]
+    current_free = val["accHoldings"][coin]["free"]
+    current_locked = val["accHoldings"][coin]["locked"]
+    current_total = float(current_free) + float(current_locked)
+
+    remaining = current_total
+    total_cost = 0.0
+    wAvg = 0.0
+    sumTraded = 0.0
+    print("calculating wAvg for " + str(coin))
+    print("currently holding " + str(remaining))
+    try:
+        for i, order in enumerate(val["history"]):
+            print(str(order))
+            if order["side"] == "BUY":
+                sumTraded += float(order["executedQty"])
+                remaining -= float(order["executedQty"])
+                total_cost += float(order["price"]) * float(order["executedQty"])
+
+                wAvg = total_cost/(sumTraded)
+
+                print(str(i))
+                print("sum traded: " + str(sumTraded))
+                print("remainign: " + str(remaining))
+                print("exec qty: " + str(order["executedQty"]))
+                # print(str(i) + ". buy: " + str(total_cost) + " remaining: " + str(remaining) + " wAvg; " + str(wAvg))
+            elif order["side"] == "SELL":
+                print(str(i))
+                if wAvg != 0:
+                    sumTraded -= float(order["executedQty"])
+                    print(str(i) + ". Sell: " + str(total_cost) + " remaining: " + str(remaining) + " wAvg; " + str(wAvg))
+                    remaining += float(order["executedQty"])
+                    total_cost -= float(order["executedQty"]) * wAvg
+
+
+            if coin != "BTC":
+                if remaining <= float(val["coins"][coin+"BTC"]["minTrade"]):
+
+
+                    if current_total > 0:
+                        print("ENOUGH! " + str(total_cost / (current_total-remaining)))
+                        final = ('{number:,.{digits}f}'.format(number=total_cost / (current_total-remaining), digits=8))
+                        return str(final)
+                    else:
+                        return ""
+    except KeyError:
+        pass

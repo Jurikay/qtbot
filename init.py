@@ -7,11 +7,18 @@ import os.path
 import configparser
 
 
-val = dict()
+val = defaultdict(dict)
 val["test"] = "hi"
 
 val["globalList"] = list()
 val["tradeHistory"] = list()
+val["tickers"] = dict()
+
+val["buyAllowed"] = False
+val["sellAllowed"] = False
+
+val["history"] = dict()
+val["timeRunning"] = 0
 
 val["ticker"] = dict()
 proxies = {

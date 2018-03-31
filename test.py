@@ -4,20 +4,21 @@ from MAIN import *
 from initApi import *
 
 holdings = (getHoldings(client))
+print(type(val["tickers"]["BNBBTC"]))
 
-print(holdings["BTC"]["free"])
-print(val["decimals"])
-#percentage_ammount(totoal_btc, price, percentage):
-# time.sleep(2)
-# print(percentage_ammount(holdings["BTC"]["free"], 0.0013781, 50, val["assetDecimals"]))
+# print(holdings["BTC"]["free"])
+# print(val["decimals"])
+# #percentage_ammount(totoal_btc, price, percentage):
+# # time.sleep(2)
+# # print(percentage_ammount(holdings["BTC"]["free"], 0.0013781, 50, val["assetDecimals"]))
+# #
+# # print(val["coins"]["BNBBTC"])
 #
-# print(val["coins"]["BNBBTC"])
-
-print(int(val["buttonPercentage"][0]))
-
-print(val["coins"])
-
-print("##########")
+# print(int(val["buttonPercentage"][0]))
+#
+# print(val["coins"])
+#
+# print("##########")
 
 # print(client.get_all_tickers())
 # print(client.get_products())
@@ -66,4 +67,19 @@ orderList = list()
 
 price = '{number:.{digits}f}'.format(number=val["coins"]["BNBBTC"]["minQty"], digits=8)
 
-print(client.get_ticker(symbol="BNBBTC"))
+# print(client.get_ticker(symbol="BNBBTC"))
+#
+# time.sleep(5)
+#
+# print(val["ticker"]["BNBBTC"])
+print(type(val["tickers"]["BNBBTC"]))
+
+# while True:
+#     # print(val["tickers"]["BNBBTC"]["quoteVolume"])
+#     time.sleep(1)
+#     print((val["tickers"]["BNBBTC"]))
+
+print(val["coins"]["BNBBTC"])
+print(val["coin"])
+
+print(val["accHoldings"][val["coin"]]["free"])

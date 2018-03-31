@@ -633,7 +633,7 @@ p, li { white-space: pre-wrap; }
                   <number>10</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="pushButton_9">
+                  <widget class="QPushButton" name="button_wavg">
                    <property name="text">
                     <string>Start</string>
                    </property>
@@ -825,7 +825,7 @@ p, li { white-space: pre-wrap; }
                 <bool>true</bool>
                </property>
                <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
+                <enum>QAbstractItemView::SingleSelection</enum>
                </property>
                <property name="showGrid">
                 <bool>false</bool>
@@ -1007,6 +1007,11 @@ p, li { white-space: pre-wrap; }
                <column>
                 <property name="text">
                  <string>Trade</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>wAvg</string>
                 </property>
                </column>
                <column>
@@ -3143,7 +3148,7 @@ p, li { white-space: pre-wrap; }
           <enum>Qt::RichText</enum>
          </property>
          <property name="pixmap">
-          <pixmap>bender3.svg</pixmap>
+          <pixmap>../images/assets/bender3.svg</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -3181,6 +3186,34 @@ p, li { white-space: pre-wrap; }
        </item>
        <item>
         <widget class="QLineEdit" name="lineEdit_14"/>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>BTC:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="btc_price_label">
+         <property name="text">
+          <string>9000$</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="btc_percent_label">
+         <property name="text">
+          <string>+5%</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Account:</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="total_btc_label">
@@ -3235,7 +3268,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>lineEdit_4</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>debugPlain</tabstop>
-  <tabstop>pushButton_9</tabstop>
+  <tabstop>button_wavg</tabstop>
   <tabstop>pushButton_8</tabstop>
   <tabstop>pushButton_7</tabstop>
   <tabstop>pushButton_6</tabstop>

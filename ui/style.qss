@@ -17,6 +17,11 @@ QWidget {
   background-color: #2e363d;
 }
 
+#top_bar {
+  font-size: 15px;
+  color: red;
+}
+
 QTableWidget#tradeTable, #bids_table, #asks_table {
   background-color: #20262b;
   color: #f3f3f3;
