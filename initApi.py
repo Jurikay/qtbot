@@ -11,7 +11,6 @@ from init import val, read_config
 from apiFunctions import *
 # from binance.depthcache import DepthCacheManager
 #
-# from binance.websockets import BinanceSocketManager
 
 from binance.exceptions import BinanceAPIException
 

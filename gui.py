@@ -1,14 +1,16 @@
 import time
 import configparser
 from functools import partial
-from datetime import datetime
-
+from datetime import datetime, timedelta
 from init import val
 from initApi import *
 from callbacks import *
 from gui_functions import *
-
-
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from charts import build_chart2, welcome_page
+from binance.websockets import BinanceSocketManager
+from PyQt5.QtCore import QThreadPool
+from PyQt5.uic import loadUi
 
 class beeserBot(QMainWindow):
 
@@ -284,7 +286,7 @@ class beeserBot(QMainWindow):
 
     def tick(self, payload):
         if payload == 1:
-            self.debug.setText(str(dt.timedelta(seconds=val["timeRunning"])))
+            self.debug.setText(str(timedelta(seconds=val["timeRunning"])))
             val["timeRunning"] += 1
 
             total_btc_value = calc_total_btc()
@@ -404,7 +406,7 @@ class beeserBot(QMainWindow):
 
     # callback function to draw order history
     def orders_received(self, orders):
-        for i, order in enumerate(orders):
+        for _, order in enumerate(orders):
             if order["symbol"] == val["pair"]:
                 if order["status"] == "FILLED":
                     self.add_to_history(order)
@@ -785,17 +787,17 @@ class beeserBot(QMainWindow):
     # threaded orders
 
     # cancel an order from a separate thread
-    def cancel_order_byId(self, id, symbol):
+    def cancel_order_byId(self, order_id, symbol):
 
-        worker = Worker(partial(self.api_cancel_order, id, symbol))
+        worker = Worker(partial(self.api_cancel_order, order_id, symbol))
         # worker.signals.progress.connect(self.cancel_callback)
         self.threadpool.start(worker)
 
     # cancel the order and call the callback when done
-    def api_cancel_order(self, id, symbol, progress_callback):
-        print("cancel order " + str(symbol) + " " + str(id))
+    def api_cancel_order(self, order_id, symbol, progress_callback):
+        print("cancel order " + str(symbol) + " " + str(order_id))
         try:
-            client.cancel_order(symbol=symbol, orderId=id)
+            client.cancel_order(symbol=symbol, orderId=order_id)
         except BinanceAPIException:
             print("cancel failed")
 
@@ -810,7 +812,7 @@ class beeserBot(QMainWindow):
             amount = '{number:.{digits}f}'.format(number=self.limit_buy_amount.value(), digits=val["assetDecimals"])
             side = "Buy"
 
-            worker = Worker(partial(self.api_create_order, side, pair, price, amount))
+            worker = Worker(partial(api_create_order, side, pair, price, amount))
             # worker.signals.progress.connect(self.create_order_callback)
             self.threadpool.start(worker)
 
@@ -823,28 +825,10 @@ class beeserBot(QMainWindow):
 
             side = "Sell"
 
-            worker = Worker(partial(self.api_create_order, side, pair, price, amount))
+            worker = Worker(partial(api_create_order, side, pair, price, amount))
             # worker.signals.progress.connect(self.create_order_callback)
             self.threadpool.start(worker)
 
-
-    def api_create_order(self, side, pair, price, amount, progress_callback):
-        print("create order: " + str(price) + " " + str(amount))
-        try:
-            if side == "Buy":
-                order = client.order_limit_buy(
-                    symbol=pair,
-                    quantity=str(amount),
-                    price=str(price))
-
-
-            elif side == "Sell":
-                order = client.order_limit_sell(
-                    symbol=pair,
-                    quantity=str(amount),
-                    price=str(price))
-        except BinanceAPIException:
-            print("create order failed")
 
 
 
@@ -965,7 +949,6 @@ class beeserBot(QMainWindow):
                     # print("wavg: " + str(wAvg))
                 elif coin == "BTC":
                     price = 1
-                    wAvg = 1
 
                 total_btc = float(total) * float(price)
                 total_btc_formatted = '{number:.{digits}f}'.format(number=total_btc, digits=8)
@@ -995,3 +978,20 @@ class beeserBot(QMainWindow):
         self.limit_sbutton3.setText(str(val["buttonPercentage"][3]) + "%")
         self.limit_sbutton4.setText(str(val["buttonPercentage"][4]) + "%")
 ####################################################################
+def api_create_order(side, pair, price, amount, progress_callback):
+    print("create order: " + str(price) + " " + str(amount))
+    try:
+        if side == "Buy":
+            order = client.order_limit_buy(
+                symbol=pair,
+                quantity=str(amount),
+                price=str(price))
+
+
+        elif side == "Sell":
+            order = client.order_limit_sell(
+                symbol=pair,
+                quantity=str(amount),
+                price=str(price))
+    except BinanceAPIException:
+        print("create order failed")

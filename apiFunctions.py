@@ -15,19 +15,20 @@ def getTickers(client):
     ticker = client.get_ticker()
     # print(str(ticker))
     all_tickers = dict()
-    for i, ticker_data in enumerate(ticker):
+    for _, ticker_data in enumerate(ticker):
         if "BTC" in ticker_data["symbol"]:
             # print(str(ticker_data))
             all_tickers[ticker_data["symbol"]] = ticker_data
 
     return all_tickers
 
+
 def getTradehistory(client, pair):
     """Make an initial API call to get the trade history of a given pair. This is used until updated by websocket data"""
     # API call
     globalList = list()
     trades = client.get_aggregate_trades(symbol=pair, limit=50)
-    for i, val in enumerate(trades):
+    for _, val in enumerate(trades):
         globalList.insert(0, {"price": str(val["p"]), "quantity": str(val["q"]), "maker": bool(val["m"]), "time": str(val["T"])})
 
     return globalList
@@ -44,7 +45,7 @@ def getDepth(client, symbol):
 
 
 def get_open_orders(client, symbol):
-    orders = client.get_open_orders(symbol=symbol)
+    client.get_open_orders(symbol=symbol)
 
 
 def availablePairs(client):
@@ -81,18 +82,6 @@ def availablePairs(client):
     return coins
 
 
-# def getHoldings(client):
-#     """Make an inital API call to get BTC and coin holdings."""
-#     # API Call:
-#     order = client.get_account()
-#     accHoldings = dict()
-#
-#     for i in range(len(order["balances"])):
-#         accHoldings[order["balances"][i]["asset"]] = {"free": order["balances"][i]["free"], "locked": order["balances"][i]["locked"]}
-#
-#     return accHoldings
-
-
 def percentage_ammount(total_btc, price, percentage, decimals):
 
     try:
@@ -103,10 +92,10 @@ def percentage_ammount(total_btc, price, percentage, decimals):
 
     if decimals == 0:
         return int(maxSize)
-    else:
 
-        maxSizeRounded = int(maxSize * 10**decimals) / 10.0**decimals
-        return maxSizeRounded
+
+    maxSizeRounded = int(maxSize * 10**decimals) / 10.0**decimals
+    return maxSizeRounded
 
 
 def get_tether(client):
@@ -117,6 +106,7 @@ def get_tether(client):
 def getOrders(client, symbol):
     orders = client.get_all_orders(symbol=symbol)
     return orders
+
 
 def create_order(client):
     pass

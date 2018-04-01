@@ -1,7 +1,6 @@
 from init import val
 from initApi import *
 from functools import partial
-import datetime as dt
 from workers import *
 
 
@@ -97,8 +96,7 @@ def userCallback(self, msg):
         print(msg)
 def tickerCallback(self, msg):
     # print("TICKER:" + str(dt.datetime.now()))
-    ticker = dict()
-    for key, value in enumerate(msg):
+    for _, value in enumerate(msg):
         # ticker[key] = value
         # print("key: " + str(key))
         # print("value: " + str(value))

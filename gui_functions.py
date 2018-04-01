@@ -1,9 +1,7 @@
 from init import val
-from PyQt5.QtCore import QThreadPool, QTimer, QObject, QRunnable, pyqtSignal, QSize, Qt
-from PyQt5.QtWidgets import QDialog, QWidget, QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtGui import QColor, QPalette, QIcon, QStandardItem, QPixmap, QFont, QFontDatabase, QCursor
-from PyQt5.uic import loadUi
+from PyQt5.QtCore import QTimer, QObject, QRunnable, pyqtSignal, QSize, Qt
+from PyQt5.QtWidgets import QWidget, QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
+from PyQt5.QtGui import QColor, QIcon, QStandardItem, QPixmap, QFont, QFontDatabase, QCursor
 from colors import *
 from charts import build_chart2, welcome_page
 

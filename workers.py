@@ -1,7 +1,7 @@
 import traceback
 import sys
 
-from PyQt5.QtCore import pyqtSlot, QThreadPool, QObject, QRunnable, pyqtSignal
+from PyQt5.QtCore import pyqtSlot, QObject, QRunnable, pyqtSignal
 
 class WorkerSignals(QObject):
     '''
