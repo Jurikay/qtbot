@@ -789,20 +789,10 @@ class beeserBot(QMainWindow):
     # cancel an order from a separate thread
     def cancel_order_byId(self, order_id, symbol):
 
-        worker = Worker(partial(self.api_cancel_order, order_id, symbol))
+        worker = Worker(partial(api_cancel_order, order_id, symbol))
         # worker.signals.progress.connect(self.cancel_callback)
         self.threadpool.start(worker)
 
-    # cancel the order and call the callback when done
-    def api_cancel_order(self, order_id, symbol, progress_callback):
-        print("cancel order " + str(symbol) + " " + str(order_id))
-        try:
-            client.cancel_order(symbol=symbol, orderId=order_id)
-        except BinanceAPIException:
-            print("cancel failed")
-
-        # not needed since user socket handles this
-        # progress_callback.emit(result)
 
     def create_buy_order(self):
         if val["buyAllowed"] is True:
@@ -978,6 +968,8 @@ class beeserBot(QMainWindow):
         self.limit_sbutton3.setText(str(val["buttonPercentage"][3]) + "%")
         self.limit_sbutton4.setText(str(val["buttonPercentage"][4]) + "%")
 ####################################################################
+
+
 def api_create_order(side, pair, price, amount, progress_callback):
     print("create order: " + str(price) + " " + str(amount))
     try:
@@ -995,3 +987,11 @@ def api_create_order(side, pair, price, amount, progress_callback):
                 price=str(price))
     except BinanceAPIException:
         print("create order failed")
+
+
+def api_cancel_order(order_id, symbol, progress_callback):
+    print("cancel order " + str(symbol) + " " + str(order_id))
+    try:
+        client.cancel_order(symbol=symbol, orderId=order_id)
+    except BinanceAPIException:
+        print("cancel failed")
