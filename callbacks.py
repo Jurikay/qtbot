@@ -69,31 +69,33 @@ def userCallback(self, msg):
 
     elif userMsg["e"] == "executionReport":
 
-            # prepare order dictionary
-            order = dict()
-            order = {"symbol": userMsg["s"], "price": userMsg["p"], "origQty": userMsg["q"], "side": userMsg["S"], "orderId": userMsg["i"], "status": userMsg["X"], "time": userMsg["T"], "type": userMsg["o"], "executedQty": userMsg["z"]}
+        # prepare order dictionary
+        order = dict()
+        order = {"symbol": userMsg["s"], "price": userMsg["p"], "origQty": userMsg["q"], "side": userMsg["S"], "orderId": userMsg["i"], "status": userMsg["X"], "time": userMsg["T"], "type": userMsg["o"], "executedQty": userMsg["z"]}
 
-            # propagate order
-            worker = Worker(partial(socket_order, order))
+        # propagate order
+        worker = Worker(partial(socket_order, order))
 
-            if userMsg["X"] == "NEW":
-                worker.signals.progress.connect(self.add_to_open_orders)
+        if userMsg["X"] == "NEW":
+            worker.signals.progress.connect(self.add_to_open_orders)
 
-            elif userMsg["X"] == "CANCELED":
-                worker.signals.progress.connect(self.remove_from_open_orders)
+        elif userMsg["X"] == "CANCELED":
+            worker.signals.progress.connect(self.remove_from_open_orders)
 
-            elif userMsg["X"] == "FILLED":
-                worker.signals.progress.connect(self.remove_from_open_orders)
-                worker.signals.progress.connect(self.add_to_history)
-                worker.signals.progress.connect(self.check_add_to_holdings)
+        elif userMsg["X"] == "FILLED":
+            worker.signals.progress.connect(self.remove_from_open_orders)
+            worker.signals.progress.connect(self.add_to_history)
+            worker.signals.progress.connect(self.check_add_to_holdings)
 
 
-            else:
-                print(msg)
-            self.threadpool.start(worker)
+        else:
+            print(msg)
+        self.threadpool.start(worker)
 
     else:
         print(msg)
+
+
 def tickerCallback(self, msg):
     # print("TICKER:" + str(dt.datetime.now()))
     for _, value in enumerate(msg):
@@ -120,6 +122,7 @@ def tickerCallback(self, msg):
 def api_history(progress_callback):
     val["globalList"] = getTradehistory(client, val["pair"])
     progress_callback.emit({"history": val["globalList"]})
+
 
 def api_depth(progress_callback):
     depth = getDepth(client, val["pair"])

@@ -6,6 +6,8 @@ from init import val
 from initApi import *
 from callbacks import *
 from gui_functions import *
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from charts import build_chart2, welcome_page
 from binance.websockets import BinanceSocketManager
@@ -107,10 +109,10 @@ class beeserBot(QMainWindow):
 
             raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, "1w"]
 
-            dtf = self.dtf_selector.currentText()
-            for i, tf in enumerate(raw_timeframes):
-                if val["defaultTimeframe"] == str(tf):
-                    self.dtf_selector.setCurrentIndex(i)
+            # dtf = self.dtf_selector.currentText()
+            # for i, tf in enumerate(raw_timeframes):
+            #     if val["defaultTimeframe"] == str(tf):
+            #         self.dtf_selector.setCurrentIndex(i)
 
 
         except (TypeError, KeyError):
@@ -230,12 +232,12 @@ class beeserBot(QMainWindow):
     def open_orders_cell_clicked(self, row, column):
         if column == 9:
 
-            id = str(self.open_orders.item(row, 8).text())
+            order_id = str(self.open_orders.item(row, 8).text())
             pair = str(self.open_orders.item(row, 1).text())
 
             # cancel = (cancel_order(client, id, pair))
 
-            self.cancel_order_byId(id, pair)
+            self.cancel_order_byId(order_id, pair)
 
             # if str(cancel["orderId"]) == str(id):
             #     self.open_orders.removeRow(row)
@@ -246,7 +248,7 @@ class beeserBot(QMainWindow):
         try:
             self.limit_buy_input.setValue(float(val["globalList"][row]["price"]))
             self.limit_sell_input.setValue(float(val["globalList"][row]["price"]))
-            value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
+            # value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
             # self.limit_buy_amount.setValue(value)
         except IndexError:
             pass
@@ -254,7 +256,7 @@ class beeserBot(QMainWindow):
     def bids_cell_clicked(self, row, column):
         self.limit_buy_input.setValue(float(val["bids"][row][0]))
         self.limit_sell_input.setValue(float(val["bids"][row][0]))
-        value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
+        # value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
         # self.limit_buy_amount.setValue(value)
 
 
@@ -262,7 +264,7 @@ class beeserBot(QMainWindow):
     def asks_cell_clicked(self, row, column):
         self.limit_buy_input.setValue(float(val["asks"][19-row][0]))
         self.limit_sell_input.setValue(float(val["asks"][19-row][0]))
-        value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
+        # value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
         # self.limit_buy_amount.setValue(value)
 
     def overbid_undercut(self):
@@ -306,6 +308,8 @@ class beeserBot(QMainWindow):
             btc_percent = operator + '{number:,.{digits}f}'.format(number=percent_change, digits=2) + "%"
 
             self.btc_percent_label.setText(btc_percent)
+
+            update_holding_prices(self)
 
     def add_to_open_orders(self, order):
 
@@ -436,19 +440,10 @@ class beeserBot(QMainWindow):
         # print(val["accHoldings"][val["coin"]]["free"])
         sell_percent = str(self.limit_sell_slider.value())
 
-        sell_size = self.round_sell_amount(sell_percent)
+        sell_size = round_sell_amount(sell_percent)
 
         self.limit_sell_amount.setValue(sell_size)
 
-
-
-    def round_sell_amount(self, percent_val):
-        holding = float(val["accHoldings"][val["coin"]]["free"]) * (float(percent_val) / 100)
-        if val["coins"][val["pair"]]["minTrade"] == 1:
-                sizeRounded = int(holding)
-        else:
-            sizeRounded = int(holding * 10**val["assetDecimals"]) / 10.0**val["assetDecimals"]
-        return sizeRounded
 
     # go to trade button
     def gotoTradeButtonClicked(self):
@@ -498,7 +493,7 @@ class beeserBot(QMainWindow):
 
 
     def progress_asks(self, asks):
-        for i, value in enumerate(asks):
+        for i, _ in enumerate(asks):
             ask_price = '{number:.{digits}f}'.format(number=float(asks[i][0]), digits=val["decimals"])
             ask_quantity = '{number:.{digits}f}'.format(number=float(asks[i][1]), digits=val["assetDecimals"])
             total_btc_asks = '{number:.{digits}f}'.format(number=float(ask_price) * float(ask_quantity), digits=3)
@@ -519,7 +514,7 @@ class beeserBot(QMainWindow):
         self.spread_label.setText("<span style='font-size: 14px; font-family: Arial Black; color:" + color_lightgrey + "'>" + spread_formatted + "</span>")
 
     def progress_bids(self, bids):
-        for i, value in enumerate(bids):
+        for i, _ in enumerate(bids):
             bid_price = '{number:.{digits}f}'.format(number=float(bids[i][0]), digits=val["decimals"])
             bid_quantity = '{number:.{digits}f}'.format(number=float(bids[i][1]), digits=val["assetDecimals"])
             total_btc_bids = '{number:.{digits}f}'.format(number=float(bid_price) * float(bid_quantity), digits=3)
@@ -537,7 +532,7 @@ class beeserBot(QMainWindow):
         try:
             asks = payload["asks"]
             if len(asks) == 20:
-                for i, value in enumerate(asks):
+                for i in enumerate(asks):
                     ask_price = '{number:.{digits}f}'.format(number=float(asks[i][0]), digits=val["decimals"])
                     ask_quantity = '{number:.{digits}f}'.format(number=float(asks[i][1]), digits=val["assetDecimals"])
                     total_btc_asks = '{number:.{digits}f}'.format(number=float(ask_price) * float(ask_quantity), digits=3)
@@ -632,7 +627,7 @@ class beeserBot(QMainWindow):
 
     def limit_percentage_sell(self):
         button_number = int(self.sender().objectName()[-1:])
-        value = float(val["accHoldings"][val["coin"]]["free"]) * (float(val["buttonPercentage"][button_number]) / 100)
+        # value = float(val["accHoldings"][val["coin"]]["free"]) * (float(val["buttonPercentage"][button_number]) / 100)
 
         # print(val["accHoldings"][val["coin"]]["free"])
         # self.limit_sell_amount.setValue(value)
@@ -679,7 +674,7 @@ class beeserBot(QMainWindow):
         # print(val["accHoldings"][val["coin"]]["free"])
         sell_percent = str(self.limit_sell_slider.value())
 
-        sell_size = self.round_sell_amount(sell_percent)
+        sell_size = round_sell_amount(sell_percent)
 
         self.limit_sell_amount.setValue(sell_size)
 
@@ -723,7 +718,7 @@ class beeserBot(QMainWindow):
         self.calc_total_buy()
 
         try:
-            min_trade = val["coins"][val["pair"]]["minTrade"]
+            # min_trade = val["coins"][val["pair"]]["minTrade"]
 
             total = float(self.limit_buy_input.value()) * float(self.limit_buy_amount.text())
 
@@ -781,10 +776,6 @@ class beeserBot(QMainWindow):
         worker.signals.progress.connect(self.orders_received)
         self.threadpool.start(worker)
 
-
-
-
-    # threaded orders
 
     # cancel an order from a separate thread
     def cancel_order_byId(self, order_id, symbol):
@@ -888,7 +879,7 @@ class beeserBot(QMainWindow):
         percent_texts = [self.percent_1, self.percent_2, self.percent_3, self.percent_4, self.percent_5]
         percent = val["buttonPercentage"]
 
-        for i, value in enumerate(percent):
+        for i in enumerate(percent):
 
             try:
                 if float(percent_texts[i].text()) >= 0 and float(percent_texts[i].text()) <= 100:
@@ -985,6 +976,7 @@ def api_create_order(side, pair, price, amount, progress_callback):
                 symbol=pair,
                 quantity=str(amount),
                 price=str(price))
+        return order
     except BinanceAPIException:
         print("create order failed")
 
@@ -995,3 +987,11 @@ def api_cancel_order(order_id, symbol, progress_callback):
         client.cancel_order(symbol=symbol, orderId=order_id)
     except BinanceAPIException:
         print("cancel failed")
+
+def round_sell_amount(percent_val):
+    holding = float(val["accHoldings"][val["coin"]]["free"]) * (float(percent_val) / 100)
+    if val["coins"][val["pair"]]["minTrade"] == 1:
+            sizeRounded = int(holding)
+    else:
+        sizeRounded = int(holding * 10**val["assetDecimals"]) / 10.0**val["assetDecimals"]
+    return sizeRounded

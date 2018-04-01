@@ -1,11 +1,10 @@
 from init import val
-from PyQt5.QtCore import QTimer, QObject, QRunnable, pyqtSignal, QSize, Qt
-from PyQt5.QtWidgets import QWidget, QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
+from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QSize, Qt
+from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
 from PyQt5.QtGui import QColor, QIcon, QStandardItem, QPixmap, QFont, QFontDatabase, QCursor
 from colors import *
 from charts import build_chart2, welcome_page
 
-from binance.websockets import BinanceSocketManager
 
 
 def initial_values(self):
@@ -202,3 +201,19 @@ def calc_wavg():
                         return ""
     except KeyError:
         pass
+
+
+def update_holding_prices(self):
+    for i in range(self.holdings_table.rowCount()):
+
+        coin = self.holdings_table.item(i, 1).text()
+        total = float(self.holdings_table.item(i, 3).text())
+
+        if coin != "BTC":
+            current_price = float(val["tickers"][coin + "BTC"]["lastPrice"])
+        elif coin == "BTC":
+            current_price = 1
+
+        total_value = total * current_price
+        total_formatted = '{number:.{digits}f}'.format(number=float(total_value), digits=8)
+        self.holdings_table.item(i, 6).setText(total_formatted)
