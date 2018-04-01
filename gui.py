@@ -201,6 +201,7 @@ class beeserBot(QMainWindow):
 
 
         print("scroll")
+
         self.asks_table.scrollToBottom()
 
         self.timer.stop()
@@ -532,7 +533,7 @@ class beeserBot(QMainWindow):
         try:
             asks = payload["asks"]
             if len(asks) == 20:
-                for i in enumerate(asks):
+                for i, _ in enumerate(asks):
                     ask_price = '{number:.{digits}f}'.format(number=float(asks[i][0]), digits=val["decimals"])
                     ask_quantity = '{number:.{digits}f}'.format(number=float(asks[i][1]), digits=val["assetDecimals"])
                     total_btc_asks = '{number:.{digits}f}'.format(number=float(ask_price) * float(ask_quantity), digits=3)
@@ -544,6 +545,8 @@ class beeserBot(QMainWindow):
 
                     self.asks_table.setItem(19-i, 3, QTableWidgetItem(total_btc_asks + " BTC"))
                     self.asks_table.item(19-i, 1).setForeground(QColor(color_pink))
+
+                    self.asks_table.scrollToBottom()
 
                     # self.asks_table.scrollToBottom()
 
@@ -558,7 +561,7 @@ class beeserBot(QMainWindow):
         try:
             bids = payload["bids"]
             if len(bids) == 20:
-                for i, value in enumerate(bids):
+                for i, _ in enumerate(bids):
                     bid_price = '{number:.{digits}f}'.format(number=float(bids[i][0]), digits=val["decimals"])
                     bid_quantity = '{number:.{digits}f}'.format(number=float(bids[i][1]), digits=val["assetDecimals"])
                     total_btc_bids = '{number:.{digits}f}'.format(number=float(bid_price) * float(bid_quantity), digits=3)
