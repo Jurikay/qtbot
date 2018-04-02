@@ -75,9 +75,9 @@ def build_holdings(self, *args):
 
                 self.holdings_table.setItem(0, 1, QTableWidgetItem(holding))
                 self.holdings_table.setItem(0, 2, QTableWidgetItem(name))
-                self.holdings_table.setItem(0, 3, QTableWidgetItem(total_formatted))
-                self.holdings_table.setItem(0, 4, QTableWidgetItem(free))
-                self.holdings_table.setItem(0, 5, QTableWidgetItem(locked))
+                self.holdings_table.setItem(0, 3, QTableWidgetItem(str(float(total))))
+                self.holdings_table.setItem(0, 4, QTableWidgetItem(str(float(free))))
+                self.holdings_table.setItem(0, 5, QTableWidgetItem(str(float(locked))))
                 self.holdings_table.setItem(0, 6, QTableWidgetItem(total_formatted))
 
                 self.holdings_table.item(0, 6).setFont(bold_font)
@@ -106,9 +106,9 @@ def build_holdings(self, *args):
 
                 self.holdings_table.setItem(1, 1, QTableWidgetItem(holding))
                 self.holdings_table.setItem(1, 2, QTableWidgetItem(name))
-                self.holdings_table.setItem(1, 3, QTableWidgetItem(total_formatted))
-                self.holdings_table.setItem(1, 4, QTableWidgetItem(free))
-                self.holdings_table.setItem(1, 5, QTableWidgetItem(locked))
+                self.holdings_table.setItem(1, 3, QTableWidgetItem(str(float(total))))
+                self.holdings_table.setItem(1, 4, QTableWidgetItem(str(float(free))))
+                self.holdings_table.setItem(1, 5, QTableWidgetItem(str(float(locked))))
                 self.holdings_table.setItem(1, 6, QTableWidgetItem(total_btc_formatted))
 
                 self.holdings_table.item(1, 6).setFont(bold_font)
