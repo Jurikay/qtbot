@@ -1,3 +1,10 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Collection of functions concerning websocket callbacks"""
+
 from app.init import val
 from app.initApi import *
 from functools import partial

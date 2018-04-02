@@ -1,3 +1,10 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""PyQt threads and worker classes."""
+
 import traceback
 import sys
 

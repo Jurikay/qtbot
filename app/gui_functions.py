@@ -1,3 +1,11 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Collection of functions that concern the gui."""
+
+
 from app.init import val
 from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QSize, Qt
 from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton

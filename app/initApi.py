@@ -1,7 +1,9 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# © Jurek Baumann 2018
-"""API related stuff to be initialized."""
+
+# made by Jirrik
+
+"""Set initial values based on API data."""
 
 
 from binance.client import Client

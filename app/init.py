@@ -1,6 +1,10 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# © Jurek Baumann 2018
+
+# made by Jirrik
+
+"""Initialize needed variables."""
+
 
 from collections import defaultdict
 import os.path

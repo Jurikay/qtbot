@@ -1,3 +1,9 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Collection of functions concerning api calls."""
 
 def getHoldings(client):
     """Make an inital API call to get BTC and coin holdings."""

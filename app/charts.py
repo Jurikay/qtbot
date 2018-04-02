@@ -1,3 +1,11 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Functions that generate HTML pages"""
+
+
 def build_chart(exchange, pair):
     tradingview = '<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>'
     tradingview += '<script type="text/javascript">'

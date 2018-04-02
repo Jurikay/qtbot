@@ -1,18 +1,30 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Main gui class."""
+
+
 import time
 import configparser
 from functools import partial
 from datetime import datetime, timedelta
+
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtCore import QThreadPool
+from PyQt5.uic import loadUi
+
+from binance.websockets import BinanceSocketManager
+
 from app.init import val
 from app.initApi import *
 from app.callbacks import *
 from app.gui_functions import *
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWebEngineWidgets import QWebEngineView
 from app.charts import build_chart2, welcome_page
-from binance.websockets import BinanceSocketManager
-from PyQt5.QtCore import QThreadPool
-from PyQt5.uic import loadUi
+
 
 class beeserBot(QMainWindow):
 

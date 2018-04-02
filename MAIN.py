@@ -1,5 +1,12 @@
-from app.gui import *
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Main application entry point."""
+
 from PyQt5.QtWidgets import QApplication
+from app.gui import *
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
