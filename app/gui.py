@@ -33,7 +33,7 @@ class beeserBot(QMainWindow):
     def __init__(self):
         """Init method."""
         super(beeserBot, self).__init__()
-        loadUi("ui/BeeserBotFull.ui", self)
+        loadUi("ui/MainWindow.ui", self)
 
 
         # set external stylesheet
