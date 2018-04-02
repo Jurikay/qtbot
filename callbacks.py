@@ -87,6 +87,10 @@ def userCallback(self, msg):
             worker.signals.progress.connect(self.add_to_history)
             worker.signals.progress.connect(self.check_add_to_holdings)
 
+        elif userMsg["X"] == "PARTIALLY_FILLED":
+            worker.signals.progress.connect(self.update_open_order)
+
+
 
         else:
             print(msg)

@@ -87,7 +87,7 @@ def build_holdings(self, *args):
                 self.btn_sell.setEnabled(False)
                 self.btn_sell.setStyleSheet("color: #666;")
                 self.btn_sell.clicked.connect(self.gotoTradeButtonClicked)
-                self.holdings_table.setCellWidget(0,7,self.btn_sell)
+                self.holdings_table.setCellWidget(0, 7, self.btn_sell)
 
 
 
@@ -197,10 +197,10 @@ def calc_wavg():
                         print("ENOUGH! " + str(total_cost / (current_total-remaining)))
                         final = ('{number:,.{digits}f}'.format(number=total_cost / (current_total-remaining), digits=8))
                         return str(final)
-                    else:
-                        return ""
+
+                    return ""
     except KeyError:
-        pass
+        return ""
 
 
 def update_holding_prices(self):

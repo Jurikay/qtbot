@@ -107,12 +107,12 @@ class beeserBot(QMainWindow):
 
             # self.default_timeframe.setText(str(val["defaultTimeframe"]))
 
-            raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, "1w"]
+            raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440]
 
             # dtf = self.dtf_selector.currentText()
-            # for i, tf in enumerate(raw_timeframes):
-            #     if val["defaultTimeframe"] == str(tf):
-            #         self.dtf_selector.setCurrentIndex(i)
+            for i, tf in enumerate(raw_timeframes):
+                if val["defaultTimeframe"] == str(tf):
+                    self.dtf_selector.setCurrentIndex(i)
 
 
         except (TypeError, KeyError):
@@ -402,7 +402,13 @@ class beeserBot(QMainWindow):
 
     # remove canceled order from open orders table
 
+    def update_open_order(self, order):
+        for i in range(self.open_orders.rowCount()):
+            order_id = self.open_orders.item(i, 8).text()
+            if str(order_id) == str(order["orderId"]):
+                filled_percent = '{number:.{digits}f}'.format(number=float(order["executedQty"]) / float(order["origQty"]), digits=2) + "%"
 
+                self.open_orders.setItem(0, 6, QTableWidgetItem(filled_percent))
 
 
 
@@ -756,13 +762,13 @@ class beeserBot(QMainWindow):
 
 
     def schedule_websockets(self):
-            # Pass the function to execute
-            worker = Worker(self.start_sockets)
+        # Pass the function to execute
+        worker = Worker(self.start_sockets)
 
-            worker.signals.progress.connect(self.progress_fn)
+        worker.signals.progress.connect(self.progress_fn)
 
-            # Execute
-            self.threadpool.start(worker)
+        # Execute
+        self.threadpool.start(worker)
 
 
     def api_calls(self):
@@ -991,10 +997,11 @@ def api_cancel_order(order_id, symbol, progress_callback):
     except BinanceAPIException:
         print("cancel failed")
 
+
 def round_sell_amount(percent_val):
     holding = float(val["accHoldings"][val["coin"]]["free"]) * (float(percent_val) / 100)
     if val["coins"][val["pair"]]["minTrade"] == 1:
-            sizeRounded = int(holding)
+        sizeRounded = int(holding)
     else:
         sizeRounded = int(holding * 10**val["assetDecimals"]) / 10.0**val["assetDecimals"]
     return sizeRounded
