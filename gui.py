@@ -202,7 +202,7 @@ class beeserBot(QMainWindow):
 
         print("scroll")
 
-        self.asks_table.scrollToBottom()
+        # self.asks_table.scrollToBottom()
 
         self.timer.stop()
 
@@ -285,7 +285,7 @@ class beeserBot(QMainWindow):
 
     def print_output(self, s):
         print("scroll print_o")
-        self.asks_table.scrollToBottom()
+        # self.asks_table.scrollToBottom()
 
     def tick(self, payload):
         if payload == 1:
@@ -423,7 +423,7 @@ class beeserBot(QMainWindow):
                     self.add_to_open_orders(order)
 
 
-            self.history_table.scrollToTop()
+            # self.history_table.scrollToTop()
             # self.open_orders.scrollToTop()
 
 
@@ -546,7 +546,7 @@ class beeserBot(QMainWindow):
                     self.asks_table.setItem(19-i, 3, QTableWidgetItem(total_btc_asks + " BTC"))
                     self.asks_table.item(19-i, 1).setForeground(QColor(color_pink))
 
-                    self.asks_table.scrollToBottom()
+                    # self.asks_table.scrollToBottom()
 
                     # self.asks_table.scrollToBottom()
 
@@ -882,7 +882,7 @@ class beeserBot(QMainWindow):
         percent_texts = [self.percent_1, self.percent_2, self.percent_3, self.percent_4, self.percent_5]
         percent = val["buttonPercentage"]
 
-        for i in enumerate(percent):
+        for i,_ in enumerate(percent):
 
             try:
                 if float(percent_texts[i].text()) >= 0 and float(percent_texts[i].text()) <= 100:

@@ -1,5 +1,5 @@
 # import os.path
-import time
+# import time
 from MAIN import *
 from initApi import *
 
@@ -72,14 +72,25 @@ price = '{number:.{digits}f}'.format(number=val["coins"]["BNBBTC"]["minQty"], di
 # time.sleep(5)
 #
 # print(val["ticker"]["BNBBTC"])
-print(type(val["tickers"]["BNBBTC"]))
+# print(type(val["tickers"]["BNBBTC"]))
+#
+# # while True:
+# #     # print(val["tickers"]["BNBBTC"]["quoteVolume"])
+# #     time.sleep(1)
+# #     print((val["tickers"]["BNBBTC"]))
+#
+# print(val["coins"]["BNBBTC"])
+# print(val["coin"])
+#
+# print(val["accHoldings"][val["coin"]]["free"])
 
-# while True:
-#     # print(val["tickers"]["BNBBTC"]["quoteVolume"])
-#     time.sleep(1)
-#     print((val["tickers"]["BNBBTC"]))
 
-print(val["coins"]["BNBBTC"])
-print(val["coin"])
+my_list = ["item1", 1337, ["list1", "list2"]]
 
-print(val["accHoldings"][val["coin"]]["free"])
+for i,_ in enumerate(my_list):
+    print("i:")
+    print(str(i))
+    print("")
+    print("i 0, i1:")
+    print(str(i[0]))
+    print(str(i[1]))
