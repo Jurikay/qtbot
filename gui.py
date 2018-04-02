@@ -479,25 +479,27 @@ class beeserBot(QMainWindow):
         self.tradeTable.removeRow(50)
         # # set last price, color and arrow
         #
-        if float(self.tradeTable.item(0, 0).text()) > float(self.tradeTable.item(1, 0).text()):
-            arrow = QPixmap("images/assets/2arrow_up.png")
-            color = color_green
-        elif float(self.tradeTable.item(0, 0).text()) == float(self.tradeTable.item(1, 0).text()):
-            arrow = QPixmap("images/assets/2arrow.png")
-            color = color_yellow
-        else:
-            arrow = QPixmap("images/assets/2arrow_down.png")
-            color = color_pink
+        try:
+            if float(self.tradeTable.item(0, 0).text()) > float(self.tradeTable.item(1, 0).text()):
+                arrow = QPixmap("images/assets/2arrow_up.png")
+                color = color_green
+            elif float(self.tradeTable.item(0, 0).text()) == float(self.tradeTable.item(1, 0).text()):
+                arrow = QPixmap("images/assets/2arrow.png")
+                color = color_yellow
+            else:
+                arrow = QPixmap("images/assets/2arrow_down.png")
+                color = color_pink
 
-        formatted_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]), digits=val["decimals"])
-        self.price_arrow.setPixmap(arrow)
+            formatted_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]), digits=val["decimals"])
+            self.price_arrow.setPixmap(arrow)
 
-        self.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
+            self.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
 
-        usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tether"]["lastPrice"]), digits=2)
+            usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tether"]["lastPrice"]), digits=2)
 
-        self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + color_yellow + "'>$" + usd_price + "</span>")
-
+            self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + color_yellow + "'>$" + usd_price + "</span>")
+        except AttributeError:
+            pass
 
     def progress_asks(self, asks):
         for i, _ in enumerate(asks):
@@ -540,26 +542,9 @@ class beeserBot(QMainWindow):
             asks = payload["asks"]
             if len(asks) == 20:
                 for i, _ in enumerate(asks):
-                    ask_price = '{number:.{digits}f}'.format(number=float(asks[i][0]), digits=val["decimals"])
-                    ask_quantity = '{number:.{digits}f}'.format(number=float(asks[i][1]), digits=val["assetDecimals"])
-                    total_btc_asks = '{number:.{digits}f}'.format(number=float(ask_price) * float(ask_quantity), digits=3)
+                    self.progress_asks(asks)
 
-                    self.asks_table.setItem(19-i, 0, QTableWidgetItem(str(i+1).zfill(2)))
 
-                    self.asks_table.setItem(19-i, 1, QTableWidgetItem(ask_price))
-                    self.asks_table.setItem(19-i, 2, QTableWidgetItem(ask_quantity))
-
-                    self.asks_table.setItem(19-i, 3, QTableWidgetItem(total_btc_asks + " BTC"))
-                    self.asks_table.item(19-i, 1).setForeground(QColor(color_pink))
-
-                    # self.asks_table.scrollToBottom()
-
-                    # self.asks_table.scrollToBottom()
-
-            spread = ((float(val["asks"][0][0]) / float(val["bids"][0][0])) - 1) * 100
-            spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
-
-            self.spread_label.setText("<span style='font-size: 14px; font-family: Arial Black; color:" + color_lightgrey + "'>" + spread_formatted + "</span>")
         except (TypeError, KeyError):
             pass
 
@@ -568,17 +553,7 @@ class beeserBot(QMainWindow):
             bids = payload["bids"]
             if len(bids) == 20:
                 for i, _ in enumerate(bids):
-                    bid_price = '{number:.{digits}f}'.format(number=float(bids[i][0]), digits=val["decimals"])
-                    bid_quantity = '{number:.{digits}f}'.format(number=float(bids[i][1]), digits=val["assetDecimals"])
-                    total_btc_bids = '{number:.{digits}f}'.format(number=float(bid_price) * float(bid_quantity), digits=3)
-
-                    self.bids_table.setItem(i, 0, QTableWidgetItem(str(i+1).zfill(2)))
-
-                    self.bids_table.setItem(i, 1, QTableWidgetItem(bid_price))
-                    self.bids_table.setItem(i, 2, QTableWidgetItem(bid_quantity))
-
-                    self.bids_table.setItem(i, 3, QTableWidgetItem(total_btc_bids + " BTC"))
-                    self.bids_table.item(i, 1).setForeground(QColor(color_green))
+                    self.progress_bids(bids)
 
 
         except (TypeError, KeyError):
@@ -586,41 +561,29 @@ class beeserBot(QMainWindow):
 
         try:
             history = payload["history"]
-            for index, trade in enumerate(history):
-                self.tradeTable.setItem(index, 0, QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["price"]), digits=val["decimals"])))
-                self.tradeTable.setItem(index, 1, QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["quantity"]), digits=val["assetDecimals"])))
-
-
-
-                self.tradeTable.setItem(index, 2, QTableWidgetItem(str(datetime.fromtimestamp(int(str(trade["time"])[:-3])).strftime('%H:%M:%S.%f')[:-7])))
-
-                if trade["maker"] is True:
-                    self.tradeTable.item(index, 0).setForeground(QColor(color_pink))
-                else:
-                    self.tradeTable.item(index, 0).setForeground(QColor(color_green))
-
-                self.tradeTable.item(index, 2).setForeground(QColor(color_lightgrey))
+            for _, trade in enumerate(history):
+                self.progress_history(trade)
 
             # set last price, color and arrow
 
-            if history[0]["price"] > history[1]["price"]:
-                arrow = QPixmap("images/assets/2arrow_up.png")
-                color = color_green
-            elif history[0]["price"] == history[1]["price"]:
-                arrow = QPixmap("images/assets/2arrow.png")
-                color = color_yellow
-            else:
-                arrow = QPixmap("images/assets/2arrow_down.png")
-                color = color_pink
-
-            formatted_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]), digits=val["decimals"])
-            self.price_arrow.setPixmap(arrow)
-
-            self.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
-
-            usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tether"]["lastPrice"]), digits=2)
-
-            self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + color_yellow + "'>$" + usd_price + "</span>")
+            # if history[0]["price"] > history[1]["price"]:
+            #     arrow = QPixmap("images/assets/2arrow_up.png")
+            #     color = color_green
+            # elif history[0]["price"] == history[1]["price"]:
+            #     arrow = QPixmap("images/assets/2arrow.png")
+            #     color = color_yellow
+            # else:
+            #     arrow = QPixmap("images/assets/2arrow_down.png")
+            #     color = color_pink
+            #
+            # formatted_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]), digits=val["decimals"])
+            # self.price_arrow.setPixmap(arrow)
+            #
+            # self.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
+            #
+            # usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tether"]["lastPrice"]), digits=2)
+            #
+            # self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + color_yellow + "'>$" + usd_price + "</span>")
 
         except (TypeError, KeyError, ValueError):
             pass
