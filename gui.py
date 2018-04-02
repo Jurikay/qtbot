@@ -289,7 +289,7 @@ class beeserBot(QMainWindow):
 
     def tick(self, payload):
         if payload == 1:
-            self.debug.setText(str(timedelta(seconds=val["timeRunning"])))
+            self.session_running.setText(str(timedelta(seconds=val["timeRunning"])))
             val["timeRunning"] += 1
 
             total_btc_value = calc_total_btc()
@@ -311,6 +311,8 @@ class beeserBot(QMainWindow):
             self.btc_percent_label.setText(btc_percent)
 
             update_holding_prices(self)
+        elif payload == 15:
+            self.asks_table.scrollToBottom()
 
     def add_to_open_orders(self, order):
 
@@ -824,7 +826,7 @@ class beeserBot(QMainWindow):
 
 
     def check_for_update(self, progress_callback):
-
+        current_height = self.frameGeometry().height()
         while True:
             # print("check")
             try:
