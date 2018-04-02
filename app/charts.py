@@ -3,7 +3,7 @@
 
 # made by Jirrik
 
-"""Functions that generate HTML pages"""
+"""Functions that generate HTML pages."""
 
 
 def build_chart(exchange, pair):
@@ -74,7 +74,7 @@ def build_chart2(pair, timeframe):
     background-color: #444;
   }
 
-  .tv-side-toolbar .tools-group .button:active:not(.subgroup),
+    .tv-side-toolbar .tools-group .button:active:not(.subgroup),
 	.tv-side-toolbar .tools-group .button.active:not(.subgroup),
 	.tv-side-toolbar .tools-group .button.selected:not(.subgroup),
 	.properties-toolbar .tools-group .button:active,
@@ -84,7 +84,7 @@ def build_chart2(pair, timeframe):
 	.tv-side-toolbar .tools-group .button.selected .main,
 	.tv-side-toolbar .tools-group .button:active .side,
 	.tv-side-toolbar .tools-group .button.active .side
-  {
+    {
     background-color: #444;
   }
 
@@ -105,8 +105,7 @@ def build_chart2(pair, timeframe):
   }
 
   input.symbol-edit,
-	.symbol-search-dialog input
-  {
+  .symbol-search-dialog input {
     background-color: #222;
     border-color: #666;
     color: #aaa;

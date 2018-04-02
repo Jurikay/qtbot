@@ -23,7 +23,7 @@ from app.init import val
 from app.initApi import *
 from app.callbacks import *
 from app.gui_functions import *
-from app.charts import build_chart2, welcome_page
+from app.charts import welcome_page
 
 
 class beeserBot(QMainWindow):
@@ -713,18 +713,15 @@ class beeserBot(QMainWindow):
         # total = float(self.limit_sell_amount.text()) *
 
         try:
-            print("chck sell")
             sell_amount = float(self.limit_sell_amount.text())
             free_amount = float(val["accHoldings"][val["coin"]]["free"])
             sell_price = float(self.limit_sell_input.text())
 
             if sell_amount > free_amount or sell_amount * sell_price < 0.001:
-                print("fist if case")
                 self.limit_sell_button.setStyleSheet("border: 2px solid transparent; background: #ff077a; color: #f3f3f3;")
                 self.limit_sell_button.setCursor(QCursor(Qt.ForbiddenCursor))
                 val["sellAllowed"] = False
             else:
-                print("2nd if case")
                 self.limit_sell_button.setStyleSheet("border: 2px solid transparent;")
                 self.limit_sell_button.setCursor(QCursor(Qt.PointingHandCursor))
                 val["sellAllowed"] = True
@@ -741,13 +738,7 @@ class beeserBot(QMainWindow):
         self.calc_total_buy()
 
         try:
-            # min_trade = val["coins"][val["pair"]]["minTrade"]
-
             total = float(self.limit_buy_input.value()) * float(self.limit_buy_amount.text())
-
-            print("total: " + str(total))
-            print(type(total))
-
 
             if total > float(val["accHoldings"]["BTC"]["free"]) or total < 0.001:
                 self.limit_buy_button.setStyleSheet("border: 2px solid transparent; background: #70a800; color: #f3f3f3;")
@@ -765,13 +756,15 @@ class beeserBot(QMainWindow):
 
 
     def schedule_work(self):
-        # Pass the function to execute
 
+        # Pass the function to execute
         worker = Worker(self.check_for_update)
+
         # Any other args, kwargs are passed to the run function
         worker.signals.result.connect(self.print_output)
         worker.signals.progress.connect(self.tick)
 
+        # start thread
         self.threadpool.start(worker)
 
 

@@ -3,7 +3,7 @@
 
 # made by Jirrik
 
-"""Collection of functions concerning websocket callbacks"""
+"""Collection of functions concerning websocket callbacks."""
 
 from app.init import val
 from app.initApi import *
@@ -142,18 +142,23 @@ def api_depth(progress_callback):
     val["bids"] = depth["bids"]
     progress_callback.emit({"bids": val["bids"]})
 
+
 def api_order_history(progress_callback):
     orders = getOrders(client, val["pair"])
     progress_callback.emit(orders)
 
+
 def socket_history(history, progress_callback):
     progress_callback.emit(history)
+
 
 def socket_orderbook(depth, progress_callback):
     progress_callback.emit(depth)
 
+
 def socket_order(order, progress_callback):
     progress_callback.emit(order)
+
 
 def update_holdings(progress_callback):
     progress_callback.emit("update")

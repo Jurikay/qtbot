@@ -11,7 +11,7 @@ from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QSize, Qt
 from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
 from PyQt5.QtGui import QColor, QIcon, QStandardItem, QPixmap, QFont, QFontDatabase, QCursor
 from app.colors import *
-from app.charts import build_chart2, welcome_page
+from app.charts import build_chart2
 
 
 
@@ -51,9 +51,6 @@ def initial_values(self):
     asks_header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
     asks_header.setSectionResizeMode(1, QHeaderView.Fixed)
     asks_header.setSectionResizeMode(2, QHeaderView.Fixed)
-
-
-
 
 
 def build_holdings(self, *args):

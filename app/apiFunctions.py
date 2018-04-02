@@ -5,6 +5,8 @@
 
 """Collection of functions concerning api calls."""
 
+
+
 def getHoldings(client):
     """Make an inital API call to get BTC and coin holdings."""
     # API Call:
@@ -30,7 +32,7 @@ def getTickers(client):
 
 
 def getTradehistory(client, pair):
-    """Make an initial API call to get the trade history of a given pair. This is used until updated by websocket data"""
+    """Make an initial API call to get the trade history of a given pair. This is used until updated by websocket data."""
     # API call
     globalList = list()
     trades = client.get_aggregate_trades(symbol=pair, limit=50)
@@ -41,6 +43,7 @@ def getTradehistory(client, pair):
 
 
 def getDepth(client, symbol):
+    """Make an initial API call to get market depth (bids and asks)."""
     # API Call
     depth = client.get_order_book(symbol=symbol, limit=20)
 
