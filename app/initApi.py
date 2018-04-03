@@ -68,7 +68,7 @@ def set_pair_values():
         val["assetDecimals"] = 0
     else:
         val["assetDecimals"] = len(str(val["coins"][val["pair"]]["minTrade"]))-2
-
+    print("mintrade: " + str(val["assetDecimals"]))
 
 read_config()
 

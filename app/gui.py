@@ -91,10 +91,10 @@ class beeserBot(QMainWindow):
         self.limit_low.clicked.connect(self.overbid_undercut)
 
         self.limit_sell_amount.valueChanged.connect(self.check_sell_ammount)
-        self.limit_buy_amount.valueChanged.connect(self.check_buy_ammount)
+        self.limit_buy_amount.valueChanged.connect(self.check_buy_amount)
 
         self.limit_sell_input.valueChanged.connect(self.check_sell_ammount)
-        self.limit_buy_input.valueChanged.connect(self.check_buy_ammount)
+        self.limit_buy_input.valueChanged.connect(self.check_buy_amount)
 
 
 
@@ -211,7 +211,7 @@ class beeserBot(QMainWindow):
         self.holdings_table.setColumnWidth(7, 120)
 
 
-        self.check_buy_ammount()
+        self.check_buy_amount()
         self.check_sell_ammount()
 
 
@@ -698,8 +698,8 @@ class beeserBot(QMainWindow):
             # pass
         self.calc_total_sell()
 
-    def check_buy_ammount(self):
-
+    def check_buy_amount(self):
+        print("check buy amount")
         total = int(((float(self.limit_buy_amount.value()) * float(self.limit_buy_input.value())) / float(val["accHoldings"]["BTC"]["free"])) * 100)
 
         self.calc_total_buy()
@@ -708,17 +708,20 @@ class beeserBot(QMainWindow):
             total = float(self.limit_buy_input.value()) * float(self.limit_buy_amount.text())
 
             if total > float(val["accHoldings"]["BTC"]["free"]) or total < 0.001:
+                print("disable")
                 self.limit_buy_button.setStyleSheet("border: 2px solid transparent; background: #70a800; color: #f3f3f3;")
                 self.limit_buy_button.setCursor(QCursor(Qt.ForbiddenCursor))
                 val["buyAllowed"] = False
 
             else:
+                print("enable")
                 self.limit_buy_button.setCursor(QCursor(Qt.PointingHandCursor))
                 self.limit_buy_button.setStyleSheet("border: 2px solid transparent;")
                 val["buyAllowed"] = True
 
-        except ValueError:
-            pass
+        except ValueError as e:
+            print(str(e))
+            
 
 
 
@@ -926,11 +929,14 @@ class beeserBot(QMainWindow):
                     self.holdings_table.removeRow(i)
 
 
-                self.check_buy_ammount()
-                self.check_sell_ammount()
+
 
             except AttributeError:
                 print("attr error: " + str(i))
+
+        self.check_buy_amount()
+        self.check_sell_ammount()
+
 
     def set_button_text(self):
         self.limit_button0.setText(str(val["buttonPercentage"][0]) + "%")
