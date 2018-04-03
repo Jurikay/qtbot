@@ -1,7 +1,14 @@
-from init import val
-from initApi import *
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Collection of functions concerning websocket callbacks."""
+
+from app.init import val
+from app.initApi import *
 from functools import partial
-from workers import *
+from app.workers import *
 
 
 
@@ -82,13 +89,15 @@ def userCallback(self, msg):
         elif userMsg["X"] == "CANCELED":
             worker.signals.progress.connect(self.remove_from_open_orders)
 
+        elif userMsg["X"] == "PARTIALLY_FILLED":
+            worker.signals.progress.connect(self.update_open_order)
+
         elif userMsg["X"] == "FILLED":
             worker.signals.progress.connect(self.remove_from_open_orders)
             worker.signals.progress.connect(self.add_to_history)
             worker.signals.progress.connect(self.check_add_to_holdings)
 
-        elif userMsg["X"] == "PARTIALLY_FILLED":
-            worker.signals.progress.connect(self.update_open_order)
+
 
 
 
@@ -135,18 +144,23 @@ def api_depth(progress_callback):
     val["bids"] = depth["bids"]
     progress_callback.emit({"bids": val["bids"]})
 
+
 def api_order_history(progress_callback):
     orders = getOrders(client, val["pair"])
     progress_callback.emit(orders)
 
+
 def socket_history(history, progress_callback):
     progress_callback.emit(history)
+
 
 def socket_orderbook(depth, progress_callback):
     progress_callback.emit(depth)
 
+
 def socket_order(order, progress_callback):
     progress_callback.emit(order)
+
 
 def update_holdings(progress_callback):
     progress_callback.emit("update")

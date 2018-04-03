@@ -1,18 +1,30 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Main gui class."""
+
+
 import time
 import configparser
 from functools import partial
 from datetime import datetime, timedelta
-from init import val
-from initApi import *
-from callbacks import *
-from gui_functions import *
+
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from charts import build_chart2, welcome_page
-from binance.websockets import BinanceSocketManager
 from PyQt5.QtCore import QThreadPool
 from PyQt5.uic import loadUi
+
+from binance.websockets import BinanceSocketManager
+
+from app.init import val
+from app.initApi import *
+from app.callbacks import *
+from app.gui_functions import *
+from app.charts import welcome_page
+
 
 class beeserBot(QMainWindow):
 
@@ -21,7 +33,7 @@ class beeserBot(QMainWindow):
     def __init__(self):
         """Init method."""
         super(beeserBot, self).__init__()
-        loadUi("ui/BeeserBotFull.ui", self)
+        loadUi("ui/MainWindow.ui", self)
 
 
         # set external stylesheet
@@ -90,6 +102,8 @@ class beeserBot(QMainWindow):
         self.limit_sell_button.clicked.connect(self.create_sell_order)
 
         self.button_wavg.clicked.connect(calc_wavg)
+
+        self.coinindex_filter.textChanged.connect(partial(filter_coinindex, self))
 
         # set config values
         try:
@@ -169,6 +183,8 @@ class beeserBot(QMainWindow):
 
         build_holdings(self)
 
+        build_coinindex(self)
+
         self.timer = QTimer()
         self.timer.setInterval(200)
         self.timer.timeout.connect(self.delayed_stuff)
@@ -202,7 +218,7 @@ class beeserBot(QMainWindow):
 
         print("scroll")
 
-        # self.asks_table.scrollToBottom()
+        self.asks_table.scrollToBottom()
 
         self.timer.stop()
 
@@ -289,7 +305,7 @@ class beeserBot(QMainWindow):
 
     def tick(self, payload):
         if payload == 1:
-            self.debug.setText(str(timedelta(seconds=val["timeRunning"])))
+            self.session_running.setText(str(timedelta(seconds=val["timeRunning"])))
             val["timeRunning"] += 1
 
             total_btc_value = calc_total_btc()
@@ -311,6 +327,8 @@ class beeserBot(QMainWindow):
             self.btc_percent_label.setText(btc_percent)
 
             update_holding_prices(self)
+        elif payload == 15:
+            self.asks_table.scrollToBottom()
 
     def add_to_open_orders(self, order):
 
@@ -662,18 +680,15 @@ class beeserBot(QMainWindow):
         # total = float(self.limit_sell_amount.text()) *
 
         try:
-            print("chck sell")
             sell_amount = float(self.limit_sell_amount.text())
             free_amount = float(val["accHoldings"][val["coin"]]["free"])
             sell_price = float(self.limit_sell_input.text())
 
             if sell_amount > free_amount or sell_amount * sell_price < 0.001:
-                print("fist if case")
                 self.limit_sell_button.setStyleSheet("border: 2px solid transparent; background: #ff077a; color: #f3f3f3;")
                 self.limit_sell_button.setCursor(QCursor(Qt.ForbiddenCursor))
                 val["sellAllowed"] = False
             else:
-                print("2nd if case")
                 self.limit_sell_button.setStyleSheet("border: 2px solid transparent;")
                 self.limit_sell_button.setCursor(QCursor(Qt.PointingHandCursor))
                 val["sellAllowed"] = True
@@ -690,13 +705,7 @@ class beeserBot(QMainWindow):
         self.calc_total_buy()
 
         try:
-            # min_trade = val["coins"][val["pair"]]["minTrade"]
-
             total = float(self.limit_buy_input.value()) * float(self.limit_buy_amount.text())
-
-            print("total: " + str(total))
-            print(type(total))
-
 
             if total > float(val["accHoldings"]["BTC"]["free"]) or total < 0.001:
                 self.limit_buy_button.setStyleSheet("border: 2px solid transparent; background: #70a800; color: #f3f3f3;")
@@ -714,13 +723,15 @@ class beeserBot(QMainWindow):
 
 
     def schedule_work(self):
-        # Pass the function to execute
 
+        # Pass the function to execute
         worker = Worker(self.check_for_update)
+
         # Any other args, kwargs are passed to the run function
         worker.signals.result.connect(self.print_output)
         worker.signals.progress.connect(self.tick)
 
+        # start thread
         self.threadpool.start(worker)
 
 
@@ -787,7 +798,7 @@ class beeserBot(QMainWindow):
 
 
     def check_for_update(self, progress_callback):
-
+        current_height = self.frameGeometry().height()
         while True:
             # print("check")
             try:
@@ -914,6 +925,9 @@ class beeserBot(QMainWindow):
                 if float(total) * float(price) < 0.001:
                     self.holdings_table.removeRow(i)
 
+
+                self.check_buy_ammount()
+                self.check_sell_ammount()
 
             except AttributeError:
                 print("attr error: " + str(i))

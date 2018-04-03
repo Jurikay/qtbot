@@ -1,9 +1,17 @@
-from init import val
-from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QSize, Qt
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Collection of functions that concern the gui."""
+
+
+from app.init import val
+from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QSize, Qt, QVariant
 from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
 from PyQt5.QtGui import QColor, QIcon, QStandardItem, QPixmap, QFont, QFontDatabase, QCursor
-from colors import *
-from charts import build_chart2, welcome_page
+from app.colors import *
+from app.charts import build_chart2
 
 
 
@@ -45,8 +53,58 @@ def initial_values(self):
     asks_header.setSectionResizeMode(2, QHeaderView.Fixed)
 
 
+def filter_coinindex(self, text):
+    print(text)
+    if text != "":
+        for i in range(self.coin_index.rowCount()):
+
+            if text.upper() not in str(self.coin_index.item(i, 1).text()):
+                self.coin_index.hideRow(i)
+            else:
+                self.coin_index.showRow(i)
+    else:
+        for i in range(self.coin_index.rowCount()):
+            self.coin_index.showRow(i)
+
+def build_coinindex(self):
+    self.coin_index.setRowCount(0)
+    for pair in val["tickers"]:
+        if "USDT" not in pair:
+            coin = str(val["tickers"][pair]["symbol"]).replace("BTC", "")
+            # print(str(holding))
+
+            icon = QIcon("images/ico/" + coin + ".svg")
+
+            icon_item = QTableWidgetItem()
+            icon_item.setIcon(icon)
+
+            # price_change = float(val["tickers"][pair]["priceChangePercent"])
+            # if price_change > 0:
+            #     operator = "+"
+            # else:
+            #     operator = ""
+
+            last_price = QTableWidgetItem()
+            last_price.setData(Qt.EditRole, QVariant(val["tickers"][pair]["lastPrice"]))
+
+            price_change = QTableWidgetItem()
+            price_change.setData(Qt.EditRole, QVariant(float(val["tickers"][pair]["priceChangePercent"])))
+            # price_change.setData(Qt.DisplayRole, QVariant(str(val["tickers"][pair]["priceChangePercent"]) + "%"))
+
+            self.coin_index.insertRow(0)
+            self.coin_index.setItem(0, 0, icon_item)
+            self.coin_index.setItem(0, 1, QTableWidgetItem(coin + "/BTC"))
+            self.coin_index.setItem(0, 2, last_price)
+            self.coin_index.setItem(0, 3, QTableWidgetItem(price_change))
+            self.coin_index.setItem(0, 4, QTableWidgetItem(str(round(float(val["tickers"][pair]["quoteVolume"]), 2))))
 
 
+            self.btn_trade = QPushButton("Trade " + coin)
+            self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
+            self.coin_index.setCellWidget(0, 5, self.btn_trade)
+
+        self.coin_index.model().sort(5, Qt.AscendingOrder)
+        self.coin_index.setIconSize(QSize(25, 25))
 
 def build_holdings(self, *args):
     self.holdings_table.setRowCount(0)
@@ -116,7 +174,7 @@ def build_holdings(self, *args):
 
                 self.btn_sell = QPushButton('Trade ' + str(holding))
                 self.btn_sell.clicked.connect(self.gotoTradeButtonClicked)
-                self.holdings_table.setCellWidget(1,7,self.btn_sell)
+                self.holdings_table.setCellWidget(1, 7, self.btn_sell)
 
         except KeyError:
             pass

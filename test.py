@@ -1,7 +1,12 @@
-# import os.path
-# import time
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Used for testing Only. Not part of the application."""
+
 from MAIN import *
-from initApi import *
+from app.initApi import *
 
 holdings = (getHoldings(client))
 print(type(val["tickers"]["BNBBTC"]))
@@ -87,10 +92,12 @@ price = '{number:.{digits}f}'.format(number=val["coins"]["BNBBTC"]["minQty"], di
 
 my_list = ["item1", 1337, ["list1", "list2"]]
 
-for i,_ in enumerate(my_list):
-    print("i:")
-    print(str(i))
-    print("")
-    print("i 0, i1:")
-    print(str(i[0]))
-    print(str(i[1]))
+# for i,_ in enumerate(my_list):
+#     print("i:")
+#     print(str(i))
+#     print("")
+#     print("i 0, i1:")
+#     print(str(i[0]))
+#     print(str(i[1]))
+
+print(val["tickers"]["BNBBTC"])
