@@ -6,10 +6,10 @@
 """Collection of functions concerning websocket callbacks."""
 
 from app.init import val
-from app.initApi import *
+from app.initApi import client, getDepth, percentage_ammount, getTradehistory
 from functools import partial
-from app.workers import *
-
+from app.workers import WorkerSignals, Worker, sys
+from app.apiFunctions import getAllOrders
 
 
 def directCallback(self, msg):
@@ -55,7 +55,7 @@ def userCallback(self, msg):
     # print("####################")
     # print(str(self))
     # print(msg)
-
+    userMsg = dict()
 
     for key, value in msg.items():
         userMsg[key] = value
@@ -146,7 +146,7 @@ def api_depth(progress_callback):
 
 
 def api_order_history(progress_callback):
-    orders = getOrders(client, val["pair"])
+    orders = getAllOrders(client, val["pair"])
     progress_callback.emit(orders)
 
 

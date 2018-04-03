@@ -10,7 +10,7 @@ from app.init import val
 from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QSize, Qt, QVariant
 from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
 from PyQt5.QtGui import QColor, QIcon, QStandardItem, QPixmap, QFont, QFontDatabase, QCursor
-from app.colors import *
+from app.colors import colors
 from app.charts import build_chart2
 
 
@@ -139,7 +139,7 @@ def build_holdings(self, *args):
                 self.holdings_table.setItem(0, 6, QTableWidgetItem(total_formatted))
 
                 self.holdings_table.item(0, 6).setFont(bold_font)
-                self.holdings_table.item(0, 6).setForeground(QColor(color_lightgrey))
+                self.holdings_table.item(0, 6).setForeground(QColor(colors.color_lightgrey))
 
                 self.btn_sell = QPushButton('Trade' + " BTC")
                 self.btn_sell.setEnabled(False)
@@ -170,7 +170,7 @@ def build_holdings(self, *args):
                 self.holdings_table.setItem(1, 6, QTableWidgetItem(total_btc_formatted))
 
                 self.holdings_table.item(1, 6).setFont(bold_font)
-                self.holdings_table.item(1, 6).setForeground(QColor(color_lightgrey))
+                self.holdings_table.item(1, 6).setForeground(QColor(colors.color_lightgrey))
 
                 self.btn_sell = QPushButton('Trade ' + str(holding))
                 self.btn_sell.clicked.connect(self.gotoTradeButtonClicked)

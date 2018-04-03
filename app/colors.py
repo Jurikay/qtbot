@@ -5,9 +5,9 @@
 
 """Named color variables."""
 
-
-color_pink = "#ff007a"
-color_yellow = "#f3ba2e"
-color_green = "#94c940"
-color_lightgrey = "#cdcdcd"
-color_grey = "#999"
+class colors:
+    color_pink = "#ff007a"
+    color_yellow = "#f3ba2e"
+    color_green = "#94c940"
+    color_lightgrey = "#cdcdcd"
+    color_grey = "#999"

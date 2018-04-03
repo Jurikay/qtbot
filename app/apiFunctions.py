@@ -107,15 +107,15 @@ def percentage_ammount(total_btc, price, percentage, decimals):
     return maxSizeRounded
 
 
-def get_tether(client):
-    tether_info = client.get_ticker(symbol="BTCUSDT")
-    return tether_info
+# def get_tether(client):
+#     tether_info = client.get_ticker(symbol="BTCUSDT")
+#     return tether_info
 
 
-def getOrders(client, symbol):
+def getAllOrders(client, symbol):
     orders = client.get_all_orders(symbol=symbol)
     return orders
 
 
-def create_order(client):
-    pass
+# def create_order(client):
+#     pass

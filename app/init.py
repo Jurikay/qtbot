@@ -9,8 +9,7 @@
 from collections import defaultdict
 import locale
 
-locale.setlocale(locale.LC_NUMERIC, "en_GB.UTF-8")
-
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 val = defaultdict(dict)
 val["test"] = "hi"

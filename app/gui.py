@@ -11,20 +11,20 @@ import configparser
 from functools import partial
 from datetime import datetime, timedelta
 
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QSize, Qt, QVariant, QTimer
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QThreadPool
+from PyQt5.QtCore import QThreadPool, QSize
 from PyQt5.uic import loadUi
-
+from PyQt5.QtWidgets import QWidget, QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
+from PyQt5.QtGui import QColor, QIcon, QStandardItem, QPixmap, QFont, QFontDatabase, QCursor
 from binance.websockets import BinanceSocketManager
 
 from app.init import val
-from app.initApi import *
-from app.callbacks import *
-from app.gui_functions import *
+from app.initApi import read_config, set_pair_values, client, BinanceAPIException
+from app.callbacks import Worker, sys, api_history, api_depth, api_order_history, percentage_ammount, directCallback, depthCallback, tickerCallback, userCallback
+from app.gui_functions import initial_values, filter_coinindex, build_coinindex, build_holdings, calc_total_btc, calc_wavg, update_holding_prices, QMainWindow
 from app.charts import welcome_page
-
+from app.colors import colors
 
 class beeserBot(QMainWindow):
 
@@ -357,12 +357,12 @@ class beeserBot(QMainWindow):
 
             self.open_orders.setItem(0, 9, QTableWidgetItem("cancel"))
 
-            self.open_orders.item(0, 9).setForeground(QColor(color_yellow))
+            self.open_orders.item(0, 9).setForeground(QColor(colors.color_yellow))
 
             if order["side"] == "BUY":
-                self.open_orders.item(0, 3).setForeground(QColor(color_green))
+                self.open_orders.item(0, 3).setForeground(QColor(colors.color_green))
             else:
-                self.open_orders.item(0, 3).setForeground(QColor(color_pink))
+                self.open_orders.item(0, 3).setForeground(QColor(colors.color_pink))
 
 
     def remove_from_open_orders(self, order):
@@ -399,9 +399,9 @@ class beeserBot(QMainWindow):
             self.history_table.setItem(0, 5, QTableWidgetItem('{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8) + " BTC"))
 
             if order["side"] == "BUY":
-                self.history_table.item(0, 2).setForeground(QColor(color_green))
+                self.history_table.item(0, 2).setForeground(QColor(colors.color_green))
             else:
-                self.history_table.item(0, 2).setForeground(QColor(color_pink))
+                self.history_table.item(0, 2).setForeground(QColor(colors.color_pink))
 
     def check_add_to_holdings(self, order):
         """Check if the coin has to be added to the holdings table"""
@@ -459,6 +459,7 @@ class beeserBot(QMainWindow):
         self.limit_buy_input.setValue(float(val["bids"][0][0]))
         self.limit_sell_input.setValue(float(val["asks"][0][0]))
         value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
+        print("value: " + str(value))
         self.limit_buy_amount.setValue(value)
 
 
@@ -487,11 +488,11 @@ class beeserBot(QMainWindow):
         self.tradeTable.setItem(0, 1, QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["quantity"]), digits=val["assetDecimals"])))
         self.tradeTable.setItem(0, 2, QTableWidgetItem(str(datetime.fromtimestamp(int(str(trade["time"])[:-3])).strftime('%H:%M:%S.%f')[:-7])))
         if trade["maker"] is True:
-            self.tradeTable.item(0, 0).setForeground(QColor(color_pink))
+            self.tradeTable.item(0, 0).setForeground(QColor(colors.color_pink))
         else:
-            self.tradeTable.item(0, 0).setForeground(QColor(color_green))
+            self.tradeTable.item(0, 0).setForeground(QColor(colors.color_green))
 
-        self.tradeTable.item(0, 2).setForeground(QColor(color_lightgrey))
+        self.tradeTable.item(0, 2).setForeground(QColor(colors.color_lightgrey))
 
 
         self.tradeTable.removeRow(50)
@@ -500,22 +501,22 @@ class beeserBot(QMainWindow):
         try:
             if float(self.tradeTable.item(0, 0).text()) > float(self.tradeTable.item(1, 0).text()):
                 arrow = QPixmap("images/assets/2arrow_up.png")
-                color = color_green
+                color = colors.color_green
             elif float(self.tradeTable.item(0, 0).text()) == float(self.tradeTable.item(1, 0).text()):
                 arrow = QPixmap("images/assets/2arrow.png")
-                color = color_yellow
+                color = colors.color_yellow
             else:
                 arrow = QPixmap("images/assets/2arrow_down.png")
-                color = color_pink
+                color = colors.color_pink
 
             formatted_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]), digits=val["decimals"])
             self.price_arrow.setPixmap(arrow)
 
             self.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
 
-            usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tether"]["lastPrice"]), digits=2)
+            # usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tether"]["lastPrice"]), digits=2)
 
-            self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + color_yellow + "'>$" + usd_price + "</span>")
+            # self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + colors.color_yellow + "'>$" + usd_price + "</span>")
         except AttributeError:
             pass
 
@@ -531,14 +532,14 @@ class beeserBot(QMainWindow):
             self.asks_table.setItem(19-i, 2, QTableWidgetItem(ask_quantity))
 
             self.asks_table.setItem(19-i, 3, QTableWidgetItem(total_btc_asks + " BTC"))
-            self.asks_table.item(19-i, 1).setForeground(QColor(color_pink))
+            self.asks_table.item(19-i, 1).setForeground(QColor(colors.color_pink))
 
             # self.asks_table.scrollToBottom()
 
         spread = ((float(val["asks"][0][0]) / float(val["bids"][0][0])) - 1) * 100
         spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
 
-        self.spread_label.setText("<span style='font-size: 14px; font-family: Arial Black; color:" + color_lightgrey + "'>" + spread_formatted + "</span>")
+        self.spread_label.setText("<span style='font-size: 14px; font-family: Arial Black; color:" + colors.color_lightgrey + "'>" + spread_formatted + "</span>")
 
     def progress_bids(self, bids):
         for i, _ in enumerate(bids):
@@ -552,14 +553,14 @@ class beeserBot(QMainWindow):
             self.bids_table.setItem(i, 2, QTableWidgetItem(bid_quantity))
 
             self.bids_table.setItem(i, 3, QTableWidgetItem(total_btc_bids + " BTC"))
-            self.bids_table.item(i, 1).setForeground(QColor(color_green))
+            self.bids_table.item(i, 1).setForeground(QColor(colors.color_green))
 
     # Draw UI changes
     def progress_fn(self, payload):
         try:
             asks = payload["asks"]
             if len(asks) == 20:
-                for i, _ in enumerate(asks):
+                for _ in enumerate(asks):
                     self.progress_asks(asks)
 
 
@@ -570,7 +571,7 @@ class beeserBot(QMainWindow):
         try:
             bids = payload["bids"]
             if len(bids) == 20:
-                for i, _ in enumerate(bids):
+                for _ in enumerate(bids):
                     self.progress_bids(bids)
 
 
@@ -586,13 +587,13 @@ class beeserBot(QMainWindow):
 
             # if history[0]["price"] > history[1]["price"]:
             #     arrow = QPixmap("images/assets/2arrow_up.png")
-            #     color = color_green
+            #     color = colors.color_green
             # elif history[0]["price"] == history[1]["price"]:
             #     arrow = QPixmap("images/assets/2arrow.png")
-            #     color = color_yellow
+            #     color = colors.color_yellow
             # else:
             #     arrow = QPixmap("images/assets/2arrow_down.png")
-            #     color = color_pink
+            #     color = colors.color_pink
             #
             # formatted_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]), digits=val["decimals"])
             # self.price_arrow.setPixmap(arrow)
@@ -601,7 +602,7 @@ class beeserBot(QMainWindow):
             #
             # usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tether"]["lastPrice"]), digits=2)
             #
-            # self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + color_yellow + "'>$" + usd_price + "</span>")
+            # self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + colors.color_yellow + "'>$" + usd_price + "</span>")
 
         except (TypeError, KeyError, ValueError):
             pass
@@ -719,9 +720,9 @@ class beeserBot(QMainWindow):
                 self.limit_buy_button.setStyleSheet("border: 2px solid transparent;")
                 val["buyAllowed"] = True
 
-        except ValueError as e:
-            print(str(e))
-            
+        except ValueError as error:
+            print(str(error))
+
 
 
 
@@ -934,8 +935,8 @@ class beeserBot(QMainWindow):
             except AttributeError:
                 print("attr error: " + str(i))
 
-        self.check_buy_amount()
-        self.check_sell_ammount()
+        # self.check_buy_amount()
+        # self.check_sell_ammount()
 
 
     def set_button_text(self):

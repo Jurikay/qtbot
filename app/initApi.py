@@ -11,7 +11,7 @@ from binance.client import Client
 # from config import binance_credentials
 from app.init import val
 
-from app.apiFunctions import *
+from app.apiFunctions import getHoldings, getTickers, getTradehistory, getDepth, get_open_orders, availablePairs, percentage_ammount, getAllOrders
 # from binance.depthcache import DepthCacheManager
 #
 
@@ -86,7 +86,7 @@ try:
 
     val["accHoldings"] = getHoldings(client)
 
-    val["tether"] = get_tether(client)
+    # val["tether"] = get_tether(client)
 
     val["tickers"] = getTickers(client)
 

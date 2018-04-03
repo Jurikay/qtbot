@@ -29,7 +29,7 @@ print(type(val["tickers"]["BNBBTC"]))
 # print(client.get_products())
 
 # print(val["coins"])
-get_tether(client)
+# get_tether(client)
 
 orders = (client.get_all_orders(symbol="BNBBTC"))
 
@@ -50,7 +50,7 @@ orderList = list()
 #             f.write(str(orderList))
 
 
-# print(getOrders(client, "DASHBTC"))
+# print(getAllOrders(client, "DASHBTC"))
 
 # depth = (client.get_order_book(symbol='BNBBTC'))
 # asks = list()
