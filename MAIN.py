@@ -5,8 +5,8 @@
 
 """Main application entry point."""
 
-from PyQt5.QtWidgets import QApplication
-from app.gui import beeserBot, QStyleFactory
+from PyQt5.QtWidgets import QApplication, QStyleFactory
+from app.gui import beeserBot
 import sys
 if __name__ == "__main__":
     app = QApplication(sys.argv)

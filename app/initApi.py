@@ -11,7 +11,7 @@ from binance.client import Client
 # from config import binance_credentials
 from app.init import val
 
-from app.apiFunctions import getHoldings, getTickers, availablePairs, percentage_ammount, getAllOrders
+from app.apiFunctions import getHoldings, getTickers, availablePairs
 # from binance.depthcache import DepthCacheManager
 #
 

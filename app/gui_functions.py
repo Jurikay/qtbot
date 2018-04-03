@@ -8,7 +8,7 @@
 
 from app.init import val
 from PyQt5.QtCore import QSize, Qt, QVariant
-from PyQt5.QtWidgets import QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
+from PyQt5.QtWidgets import QTableWidgetItem, QHeaderView, QPushButton
 from PyQt5.QtGui import QColor, QIcon, QFont, QFontDatabase, QCursor
 from app.colors import colors
 from app.charts import build_chart2
