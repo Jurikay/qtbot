@@ -6,10 +6,10 @@
 """Collection of functions concerning websocket callbacks."""
 
 from app.init import val
-from app.initApi import client, getDepth
+from app.initApi import client
 from functools import partial
-from app.workers import Worker, sys
-from app.apiFunctions import getAllOrders, getTradehistory
+from app.workers import Worker
+from app.apiFunctions import getAllOrders, getTradehistory, getDepth
 
 
 def directCallback(self, msg):
