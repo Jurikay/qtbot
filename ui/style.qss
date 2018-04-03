@@ -22,6 +22,11 @@ QWidget {
   color: red;
 }
 
+#stats_grid QLineEdit, #stats_grid QLineEdit:hover {
+  border: 2px solid transparent;
+}
+
+
 QTableWidget#tradeTable, #bids_table, #asks_table {
   background-color: #20262b;
   color: #f3f3f3;
