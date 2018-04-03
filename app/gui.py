@@ -11,18 +11,19 @@ import configparser
 from functools import partial
 from datetime import datetime, timedelta
 
-from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QSize, Qt, QVariant, QTimer
+from PyQt5.QtCore import QRunnable, pyqtSignal, QSize, Qt, QVariant, QTimer
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QThreadPool, QSize
+from PyQt5.QtCore import QThreadPool
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QWidget, QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
-from PyQt5.QtGui import QColor, QIcon, QStandardItem, QPixmap, QFont, QFontDatabase, QCursor
+from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
+from PyQt5.QtGui import QColor, QIcon, QPixmap, QFont, QFontDatabase, QCursor
 from binance.websockets import BinanceSocketManager
 
 from app.init import val
 from app.initApi import read_config, set_pair_values, client, BinanceAPIException
-from app.callbacks import Worker, sys, api_history, api_depth, api_order_history, percentage_ammount, directCallback, depthCallback, tickerCallback, userCallback
-from app.gui_functions import initial_values, filter_coinindex, build_coinindex, build_holdings, calc_total_btc, calc_wavg, update_holding_prices, QMainWindow
+from app.callbacks import Worker, api_history, api_depth, api_order_history, directCallback, depthCallback, tickerCallback, userCallback
+from app.gui_functions import initial_values, filter_coinindex, build_coinindex, build_holdings, calc_total_btc, calc_wavg, update_holding_prices
+from app.apiFunctions import percentage_ammount
 from app.charts import welcome_page
 from app.colors import colors
 
@@ -299,9 +300,9 @@ class beeserBot(QMainWindow):
 
 
 
-    def print_output(self, s):
-        print("scroll print_o")
-        # self.asks_table.scrollToBottom()
+    # def print_output(self, s):
+    #     print("scroll print_o")
+    #     # self.asks_table.scrollToBottom()
 
     def tick(self, payload):
         if payload == 1:
@@ -732,7 +733,7 @@ class beeserBot(QMainWindow):
         worker = Worker(self.check_for_update)
 
         # Any other args, kwargs are passed to the run function
-        worker.signals.result.connect(self.print_output)
+        # worker.signals.result.connect(self.print_output)
         worker.signals.progress.connect(self.tick)
 
         # start thread

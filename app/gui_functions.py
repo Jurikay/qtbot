@@ -7,9 +7,9 @@
 
 
 from app.init import val
-from PyQt5.QtCore import QObject, QRunnable, pyqtSignal, QSize, Qt, QVariant
-from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
-from PyQt5.QtGui import QColor, QIcon, QStandardItem, QPixmap, QFont, QFontDatabase, QCursor
+from PyQt5.QtCore import QRunnable, pyqtSignal, QSize, Qt, QVariant
+from PyQt5.QtWidgets import QListWidgetItem, QScrollBar, QTableWidgetItem, QStyleFactory, QHeaderView, QPushButton
+from PyQt5.QtGui import QColor, QIcon, QPixmap, QFont, QFontDatabase, QCursor
 from app.colors import colors
 from app.charts import build_chart2
 
