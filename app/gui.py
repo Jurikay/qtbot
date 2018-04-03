@@ -214,7 +214,7 @@ class beeserBot(QMainWindow):
 
         print("scroll")
 
-        # self.asks_table.scrollToBottom()
+        self.asks_table.scrollToBottom()
 
         self.timer.stop()
 
@@ -958,6 +958,9 @@ class beeserBot(QMainWindow):
                 if float(total) * float(price) < 0.001:
                     self.holdings_table.removeRow(i)
 
+
+                self.check_buy_ammount()
+                self.check_sell_ammount()
 
             except AttributeError:
                 print("attr error: " + str(i))
