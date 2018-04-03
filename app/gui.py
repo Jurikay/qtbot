@@ -103,6 +103,8 @@ class beeserBot(QMainWindow):
 
         self.button_wavg.clicked.connect(calc_wavg)
 
+        self.coinindex_filter.textChanged.connect(partial(filter_coinindex, self))
+
         # set config values
         try:
             self.default_pair.setText(val["defaultPair"])
@@ -180,6 +182,8 @@ class beeserBot(QMainWindow):
         self.schedule_work()
 
         build_holdings(self)
+
+        build_coinindex(self)
 
         self.timer = QTimer()
         self.timer.setInterval(200)
