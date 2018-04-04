@@ -1615,7 +1615,7 @@ p, li { white-space: pre-wrap; }
                 <item>
                  <widget class="QLabel" name="usd_value">
                   <property name="text">
-                   <string>-</string>
+                   <string/>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
