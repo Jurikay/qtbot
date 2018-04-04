@@ -5,11 +5,12 @@
 
 """Collection of functions concerning websocket callbacks."""
 
+from functools import partial
+
+from app.apiFunctions import getAllOrders, getDepth, getTradehistory
 from app.init import val
 from app.initApi import client
-from functools import partial
 from app.workers import Worker
-from app.apiFunctions import getAllOrders, getTradehistory, getDepth
 
 
 def directCallback(self, msg):
@@ -63,9 +64,9 @@ def userCallback(self, msg):
     if userMsg["e"] == "outboundAccountInfo":
         for i in range(len(userMsg["B"])):
 
-            # put account info in accHoldings dictionary. Access free and locked holdings like so: accHoldings["BTC"]["free"]
+            # put account info in accHoldings dictionary. Access
+            # free and locked holdings like so: accHoldings["BTC"]["free"]
             val["accHoldings"][userMsg["B"][i]["a"]] = {"free": userMsg["B"][i]["f"], "locked": userMsg["B"][i]["l"]}
-
 
         # update holdings table in a separate thread
         worker = Worker(update_holdings)
@@ -85,6 +86,7 @@ def userCallback(self, msg):
 
         if userMsg["X"] == "NEW":
             worker.signals.progress.connect(self.add_to_open_orders)
+            worker.signals.progress.connect(self.play_sound_effect)
 
         elif userMsg["X"] == "CANCELED":
             worker.signals.progress.connect(self.remove_from_open_orders)

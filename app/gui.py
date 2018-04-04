@@ -6,26 +6,32 @@
 """Main gui class."""
 
 
-import time
 import configparser
-from functools import partial
+import time
 from datetime import datetime, timedelta
+from functools import partial
 
-from PyQt5.QtCore import QSize, Qt, QTimer
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QThreadPool
-from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem
-from PyQt5.QtGui import QColor, QIcon, QPixmap, QCursor
 from binance.websockets import BinanceSocketManager
+from PyQt5.QtCore import QSize, Qt, QThreadPool, QTimer, QUrl
+from PyQt5.QtGui import QColor, QCursor, QIcon, QPixmap
+from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem
+from PyQt5.uic import loadUi
 
-from app.init import val
-from app.initApi import read_config, set_pair_values, client, BinanceAPIException
-from app.callbacks import Worker, api_history, api_depth, api_order_history, directCallback, depthCallback, tickerCallback, userCallback
-from app.gui_functions import initial_values, filter_coinindex, build_coinindex, build_holdings, calc_total_btc, calc_wavg, update_holding_prices
 from app.apiFunctions import percentage_ammount
+from app.callbacks import (Worker, api_depth, api_history, api_order_history,
+                           depthCallback, directCallback, tickerCallback,
+                           userCallback)
 from app.charts import welcome_page
 from app.colors import colors
+from app.gui_functions import (build_coinindex, build_holdings, calc_total_btc,
+                               calc_wavg, filter_coinindex, initial_values,
+                               update_holding_prices)
+from app.init import val
+from app.initApi import (BinanceAPIException, client, read_config,
+                         set_pair_values)
+
 
 class beeserBot(QMainWindow):
 
@@ -53,8 +59,6 @@ class beeserBot(QMainWindow):
         # THREADING
         self.threadpool = QThreadPool()
         print("Multithreading with a maximum of %d threads" % self.threadpool.maxThreadCount())
-
-
 
         # connect elements to functions
 
@@ -98,6 +102,10 @@ class beeserBot(QMainWindow):
         self.limit_buy_input.valueChanged.connect(self.check_buy_amount)
 
 
+        self.player = QMediaPlayer()
+        sound = QMediaContent(QUrl.fromLocalFile("sounds/Tink.wav"))
+        self.player.setMedia(sound)
+        self.player.setVolume(1)
 
         self.limit_buy_button.clicked.connect(self.create_buy_order)
         self.limit_sell_button.clicked.connect(self.create_sell_order)
@@ -186,10 +194,15 @@ class beeserBot(QMainWindow):
 
         build_coinindex(self)
 
+
+        self.sound_1 = QSound('sounds/Tink.wav')
+
         self.timer = QTimer()
         self.timer.setInterval(200)
         self.timer.timeout.connect(self.delayed_stuff)
         self.timer.start()
+
+
 
     def delayed_stuff(self):
 
@@ -212,9 +225,12 @@ class beeserBot(QMainWindow):
         self.holdings_table.setColumnWidth(7, 120)
 
 
-        self.check_buy_amount()
-        self.check_sell_ammount()
+        # self.check_buy_amount()
+        # self.check_sell_ammount()
 
+        # val["sound_1"] = QSoundEffect()
+        # val["sound_1"].setSource(QUrl.fromLocalFile("sounds/Tink.wav"))
+        # val["sound_1"].setVolume(1)
 
 
         print("scroll")
@@ -331,7 +347,17 @@ class beeserBot(QMainWindow):
         elif payload == 15:
             self.asks_table.scrollToBottom()
 
+    def play_sound_effect(self):
+        # self.sound_1.play()
+        print("playung sound")
+
     def add_to_open_orders(self, order):
+
+        # play a sound file to indicate a new order
+        # print("play sound")
+
+        # val["sound_1"].play()
+        # QSoundEffect.play("sounds/Tink.mp3")
 
         # only add to open orders table if the coin is currently selected.
         if order["symbol"] == val["pair"]:
@@ -438,7 +464,7 @@ class beeserBot(QMainWindow):
     def orders_received(self, orders):
         for _, order in enumerate(orders):
             if order["symbol"] == val["pair"]:
-                if order["status"] == "FILLED":
+                if order["status"] == "FILLED" or order["status"] == "PARTIALLY_FILLED":
                     self.add_to_history(order)
 
                 # handle open orders
@@ -540,7 +566,8 @@ class beeserBot(QMainWindow):
         spread = ((float(val["asks"][0][0]) / float(val["bids"][0][0])) - 1) * 100
         spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
 
-        self.spread_label.setText("<span style='font-size: 14px; font-family: Arial Black; color:" + colors.color_lightgrey + "'>" + spread_formatted + "</span>")
+        self.spread_label.setText("<span style='font-size: 14px; font-family: Arial Black; color:"
+        + colors.color_lightgrey + "'>" + spread_formatted + "</span>")
 
     def progress_bids(self, bids):
         for i, _ in enumerate(bids):
@@ -701,22 +728,19 @@ class beeserBot(QMainWindow):
         self.calc_total_sell()
 
     def check_buy_amount(self):
-        print("check buy amount")
         total = int(((float(self.limit_buy_amount.value()) * float(self.limit_buy_input.value())) / float(val["accHoldings"]["BTC"]["free"])) * 100)
-
+        print("check buy")
         self.calc_total_buy()
 
         try:
             total = float(self.limit_buy_input.value()) * float(self.limit_buy_amount.text())
 
             if total > float(val["accHoldings"]["BTC"]["free"]) or total < 0.001:
-                print("disable")
                 self.limit_buy_button.setStyleSheet("border: 2px solid transparent; background: #70a800; color: #f3f3f3;")
                 self.limit_buy_button.setCursor(QCursor(Qt.ForbiddenCursor))
                 val["buyAllowed"] = False
 
             else:
-                print("enable")
                 self.limit_buy_button.setCursor(QCursor(Qt.PointingHandCursor))
                 self.limit_buy_button.setStyleSheet("border: 2px solid transparent;")
                 val["buyAllowed"] = True
@@ -936,8 +960,8 @@ class beeserBot(QMainWindow):
             except AttributeError:
                 print("attr error: " + str(i))
 
-        # self.check_buy_amount()
-        # self.check_sell_ammount()
+        self.check_buy_amount()
+        self.check_sell_ammount()
 
 
     def set_button_text(self):

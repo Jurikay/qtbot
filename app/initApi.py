@@ -19,6 +19,7 @@ from binance.exceptions import BinanceAPIException
 
 from requests.exceptions import InvalidHeader
 
+
 # get api credentials from config
 # def init_api():
 # binanceAcc = binance_credentials["MainAcc"]
@@ -90,7 +91,7 @@ try:
 
     val["tickers"] = getTickers(client)
 
-
+    
 
     userMsg = dict()
     accHoldings = dict()
