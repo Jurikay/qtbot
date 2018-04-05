@@ -123,7 +123,7 @@ def tickerCallback(self, msg):
             # print(str(ticker_data))
 
             val["tickers"][value["s"]] = ticker_data
-
+            # print(ticker_data["symbol"])
         #
         # if "BTC" in coin["s"]:
         #     if coin["s"] == "BNBBTC":

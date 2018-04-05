@@ -223,7 +223,6 @@ def build_chart2(pair, timeframe):
     	// 	chartTypes: ["Area", "Line"]
     	// },
     });
-
 </script>
 <!-- TradingView Widget END -->
 """

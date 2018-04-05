@@ -42,7 +42,6 @@ class beeserBot(QMainWindow):
         super(beeserBot, self).__init__()
         loadUi("ui/MainWindow.ui", self)
 
-
         # set external stylesheet
         with open("ui/style.qss", "r") as fh:
             self.setStyleSheet(fh.read())
@@ -101,11 +100,10 @@ class beeserBot(QMainWindow):
         self.limit_sell_input.valueChanged.connect(self.check_sell_ammount)
         self.limit_buy_input.valueChanged.connect(self.check_buy_amount)
 
-
-        self.player = QMediaPlayer()
-        sound = QMediaContent(QUrl.fromLocalFile("sounds/Tink.wav"))
-        self.player.setMedia(sound)
-        self.player.setVolume(1)
+        # self.player = QMediaPlayer()
+        # sound = QMediaContent(QUrl.fromLocalFile("sounds/Tink.wav"))
+        # self.player.setMedia(sound)
+        # self.player.setVolume(1)
 
         self.limit_buy_button.clicked.connect(self.create_buy_order)
         self.limit_sell_button.clicked.connect(self.create_sell_order)
@@ -137,7 +135,6 @@ class beeserBot(QMainWindow):
                 if val["defaultTimeframe"] == str(tf):
                     self.dtf_selector.setCurrentIndex(i)
 
-
         except (TypeError, KeyError):
             pass
 
@@ -157,12 +154,10 @@ class beeserBot(QMainWindow):
             self.api_key.setStyleSheet("border: 2px solid #f3ba2e;")
             self.api_secret.setStyleSheet("border: 2px solid #f3ba2e;")
 
-
         for _ in range(20):
             self.bids_table.insertRow(0)
             self.asks_table.insertRow(0)
             self.new_table.insertRow(0)
-
 
         for _ in range(50):
             self.tradeTable.insertRow(0)
@@ -186,7 +181,6 @@ class beeserBot(QMainWindow):
 
         initial_values(self)
 
-
         self.schedule_websockets()
         self.schedule_work()
 
@@ -194,14 +188,12 @@ class beeserBot(QMainWindow):
 
         build_coinindex(self)
 
-
         self.sound_1 = QSound('sounds/Tink.wav')
 
         self.timer = QTimer()
         self.timer.setInterval(200)
         self.timer.timeout.connect(self.delayed_stuff)
         self.timer.start()
-
 
 
     def delayed_stuff(self):
@@ -224,20 +216,18 @@ class beeserBot(QMainWindow):
         self.holdings_table.setColumnWidth(1, 75)
         self.holdings_table.setColumnWidth(7, 120)
 
-
         # self.check_buy_amount()
         # self.check_sell_ammount()
 
         # val["sound_1"] = QSoundEffect()
         # val["sound_1"].setSource(QUrl.fromLocalFile("sounds/Tink.wav"))
         # val["sound_1"].setVolume(1)
-
-
         print("scroll")
 
         self.asks_table.scrollToBottom()
 
         self.timer.stop()
+
 
     def change_pair(self):
 
@@ -296,8 +286,8 @@ class beeserBot(QMainWindow):
 
 
     def asks_cell_clicked(self, row, column):
-        self.limit_buy_input.setValue(float(val["asks"][19-row][0]))
-        self.limit_sell_input.setValue(float(val["asks"][19-row][0]))
+        self.limit_buy_input.setValue(float(val["asks"][19 - row][0]))
+        self.limit_sell_input.setValue(float(val["asks"][19 - row][0]))
         # value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
         # self.limit_buy_amount.setValue(value)
 
@@ -456,12 +446,8 @@ class beeserBot(QMainWindow):
                 self.open_orders.setItem(0, 6, QTableWidgetItem(filled_percent))
 
 
-
-
-
-
-    # callback function to draw order history
     def orders_received(self, orders):
+        """Callback function to draw order history."""
         for _, order in enumerate(orders):
             if order["symbol"] == val["pair"]:
                 if order["status"] == "FILLED" or order["status"] == "PARTIALLY_FILLED":
@@ -472,7 +458,6 @@ class beeserBot(QMainWindow):
                 elif order["status"] == "NEW":
 
                     self.add_to_open_orders(order)
-
 
             # self.history_table.scrollToTop()
             # self.open_orders.scrollToTop()
@@ -541,11 +526,12 @@ class beeserBot(QMainWindow):
 
             self.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
 
-            # usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tether"]["lastPrice"]), digits=2)
+            usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
 
-            # self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + colors.color_yellow + "'>$" + usd_price + "</span>")
+            self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + colors.color_yellow + "'>$" + usd_price + "</span>")
         except AttributeError:
             pass
+
 
     def progress_asks(self, asks):
         for i, _ in enumerate(asks):
@@ -553,21 +539,21 @@ class beeserBot(QMainWindow):
             ask_quantity = '{number:.{digits}f}'.format(number=float(asks[i][1]), digits=val["assetDecimals"])
             total_btc_asks = '{number:.{digits}f}'.format(number=float(ask_price) * float(ask_quantity), digits=3)
 
-            self.asks_table.setItem(19-i, 0, QTableWidgetItem(str(i+1).zfill(2)))
+            self.asks_table.setItem(19 - i, 0, QTableWidgetItem(str(i + 1).zfill(2)))
 
-            self.asks_table.setItem(19-i, 1, QTableWidgetItem(ask_price))
-            self.asks_table.setItem(19-i, 2, QTableWidgetItem(ask_quantity))
+            self.asks_table.setItem(19 - i, 1, QTableWidgetItem(ask_price))
+            self.asks_table.setItem(19 - i, 2, QTableWidgetItem(ask_quantity))
 
-            self.asks_table.setItem(19-i, 3, QTableWidgetItem(total_btc_asks + " BTC"))
-            self.asks_table.item(19-i, 1).setForeground(QColor(colors.color_pink))
+            self.asks_table.setItem(19 - i, 3, QTableWidgetItem(total_btc_asks + " BTC"))
+            self.asks_table.item(19 - i, 1).setForeground(QColor(colors.color_pink))
 
             # self.asks_table.scrollToBottom()
 
         spread = ((float(val["asks"][0][0]) / float(val["bids"][0][0])) - 1) * 100
         spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
 
-        self.spread_label.setText("<span style='font-size: 14px; font-family: Arial Black; color:"
-        + colors.color_lightgrey + "'>" + spread_formatted + "</span>")
+        self.spread_label.setText("<span style='font-size: 14px; font-family: Arial Black; color:" +
+                                  colors.color_lightgrey + "'>" + spread_formatted + "</span>")
 
     def progress_bids(self, bids):
         for i, _ in enumerate(bids):
@@ -575,7 +561,7 @@ class beeserBot(QMainWindow):
             bid_quantity = '{number:.{digits}f}'.format(number=float(bids[i][1]), digits=val["assetDecimals"])
             total_btc_bids = '{number:.{digits}f}'.format(number=float(bid_price) * float(bid_quantity), digits=3)
 
-            self.bids_table.setItem(i, 0, QTableWidgetItem(str(i+1).zfill(2)))
+            self.bids_table.setItem(i, 0, QTableWidgetItem(str(i + 1).zfill(2)))
 
             self.bids_table.setItem(i, 1, QTableWidgetItem(bid_price))
             self.bids_table.setItem(i, 2, QTableWidgetItem(bid_quantity))
@@ -591,17 +577,14 @@ class beeserBot(QMainWindow):
                 for _ in enumerate(asks):
                     self.progress_asks(asks)
 
-
         except (TypeError, KeyError):
             pass
-
 
         try:
             bids = payload["bids"]
             if len(bids) == 20:
                 for _ in enumerate(bids):
                     self.progress_bids(bids)
-
 
         except (TypeError, KeyError):
             pass
@@ -611,29 +594,9 @@ class beeserBot(QMainWindow):
             for _, trade in enumerate(history):
                 self.progress_history(trade)
 
-            # set last price, color and arrow
-
-            # if history[0]["price"] > history[1]["price"]:
-            #     arrow = QPixmap("images/assets/2arrow_up.png")
-            #     color = colors.color_green
-            # elif history[0]["price"] == history[1]["price"]:
-            #     arrow = QPixmap("images/assets/2arrow.png")
-            #     color = colors.color_yellow
-            # else:
-            #     arrow = QPixmap("images/assets/2arrow_down.png")
-            #     color = colors.color_pink
-            #
-            # formatted_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]), digits=val["decimals"])
-            # self.price_arrow.setPixmap(arrow)
-            #
-            # self.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
-            #
-            # usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tether"]["lastPrice"]), digits=2)
-            #
-            # self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + colors.color_yellow + "'>$" + usd_price + "</span>")
-
         except (TypeError, KeyError, ValueError):
             pass
+
 
     def limit_percentage(self):
         button_number = int(self.sender().objectName()[-1:])
@@ -702,7 +665,7 @@ class beeserBot(QMainWindow):
 
 
     ####################################
-    ########## VALIDATATION
+    #           VALIDATATION
     ####################################
 
     def check_sell_ammount(self):
@@ -882,16 +845,14 @@ class beeserBot(QMainWindow):
                 # self.dtf_selector.setCurrentIndex(i)
                 tf_index = i
 
-
         copy_price = self.copy_price_box.isChecked()
         copy_qty = self.copy_qty_box.isChecked()
         print("checkbox state:" + str(copy_price) + " " + str(copy_qty))
 
-
         percent_texts = [self.percent_1, self.percent_2, self.percent_3, self.percent_4, self.percent_5]
         percent = val["buttonPercentage"]
 
-        for i,_ in enumerate(percent):
+        for i, _ in enumerate(percent):
 
             try:
                 if float(percent_texts[i].text()) >= 0 and float(percent_texts[i].text()) <= 100:
@@ -902,14 +863,12 @@ class beeserBot(QMainWindow):
             except ValueError:
                 percent_texts[i].setStyleSheet("color: #ff077a;")
 
-
         config = configparser.ConfigParser()
 
         if key != val["api_key"] or secret != val["api_secret"]:
             self.restart_warning.setStyleSheet("color: red;")
 
         print("saving config...")
-
 
         config['CONFIG'] = {'DefaultPair': defaultPair,
                             'ButtonPercentages': percent[0] + ", " + percent[1] + ", " + percent[2] + ", " + percent[3] + ", " + percent[4],

@@ -5,6 +5,7 @@
 
 """Named color variables."""
 
+
 class colors:
     color_pink = "#ff007a"
     color_yellow = "#f3ba2e"
