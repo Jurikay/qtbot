@@ -262,6 +262,9 @@ def update_holding_prices(self):
 
     """Update the total value of every coin in the holdings table."""
 
+    bold_font = QFont()
+    bold_font.setBold(True)
+
     for i in range(self.holdings_table.rowCount()):
 
         current_total = self.holdings_table.item(i, 6).text()
@@ -279,3 +282,5 @@ def update_holding_prices(self):
 
         if current_total != total_formatted:
             self.holdings_table.item(i, 6).setText(total_formatted)
+            self.holdings_table.item(i, 6).setFont(bold_font)
+            self.holdings_table.item(i, 6).setForeground(QColor(colors.color_lightgrey))

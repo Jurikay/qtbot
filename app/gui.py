@@ -13,7 +13,7 @@ from functools import partial
 
 from binance.websockets import BinanceSocketManager
 from PyQt5.QtCore import QSize, Qt, QThreadPool, QTimer, QUrl
-from PyQt5.QtGui import QColor, QCursor, QIcon, QPixmap
+from PyQt5.QtGui import QColor, QCursor, QIcon, QPixmap, QFont
 from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem
@@ -396,7 +396,6 @@ class beeserBot(QMainWindow):
     def add_to_history(self, order):
         if order["symbol"] == val["pair"]:
 
-
             self.history_table.insertRow(0)
             self.history_table.setItem(0, 0, QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
             self.history_table.setItem(0, 1, QTableWidgetItem(order["symbol"]))
@@ -419,6 +418,7 @@ class beeserBot(QMainWindow):
                 self.history_table.item(0, 2).setForeground(QColor(colors.color_green))
             else:
                 self.history_table.item(0, 2).setForeground(QColor(colors.color_pink))
+
 
     def check_add_to_holdings(self, order):
         """Check if the coin has to be added to the holdings table"""
@@ -591,7 +591,7 @@ class beeserBot(QMainWindow):
 
         try:
             history = payload["history"]
-            for _, trade in enumerate(history):
+            for i, trade in enumerate(history):
                 self.progress_history(trade)
 
         except (TypeError, KeyError, ValueError):
@@ -889,6 +889,9 @@ class beeserBot(QMainWindow):
         self.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
         self.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
 
+        bold_font = QFont()
+        bold_font.setBold(True)
+
         for i in range(self.holdings_table.rowCount()):
             try:
                 coin = self.holdings_table.item(i, 1).text()
@@ -905,12 +908,15 @@ class beeserBot(QMainWindow):
                 total_btc = float(total) * float(price)
                 total_btc_formatted = '{number:.{digits}f}'.format(number=total_btc, digits=8)
 
-                self.holdings_table.item(i, 3).setText(str(total))
-                self.holdings_table.item(i, 4).setText(str(free))
-                self.holdings_table.item(i, 5).setText(str(locked))
+                self.holdings_table.setItem(i, 3, QTableWidgetItem("{0:g}".format(float(total))))
+                self.holdings_table.setItem(i, 4, QTableWidgetItem("{0:g}".format(float(free))))
+                self.holdings_table.setItem(i, 5, QTableWidgetItem("{0:g}".format(float(locked))))
                 self.holdings_table.setItem(i, 6, QTableWidgetItem(total_btc_formatted))
+                self.holdings_table.item(i, 6).setFont(bold_font)
+                self.holdings_table.item(i, 6).setForeground(QColor(colors.color_lightgrey))
 
-                if float(total) * float(price) < 0.001:
+
+                if float(total) * float(price) < 0.001 and coin != "BTC":
                     self.holdings_table.removeRow(i)
 
 
