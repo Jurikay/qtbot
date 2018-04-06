@@ -591,8 +591,8 @@ class beeserBot(QMainWindow):
 
         try:
             history = payload["history"]
-            for i, trade in enumerate(history):
-                self.progress_history(trade)
+            for trade in enumerate(history):
+                self.progress_history(trade[1])
 
         except (TypeError, KeyError, ValueError):
             pass

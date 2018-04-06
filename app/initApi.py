@@ -62,13 +62,13 @@ def set_pair_values():
     val["coin"] = val["pair"][:-3]
 
 
-    val["decimals"] = len(str(val["coins"][val["pair"]]["tickSize"]))-2
+    val["decimals"] = len(str(val["coins"][val["pair"]]["tickSize"])) - 2
 
 
     if int(val["coins"][val["pair"]]["minTrade"]) == 1:
         val["assetDecimals"] = 0
     else:
-        val["assetDecimals"] = len(str(val["coins"][val["pair"]]["minTrade"]))-2
+        val["assetDecimals"] = len(str(val["coins"][val["pair"]]["minTrade"])) - 2
     print("mintrade: " + str(val["assetDecimals"]))
 
 
@@ -92,8 +92,6 @@ try:
     # val["tether"] = get_tether(client)
 
     val["tickers"] = getTickers(client)
-
-    
 
     userMsg = dict()
     accHoldings = dict()
