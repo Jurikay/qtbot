@@ -908,7 +908,7 @@ class beeserBot(QMainWindow):
                 total_btc = float(total) * float(price)
                 total_btc_formatted = '{number:.{digits}f}'.format(number=total_btc, digits=8)
 
-                self.holdings_table.setItem(i, 3, QTableWidgetItem("{0:g}".format(float(total))))
+                self.holdings_table.setItem(i, 3, QTableWidgetItem("{0:.8f}".format(float(total))))
                 self.holdings_table.setItem(i, 4, QTableWidgetItem("{0:g}".format(float(free))))
                 self.holdings_table.setItem(i, 5, QTableWidgetItem("{0:g}".format(float(locked))))
                 self.holdings_table.setItem(i, 6, QTableWidgetItem(total_btc_formatted))
