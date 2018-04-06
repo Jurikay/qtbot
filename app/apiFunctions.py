@@ -36,8 +36,8 @@ def getTradehistory(client, pair):
     # API call
     globalList = list()
     trades = client.get_aggregate_trades(symbol=pair, limit=50)
-    for _, val in enumerate(trades):
-        globalList.insert(0, {"price": str(val["p"]), "quantity": str(val["q"]), "maker": bool(val["m"]), "time": str(val["T"])})
+    for _, trade in enumerate(reversed(trades)):
+        globalList.insert(0, {"price": str(trade["p"]), "quantity": str(trade["q"]), "maker": bool(trade["m"]), "time": str(trade["T"])})
 
     return globalList
 
