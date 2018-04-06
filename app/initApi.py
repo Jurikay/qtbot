@@ -71,10 +71,12 @@ def set_pair_values():
         val["assetDecimals"] = len(str(val["coins"][val["pair"]]["minTrade"]))-2
     print("mintrade: " + str(val["assetDecimals"]))
 
+
 read_config()
 
 try:
-    client = Client(val["api_key"], val["api_secret"])
+    client = Client(val["api_key"], val["api_secret"],
+                    {"verify": True, "timeout": 50})
     val["client"] = client
 except (TypeError, InvalidHeader):
     print("NO API KEY!")
