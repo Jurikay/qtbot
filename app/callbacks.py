@@ -99,10 +99,6 @@ def userCallback(self, msg):
             worker.signals.progress.connect(self.add_to_history)
             worker.signals.progress.connect(self.check_add_to_holdings)
 
-
-
-
-
         else:
             print(msg)
         self.threadpool.start(worker)
@@ -132,6 +128,12 @@ def tickerCallback(self, msg):
     # print(msg)
     # with open("tickerMsg.txt", "w") as f:
     #     f.write(str(msg))
+
+
+def klineCallback(self, msg):
+    # print("kline msg:")
+    # print(msg)
+    pass
 
 
 def api_history(progress_callback):
