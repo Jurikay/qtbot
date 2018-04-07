@@ -87,6 +87,9 @@ def filter_confirmed(self):
 
 def build_coinindex(self):
     self.coin_index.setRowCount(0)
+    print("setze delegate")
+    self.coin_index.setItemDelegate(CoinDelegate(self))
+
     for pair in val["tickers"]:
         if "USDT" not in pair:
             coin = str(val["tickers"][pair]["symbol"]).replace("BTC", "")
@@ -107,7 +110,8 @@ def build_coinindex(self):
             last_price.setData(Qt.EditRole, QVariant(val["tickers"][pair]["lastPrice"]))
 
             price_change = QTableWidgetItem()
-            price_change.setData(Qt.EditRole, QVariant(float(val["tickers"][pair]["priceChangePercent"])))
+            price_change_value = float(val["tickers"][pair]["priceChangePercent"])
+            price_change.setData(Qt.EditRole, QVariant(price_change_value))
 
             btc_volume = QTableWidgetItem()
             btc_volume.setData(Qt.EditRole, QVariant(round(float(val["tickers"][pair]["quoteVolume"]), 2)))
@@ -121,14 +125,17 @@ def build_coinindex(self):
             self.coin_index.setItem(0, 3, QTableWidgetItem(price_change))
             self.coin_index.setItem(0, 4, QTableWidgetItem(btc_volume))
 
+            if price_change_value < 0:
+                self.coin_index.item(0, 3).setForeground(QColor(colors.color_pink))
+            else:
+                self.coin_index.item(0, 3).setForeground(QColor(colors.color_green))
+
             self.btn_trade = QPushButton("Trade " + coin)
             self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
             self.coin_index.setCellWidget(0, 5, self.btn_trade)
 
     self.coin_index.model().sort(5, Qt.AscendingOrder)
     self.coin_index.setIconSize(QSize(25, 25))
-    print("setze delegate")
-    self.coin_index.setItemDelegate(CoinDelegate(self))
 
     self.coin_index.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
     self.coin_index.setColumnWidth(2, 120)

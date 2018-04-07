@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import (QWidget, QApplication, QTableWidget,
                              QTableWidgetItem, QVBoxLayout, QStyledItemDelegate)
 from PyQt5.QtWidgets import QStyle
 from PyQt5.QtGui import QFont, QColor
-
+from app.colors import colors
 
 class CoinDelegate(QStyledItemDelegate):
     """
@@ -33,6 +33,7 @@ class CoinDelegate(QStyledItemDelegate):
 
         elif index.column() == 3:
             percent_value = float(index.data())
+            option.color = colors.color_green
             if percent_value > 0:
                 operator = "+"
                 
