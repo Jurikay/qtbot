@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import QHeaderView, QPushButton, QTableWidgetItem
 from app.charts import build_chart2
 from app.colors import colors
 from app.init import val
+from app.table_items import CoinDelegate
 
 
 def initial_values(self):
@@ -54,7 +55,7 @@ def initial_values(self):
 
 
 def filter_coinindex(self, text):
-    print(text)
+    """Hide every row in coin index that does not contain the user input."""
     if text != "":
         for i in range(self.coin_index.rowCount()):
 
@@ -66,6 +67,23 @@ def filter_coinindex(self, text):
         for i in range(self.coin_index.rowCount()):
             self.coin_index.showRow(i)
 
+
+def filter_confirmed(self):
+    """Switch to the topmost coin of the coin index that is not hidden."""
+    # check if input is empty
+    if self.coinindex_filter.text() != "":
+        # iterate through all rows 
+        for i in range(self.coin_index.rowCount()):
+            # skip the row if hidden
+            if self.coin_index.isRowHidden(i):
+                continue
+            else:
+                # return the first nonhidden row (might be inefficient)
+                coin = self.coin_index.item(i, 1).text()
+                # switch to that coin
+                coinIndex = self.coin_selector.findText(coin)
+                self.coin_selector.setCurrentIndex(coinIndex)
+                self.change_pair()
 
 def build_coinindex(self):
     self.coin_index.setRowCount(0)
@@ -90,21 +108,31 @@ def build_coinindex(self):
 
             price_change = QTableWidgetItem()
             price_change.setData(Qt.EditRole, QVariant(float(val["tickers"][pair]["priceChangePercent"])))
+
+            btc_volume = QTableWidgetItem()
+            btc_volume.setData(Qt.EditRole, QVariant(round(float(val["tickers"][pair]["quoteVolume"]), 2)))
+
             # price_change.setData(Qt.DisplayRole, QVariant(str(val["tickers"][pair]["priceChangePercent"]) + "%"))
 
             self.coin_index.insertRow(0)
             self.coin_index.setItem(0, 0, icon_item)
-            self.coin_index.setItem(0, 1, QTableWidgetItem(coin + "/BTC"))
+            self.coin_index.setItem(0, 1, QTableWidgetItem(coin))
             self.coin_index.setItem(0, 2, last_price)
             self.coin_index.setItem(0, 3, QTableWidgetItem(price_change))
-            self.coin_index.setItem(0, 4, QTableWidgetItem(str(round(float(val["tickers"][pair]["quoteVolume"]), 2))))
+            self.coin_index.setItem(0, 4, QTableWidgetItem(btc_volume))
 
             self.btn_trade = QPushButton("Trade " + coin)
             self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
             self.coin_index.setCellWidget(0, 5, self.btn_trade)
 
-        self.coin_index.model().sort(5, Qt.AscendingOrder)
-        self.coin_index.setIconSize(QSize(25, 25))
+    self.coin_index.model().sort(5, Qt.AscendingOrder)
+    self.coin_index.setIconSize(QSize(25, 25))
+    print("setze delegate")
+    self.coin_index.setItemDelegate(CoinDelegate(self))
+
+    self.coin_index.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+    self.coin_index.setColumnWidth(2, 120)
+    self.coin_index.model().sort(4, Qt.DescendingOrder)
 
 
 def build_holdings(self, *args):

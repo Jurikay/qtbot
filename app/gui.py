@@ -12,9 +12,9 @@ from datetime import datetime, timedelta
 from functools import partial
 
 from binance.websockets import BinanceSocketManager
-from PyQt5.QtCore import QSize, Qt, QThreadPool, QTimer, QUrl
+from PyQt5.QtCore import QSize, Qt, QThreadPool, QTimer  # , QUrl
 from PyQt5.QtGui import QColor, QCursor, QIcon, QPixmap, QFont
-from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
+# from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem
 from PyQt5.uic import loadUi
@@ -22,11 +22,11 @@ from PyQt5.uic import loadUi
 from app.apiFunctions import percentage_ammount
 from app.callbacks import (Worker, api_depth, api_history, api_order_history,
                            depthCallback, directCallback, tickerCallback,
-                           userCallback)
+                           userCallback, klineCallback)
 from app.charts import welcome_page
 from app.colors import colors
 from app.gui_functions import (build_coinindex, build_holdings, calc_total_btc,
-                               calc_wavg, filter_coinindex, initial_values,
+                               calc_wavg, filter_coinindex, filter_confirmed, initial_values,
                                update_holding_prices)
 from app.init import val
 from app.initApi import (BinanceAPIException, client, read_config,
@@ -111,6 +111,10 @@ class beeserBot(QMainWindow):
         self.button_wavg.clicked.connect(calc_wavg)
 
         self.coinindex_filter.textChanged.connect(partial(filter_coinindex, self))
+        self.coinindex_filter.returnPressed.connect(partial(filter_confirmed, self))
+
+        # Fix a linter error...
+        # self.chart2 = QWebEngineView()
 
         # set config values
         try:
@@ -188,7 +192,7 @@ class beeserBot(QMainWindow):
 
         build_coinindex(self)
 
-        self.sound_1 = QSound('sounds/Tink.wav')
+        # self.sound_1 = QSound('sounds/Tink.wav')
 
         self.timer = QTimer()
         self.timer.setInterval(200)
@@ -237,11 +241,12 @@ class beeserBot(QMainWindow):
             val["pair"] = newcoin + "BTC"
             val["bm"].stop_socket(val["aggtradeWebsocket"])
             val["bm"].stop_socket(val["depthWebsocket"])
+            val["bm"].stop_socket(val["klineWebsocket"])
 
             set_pair_values()
             initial_values(self)
 
-            self.websockets()
+            self.websockets_symbol()
 
             self.history_table.setRowCount(0)
             self.open_orders.setRowCount(0)
@@ -334,7 +339,9 @@ class beeserBot(QMainWindow):
             self.btc_percent_label.setText(btc_percent)
 
             update_holding_prices(self)
+
         elif payload == 15:
+            print("scroll to bottom")
             self.asks_table.scrollToBottom()
 
     def play_sound_effect(self):
@@ -441,7 +448,7 @@ class beeserBot(QMainWindow):
         for i in range(self.open_orders.rowCount()):
             order_id = self.open_orders.item(i, 8).text()
             if str(order_id) == str(order["orderId"]):
-                filled_percent = '{number:.{digits}f}'.format(number=float(order["executedQty"]) / float(order["origQty"]), digits=2) + "%"
+                filled_percent = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float(order["origQty"]) * 100) - 1, digits=2) + "%"
 
                 self.open_orders.setItem(0, 6, QTableWidgetItem(filled_percent))
 
@@ -814,7 +821,7 @@ class beeserBot(QMainWindow):
 
         val["bm"] = BinanceSocketManager(client)
 
-        self.websockets()
+        self.websockets_symbol()
 
         # start user websocket separately since it does not need to be restarted
         val["userWebsocket"] = val["bm"].start_user_socket(partial(userCallback, self))
@@ -824,10 +831,12 @@ class beeserBot(QMainWindow):
 
         val["bm"].start()
 
-    def websockets(self):
+    def websockets_symbol(self):
         val["aggtradeWebsocket"] = val["bm"].start_aggtrade_socket(val["pair"], partial(directCallback, self))
 
         val["depthWebsocket"] = val["bm"].start_depth_socket(val["pair"], partial(depthCallback, self), depth=20)
+
+        val["klineWebsocket"] = val["bm"].start_kline_socket(val["pair"], partial(klineCallback, self))
 
 
 
