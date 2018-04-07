@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1846</width>
+    <width>1480</width>
     <height>800</height>
    </rect>
   </property>
@@ -107,7 +107,7 @@
       <widget class="QFrame" name="leftSide">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>2</horstretch>
+         <horstretch>4</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
@@ -134,9 +134,9 @@
           </property>
           <widget class="QTabWidget" name="ChartTabs">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-             <horstretch>3</horstretch>
-             <verstretch>0</verstretch>
+            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>4</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
@@ -150,7 +150,7 @@
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -174,7 +174,7 @@
              <item>
               <widget class="QWebEngineView" name="chart" native="true">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -512,9 +512,9 @@ p, li { white-space: pre-wrap; }
           </widget>
           <widget class="QTabWidget" name="tabsBotLeft">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-             <horstretch>1</horstretch>
-             <verstretch>0</verstretch>
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>3</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
@@ -530,6 +530,12 @@ p, li { white-space: pre-wrap; }
             <bool>false</bool>
            </property>
            <widget class="QWidget" name="tab_6">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="autoFillBackground">
              <bool>false</bool>
             </property>
@@ -656,6 +662,12 @@ p, li { white-space: pre-wrap; }
             </layout>
            </widget>
            <widget class="QWidget" name="tab">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <attribute name="title">
              <string>Open Orders</string>
             </attribute>
@@ -675,7 +687,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <widget class="QTableWidget" name="open_orders">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -785,6 +797,12 @@ p, li { white-space: pre-wrap; }
             </layout>
            </widget>
            <widget class="QWidget" name="tab_5">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <attribute name="title">
              <string>Trade History</string>
             </attribute>
@@ -804,7 +822,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <widget class="QTableWidget" name="history_table">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -894,6 +912,12 @@ p, li { white-space: pre-wrap; }
             </layout>
            </widget>
            <widget class="QWidget" name="tab_10">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <attribute name="title">
              <string>Holdings</string>
             </attribute>
@@ -913,7 +937,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <widget class="QTableWidget" name="holdings_table">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -1027,6 +1051,12 @@ p, li { white-space: pre-wrap; }
             </layout>
            </widget>
            <widget class="QWidget" name="tab_14">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <attribute name="title">
              <string>Coins</string>
             </attribute>
@@ -1075,6 +1105,12 @@ p, li { white-space: pre-wrap; }
                  </property>
                  <item row="0" column="0">
                   <widget class="QLineEdit" name="coinindex_filter">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="text">
                     <string/>
                    </property>
@@ -1096,7 +1132,7 @@ p, li { white-space: pre-wrap; }
              <item>
               <widget class="QTableWidget" name="coin_index">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -1613,6 +1649,19 @@ p, li { white-space: pre-wrap; }
                  </widget>
                 </item>
                 <item>
+                 <widget class="QLabel" name="label_46">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Spread</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QLabel" name="usd_value">
                   <property name="text">
                    <string/>
@@ -1929,7 +1978,7 @@ p, li { white-space: pre-wrap; }
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>358</height>
+            <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
@@ -1948,7 +1997,7 @@ p, li { white-space: pre-wrap; }
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -2917,7 +2966,7 @@ p, li { white-space: pre-wrap; }
                 </property>
                </widget>
               </item>
-              <item row="9" column="1">
+              <item row="5" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_3">
                 <item>
                  <widget class="QCheckBox" name="spread_halt_buys">
@@ -2950,7 +2999,7 @@ p, li { white-space: pre-wrap; }
                 </item>
                </layout>
               </item>
-              <item row="8" column="1">
+              <item row="4" column="1">
                <widget class="QSlider" name="spread_amount_slider">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -2979,7 +3028,7 @@ p, li { white-space: pre-wrap; }
                 </property>
                </widget>
               </item>
-              <item row="9" column="0">
+              <item row="5" column="0">
                <widget class="QLabel" name="label_18">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -2995,7 +3044,7 @@ p, li { white-space: pre-wrap; }
                 </property>
                </widget>
               </item>
-              <item row="5" column="0">
+              <item row="2" column="0">
                <widget class="QLabel" name="label_16">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -3011,7 +3060,7 @@ p, li { white-space: pre-wrap; }
                 </property>
                </widget>
               </item>
-              <item row="5" column="1" alignment="Qt::AlignBottom">
+              <item row="2" column="1" alignment="Qt::AlignBottom">
                <widget class="QLineEdit" name="spread_amount_input">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -3030,7 +3079,7 @@ p, li { white-space: pre-wrap; }
                 </property>
                </widget>
               </item>
-              <item row="7" column="1">
+              <item row="3" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_4">
                 <item>
                  <widget class="QPushButton" name="spread_25amount">
@@ -3088,7 +3137,7 @@ p, li { white-space: pre-wrap; }
                 </property>
                </widget>
               </item>
-              <item row="5" column="2">
+              <item row="2" column="2">
                <widget class="QLabel" name="label_26">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -3250,7 +3299,7 @@ p, li { white-space: pre-wrap; }
              </layout>
             </item>
             <item>
-             <widget class="QWidget" name="" native="true">
+             <widget class="QWidget" name="widget" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -3720,8 +3769,8 @@ p, li { white-space: pre-wrap; }
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>751</width>
-                 <height>397</height>
+                 <width>620</width>
+                 <height>468</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -3746,26 +3795,16 @@ p, li { white-space: pre-wrap; }
                 <property name="verticalSpacing">
                  <number>12</number>
                 </property>
-                <item row="10" column="0" colspan="2">
-                 <widget class="QLabel" name="label_48">
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_28">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;API updates:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="12" column="0">
-                 <widget class="QLabel" name="label_57">
-                  <property name="text">
-                   <string>TextLabel</string>
+                   <string>Session:</string>
                   </property>
                  </widget>
                 </item>
@@ -3788,16 +3827,19 @@ p, li { white-space: pre-wrap; }
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_28">
+                <item row="10" column="0" colspan="2">
+                 <widget class="QLabel" name="label_48">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>Session:</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;API updates:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
                   </property>
                  </widget>
                 </item>
@@ -4005,10 +4047,56 @@ p, li { white-space: pre-wrap; }
                   </property>
                  </widget>
                 </item>
-                <item row="13" column="0">
-                 <widget class="QLabel" name="label_58">
+                <item row="14" column="0" colspan="2">
+                 <widget class="QLabel" name="label_57">
                   <property name="text">
-                   <string>TextLabel</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Explicit API calls:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+                  </property>
+                 </widget>
+                </item>
+                <item row="15" column="1">
+                 <widget class="QLineEdit" name="lineEdit_2">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item row="15" column="0">
+                 <widget class="QLabel" name="label_58">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Session:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="12" column="1">
+                 <widget class="QLineEdit" name="lineEdit_15"/>
+                </item>
+                <item row="16" column="1">
+                 <widget class="QLineEdit" name="lineEdit_16"/>
+                </item>
+                <item row="12" column="0">
+                 <widget class="QLabel" name="label_47">
+                  <property name="text">
+                   <string>Total:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="16" column="0">
+                 <widget class="QLabel" name="label_52">
+                  <property name="text">
+                   <string>Total:</string>
                   </property>
                  </widget>
                 </item>
@@ -4063,7 +4151,7 @@ p, li { white-space: pre-wrap; }
           <enum>Qt::RichText</enum>
          </property>
          <property name="pixmap">
-          <pixmap>../images/assets/bender3.svg</pixmap>
+          <pixmap>../../.designer/images/assets/bender3.svg</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -4168,7 +4256,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1846</width>
+     <width>1480</width>
      <height>22</height>
     </rect>
    </property>
