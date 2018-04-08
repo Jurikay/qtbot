@@ -139,6 +139,7 @@ def klineCallback(self, msg):
 def api_history(progress_callback):
     val["globalList"] = getTradehistory(client, val["pair"])
     progress_callback.emit({"history": val["globalList"]})
+    val["apiCalls"] += 1
 
 
 def api_depth(progress_callback):
@@ -147,11 +148,13 @@ def api_depth(progress_callback):
     progress_callback.emit({"asks": val["asks"]})
     val["bids"] = depth["bids"]
     progress_callback.emit({"bids": val["bids"]})
+    val["apiCalls"] += 1
 
 
 def api_order_history(progress_callback):
     orders = getAllOrders(client, val["pair"])
     progress_callback.emit(orders)
+    val["apiCalls"] += 1
 
 
 def socket_history(history, progress_callback):

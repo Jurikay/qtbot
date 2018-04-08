@@ -93,11 +93,11 @@ try:
 
     val["tickers"] = getTickers(client)
 
-    userMsg = dict()
-    accHoldings = dict()
+    val["apiCalls"] += 3
+    # userMsg = dict()
+    # accHoldings = dict()
 
     set_pair_values()
-
 except (BinanceAPIException, NameError) as e:
     print("API ERROR")
     print(str(e))
