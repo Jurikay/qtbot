@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -51,7 +51,7 @@
     <bool>true</bool>
    </property>
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
+    <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -134,7 +134,7 @@
           </property>
           <widget class="QTabWidget" name="ChartTabs">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
              <horstretch>0</horstretch>
              <verstretch>4</verstretch>
             </sizepolicy>
@@ -146,11 +146,11 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -174,7 +174,7 @@
              <item>
               <widget class="QWebEngineView" name="chart" native="true">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -1993,7 +1993,7 @@ p, li { white-space: pre-wrap; }
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Amount:</string>
+                 <string>Qty:</string>
                 </property>
                </widget>
               </item>
@@ -2751,7 +2751,7 @@ p, li { white-space: pre-wrap; }
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Amount:</string>
+                 <string>Qty:</string>
                 </property>
                </widget>
               </item>
