@@ -72,7 +72,7 @@ def filter_confirmed(self):
     """Switch to the topmost coin of the coin index that is not hidden."""
     # check if input is empty
     if self.coinindex_filter.text() != "":
-        # iterate through all rows 
+        # iterate through all rows
         for i in range(self.coin_index.rowCount()):
             # skip the row if hidden
             if self.coin_index.isRowHidden(i):
@@ -84,6 +84,7 @@ def filter_confirmed(self):
                 coinIndex = self.coin_selector.findText(coin)
                 self.coin_selector.setCurrentIndex(coinIndex)
                 self.change_pair()
+
 
 def build_coinindex(self):
     self.coin_index.setRowCount(0)
@@ -319,3 +320,36 @@ def update_holding_prices(self):
             self.holdings_table.item(i, 6).setText(total_formatted)
             self.holdings_table.item(i, 6).setFont(bold_font)
             self.holdings_table.item(i, 6).setForeground(QColor(colors.color_lightgrey))
+
+
+def update_coin_index_prices(self):
+    for i in range(self.coin_index.rowCount()):
+        coin = self.coin_index.item(i, 1).text()
+        price = self.coin_index.item(i, 2).text()
+        price_change = self.coin_index.item(i, 3).text()
+        btc_volume = self.coin_index.item(i, 4).text()
+
+
+        new_price = QTableWidgetItem()
+        new_price_change = QTableWidgetItem()
+        new_btc_volume = QTableWidgetItem()
+
+        new_price_value = "{0:.8f}".format(float(val["tickers"][coin + "BTC"]["lastPrice"]))
+        new_price_change_value = float(val["tickers"][coin + "BTC"]["priceChangePercent"])
+        new_btc_volume_value = float(val["tickers"][coin + "BTC"]["quoteVolume"])
+
+        new_price.setData(Qt.EditRole, QVariant(new_price_value))
+        new_price_change.setData(Qt.EditRole, QVariant(new_price_change_value))
+        new_btc_volume.setData(Qt.EditRole, QVariant(new_btc_volume_value))
+
+
+        if price != new_price_value:
+            self.coin_index.setItem(i, 2, new_price)
+        
+        if float(price_change) != new_price_change_value:
+
+            self.coin_index.setItem(i, 3, new_price_change)
+
+        if float(btc_volume) != new_btc_volume_value:
+            
+            self.coin_index.setItem(i, 4, new_btc_volume)

@@ -27,7 +27,7 @@ from app.charts import welcome_page
 from app.colors import colors
 from app.gui_functions import (build_coinindex, build_holdings, calc_total_btc,
                                calc_wavg, filter_coinindex, filter_confirmed, initial_values,
-                               update_holding_prices)
+                               update_holding_prices, update_coin_index_prices)
 from app.init import val
 from app.initApi import (BinanceAPIException, client, read_config,
                          set_pair_values)
@@ -114,7 +114,7 @@ class beeserBot(QMainWindow):
         self.coinindex_filter.returnPressed.connect(partial(filter_confirmed, self))
 
         # Fix a linter error...
-        # self.chart2 = QWebEngineView()
+        self.chartLOL = QWebEngineView()
 
         # set config values
         try:
@@ -316,9 +316,12 @@ class beeserBot(QMainWindow):
     #     # self.asks_table.scrollToBottom()
 
     def tick(self, payload):
+
         if payload == 1:
             self.session_running.setText(str(timedelta(seconds=val["timeRunning"])))
             val["timeRunning"] += 1
+
+            self.explicit_api_calls_label.setText(str(val["apiCalls"]))
 
             total_btc_value = calc_total_btc()
             self.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
@@ -338,15 +341,23 @@ class beeserBot(QMainWindow):
 
             self.btc_percent_label.setText(btc_percent)
 
-            update_holding_prices(self)
+
+            tab_index_botLeft = self.tabsBotLeft.currentIndex()
+
+            if tab_index_botLeft == 3:        
+                update_holding_prices(self)
+            elif tab_index_botLeft == 4:
+                update_coin_index_prices(self)
 
         elif payload == 15:
             print("scroll to bottom")
             self.asks_table.scrollToBottom()
 
+
     def play_sound_effect(self):
         # self.sound_1.play()
         print("playung sound")
+
 
     def add_to_open_orders(self, order):
 
@@ -448,10 +459,13 @@ class beeserBot(QMainWindow):
         for i in range(self.open_orders.rowCount()):
             order_id = self.open_orders.item(i, 8).text()
             if str(order_id) == str(order["orderId"]):
-                filled_percent = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float(order["origQty"]) * 100) - 1, digits=2) + "%"
+                filled_percent = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float(order["origQty"]) * 100), digits=2) + "%"
 
                 self.open_orders.setItem(0, 6, QTableWidgetItem(filled_percent))
+                return
 
+        print("adde to open orders")
+        self.add_to_open_orders(order)
 
     def orders_received(self, orders):
         """Callback function to draw order history."""

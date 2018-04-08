@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1558</width>
+    <width>1518</width>
     <height>800</height>
    </rect>
   </property>
@@ -2035,7 +2035,7 @@ p, li { white-space: pre-wrap; }
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>4</number>
+           <number>5</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -3854,7 +3854,7 @@ p, li { white-space: pre-wrap; }
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>654</width>
+                 <width>637</width>
                  <height>468</height>
                 </rect>
                </property>
@@ -4143,7 +4143,7 @@ p, li { white-space: pre-wrap; }
                  </widget>
                 </item>
                 <item row="15" column="1">
-                 <widget class="QLineEdit" name="lineEdit_2">
+                 <widget class="QLineEdit" name="explicit_api_calls_label">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                     <horstretch>0</horstretch>
@@ -4341,7 +4341,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1558</width>
+     <width>1518</width>
      <height>22</height>
     </rect>
    </property>

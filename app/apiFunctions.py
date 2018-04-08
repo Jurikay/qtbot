@@ -53,8 +53,9 @@ def getDepth(client, symbol):
 
 
 
-def get_open_orders(client, symbol):
-    client.get_open_orders(symbol=symbol)
+# def get_open_orders(client, symbol):
+#     client.get_open_orders(symbol=symbol)
+
 
 
 def availablePairs(client):
