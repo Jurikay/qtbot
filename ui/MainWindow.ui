@@ -146,7 +146,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>3</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -282,127 +282,7 @@ p, li { white-space: pre-wrap; }
             <attribute name="title">
              <string>Page</string>
             </attribute>
-            <widget class="QTabWidget" name="tabWidget">
-             <property name="geometry">
-              <rect>
-               <x>30</x>
-               <y>20</y>
-               <width>735</width>
-               <height>407</height>
-              </rect>
-             </property>
-             <property name="currentIndex">
-              <number>0</number>
-             </property>
-             <widget class="QWidget" name="tab_7">
-              <attribute name="title">
-               <string>Tab 1</string>
-              </attribute>
-              <layout class="QHBoxLayout" name="horizontalLayout_27">
-               <item>
-                <layout class="QGridLayout" name="gridLayout_5">
-                 <item row="3" column="1">
-                  <widget class="QLineEdit" name="lineEdit_10"/>
-                 </item>
-                 <item row="6" column="1">
-                  <widget class="QSlider" name="horizontalSlider_3">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLineEdit" name="lineEdit_9"/>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_40">
-                   <property name="text">
-                    <string>TextLabel</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <layout class="QHBoxLayout" name="horizontalLayout_28">
-                   <item>
-                    <widget class="QPushButton" name="pushButton_11">
-                     <property name="text">
-                      <string>PushButton</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="pushButton_13">
-                     <property name="text">
-                      <string>PushButton</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLineEdit" name="lineEdit_3"/>
-                 </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_12">
-                   <property name="text">
-                    <string>TextLabel</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="1">
-                  <widget class="QLabel" name="label_43">
-                   <property name="text">
-                    <string>TextLabel</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="label_41">
-                   <property name="text">
-                    <string>TextLabel</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
-                  <widget class="QLabel" name="label_42">
-                   <property name="text">
-                    <string>TextLabel</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="1">
-                  <layout class="QHBoxLayout" name="horizontalLayout_29"/>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QGridLayout" name="gridLayout_6">
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_5">
-                   <property name="text">
-                    <string>TextLabel</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLineEdit" name="lineEdit_4"/>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="tab_11">
-              <attribute name="title">
-               <string>Tab 2</string>
-              </attribute>
-             </widget>
-            </widget>
+            <layout class="QHBoxLayout" name="horizontalLayout_36"/>
            </widget>
            <widget class="QWidget" name="tab_2">
             <attribute name="title">
@@ -4360,15 +4240,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>limit_sell_input</tabstop>
   <tabstop>limit_buy_amount</tabstop>
   <tabstop>limit_sell_amount</tabstop>
-  <tabstop>lineEdit_10</tabstop>
-  <tabstop>horizontalSlider_3</tabstop>
-  <tabstop>lineEdit_9</tabstop>
-  <tabstop>pushButton_11</tabstop>
   <tabstop>tabsBotLeft</tabstop>
-  <tabstop>pushButton_13</tabstop>
-  <tabstop>lineEdit_3</tabstop>
-  <tabstop>lineEdit_4</tabstop>
-  <tabstop>tabWidget</tabstop>
   <tabstop>debugPlain</tabstop>
   <tabstop>button_wavg</tabstop>
   <tabstop>pushButton_8</tabstop>
