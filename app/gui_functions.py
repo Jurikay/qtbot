@@ -64,16 +64,19 @@ def filter_coinindex(self, text):
             else:
                 self.coin_index.showRow(i)
     else:
-        for i in range(self.coin_index.rowCount()):
-            self.coin_index.showRow(i)
+        for j in range(self.coin_index.rowCount()):
+            self.coin_index.showRow(j)
 
 
 def filter_confirmed(self):
     """Switch to the topmost coin of the coin index that is not hidden."""
     # check if input is empty
     if self.coinindex_filter.text() != "":
+        # test = self.coin_index.
+        # print(str(test))
+
         # iterate through all rows
-        for i in range(self.coin_index.rowCount()):
+        for i in (range(self.coin_index.rowCount())):
             # skip the row if hidden
             if self.coin_index.isRowHidden(i):
                 continue
@@ -81,10 +84,16 @@ def filter_confirmed(self):
                 # return the first nonhidden row (might be inefficient)
                 coin = self.coin_index.item(i, 1).text()
                 # switch to that coin
-                coinIndex = self.coin_selector.findText(coin)
-                self.coin_selector.setCurrentIndex(coinIndex)
-                self.change_pair()
+                print(str(coin) + "   " + str(val["pair"]))
+                
+                if coin != val["pair"].replace("BTC", ""):
+                    coinIndex = self.coin_selector.findText(coin)
+                    self.coin_selector.setCurrentIndex(coinIndex)
+                    self.change_pair()
+                    return
 
+                elif coin == val["pair"].replace("BTC", ""):
+                    return
 
 def build_coinindex(self):
     self.coin_index.setRowCount(0)

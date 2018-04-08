@@ -492,7 +492,6 @@ class beeserBot(QMainWindow):
         self.limit_buy_input.setValue(float(val["bids"][0][0]))
         self.limit_sell_input.setValue(float(val["asks"][0][0]))
         value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
-        print("value: " + str(value))
         self.limit_buy_amount.setValue(value)
 
 
@@ -713,7 +712,7 @@ class beeserBot(QMainWindow):
 
     def check_buy_amount(self):
         total = int(((float(self.limit_buy_amount.value()) * float(self.limit_buy_input.value())) / float(val["accHoldings"]["BTC"]["free"])) * 100)
-        print("check buy")
+        # print("check buy")
         self.calc_total_buy()
 
         try:
