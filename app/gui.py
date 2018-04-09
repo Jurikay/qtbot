@@ -9,6 +9,7 @@
 import configparser
 import time
 from datetime import datetime, timedelta
+import _strptime
 from functools import partial
 
 from binance.websockets import BinanceSocketManager
@@ -351,6 +352,15 @@ class beeserBot(QMainWindow):
             self.btc_percent_label.setText(btc_percent)
 
 
+            self.percent_changes()
+            # new_5m_change_value = (str(val["klines"]["1m"]))
+            # new_15m_change_value = (str(val["klines"]["1m"]))
+
+            # new_1h_change_value = (str(val["klines"]["1m"]))
+            # self.change_15m.setText(new_15m_change_value)
+            # self.change_1h.setText(new_1h_change_value)
+
+
             tab_index_botLeft = self.tabsBotLeft.currentIndex()
 
             if tab_index_botLeft == 3:
@@ -367,6 +377,36 @@ class beeserBot(QMainWindow):
             print("scroll to bottom")
             self.asks_table.scrollToBottom()
 
+
+    def percent_changes(self):
+        try:
+                close_5m = float(val["klines"]["1m"][val["pair"]][-5][4])
+                close_15m = float(val["klines"]["1m"][val["pair"]][-15][4])
+                close_30m = float(val["klines"]["1m"][val["pair"]][-30][4])
+                close_1h = float(val["klines"]["1m"][val["pair"]][-60][4])
+
+                change_5m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_5m)) - 1) * 100
+                change_15m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_15m)) - 1) * 100
+                change_30m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_30m)) - 1) * 100
+                change_1h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_1h)) - 1) * 100
+
+                changes = [self.change_5m, self.change_15m, self.change_30m, self.change_1h]
+                change_values = [change_5m_value, change_15m_value, change_30m_value, change_1h_value]
+
+                for i, change in enumerate(changes):
+                    if change_values[i] > 0:
+                        operator = "+"
+                        color = colors.color_green
+                    elif change_values[i] < 0:
+                        operator = ""
+                        color = colors.color_pink
+
+                
+                    print(str(change))
+                    changes[i].setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
+
+        except Exception as e:
+            print(str(e))
 
     def play_sound_effect(self):
         # self.sound_1.play()
@@ -781,12 +821,12 @@ class beeserBot(QMainWindow):
                 print("tab is open")
                 for i in val["coins"]:
                     # print(str(i))
-                    time.sleep(0.05)
+                    time.sleep(0.1)
                     worker = Worker(partial(self.get_kline, str(i)))
                     worker.signals.progress.connect(self.klines_received)
                     self.threadpool.start(worker)
 
-                time.sleep(5)
+                time.sleep(10)
             time.sleep(0.5)
 
 

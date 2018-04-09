@@ -86,16 +86,16 @@ class CoinDelegate(QStyledItemDelegate):
             super(CoinDelegate, self).initStyleOption(option, index)
 
 
-    def displayText(self, text, locale):
-        """
-        Display `text` in the selected with the selected number
-        of digits
+    # def displayText(self, text, locale):
+    #     """
+    #     Display `text` in the selected with the selected number
+    #     of digits
 
-        text:   string / QVariant from QTableWidget to be rendered
-        locale: locale for the text
-        """
-        data = text  # .toString() # Python 2: need to convert to "normal" string
-        return "{0:>{1}}".format(data, 4)
+    #     text:   string / QVariant from QTableWidget to be rendered
+    #     locale: locale for the text
+    #     """
+    #     data = text  # .toString() # Python 2: need to convert to "normal" string
+    #     return "{0:>{1}}".format(data, 4)
 
 
     def paint(self, painter, option, index):

@@ -1334,18 +1334,24 @@ p, li { white-space: pre-wrap; }
           <item>
            <widget class="QLabel" name="label_27">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>TextLabel</string>
+             <string>5m change:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_30">
+           <widget class="QLabel" name="change_5m">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>TextLabel</string>
             </property>
@@ -1354,18 +1360,24 @@ p, li { white-space: pre-wrap; }
           <item>
            <widget class="QLabel" name="label_23">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>TextLabel</string>
+             <string>15m: change</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_31">
+           <widget class="QLabel" name="change_15m">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>TextLabel</string>
             </property>
@@ -1374,38 +1386,50 @@ p, li { white-space: pre-wrap; }
           <item>
            <widget class="QLabel" name="label_22">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>TextLabel</string>
+             <string>30mchange:</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_45">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_44">
+           <widget class="QLabel" name="change_30m">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>TextLabel</string>
+             <string>text</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_24">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>1h change:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="change_1h">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>TextLabel</string>
             </property>
