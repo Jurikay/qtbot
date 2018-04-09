@@ -382,16 +382,21 @@ class beeserBot(QMainWindow):
         try:
                 close_5m = float(val["klines"]["1m"][val["pair"]][-5][4])
                 close_15m = float(val["klines"]["1m"][val["pair"]][-15][4])
-                close_30m = float(val["klines"]["1m"][val["pair"]][-30][4])
+                # close_30m = float(val["klines"]["1m"][val["pair"]][-30][4])
                 close_1h = float(val["klines"]["1m"][val["pair"]][-60][4])
+                close_4h = float(val["klines"]["1m"][val["pair"]][-240][4])
 
                 change_5m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_5m)) - 1) * 100
                 change_15m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_15m)) - 1) * 100
-                change_30m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_30m)) - 1) * 100
+                # change_30m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_30m)) - 1) * 100
                 change_1h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_1h)) - 1) * 100
+                change_4h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_4h)) - 1) * 100
 
-                changes = [self.change_5m, self.change_15m, self.change_30m, self.change_1h]
-                change_values = [change_5m_value, change_15m_value, change_30m_value, change_1h_value]
+                change_1d_value = float(val["tickers"][val["pair"]]["priceChangePercent"])
+
+
+                changes = [self.change_5m, self.change_15m, self.change_1h, self.change_4h, self.change_1d]
+                change_values = [change_5m_value, change_15m_value, change_1h_value, change_4h_value, change_1d_value]
 
                 for i, change in enumerate(changes):
                     if change_values[i] > 0:
@@ -400,10 +405,12 @@ class beeserBot(QMainWindow):
                     elif change_values[i] < 0:
                         operator = ""
                         color = colors.color_pink
-
+                    else:
+                        operator = ""
+                        color = colors.color_grey
 
                     # print(str(change))
-                    changes[i].setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
+                    change.setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
 
         except Exception as e:
             print(str(e))
@@ -1003,14 +1010,14 @@ class beeserBot(QMainWindow):
         current_height = self.frameGeometry().height()
         while True:
             # print("check")
-            try:
+            # try:
 
-                if current_height != self.frameGeometry().height():
-                    progress_callback.emit(15)
+            if current_height > self.frameGeometry().height():
+                progress_callback.emit(15)
 
 
-            except (KeyError, UnboundLocalError):
-                pass
+            # except (KeyError, UnboundLocalError):
+            #     pass
 
             current_height = self.frameGeometry().height()
 

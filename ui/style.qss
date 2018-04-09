@@ -319,7 +319,11 @@ QPushButton#limit_sell_button::pressed {
      font-size: 16px;
 
 }
+#percent_frame, #percent_frame QLabel {
+    background-color: "#20262b";
+    color: white;
 
+}
 
 QScrollBar:horizontal {
     height: 15px;

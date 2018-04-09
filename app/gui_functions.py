@@ -67,6 +67,7 @@ def filter_coinindex(self, text):
     row_count = self.coin_index.rowCount()
 
     if text != "":
+        self.coin_index.item(0, 1).setForeground(QColor(colors.color_yellow))
         for i in range(row_count):
 
             if text.upper() not in str(self.coin_index.item(i, 1).text()):

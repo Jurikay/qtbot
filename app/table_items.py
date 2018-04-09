@@ -28,12 +28,16 @@ class CoinDelegate(QStyledItemDelegate):
         """
         # print("delegate stuff")
         # print(self.parent.name())
+
+        # set default values:
+        color = "#cdcdcd"
+
         if index.column() == 1:
-            option.text = "<span style='color:#cdcdcd;'>" + str(index.data()) + " / BTC</span>"
+            option.text = "<span style='color:" + color + ";'>" + str(index.data()) + " / BTC</span>"
 
         elif index.column() == 2:
             # orig = str(index.data())
-            option.text = "<span style='color:#cdcdcd;'>" + str(index.data()) + " BTC</span>"
+            option.text = "<span style='color:" + color + ";'>" + str(index.data()) + " BTC</span>"
 
         elif index.column() == 3 or index.column() == 10 or index.column() == 11 or index.column() == 12:
             value = index.data()
@@ -62,6 +66,7 @@ class CoinDelegate(QStyledItemDelegate):
 
         elif index.column() == 4 or index.column() == 6 or index.column() == 7 or index.column() == 8 or index.column() == 9:
             value = index.data()
+
             try:
                 percent_value = float(value)
             except TypeError:
@@ -69,16 +74,23 @@ class CoinDelegate(QStyledItemDelegate):
 
             if percent_value < 1:
                 color = "#999"
+                weight = "normal"
 
             elif index.column() == 6 and percent_value > 5:
-                color = "#94c940"
+                color = "white"
+                weight = "bold"
 
             elif index.column() == 7 and percent_value > 50:
-                color = "#94c940"
+                color = "white"
+                weight = "bold"
 
             else:
                 color = "#cdcdcd"
-            option.text = "<span style='color:" + color + ";'>" + "{0:,.1f}".format(percent_value) + " BTC</span>"
+                weight = "normal"
+
+            option.text = "<span style='font-weight: " + weight + "; color:" + color + ";'>" + "{0:,.2f}".format(percent_value) + " BTC</span>"
+
+
 
         else:
             # print(index.data())
