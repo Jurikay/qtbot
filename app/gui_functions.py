@@ -21,8 +21,11 @@ def initial_values(self):
     self.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
     self.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
 
-    self.limit_buy_label.setText("<span style='font-weight: bold;'>Buy " + val["coin"] + "</span>")
-    self.limit_sell_label.setText("<span style='font-weight: bold;'>Sell " + val["coin"] + "</span>")
+    self.limit_buy_label.setText("<span style='font-weight: bold; font-size: 12px;'>Buy " + val["coin"] + "</span>")
+    self.limit_sell_label.setText("<span style='font-weight: bold; font-size: 12px;'>Sell " + val["coin"] + "</span>")
+
+    # self.limit_coin_label_buy.setText("<span style='font-weight: bold; color: white;'>" + val["coin"] + "</span>")
+    # self.limit_coin_label_sell.setText("<span style='font-weight: bold; color: white;'>" + val["coin"] + "</span>")
 
     # self.limit_buy_input.setText("kernoschmaus")
     self.limit_buy_input.setDecimals(val["decimals"])
@@ -46,32 +49,46 @@ def initial_values(self):
     bids_header = self.bids_table.horizontalHeader()
     asks_header = self.asks_table.horizontalHeader()
     bids_header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-    bids_header.setSectionResizeMode(1, QHeaderView.Fixed)
-    bids_header.setSectionResizeMode(2, QHeaderView.Fixed)
+    bids_header.setSectionResizeMode(1, QHeaderView.Stretch)
+    bids_header.setSectionResizeMode(2, QHeaderView.Stretch)
 
     asks_header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-    asks_header.setSectionResizeMode(1, QHeaderView.Fixed)
-    asks_header.setSectionResizeMode(2, QHeaderView.Fixed)
+    asks_header.setSectionResizeMode(1, QHeaderView.Stretch)
+    asks_header.setSectionResizeMode(2, QHeaderView.Stretch)
+
+    trades_header = self.tradeTable.horizontalHeader()
+    trades_header.setSectionResizeMode(0, QHeaderView.Stretch)
+    trades_header.setSectionResizeMode(1, QHeaderView.Stretch)
 
 
 def filter_coinindex(self, text):
     """Hide every row in coin index that does not contain the user input."""
+    self.coin_index.setSortingEnabled(False)
+    row_count = self.coin_index.rowCount()
+
     if text != "":
-        for i in range(self.coin_index.rowCount()):
+        for i in range(row_count):
 
             if text.upper() not in str(self.coin_index.item(i, 1).text()):
+                print("hide row: " + str(i))
                 self.coin_index.hideRow(i)
             else:
+                print("show")
                 self.coin_index.showRow(i)
     else:
-        for j in range(self.coin_index.rowCount()):
+        print("show all row count: " + str(row_count))
+        for j in range(row_count):
             self.coin_index.showRow(j)
+        self.coin_index.setSortingEnabled(True)
+
+    print("pricc")
 
 
 def filter_confirmed(self):
     """Switch to the topmost coin of the coin index that is not hidden."""
     # check if input is empty
     if self.coinindex_filter.text() != "":
+        # self.coin_index.setSortingEnabled(False)
         # test = self.coin_index.
         # print(str(test))
 
@@ -85,15 +102,18 @@ def filter_confirmed(self):
                 coin = self.coin_index.item(i, 1).text()
                 # switch to that coin
                 print(str(coin) + "   " + str(val["pair"]))
-                
+
                 if coin != val["pair"].replace("BTC", ""):
                     coinIndex = self.coin_selector.findText(coin)
                     self.coin_selector.setCurrentIndex(coinIndex)
                     self.change_pair()
+                    # self.coin_index.setSortingEnabled(True)
                     return
 
                 elif coin == val["pair"].replace("BTC", ""):
+                    # self.coin_index.setSortingEnabled(True)
                     return
+
 
 def build_coinindex(self):
     self.coin_index.setRowCount(0)
@@ -354,11 +374,11 @@ def update_coin_index_prices(self):
 
         if price != new_price_value:
             self.coin_index.setItem(i, 2, new_price)
-        
+
         if float(price_change) != new_price_change_value:
 
             self.coin_index.setItem(i, 3, new_price_change)
 
         if float(btc_volume) != new_btc_volume_value:
-            
+
             self.coin_index.setItem(i, 4, new_btc_volume)

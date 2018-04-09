@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1518</width>
-    <height>818</height>
+    <width>1523</width>
+    <height>791</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -73,6 +73,12 @@
    </property>
    <layout class="QGridLayout" name="gridLayout_7">
     <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <property name="verticalSpacing">
      <number>0</number>
     </property>
     <item row="1" column="0">
@@ -142,11 +148,11 @@
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>0</height>
+             <height>320</height>
             </size>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -210,7 +216,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QTableWidget" name="tableWidget">
+              <widget class="QTableWidget" name="kline_table">
                <row>
                 <property name="text">
                  <string>New Row</string>
@@ -529,9 +535,9 @@ p, li { white-space: pre-wrap; }
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_8">
+                  <widget class="QPushButton" name="button_klines">
                    <property name="text">
-                    <string>PushButton</string>
+                    <string>check klines</string>
                    </property>
                   </widget>
                  </item>
@@ -941,71 +947,197 @@ p, li { white-space: pre-wrap; }
              <string>Coins</string>
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_7">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_35">
                <property name="spacing">
-                <number>-1</number>
+                <number>30</number>
+               </property>
+               <property name="topMargin">
+                <number>5</number>
+               </property>
+               <property name="bottomMargin">
+                <number>5</number>
                </property>
                <item>
-                <widget class="QPushButton" name="pushButton_3">
+                <widget class="QWidget" name="horizontalWidget_4" native="true">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
+                  <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                   <horstretch>3</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="text">
-                  <string>PushButton</string>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
                  </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_29">
+                  <property name="spacing">
+                   <number>10</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_5">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="text">
+                     <string>Favorites</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_4">
+                    <property name="text">
+                     <string>BTC</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_3">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>ETH</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_2">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>BNB</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="pushButton_6">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="text">
+                     <string>USDT</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="pushButton_2">
+                <widget class="QWidget" name="widget" native="true">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
+                  <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                   <horstretch>4</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <property name="text">
-                  <string>PushButton</string>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
                  </property>
+                 <layout class="QGridLayout" name="gridLayout_14">
+                  <property name="leftMargin">
+                   <number>20</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="horizontalSpacing">
+                   <number>0</number>
+                  </property>
+                  <property name="verticalSpacing">
+                   <number>-1</number>
+                  </property>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="coinindex_filter">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>16777215</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="frame">
+                     <bool>false</bool>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                    </property>
+                    <property name="placeholderText">
+                     <string>Search</string>
+                    </property>
+                    <property name="clearButtonEnabled">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_41">
+                    <property name="text">
+                     <string>    </string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
-               </item>
-               <item>
-                <layout class="QGridLayout" name="gridLayout_14">
-                 <property name="rightMargin">
-                  <number>5</number>
-                 </property>
-                 <property name="horizontalSpacing">
-                  <number>0</number>
-                 </property>
-                 <property name="verticalSpacing">
-                  <number>-1</number>
-                 </property>
-                 <item row="0" column="0">
-                  <widget class="QLineEdit" name="coinindex_filter">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="frame">
-                    <bool>false</bool>
-                   </property>
-                   <property name="placeholderText">
-                    <string>Search</string>
-                   </property>
-                   <property name="clearButtonEnabled">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
                </item>
               </layout>
              </item>
@@ -1112,6 +1244,41 @@ p, li { white-space: pre-wrap; }
                </column>
                <column>
                 <property name="text">
+                 <string>1m volume</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>5m volume</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>15m volume</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>1h volume</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>5m change</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>15m change</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>1h change</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
                  <string/>
                 </property>
                </column>
@@ -1151,7 +1318,7 @@ p, li { white-space: pre-wrap; }
          <number>0</number>
         </property>
         <property name="topMargin">
-         <number>0</number>
+         <number>11</number>
         </property>
         <property name="rightMargin">
          <number>10</number>
@@ -1249,7 +1416,7 @@ p, li { white-space: pre-wrap; }
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_11">
           <property name="spacing">
-           <number>-1</number>
+           <number>20</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -1365,7 +1532,7 @@ p, li { white-space: pre-wrap; }
                 <bool>false</bool>
                </attribute>
                <attribute name="horizontalHeaderDefaultSectionSize">
-                <number>100</number>
+                <number>70</number>
                </attribute>
                <attribute name="horizontalHeaderHighlightSections">
                 <bool>false</bool>
@@ -1409,11 +1576,6 @@ p, li { white-space: pre-wrap; }
                <column>
                 <property name="text">
                  <string>Total BTC</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string/>
                 </property>
                </column>
               </widget>
@@ -1470,12 +1632,27 @@ p, li { white-space: pre-wrap; }
              <item row="3" column="0">
               <widget class="QWidget" name="spread_area" native="true">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>5</number>
+                </property>
+                <property name="topMargin">
+                 <number>5</number>
+                </property>
+                <property name="rightMargin">
+                 <number>5</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>5</number>
+                </property>
                 <item>
                  <widget class="QLabel" name="last_price">
                   <property name="sizePolicy">
@@ -1507,7 +1684,7 @@ p, li { white-space: pre-wrap; }
                 <item>
                  <widget class="QLabel" name="price_arrow">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -1538,27 +1715,14 @@ p, li { white-space: pre-wrap; }
                    <string>-</string>
                   </property>
                   <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="label_46">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Spread</string>
+                   <set>Qt::AlignCenter</set>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="usd_value">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -1646,7 +1810,7 @@ p, li { white-space: pre-wrap; }
                 <bool>true</bool>
                </attribute>
                <attribute name="horizontalHeaderDefaultSectionSize">
-                <number>100</number>
+                <number>70</number>
                </attribute>
                <attribute name="horizontalHeaderHighlightSections">
                 <bool>false</bool>
@@ -1707,18 +1871,13 @@ p, li { white-space: pre-wrap; }
                  <set>AlignCenter</set>
                 </property>
                </column>
-               <column>
-                <property name="text">
-                 <string/>
-                </property>
-               </column>
               </widget>
              </item>
             </layout>
            </widget>
           </item>
           <item>
-           <widget class="QWidget" name="" native="true">
+           <widget class="QWidget" name="widget" native="true">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1832,7 +1991,7 @@ p, li { white-space: pre-wrap; }
                 <bool>false</bool>
                </attribute>
                <attribute name="horizontalHeaderDefaultSectionSize">
-                <number>100</number>
+                <number>70</number>
                </attribute>
                <attribute name="horizontalHeaderHighlightSections">
                 <bool>false</bool>
@@ -1871,11 +2030,6 @@ p, li { white-space: pre-wrap; }
                <column>
                 <property name="text">
                  <string>Time</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string/>
                 </property>
                </column>
               </widget>
@@ -1955,6 +2109,9 @@ p, li { white-space: pre-wrap; }
             <string>Limit Order</string>
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>20</number>
+            </property>
             <property name="leftMargin">
              <number>0</number>
             </property>
@@ -1976,13 +2133,16 @@ p, li { white-space: pre-wrap; }
                <number>10</number>
               </property>
               <property name="rightMargin">
-               <number>5</number>
+               <number>0</number>
               </property>
               <property name="bottomMargin">
                <number>5</number>
               </property>
+              <property name="horizontalSpacing">
+               <number>5</number>
+              </property>
               <property name="verticalSpacing">
-               <number>15</number>
+               <number>10</number>
               </property>
               <item row="3" column="0">
                <widget class="QLabel" name="label_8">
@@ -1993,7 +2153,7 @@ p, li { white-space: pre-wrap; }
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Qty:</string>
+                 <string>Amount:</string>
                 </property>
                </widget>
               </item>
@@ -2166,10 +2326,52 @@ p, li { white-space: pre-wrap; }
                 </property>
                </widget>
               </item>
+              <item row="1" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_27">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QDoubleSpinBox" name="limit_buy_input">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>SizeVerCursor</cursorShape>
+                  </property>
+                  <property name="maximum">
+                   <double>1.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_5">
+                  <property name="text">
+                   <string>BTC</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
               <item row="0" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_25">
                 <property name="spacing">
                  <number>-1</number>
+                </property>
+                <property name="sizeConstraint">
+                 <enum>QLayout::SetDefaultConstraint</enum>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
                 </property>
                 <item>
                  <widget class="QLabel" name="label_39">
@@ -2201,10 +2403,10 @@ p, li { white-space: pre-wrap; }
                    <bool>false</bool>
                   </property>
                   <property name="margin">
-                   <number>-2</number>
+                   <number>2</number>
                   </property>
                   <property name="indent">
-                   <number>-1</number>
+                   <number>0</number>
                   </property>
                  </widget>
                 </item>
@@ -2226,23 +2428,13 @@ p, li { white-space: pre-wrap; }
                 </item>
                </layout>
               </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_7">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Price:</string>
-                </property>
-               </widget>
-              </item>
               <item row="3" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_31">
                 <property name="spacing">
-                 <number>10</number>
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
                 <item>
                  <widget class="QDoubleSpinBox" name="limit_buy_amount">
@@ -2298,6 +2490,19 @@ p, li { white-space: pre-wrap; }
                  </widget>
                 </item>
                </layout>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_7">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Price:</string>
+                </property>
+               </widget>
               </item>
               <item row="4" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -2419,22 +2624,6 @@ p, li { white-space: pre-wrap; }
                 </item>
                </layout>
               </item>
-              <item row="1" column="1">
-               <widget class="QDoubleSpinBox" name="limit_buy_input">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>SizeVerCursor</cursorShape>
-                </property>
-                <property name="maximum">
-                 <double>1.000000000000000</double>
-                </property>
-               </widget>
-              </item>
              </layout>
             </item>
             <item>
@@ -2451,11 +2640,17 @@ p, li { white-space: pre-wrap; }
               <property name="bottomMargin">
                <number>5</number>
               </property>
+              <property name="horizontalSpacing">
+               <number>5</number>
+              </property>
               <property name="verticalSpacing">
-               <number>15</number>
+               <number>10</number>
               </property>
               <item row="0" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_26">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QLabel" name="label_38">
                   <property name="sizePolicy">
@@ -2487,6 +2682,12 @@ p, li { white-space: pre-wrap; }
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+                  </property>
+                  <property name="margin">
+                   <number>2</number>
+                  </property>
+                  <property name="indent">
+                   <number>0</number>
                   </property>
                  </widget>
                 </item>
@@ -2589,6 +2790,9 @@ p, li { white-space: pre-wrap; }
                 </property>
                 <property name="text">
                  <string>Sell</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -2714,6 +2918,9 @@ p, li { white-space: pre-wrap; }
               </item>
               <item row="3" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_32">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
                 <item>
                  <widget class="QDoubleSpinBox" name="limit_sell_amount">
                   <property name="cursor">
@@ -2751,7 +2958,7 @@ p, li { white-space: pre-wrap; }
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Qty:</string>
+                 <string>Amount:</string>
                 </property>
                </widget>
               </item>
@@ -2803,22 +3010,6 @@ p, li { white-space: pre-wrap; }
                 </item>
                </layout>
               </item>
-              <item row="1" column="1">
-               <widget class="QDoubleSpinBox" name="limit_sell_input">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="cursor">
-                 <cursorShape>SizeVerCursor</cursorShape>
-                </property>
-                <property name="maximum">
-                 <double>1.000000000000000</double>
-                </property>
-               </widget>
-              </item>
               <item row="6" column="1">
                <widget class="QLabel" name="limit_sell_total">
                 <property name="sizePolicy">
@@ -2859,6 +3050,36 @@ p, li { white-space: pre-wrap; }
                  <string>Sell</string>
                 </property>
                </widget>
+              </item>
+              <item row="1" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_28">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <item>
+                 <widget class="QDoubleSpinBox" name="limit_sell_input">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="cursor">
+                   <cursorShape>SizeVerCursor</cursorShape>
+                  </property>
+                  <property name="maximum">
+                   <double>1.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_12">
+                  <property name="text">
+                   <string>BTC</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
              </layout>
             </item>
@@ -3550,8 +3771,17 @@ p, li { white-space: pre-wrap; }
             </item>
             <item row="5" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_24">
+              <property name="spacing">
+               <number>10</number>
+              </property>
               <item>
                <widget class="QCheckBox" name="copy_price_box">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Copy Price</string>
                 </property>
@@ -3562,19 +3792,18 @@ p, li { white-space: pre-wrap; }
               </item>
               <item>
                <widget class="QCheckBox" name="copy_qty_box">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Copy Quantity</string>
                 </property>
                </widget>
               </item>
              </layout>
-            </item>
-            <item row="11" column="3">
-             <widget class="QPushButton" name="save_config">
-              <property name="text">
-               <string>save</string>
-              </property>
-             </widget>
             </item>
             <item row="4" column="3">
              <widget class="QComboBox" name="dtf_selector">
@@ -3649,6 +3878,9 @@ p, li { white-space: pre-wrap; }
             </item>
             <item row="6" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_34">
+              <property name="spacing">
+               <number>10</number>
+              </property>
               <item>
                <widget class="QLabel" name="label_64">
                 <property name="sizePolicy">
@@ -3664,6 +3896,18 @@ p, li { white-space: pre-wrap; }
               </item>
               <item>
                <widget class="QSpinBox" name="spinBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
                 <property name="minimum">
                  <number>1</number>
                 </property>
@@ -3685,7 +3929,21 @@ p, li { white-space: pre-wrap; }
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QLabel" name="label_40">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#666666;&quot;&gt;(Does not include order book and trade history)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
              </layout>
+            </item>
+            <item row="8" column="3">
+             <widget class="QPushButton" name="save_config">
+              <property name="text">
+               <string>save</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -3734,7 +3992,7 @@ p, li { white-space: pre-wrap; }
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>637</width>
+                 <width>604</width>
                  <height>468</height>
                 </rect>
                </property>
@@ -4086,129 +4344,220 @@ p, li { white-space: pre-wrap; }
        </sizepolicy>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_15">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <property name="leftMargin">
-        <number>5</number>
+        <number>10</number>
        </property>
        <property name="topMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>5</number>
+        <number>10</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="SVGLabel">
-         <property name="maximumSize">
-          <size>
-           <width>222</width>
-           <height>50</height>
-          </size>
+        <widget class="QWidget" name="verticalWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="textFormat">
-          <enum>Qt::RichText</enum>
-         </property>
-         <property name="pixmap">
-          <pixmap>../images/assets/bender3.svg</pixmap>
-         </property>
-         <property name="scaledContents">
-          <bool>true</bool>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-         </property>
-         <property name="wordWrap">
-          <bool>false</bool>
-         </property>
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <property name="indent">
-          <number>0</number>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::NoTextInteraction</set>
-         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_10">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="SVGLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>222</width>
+              <height>50</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="pixmap">
+             <pixmap>../images/assets/bender3.svg</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+            <property name="margin">
+             <number>10</number>
+            </property>
+            <property name="indent">
+             <number>0</number>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::NoTextInteraction</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_10">
-         <property name="text">
-          <string>PushButton</string>
+       <item alignment="Qt::AlignBottom">
+        <widget class="QWidget" name="topl" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_16">
-         <property name="text">
-          <string>PushButton</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_50">
-         <property name="text">
-          <string>Status:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_51">
-         <property name="text">
-          <string>status</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_14"/>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>BTC:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="btc_price_label">
-         <property name="text">
-          <string>9000$</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="btc_percent_label">
-         <property name="text">
-          <string>+5%</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Account:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="total_btc_label">
-         <property name="text">
-          <string>-</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="total_usd_label">
-         <property name="text">
-          <string>-</string>
-         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_37">
+          <property name="spacing">
+           <number>5</number>
+          </property>
+          <property name="leftMargin">
+           <number>25</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="current_time">
+            <property name="text">
+             <string>current time</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_10">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_16">
+            <property name="text">
+             <string>PushButton</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_50">
+            <property name="text">
+             <string>Status:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_51">
+            <property name="text">
+             <string>status</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="lineEdit_14"/>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_11">
+            <property name="spacing">
+             <number>5</number>
+            </property>
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <property name="rightMargin">
+             <number>10</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_42">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;BTC low:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_43">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;6500,12$&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>BTC:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="btc_price_label">
+            <property name="text">
+             <string>9000$</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="btc_percent_label">
+            <property name="text">
+             <string>+5%</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Arial Black'; font-size:14pt; font-weight:600; color:#cdcdcd;&quot;&gt;Account:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="total_btc_label">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="total_usd_label">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -4221,11 +4570,55 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1518</width>
+     <width>1523</width>
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuTest">
+    <property name="title">
+     <string>Test</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHi">
+    <property name="title">
+     <string>Hi</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menusd">
+    <property name="title">
+     <string>sd</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuasd">
+    <property name="title">
+     <string>asd</string>
+    </property>
+    <widget class="QMenu" name="menuasd_2">
+     <property name="title">
+      <string>asd</string>
+     </property>
+     <addaction name="actionasd_3"/>
+    </widget>
+    <addaction name="menuasd_2"/>
+    <addaction name="actionasd_2"/>
+   </widget>
+   <addaction name="menuTest"/>
+   <addaction name="menuHi"/>
+   <addaction name="menusd"/>
+   <addaction name="menuasd"/>
   </widget>
+  <action name="actionasd_2">
+   <property name="text">
+    <string>asd</string>
+   </property>
+  </action>
+  <action name="actionasd_3">
+   <property name="text">
+    <string>asd</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -4236,20 +4629,18 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>limit_buy_input</tabstop>
-  <tabstop>limit_sell_input</tabstop>
   <tabstop>limit_buy_amount</tabstop>
   <tabstop>limit_sell_amount</tabstop>
   <tabstop>tabsBotLeft</tabstop>
   <tabstop>debugPlain</tabstop>
   <tabstop>button_wavg</tabstop>
-  <tabstop>pushButton_8</tabstop>
+  <tabstop>button_klines</tabstop>
   <tabstop>coin_selector</tabstop>
   <tabstop>comboBox</tabstop>
   <tabstop>bot_tabs</tabstop>
   <tabstop>limit_outbid</tabstop>
   <tabstop>limit_low</tabstop>
-  <tabstop>tableWidget</tabstop>
+  <tabstop>kline_table</tabstop>
   <tabstop>limit_button0</tabstop>
   <tabstop>limit_button1</tabstop>
   <tabstop>limit_button2</tabstop>
@@ -4280,7 +4671,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>spread_100amount</tabstop>
   <tabstop>spread_min_input</tabstop>
   <tabstop>spread_confirm_button</tabstop>
-  <tabstop>save_config</tabstop>
   <tabstop>api_key</tabstop>
   <tabstop>api_secret</tabstop>
   <tabstop>percent_1</tabstop>
@@ -4289,9 +4679,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>percent_4</tabstop>
   <tabstop>percent_5</tabstop>
   <tabstop>copy_qty_box</tabstop>
-  <tabstop>pushButton_10</tabstop>
-  <tabstop>pushButton_16</tabstop>
-  <tabstop>lineEdit_14</tabstop>
  </tabstops>
  <resources/>
  <connections/>

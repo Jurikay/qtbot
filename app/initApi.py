@@ -75,7 +75,7 @@ read_config()
 
 try:
     client = Client(val["api_key"], val["api_secret"],
-                    {"verify": True, "timeout": 50})
+                    {"verify": True, "timeout": 61})
     val["client"] = client
 except (TypeError, InvalidHeader):
     print("NO API KEY!")

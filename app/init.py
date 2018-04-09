@@ -30,6 +30,10 @@ val["ticker"] = dict()
 
 val["apiCalls"] = 0
 
+val["klines"]["1m"] = dict()
+val["klines"]["5m"] = dict()
+
+val["indexTabOpen"] = False
 proxies = {
     'http': 'http://10.10.1.10:3128',
     'https': 'http://10.10.1.10:1080'

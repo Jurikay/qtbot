@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from functools import partial
 
 from binance.websockets import BinanceSocketManager
-from PyQt5.QtCore import QSize, Qt, QThreadPool, QTimer  # , QUrl
+from PyQt5.QtCore import QSize, Qt, QThreadPool, QTimer, QVariant  # , QUrl
 from PyQt5.QtGui import QColor, QCursor, QIcon, QPixmap, QFont
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 from PyQt5.QtWebEngineWidgets import QWebEngineView
@@ -100,6 +100,8 @@ class beeserBot(QMainWindow):
         self.limit_sell_input.valueChanged.connect(self.check_sell_ammount)
         self.limit_buy_input.valueChanged.connect(self.check_buy_amount)
 
+
+        self.button_klines.clicked.connect(self.start_kline_check)
         # self.player = QMediaPlayer()
         # sound = QMediaContent(QUrl.fromLocalFile("sounds/Tink.wav"))
         # self.player.setMedia(sound)
@@ -192,6 +194,9 @@ class beeserBot(QMainWindow):
 
         build_coinindex(self)
 
+        self.start_kline_check()
+
+
         # self.sound_1 = QSound('sounds/Tink.wav')
 
         self.timer = QTimer()
@@ -206,6 +211,8 @@ class beeserBot(QMainWindow):
 
         self.asks_table.setColumnWidth(1, 75)
         self.bids_table.setColumnWidth(1, 75)
+
+        self.tradeTable.setColumnWidth(0, 100)
         self.tradeTable.setColumnWidth(1, 75)
 
         self.open_orders.setColumnWidth(0, 130)
@@ -321,6 +328,8 @@ class beeserBot(QMainWindow):
             self.session_running.setText(str(timedelta(seconds=val["timeRunning"])))
             val["timeRunning"] += 1
 
+            self.current_time.setText(str(time.strftime('%a, %d %b %Y %H:%M:%S')))
+
             self.explicit_api_calls_label.setText(str(val["apiCalls"]))
 
             total_btc_value = calc_total_btc()
@@ -328,7 +337,7 @@ class beeserBot(QMainWindow):
 
             total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2) + "$"
 
-            self.total_usd_label.setText(total_usd_value)
+            self.total_usd_label.setText("<span style='font-size: 14px; color: white; font-family: Arial Black;'>" + total_usd_value + "</span>")
 
             self.btc_price_label.setText('{number:,.{digits}f}'.format(number=float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2) + "$")
 
@@ -344,10 +353,15 @@ class beeserBot(QMainWindow):
 
             tab_index_botLeft = self.tabsBotLeft.currentIndex()
 
-            if tab_index_botLeft == 3:        
+            if tab_index_botLeft == 3:
                 update_holding_prices(self)
+                val["indexTabOpen"] = False
             elif tab_index_botLeft == 4:
                 update_coin_index_prices(self)
+                val["indexTabOpen"] = True
+            else:
+                val["indexTabOpen"] = False
+
 
         elif payload == 15:
             print("scroll to bottom")
@@ -756,6 +770,138 @@ class beeserBot(QMainWindow):
         # Execute
         self.threadpool.start(worker)
 
+    def start_kline_check(self):
+        worker = Worker(self.schedule_kline_check)
+        # worker.signals.progress.connect(self.klines_received)
+        self.threadpool.start(worker)
+
+    def schedule_kline_check(self, progress_callback):
+        while True:
+            while val["indexTabOpen"] is True:
+                print("tab is open")
+                for i in val["coins"]:
+                    # print(str(i))
+                    time.sleep(0.05)
+                    worker = Worker(partial(self.get_kline, str(i)))
+                    worker.signals.progress.connect(self.klines_received)
+                    self.threadpool.start(worker)
+
+                time.sleep(5)
+            time.sleep(0.5)
+
+
+        # worker = Worker(partial(get_kline, self, ))
+    def get_kline(self, pair, progress_callback):
+        interval = "1m"
+        klines = client.get_klines(symbol=pair, interval=interval)
+        progress_callback.emit([klines, pair, interval])
+        val["apiCalls"] += 1
+        # time.sleep(1)
+        # interval = "5m"
+        # klines = client.get_klines(symbol=pair, interval=interval)
+        # progress_callback.emit([klines, pair, interval])
+        # val["apiCalls"] += 1
+
+
+    def klines_received(self, klines_pair):
+
+        # self.kline_table.insertRow(0)
+        # self.kline_table.setItem(0, 0, QTableWidgetItem(klines_pair[1]))
+        # self.kline_table.setItem(0, 1, QTableWidgetItem(str(klines_pair[0][-2][7])))
+        pair = klines_pair[1]
+        timeframe = klines_pair[2]
+        symbol = pair.replace("BTC", "")
+
+
+
+        val["klines"][timeframe][str(klines_pair[1])] = klines_pair[0]
+
+
+        for i in range(self.coin_index.rowCount()):
+
+            coin = self.coin_index.item(i, 1).text()
+            if coin == symbol:
+
+                if timeframe == "1m":
+                    try:
+                        volume_1m = self.coin_index.item(i, 6).text()
+                    except AttributeError:
+                        volume_1m = 0
+                    new_volume_1m_value = float(klines_pair[0][-1][7])
+
+                    if volume_1m != new_volume_1m_value:
+                        new_volume_1m = QTableWidgetItem()
+                        new_volume_1m.setData(Qt.EditRole, QVariant(new_volume_1m_value))
+                        self.coin_index.setItem(i, 6, new_volume_1m)
+
+
+                    try:
+                        volume_5x1 = self.coin_index.item(i, 7).text()
+                    except AttributeError:
+                        volume_5x1 = 0
+                    new_volume_5x1_value = float(klines_pair[0][-1][7]) + float(klines_pair[0][-2][7]) + float(klines_pair[0][-3][7]) + float(klines_pair[0][-4][7]) + float(klines_pair[0][-5][7])
+
+                    if volume_5x1 != new_volume_5x1_value:
+                        new_volume_5x1 = QTableWidgetItem()
+                        new_volume_5x1.setData(Qt.EditRole, QVariant(new_volume_5x1_value))
+                        self.coin_index.setItem(i, 7, new_volume_5x1)
+
+
+                    new_volume_15m_value = 0
+                    try:
+                        volume_15m = self.coin_index.item(i, 8).text()
+                    except AttributeError:
+                        volume_15m = 0
+                    for j in range(15):
+                        new_volume_15m_value += float(klines_pair[0][-(j + 1)][7])
+
+                    if volume_15m != new_volume_15m_value:
+                        new_volume_15m = QTableWidgetItem()
+                        new_volume_15m.setData(Qt.EditRole, QVariant(new_volume_15m_value))
+                        self.coin_index.setItem(i, 8, new_volume_15m)
+
+                    new_volume_1h_value = 0
+                    try:
+                        volume_1h = self.coin_index.item(i, 9).text()
+                    except AttributeError:
+                        volume_1h = 0
+                    for j in range(60):
+                        new_volume_1h_value += float(klines_pair[0][-(j + 1)][7])
+
+                    if volume_1h != new_volume_1h_value:
+                        new_volume_1h = QTableWidgetItem()
+                        new_volume_1h.setData(Qt.EditRole, QVariant(new_volume_1h_value))
+                        self.coin_index.setItem(i, 9, new_volume_1h)
+
+
+                    new_5m_change = QTableWidgetItem()
+                    new_5m_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-5][4])) - 1) * 100
+                    new_5m_change.setData(Qt.EditRole, QVariant(new_5m_change_value))
+                    self.coin_index.setItem(i, 10, new_5m_change)
+
+                    new_15m_change = QTableWidgetItem()
+                    new_15m_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-15][4])) - 1) * 100
+                    new_15m_change.setData(Qt.EditRole, QVariant(new_15m_change_value))
+                    self.coin_index.setItem(i, 11, new_15m_change)
+
+                    new_1h_change = QTableWidgetItem()
+                    new_1h_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-60][4])) - 1) * 100
+                    new_1h_change.setData(Qt.EditRole, QVariant(new_1h_change_value))
+                    self.coin_index.setItem(i, 12, new_1h_change)
+
+                # elif timeframe == "5m":
+                #     new_volume_5m = QTableWidgetItem()
+                #     new_volume_5m_value = float(klines_pair[0][-1][7])
+                #     new_volume_5m.setData(Qt.EditRole, QVariant(new_volume_5m_value))
+                #     self.coin_index.setItem(i, 7, new_volume_5m)
+
+                # if volume_5m != new_volume_5m_value:
+
+
+
+
+
+
 
     def api_calls(self):
         worker = Worker(api_history)
@@ -778,6 +924,8 @@ class beeserBot(QMainWindow):
         worker = Worker(partial(api_cancel_order, order_id, symbol))
         # worker.signals.progress.connect(self.cancel_callback)
         self.threadpool.start(worker)
+
+
 
 
     def create_buy_order(self):

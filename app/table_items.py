@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QApplication, QStyledItemDelegate, QStyleOptionViewItem)
 from PyQt5.QtWidgets import QStyle
 from PyQt5.QtGui import QTextDocument, QAbstractTextDocumentLayout, QPalette
-from app.colors import colors
+# from app.colors import colors
 from PyQt5.QtCore import QSize
 from PyQt5 import Qt
 
@@ -35,26 +35,50 @@ class CoinDelegate(QStyledItemDelegate):
             # orig = str(index.data())
             option.text = "<span style='color:#cdcdcd;'>" + str(index.data()) + " BTC</span>"
 
-        elif index.column() == 3:
-            percent_value = float(index.data())
+        elif index.column() == 3 or index.column() == 10 or index.column() == 11 or index.column() == 12:
+            value = index.data()
+            try:
+                percent_value = float(value)
+            except TypeError:
+                percent_value = 0
+
             if percent_value > 0:
                 operator = "+"
                 color = "#94c940"
 
             elif percent_value == 0.00:
-                operator = ""
-                color = "#999"
+                operator = "&nbsp;&nbsp;"
+                color = "#cdcdcd"
 
             else:
                 operator = ""
                 color = "#ff007a"
 
+
+
             option.text = "<span style='color:" + color + ";'>" + operator + "{0:.2f}".format(percent_value) + "%"
             option.textAlignmentRole = Qt.Qt.AlignRight
 
 
-        elif index.column() == 4:
-            option.text = "<span style='color:#cdcdcd;'>" + "{0:,.1f}".format(float(index.data())) + " BTC</span>"
+        elif index.column() == 4 or index.column() == 6 or index.column() == 7 or index.column() == 8 or index.column() == 9:
+            value = index.data()
+            try:
+                percent_value = float(value)
+            except TypeError:
+                percent_value = 0
+
+            if percent_value < 1:
+                color = "#999"
+
+            elif index.column() == 6 and percent_value > 5:
+                color = "#94c940"
+
+            elif index.column() == 7 and percent_value > 10:
+                color = "#94c940"
+
+            else:
+                color = "#cdcdcd"
+            option.text = "<span style='color:" + color + ";'>" + "{0:,.1f}".format(percent_value) + " BTC</span>"
 
         else:
             # print(index.data())
@@ -75,7 +99,7 @@ class CoinDelegate(QStyledItemDelegate):
 
 
     def paint(self, painter, option, index):
-        """Reimplement paint function to allow html rendering within tableWidgets."""
+        """Reimplement paint method to allow html rendering within tableWidgets."""
         options = QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
 

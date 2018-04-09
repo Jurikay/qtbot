@@ -7,6 +7,7 @@
 
 from MAIN import *
 from app.initApi import *
+import time
 
 holdings = (getHoldings(client))
 print(type(val["tickers"]["BNBBTC"]))
@@ -100,4 +101,12 @@ my_list = ["item1", 1337, ["list1", "list2"]]
 #     print(str(i[0]))
 #     print(str(i[1]))
 
-print(val["tickers"]["BNBBTC"])
+# print(val["tickers"]["BNBBTC"])
+candles = client.get_klines(symbol='BNBBTC', interval=Client.KLINE_INTERVAL_1MINUTE)
+# print(str(candles))
+
+while True:
+    print(val["tickers"])
+    print("#########")
+    time.sleep(1)
+
