@@ -17,7 +17,7 @@ from PyQt5.QtCore import QSize, Qt, QThreadPool, QTimer, QVariant  # , QUrl
 from PyQt5.QtGui import QColor, QCursor, QIcon, QPixmap, QFont
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QPlainTextEdit
 from PyQt5.uic import loadUi
 
 from app.apiFunctions import percentage_ammount
@@ -33,6 +33,20 @@ from app.init import val
 from app.initApi import (BinanceAPIException, client, read_config,
                          set_pair_values)
 
+import logging
+
+
+class QPlainTextEditLogger(logging.Handler):
+    def __init__(self, parent):
+        super().__init__()
+        self.widget = QPlainTextEdit(parent)
+        self.widget.setReadOnly(True)
+
+    def emit(self, record):
+        msg = self.format(record)
+        self.widget.appendPlainText(msg)
+        # print(msg)
+
 
 class beeserBot(QMainWindow):
 
@@ -47,6 +61,17 @@ class beeserBot(QMainWindow):
         with open("ui/style.qss", "r") as fh:
             self.setStyleSheet(fh.read())
 
+        qtLogger = QPlainTextEditLogger(self)
+        qtLogger.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+        logging.getLogger().addHandler(qtLogger)
+        # You can control the logging level
+        logging.getLogger().setLevel(logging.INFO)
+
+        self.widget_2.setWidget(qtLogger.widget)
+
+
+        logging.info('Initializing GUI')
+
         self.setWindowTitle("Juris beeser Bot")
         self.restart_warning.setStyleSheet("color: transparent;")
         # self.spread_area.setStyleSheet("background: #2e363d;")
@@ -59,7 +84,7 @@ class beeserBot(QMainWindow):
         # THREADING
         self.threadpool = QThreadPool()
         print("Multithreading with a maximum of %d threads" % self.threadpool.maxThreadCount())
-
+        logging.info('Enable multithreading with %d threads.' % self.threadpool.maxThreadCount())
         # connect elements to functions
 
         self.limit_buy_slider.valueChanged.connect(self.buy_slider)
@@ -239,6 +264,7 @@ class beeserBot(QMainWindow):
         self.asks_table.scrollToBottom()
 
         self.timer.stop()
+        logging.info('Finishing setup...')
 
 
     def change_pair(self):
@@ -250,6 +276,7 @@ class beeserBot(QMainWindow):
             val["bm"].stop_socket(val["aggtradeWebsocket"])
             val["bm"].stop_socket(val["depthWebsocket"])
             val["bm"].stop_socket(val["klineWebsocket"])
+            logging.info('Switching to %s' % newcoin + " / BTC")
 
             set_pair_values()
             initial_values(self)
@@ -324,7 +351,10 @@ class beeserBot(QMainWindow):
     #     # self.asks_table.scrollToBottom()
 
     def tick(self, payload):
-
+        # logging.debug('damn, a bug')
+        # logging.info('something to remember')
+        # logging.warning('that\'s not right')
+        # logging.error('foobar')
         if payload == 1:
             self.session_running.setText(str(timedelta(seconds=val["timeRunning"])))
             val["timeRunning"] += 1
@@ -469,10 +499,20 @@ class beeserBot(QMainWindow):
 
                         self.open_orders.removeRow(row)
 
+                    print("check")
+                    if order["status"] == "FILLED":
+                        logging.info('[ ✓ ] ORDER FILLED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
+
+                    elif order["status"] == "CANCELED":
+                        logging.info('[ ✘ ] ORDER CANCELED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
+
+
+
                 except (AttributeError, TypeError):
-                    pass
+                    print("error")
 
     def add_to_history(self, order):
+
         if order["symbol"] == val["pair"]:
 
             self.history_table.insertRow(0)
@@ -517,6 +557,8 @@ class beeserBot(QMainWindow):
     # remove canceled order from open orders table
 
     def update_open_order(self, order):
+        logging.info('ORDER UPDATED! %s' % str(order))
+
         for i in range(self.open_orders.rowCount()):
             order_id = self.open_orders.item(i, 8).text()
             if str(order_id) == str(order["orderId"]):
@@ -650,8 +692,10 @@ class beeserBot(QMainWindow):
             self.bids_table.setItem(i, 3, QTableWidgetItem(total_btc_bids + " BTC"))
             self.bids_table.item(i, 1).setForeground(QColor(colors.color_green))
 
-    # Draw UI changes
+    # Draw UI changes (bids, asks, history)
     def progress_fn(self, payload):
+        # logging.info("progress FN")
+
         try:
             asks = payload["asks"]
             if len(asks) == 20:
@@ -825,6 +869,8 @@ class beeserBot(QMainWindow):
     def schedule_kline_check(self, progress_callback):
         while True:
             while val["indexTabOpen"] is True:
+                logging.info("Getting historical prices of all coins.")
+
                 print("tab is open")
                 for i in val["coins"]:
                     # print(str(i))
@@ -833,6 +879,7 @@ class beeserBot(QMainWindow):
                     worker.signals.progress.connect(self.klines_received)
                     self.threadpool.start(worker)
 
+                logging.info("Finished getting prices.")
                 time.sleep(10)
             time.sleep(0.5)
 
@@ -988,6 +1035,8 @@ class beeserBot(QMainWindow):
             worker = Worker(partial(api_create_order, side, pair, price, amount))
             # worker.signals.progress.connect(self.create_order_callback)
             self.threadpool.start(worker)
+            logging.info('[ + ] BUY ORDER CREATED! %s' % str(pair) + " " + str(amount) + " at " + str(price))
+
 
     def create_sell_order(self):
         if val["sellAllowed"] is True:
@@ -1001,6 +1050,7 @@ class beeserBot(QMainWindow):
             worker = Worker(partial(api_create_order, side, pair, price, amount))
             # worker.signals.progress.connect(self.create_order_callback)
             self.threadpool.start(worker)
+            logging.info('[ - ] SELL ORDER CREATED! %s' % str(pair) + " " + str(amount) + " at " + str(price))
 
 
 
@@ -1047,6 +1097,7 @@ class beeserBot(QMainWindow):
         val["depthWebsocket"] = val["bm"].start_depth_socket(val["pair"], partial(depthCallback, self), depth=20)
 
         val["klineWebsocket"] = val["bm"].start_kline_socket(val["pair"], partial(klineCallback, self))
+        # logging.info('Starting websockets for %s' % str(val["pair"]))
 
 
 
@@ -1102,6 +1153,8 @@ class beeserBot(QMainWindow):
 
         read_config()
         self.set_button_text()
+        logging.info("Saving config.")
+
 
     def holding_updated(self):
         print("holding updated")

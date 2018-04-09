@@ -152,7 +152,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -265,21 +265,22 @@
             <attribute name="title">
              <string>Log</string>
             </attribute>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <layout class="QVBoxLayout" name="verticalLayout_17">
              <item>
-              <widget class="QColumnView" name="columnView"/>
-             </item>
-             <item>
-              <widget class="QTextBrowser" name="textBrowser">
-               <property name="html">
-                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;asd&lt;/span&gt; &lt;span style=&quot; text-decoration: underline; color:#818181;&quot;&gt;as&lt;/span&gt; asd&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;asd asd asd&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <widget class="QScrollArea" name="widget_2">
+               <property name="widgetResizable">
+                <bool>true</bool>
                </property>
+               <widget class="QWidget" name="scrollAreaWidgetContents">
+                <property name="geometry">
+                 <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>816</width>
+                  <height>312</height>
+                 </rect>
+                </property>
+               </widget>
               </widget>
              </item>
             </layout>
@@ -4857,7 +4858,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>limit_buy_button</tabstop>
   <tabstop>limit_buy_slider</tabstop>
   <tabstop>limit_sell_slider</tabstop>
-  <tabstop>columnView</tabstop>
   <tabstop>limit_sell_button</tabstop>
   <tabstop>limit_undercut</tabstop>
   <tabstop>limit_high</tabstop>
@@ -4866,7 +4866,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>limit_sbutton2</tabstop>
   <tabstop>limit_sbutton3</tabstop>
   <tabstop>limit_sbutton4</tabstop>
-  <tabstop>textBrowser</tabstop>
   <tabstop>spread_min_slider</tabstop>
   <tabstop>spread_halt_buys</tabstop>
   <tabstop>spread_halt_sells</tabstop>
