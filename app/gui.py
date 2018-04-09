@@ -9,7 +9,7 @@
 import configparser
 import time
 from datetime import datetime, timedelta
-import _strptime
+# import _strptime
 from functools import partial
 
 from binance.websockets import BinanceSocketManager
@@ -401,7 +401,7 @@ class beeserBot(QMainWindow):
                         operator = ""
                         color = colors.color_pink
 
-                
+
                     # print(str(change))
                     changes[i].setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
 
@@ -843,6 +843,8 @@ class beeserBot(QMainWindow):
         # val["apiCalls"] += 1
 
 
+    # TODO: Refactor: Build list of qtablewidgetitems in separate thread,
+    # set all in callback
     def klines_received(self, klines_pair):
 
         # self.kline_table.insertRow(0)
