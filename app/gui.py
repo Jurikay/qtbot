@@ -402,7 +402,7 @@ class beeserBot(QMainWindow):
                         color = colors.color_pink
 
                 
-                    print(str(change))
+                    # print(str(change))
                     changes[i].setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
 
         except Exception as e:

@@ -73,7 +73,7 @@ class CoinDelegate(QStyledItemDelegate):
             elif index.column() == 6 and percent_value > 5:
                 color = "#94c940"
 
-            elif index.column() == 7 and percent_value > 10:
+            elif index.column() == 7 and percent_value > 50:
                 color = "#94c940"
 
             else:

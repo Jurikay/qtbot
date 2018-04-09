@@ -81,7 +81,7 @@ def filter_coinindex(self, text):
             self.coin_index.showRow(j)
         self.coin_index.setSortingEnabled(True)
 
-    print("pricc")
+    # print("procc")
 
 
 def filter_confirmed(self):
