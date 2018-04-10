@@ -152,7 +152,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -2241,7 +2241,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>5</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -4120,6 +4120,12 @@
            </layout>
           </widget>
           <widget class="QWidget" name="tab_4">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
            <attribute name="title">
             <string>Stats</string>
            </attribute>
@@ -4143,6 +4149,12 @@
                 <horstretch>2</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
               </property>
               <property name="baseSize">
                <size>
@@ -4239,7 +4251,7 @@
                  </widget>
                 </item>
                 <item row="5" column="1">
-                 <widget class="QLineEdit" name="lineEdit_12">
+                 <widget class="QLineEdit" name="total_trades">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                     <horstretch>0</horstretch>
@@ -4265,7 +4277,7 @@
                  </widget>
                 </item>
                 <item row="9" column="1">
-                 <widget class="QLineEdit" name="lineEdit_6">
+                 <widget class="QLineEdit" name="total_bot_trades">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                     <horstretch>0</horstretch>
@@ -4362,7 +4374,7 @@
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="QLineEdit" name="lineEdit_13">
+                 <widget class="QLineEdit" name="total_running">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                     <horstretch>0</horstretch>
@@ -4476,10 +4488,10 @@
                  </widget>
                 </item>
                 <item row="12" column="1">
-                 <widget class="QLineEdit" name="lineEdit_15"/>
+                 <widget class="QLineEdit" name="total_api_updates"/>
                 </item>
                 <item row="16" column="1">
-                 <widget class="QLineEdit" name="lineEdit_16"/>
+                 <widget class="QLineEdit" name="total_api_calls"/>
                 </item>
                 <item row="12" column="0">
                  <widget class="QLabel" name="label_47">

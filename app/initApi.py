@@ -58,6 +58,34 @@ def read_config():
     val["copy_qty"] = config["CONFIG"]["CopyQuantity"]
 
 
+def read_stats():
+    config = configparser.ConfigParser()
+
+    stat_vals = [val["stats"]["timeRunning"], val["stats"]["execTrades"], val["stats"]["execBotTrades"], val["stats"]["apiCalls"], val["stats"]["apiUpdates"]]
+
+
+    if os.path.isfile("stats.ini"):
+        config.read('stats.ini')
+
+    else:
+        config['Stats'] = {'timeRunning': 0,
+                            'execTrades': 0,
+                            'execBotTrades': 0,
+                            'apiCalls': 0,
+                            'apiUpdates': 0,
+                            }
+        with open('stats.ini', 'w') as configfile:
+            config.write(configfile)
+        print("Config file has been written.")
+
+    print("reading stats")
+    for i, cfg in enumerate(config["Stats"]):
+        stat_vals[i] = cfg
+        print(str(cfg))
+
+
+
+
 def set_pair_values():
     val["coin"] = val["pair"][:-3]
 
@@ -71,7 +99,9 @@ def set_pair_values():
         val["assetDecimals"] = len(str(val["coins"][val["pair"]]["minTrade"])) - 2
 
 
+
 read_config()
+read_stats()
 
 try:
     client = Client(val["api_key"], val["api_secret"],
