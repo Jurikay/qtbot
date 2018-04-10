@@ -28,6 +28,7 @@ def directCallback(self, msg):
     worker.signals.progress.connect(self.progress_history)
     # worker.signals.finished.connect(self.t_complete)
     self.threadpool.start(worker)
+    val["apiUpdates"] += 1
 
 
 def depthCallback(self, msg):
@@ -47,7 +48,7 @@ def depthCallback(self, msg):
         worker.signals.progress.connect(self.progress_asks)
         # worker.signals.finished.connect(self.t_complete)
         self.threadpool.start(worker)
-
+    val["apiUpdates"] += 1
 
 
 def userCallback(self, msg):
@@ -57,7 +58,7 @@ def userCallback(self, msg):
     # print(str(self))
     # print(msg)
     userMsg = dict()
-
+    val["apiUpdates"] += 1
     for key, value in msg.items():
         userMsg[key] = value
 
@@ -109,6 +110,7 @@ def userCallback(self, msg):
 
 
 def tickerCallback(self, msg):
+    val["apiUpdates"] += 1
     # print("TICKER:" + str(dt.datetime.now()))
     for _, value in enumerate(msg):
         # ticker[key] = value
