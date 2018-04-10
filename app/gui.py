@@ -45,6 +45,7 @@ class QPlainTextEditLogger(logging.Handler):
     def emit(self, record):
         msg = self.format(record)
         self.widget.appendPlainText(msg)
+        self.widget.update()
         # print(msg)
 
 
@@ -127,7 +128,7 @@ class beeserBot(QMainWindow):
         self.limit_buy_input.valueChanged.connect(self.check_buy_amount)
 
 
-        self.button_klines.clicked.connect(self.start_kline_check)
+        self.button_klines.clicked.connect(self.iterate_through_klines)
         # self.player = QMediaPlayer()
         # sound = QMediaContent(QUrl.fromLocalFile("sounds/Tink.wav"))
         # self.player.setMedia(sound)
@@ -263,9 +264,19 @@ class beeserBot(QMainWindow):
 
         self.asks_table.scrollToBottom()
 
+        self.set_stats
         self.timer.stop()
         logging.info('Finishing setup...')
 
+    def shutdown_bot(self):
+        self.write_stats()
+
+    def set_stats(self):
+        self.total_running.setText(val["stats"]["timeRunning"])
+        self.total_trades.setText(val["stats"]["execTrades"])
+        self.total_bot_trades.setText(val["stats"]["execBotTrades"])
+        self.total_api_calls.setText(val["stats"]["apiCalls"])
+        self.total_api_updates.setText(val["stats"]["apiUpdates"])
 
     def change_pair(self):
 
@@ -362,6 +373,7 @@ class beeserBot(QMainWindow):
             self.current_time.setText(str(time.strftime('%a, %d %b %Y %H:%M:%S')))
 
             self.explicit_api_calls_label.setText(str(val["apiCalls"]))
+
 
             total_btc_value = calc_total_btc()
             self.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
@@ -896,6 +908,41 @@ class beeserBot(QMainWindow):
         # progress_callback.emit([klines, pair, interval])
         # val["apiCalls"] += 1
 
+    #wip
+    def iterate_through_klines(self):
+        for i, kline in enumerate(val["klines"]["1m"]):
+            coin = kline.replace("BTC", "")
+            items = self.coin_index.findItems(coin, Qt.MatchExactly)
+            for item in items:
+                print(coin)
+                print(item.row())
+                print(str(i))
+                row = item.row()
+
+                if self.coin_index.item(row, 6) is None:
+                    print("isNone")
+                    volume_1m = 0
+                else:
+                    volume_1m = self.coin_index.item(row, 6).text()
+
+                new_volume_1m_value = float(val["klines"]["1m"][kline][-1][7])
+
+                if volume_1m != new_volume_1m_value:
+                    new_volume_1m = QTableWidgetItem()
+                    new_volume_1m.setData(Qt.EditRole, QVariant(new_volume_1m_value))
+                    self.coin_index.setItem(row, 6, new_volume_1m)
+                
+
+            
+
+            # row = test.row()
+            # print(str(test))
+            # try:
+            #     print(test.row())
+            # except Exception as e:
+            #     print(e)
+            # print(test.getRow())
+
 
     # TODO: Refactor: Build list of qtablewidgetitems in separate thread,
     # set all in callback
@@ -913,77 +960,77 @@ class beeserBot(QMainWindow):
         val["klines"][timeframe][str(klines_pair[1])] = klines_pair[0]
 
 
-        for i in range(self.coin_index.rowCount()):
+        # for i in range(self.coin_index.rowCount()):
 
-            coin = self.coin_index.item(i, 1).text()
-            if coin == symbol:
+        #     coin = self.coin_index.item(i, 1).text()
+        #     if coin == symbol:
 
-                if timeframe == "1m":
-                    try:
-                        volume_1m = self.coin_index.item(i, 6).text()
-                    except AttributeError:
-                        volume_1m = 0
-                    new_volume_1m_value = float(klines_pair[0][-1][7])
+        #         if timeframe == "1m":
+        #             try:
+        #                 volume_1m = self.coin_index.item(i, 6).text()
+        #             except AttributeError:
+        #                 volume_1m = 0
+        #             new_volume_1m_value = float(klines_pair[0][-1][7])
 
-                    if volume_1m != new_volume_1m_value:
-                        new_volume_1m = QTableWidgetItem()
-                        new_volume_1m.setData(Qt.EditRole, QVariant(new_volume_1m_value))
-                        self.coin_index.setItem(i, 6, new_volume_1m)
-
-
-                    try:
-                        volume_5x1 = self.coin_index.item(i, 7).text()
-                    except AttributeError:
-                        volume_5x1 = 0
-                    new_volume_5x1_value = float(klines_pair[0][-1][7]) + float(klines_pair[0][-2][7]) + float(klines_pair[0][-3][7]) + float(klines_pair[0][-4][7]) + float(klines_pair[0][-5][7])
-
-                    if volume_5x1 != new_volume_5x1_value:
-                        new_volume_5x1 = QTableWidgetItem()
-                        new_volume_5x1.setData(Qt.EditRole, QVariant(new_volume_5x1_value))
-                        self.coin_index.setItem(i, 7, new_volume_5x1)
+        #             if volume_1m != new_volume_1m_value:
+        #                 new_volume_1m = QTableWidgetItem()
+        #                 new_volume_1m.setData(Qt.EditRole, QVariant(new_volume_1m_value))
+        #                 self.coin_index.setItem(i, 6, new_volume_1m)
 
 
-                    new_volume_15m_value = 0
-                    try:
-                        volume_15m = self.coin_index.item(i, 8).text()
-                    except AttributeError:
-                        volume_15m = 0
-                    for j in range(15):
-                        new_volume_15m_value += float(klines_pair[0][-(j + 1)][7])
+        #             try:
+        #                 volume_5x1 = self.coin_index.item(i, 7).text()
+        #             except AttributeError:
+        #                 volume_5x1 = 0
+        #             new_volume_5x1_value = float(klines_pair[0][-1][7]) + float(klines_pair[0][-2][7]) + float(klines_pair[0][-3][7]) + float(klines_pair[0][-4][7]) + float(klines_pair[0][-5][7])
 
-                    if volume_15m != new_volume_15m_value:
-                        new_volume_15m = QTableWidgetItem()
-                        new_volume_15m.setData(Qt.EditRole, QVariant(new_volume_15m_value))
-                        self.coin_index.setItem(i, 8, new_volume_15m)
-
-                    new_volume_1h_value = 0
-                    try:
-                        volume_1h = self.coin_index.item(i, 9).text()
-                    except AttributeError:
-                        volume_1h = 0
-                    for j in range(60):
-                        new_volume_1h_value += float(klines_pair[0][-(j + 1)][7])
-
-                    if volume_1h != new_volume_1h_value:
-                        new_volume_1h = QTableWidgetItem()
-                        new_volume_1h.setData(Qt.EditRole, QVariant(new_volume_1h_value))
-                        self.coin_index.setItem(i, 9, new_volume_1h)
+        #             if volume_5x1 != new_volume_5x1_value:
+        #                 new_volume_5x1 = QTableWidgetItem()
+        #                 new_volume_5x1.setData(Qt.EditRole, QVariant(new_volume_5x1_value))
+        #                 self.coin_index.setItem(i, 7, new_volume_5x1)
 
 
-                    new_5m_change = QTableWidgetItem()
-                    new_5m_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-5][4])) - 1) * 100
-                    new_5m_change.setData(Qt.EditRole, QVariant(new_5m_change_value))
-                    self.coin_index.setItem(i, 10, new_5m_change)
+        #             new_volume_15m_value = 0
+        #             try:
+        #                 volume_15m = self.coin_index.item(i, 8).text()
+        #             except AttributeError:
+        #                 volume_15m = 0
+        #             for j in range(15):
+        #                 new_volume_15m_value += float(klines_pair[0][-(j + 1)][7])
 
-                    new_15m_change = QTableWidgetItem()
-                    new_15m_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-15][4])) - 1) * 100
-                    new_15m_change.setData(Qt.EditRole, QVariant(new_15m_change_value))
-                    self.coin_index.setItem(i, 11, new_15m_change)
+        #             if volume_15m != new_volume_15m_value:
+        #                 new_volume_15m = QTableWidgetItem()
+        #                 new_volume_15m.setData(Qt.EditRole, QVariant(new_volume_15m_value))
+        #                 self.coin_index.setItem(i, 8, new_volume_15m)
 
-                    new_1h_change = QTableWidgetItem()
-                    new_1h_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-60][4])) - 1) * 100
-                    new_1h_change.setData(Qt.EditRole, QVariant(new_1h_change_value))
-                    self.coin_index.setItem(i, 12, new_1h_change)
+        #             new_volume_1h_value = 0
+        #             try:
+        #                 volume_1h = self.coin_index.item(i, 9).text()
+        #             except AttributeError:
+        #                 volume_1h = 0
+        #             for j in range(60):
+        #                 new_volume_1h_value += float(klines_pair[0][-(j + 1)][7])
+
+        #             if volume_1h != new_volume_1h_value:
+        #                 new_volume_1h = QTableWidgetItem()
+        #                 new_volume_1h.setData(Qt.EditRole, QVariant(new_volume_1h_value))
+        #                 self.coin_index.setItem(i, 9, new_volume_1h)
+
+
+        #             new_5m_change = QTableWidgetItem()
+        #             new_5m_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-5][4])) - 1) * 100
+        #             new_5m_change.setData(Qt.EditRole, QVariant(new_5m_change_value))
+        #             self.coin_index.setItem(i, 10, new_5m_change)
+
+        #             new_15m_change = QTableWidgetItem()
+        #             new_15m_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-15][4])) - 1) * 100
+        #             new_15m_change.setData(Qt.EditRole, QVariant(new_15m_change_value))
+        #             self.coin_index.setItem(i, 11, new_15m_change)
+
+        #             new_1h_change = QTableWidgetItem()
+        #             new_1h_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-60][4])) - 1) * 100
+        #             new_1h_change.setData(Qt.EditRole, QVariant(new_1h_change_value))
+        #             self.coin_index.setItem(i, 12, new_1h_change)
 
                 # elif timeframe == "5m":
                 #     new_volume_5m = QTableWidgetItem()
@@ -1155,6 +1202,23 @@ class beeserBot(QMainWindow):
         self.set_button_text()
         logging.info("Saving config.")
 
+    def write_stats(self):
+        total_running = val["stats"]["timeRunning"] + val["timeRunning"]
+        total_trades = val["stats"]["execTrades"] + val["execTrades"]
+        total_bot_trades = val["stats"]["execBotTrades"] + val["execBotTrades"]
+        api_updates = val["stats"]["apiUpdates"] + val["apiUpdates"]
+        api_calls = val["stats"]["apiCalls"] + val["apiCalls"]
+
+        config = configparser.ConfigParser()
+
+        config["Stats"] = {"timeRunning": total_running,
+                           "execTrades": total_trades,
+                           "execBotTrades": total_bot_trades,
+                           "apiUpdates": api_updates,
+                           "apiCalls": api_calls}
+
+        with open('stats.ini', 'w') as configfile:
+                    config.write(configfile)
 
     def holding_updated(self):
         print("holding updated")
