@@ -147,6 +147,8 @@ def build_coinindex(self):
             btc_volume = QTableWidgetItem()
             btc_volume.setData(Qt.EditRole, QVariant(round(float(val["tickers"][pair]["quoteVolume"]), 2)))
 
+            zero_item = QTableWidgetItem()
+            zero_item.setData(Qt.EditRole, QVariant(0))
             # price_change.setData(Qt.DisplayRole, QVariant(str(val["tickers"][pair]["priceChangePercent"]) + "%"))
 
             self.coin_index.insertRow(0)
@@ -155,6 +157,9 @@ def build_coinindex(self):
             self.coin_index.setItem(0, 2, last_price)
             self.coin_index.setItem(0, 3, QTableWidgetItem(price_change))
             self.coin_index.setItem(0, 4, QTableWidgetItem(btc_volume))
+
+            for i in (number + 6 for number in range(7)):
+                self.coin_index.setItem(0, i, QTableWidgetItem(zero_item))
 
             if price_change_value < 0:
                 self.coin_index.item(0, 3).setForeground(QColor(colors.color_pink))

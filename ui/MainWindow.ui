@@ -152,7 +152,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -217,26 +217,6 @@
              </property>
              <item>
               <widget class="QTableWidget" name="kline_table">
-               <row>
-                <property name="text">
-                 <string>New Row</string>
-                </property>
-               </row>
-               <row>
-                <property name="text">
-                 <string>New Row</string>
-                </property>
-               </row>
-               <row>
-                <property name="text">
-                 <string>New Row</string>
-                </property>
-               </row>
-               <row>
-                <property name="text">
-                 <string>New Row</string>
-                </property>
-               </row>
                <column>
                 <property name="text">
                  <string>Price</string>
@@ -252,11 +232,11 @@
                  <string>Time</string>
                 </property>
                </column>
-               <item row="0" column="0">
+               <column>
                 <property name="text">
-                 <string>asdasdasdddadasdad</string>
+                 <string>test</string>
                 </property>
-               </item>
+               </column>
               </widget>
              </item>
             </layout>
@@ -528,6 +508,13 @@
                  <property name="bottomMargin">
                   <number>10</number>
                  </property>
+                 <item>
+                  <widget class="QPushButton" name="get_all_orders_button">
+                   <property name="text">
+                    <string>get all orders</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QPushButton" name="button_wavg">
                    <property name="text">
@@ -4419,7 +4406,7 @@
                  </widget>
                 </item>
                 <item row="11" column="1">
-                 <widget class="QLineEdit" name="lineEdit">
+                 <widget class="QLineEdit" name="explicit_api_updates">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                     <horstretch>0</horstretch>

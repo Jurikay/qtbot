@@ -142,6 +142,8 @@ class beeserBot(QMainWindow):
         self.coinindex_filter.textChanged.connect(partial(filter_coinindex, self))
         self.coinindex_filter.returnPressed.connect(partial(filter_confirmed, self))
 
+
+        self.get_all_orders_button.clicked.connect(self.get_all_orders)
         # Fix a linter error...
         self.chartLOL = QWebEngineView()
 
@@ -268,15 +270,17 @@ class beeserBot(QMainWindow):
         self.timer.stop()
         logging.info('Finishing setup...')
 
+
+
     def shutdown_bot(self):
         self.write_stats()
 
     def set_stats(self):
-        self.total_running.setText(val["stats"]["timeRunning"])
-        self.total_trades.setText(val["stats"]["execTrades"])
-        self.total_bot_trades.setText(val["stats"]["execBotTrades"])
-        self.total_api_calls.setText(val["stats"]["apiCalls"])
-        self.total_api_updates.setText(val["stats"]["apiUpdates"])
+        self.total_running.setText(str(val["stats"]["timeRunning"]))
+        self.total_trades.setText(str(val["stats"]["execTrades"]))
+        self.total_bot_trades.setText(str(val["stats"]["execBotTrades"]))
+        self.total_api_calls.setText(str(val["stats"]["apiCalls"]))
+        self.total_api_updates.setText(str(val["stats"]["apiUpdates"]))
 
     def change_pair(self):
 
@@ -373,7 +377,7 @@ class beeserBot(QMainWindow):
             self.current_time.setText(str(time.strftime('%a, %d %b %Y %H:%M:%S')))
 
             self.explicit_api_calls_label.setText(str(val["apiCalls"]))
-
+            self.explicit_api_updates.setText(str(val["apiUpdates"]))
 
             total_btc_value = calc_total_btc()
             self.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
@@ -410,7 +414,9 @@ class beeserBot(QMainWindow):
                 val["indexTabOpen"] = False
             elif tab_index_botLeft == 4:
                 update_coin_index_prices(self)
+                self.start_kline_iterator()
                 val["indexTabOpen"] = True
+                # self.start_kline_iterator()
             else:
                 val["indexTabOpen"] = False
 
@@ -878,172 +884,127 @@ class beeserBot(QMainWindow):
         # worker.signals.progress.connect(self.klines_received)
         self.threadpool.start(worker)
 
+    def start_kline_iterator(self):
+        worker = Worker(self.iterate_through_klines)
+        worker.signals.progress.connect(self.draw_kline_changes)
+        self.threadpool.start(worker)
+
     def schedule_kline_check(self, progress_callback):
         while True:
-            while val["indexTabOpen"] is True:
-                logging.info("Getting historical prices of all coins.")
 
-                print("tab is open")
-                for i in val["coins"]:
-                    # print(str(i))
-                    time.sleep(0.1)
-                    worker = Worker(partial(self.get_kline, str(i)))
-                    worker.signals.progress.connect(self.klines_received)
-                    self.threadpool.start(worker)
+            print("Spawning api call workers")
+            for i in val["coins"]:
+                # print(str(i))
+                time.sleep(0.2)
+                worker = Worker(partial(self.get_kline, str(i)))
+                worker.signals.progress.connect(self.klines_received)
+                self.threadpool.start(worker)
 
-                logging.info("Finished getting prices.")
-                time.sleep(10)
-            time.sleep(0.5)
+            time.sleep(15)
+
 
 
         # worker = Worker(partial(get_kline, self, ))
     def get_kline(self, pair, progress_callback):
+        """Make an API call to get historical data of a coin pair."""
         interval = "1m"
+
         klines = client.get_klines(symbol=pair, interval=interval)
+
         progress_callback.emit([klines, pair, interval])
         val["apiCalls"] += 1
-        # time.sleep(1)
-        # interval = "5m"
-        # klines = client.get_klines(symbol=pair, interval=interval)
-        # progress_callback.emit([klines, pair, interval])
-        # val["apiCalls"] += 1
 
-    #wip
-    def iterate_through_klines(self):
-        for i, kline in enumerate(val["klines"]["1m"]):
+
+    # wip
+    def iterate_through_klines(self, progress_callback):
+        """Iterate through the global klines dict and calculate values based on historical data."""
+        for i, kline in enumerate(dict(val["klines"]["1m"])):
             coin = kline.replace("BTC", "")
+            # items = self.coin_index.findItems(coin, Qt.MatchExactly)
+            change_dict = dict()
+
+            new_volume_1m_value = 0
+            new_volume_5m_value = 0
+            new_volume_15m_value = 0
+            new_volume_1h_value = 0
+
+            new_volume_1m_value = float(val["klines"]["1m"][kline][-1][7])
+
+            # sum up 1m volume up to 1 hour.
+            for minute in range(60):
+                if minute < 6:
+                    new_volume_5m_value += float(val["klines"]["1m"][kline][-(1 + minute)][7])
+                if minute < 16:
+                    new_volume_15m_value += float(val["klines"]["1m"][kline][-(1 + minute)][7])
+
+                # sum 60 minutes to get 1 hour volume
+                new_volume_1h_value += float(val["klines"]["1m"][kline][-(1 + minute)][7])
+
+            new_change_5m_value = ((float(val["tickers"][kline]["lastPrice"]) / float(val["klines"]["1m"][kline][-5][4])) - 1) * 100
+            new_change_15m_value = ((float(val["tickers"][kline]["lastPrice"]) / float(val["klines"]["1m"][kline][-15][4])) - 1) * 100
+            new_change_1h_value = ((float(val["tickers"][kline]["lastPrice"]) / float(val["klines"]["1m"][kline][-60][4])) - 1) * 100
+
+            change_dict[6] = new_volume_1m_value
+            change_dict[7] = new_volume_5m_value
+            change_dict[8] = new_volume_15m_value
+            change_dict[9] = new_volume_1h_value
+            change_dict[10] = new_change_5m_value
+            change_dict[11] = new_change_15m_value
+            change_dict[12] = new_change_1h_value
+
+            progress_callback.emit({coin: change_dict})
+
+
+    def draw_kline_changes(self, kline_list):
+        """Update coin_index values as needed."""
+        for kline_dataset in kline_list.items():
+            coin = kline_dataset[0]
+
             items = self.coin_index.findItems(coin, Qt.MatchExactly)
+
+            # findItems returns a list hence we iterate through it. We only expect one result though.
             for item in items:
-                print(coin)
-                print(item.row())
-                print(str(i))
+
+                # get current row of coin to check
                 row = item.row()
 
-                if self.coin_index.item(row, 6) is None:
-                    print("isNone")
-                    volume_1m = 0
-                else:
-                    volume_1m = self.coin_index.item(row, 6).text()
+            # iterate through received kline data
+            for kline_data in kline_dataset[1].items():
+                colIndex = int(kline_data[0])
+                new_data = kline_data[1]
 
-                new_volume_1m_value = float(val["klines"]["1m"][kline][-1][7])
+                # read old data from table
+                old_data = self.coin_index.item(row, colIndex).text()
 
-                if volume_1m != new_volume_1m_value:
-                    new_volume_1m = QTableWidgetItem()
-                    new_volume_1m.setData(Qt.EditRole, QVariant(new_volume_1m_value))
-                    self.coin_index.setItem(row, 6, new_volume_1m)
-                
-
-            
-
-            # row = test.row()
-            # print(str(test))
-            # try:
-            #     print(test.row())
-            # except Exception as e:
-            #     print(e)
-            # print(test.getRow())
+                # if data differs from old data, create an item, set new data and update coin_index.
+                if float(old_data) != float(new_data):
+                    newItem = QTableWidgetItem()
+                    newItem.setData(Qt.EditRole, QVariant(new_data))
+                    self.coin_index.setItem(row, colIndex, newItem)
 
 
-    # TODO: Refactor: Build list of qtablewidgetitems in separate thread,
-    # set all in callback
     def klines_received(self, klines_pair):
-
-        # self.kline_table.insertRow(0)
-        # self.kline_table.setItem(0, 0, QTableWidgetItem(klines_pair[1]))
-        # self.kline_table.setItem(0, 1, QTableWidgetItem(str(klines_pair[0][-2][7])))
+        """Save kline data received from api call callback in array."""
+        kline_data = klines_pair[0]
         pair = klines_pair[1]
         timeframe = klines_pair[2]
-        symbol = pair.replace("BTC", "")
+
+        val["klines"][timeframe][str(pair)] = kline_data
+        print("received")
 
 
 
-        val["klines"][timeframe][str(klines_pair[1])] = klines_pair[0]
-
-
-        # for i in range(self.coin_index.rowCount()):
-
-        #     coin = self.coin_index.item(i, 1).text()
-        #     if coin == symbol:
-
-        #         if timeframe == "1m":
-        #             try:
-        #                 volume_1m = self.coin_index.item(i, 6).text()
-        #             except AttributeError:
-        #                 volume_1m = 0
-        #             new_volume_1m_value = float(klines_pair[0][-1][7])
-
-        #             if volume_1m != new_volume_1m_value:
-        #                 new_volume_1m = QTableWidgetItem()
-        #                 new_volume_1m.setData(Qt.EditRole, QVariant(new_volume_1m_value))
-        #                 self.coin_index.setItem(i, 6, new_volume_1m)
-
-
-        #             try:
-        #                 volume_5x1 = self.coin_index.item(i, 7).text()
-        #             except AttributeError:
-        #                 volume_5x1 = 0
-        #             new_volume_5x1_value = float(klines_pair[0][-1][7]) + float(klines_pair[0][-2][7]) + float(klines_pair[0][-3][7]) + float(klines_pair[0][-4][7]) + float(klines_pair[0][-5][7])
-
-        #             if volume_5x1 != new_volume_5x1_value:
-        #                 new_volume_5x1 = QTableWidgetItem()
-        #                 new_volume_5x1.setData(Qt.EditRole, QVariant(new_volume_5x1_value))
-        #                 self.coin_index.setItem(i, 7, new_volume_5x1)
-
-
-        #             new_volume_15m_value = 0
-        #             try:
-        #                 volume_15m = self.coin_index.item(i, 8).text()
-        #             except AttributeError:
-        #                 volume_15m = 0
-        #             for j in range(15):
-        #                 new_volume_15m_value += float(klines_pair[0][-(j + 1)][7])
-
-        #             if volume_15m != new_volume_15m_value:
-        #                 new_volume_15m = QTableWidgetItem()
-        #                 new_volume_15m.setData(Qt.EditRole, QVariant(new_volume_15m_value))
-        #                 self.coin_index.setItem(i, 8, new_volume_15m)
-
-        #             new_volume_1h_value = 0
-        #             try:
-        #                 volume_1h = self.coin_index.item(i, 9).text()
-        #             except AttributeError:
-        #                 volume_1h = 0
-        #             for j in range(60):
-        #                 new_volume_1h_value += float(klines_pair[0][-(j + 1)][7])
-
-        #             if volume_1h != new_volume_1h_value:
-        #                 new_volume_1h = QTableWidgetItem()
-        #                 new_volume_1h.setData(Qt.EditRole, QVariant(new_volume_1h_value))
-        #                 self.coin_index.setItem(i, 9, new_volume_1h)
-
-
-        #             new_5m_change = QTableWidgetItem()
-        #             new_5m_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-5][4])) - 1) * 100
-        #             new_5m_change.setData(Qt.EditRole, QVariant(new_5m_change_value))
-        #             self.coin_index.setItem(i, 10, new_5m_change)
-
-        #             new_15m_change = QTableWidgetItem()
-        #             new_15m_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-15][4])) - 1) * 100
-        #             new_15m_change.setData(Qt.EditRole, QVariant(new_15m_change_value))
-        #             self.coin_index.setItem(i, 11, new_15m_change)
-
-        #             new_1h_change = QTableWidgetItem()
-        #             new_1h_change_value = ((float(klines_pair[0][-1][4]) / float(klines_pair[0][-60][4])) - 1) * 100
-        #             new_1h_change.setData(Qt.EditRole, QVariant(new_1h_change_value))
-        #             self.coin_index.setItem(i, 12, new_1h_change)
-
-                # elif timeframe == "5m":
-                #     new_volume_5m = QTableWidgetItem()
-                #     new_volume_5m_value = float(klines_pair[0][-1][7])
-                #     new_volume_5m.setData(Qt.EditRole, QVariant(new_volume_5m_value))
-                #     self.coin_index.setItem(i, 7, new_volume_5m)
-
-                # if volume_5m != new_volume_5m_value:
-
-
-
-
-
+    # WIP
+    def get_all_orders(self):
+        orders = client.get_open_orders()
+        # print(str(orders))
+        for _, order in enumerate(orders):
+            print(str(order))
+            self.kline_table.insertRow(0)
+            self.kline_table.setItem(0, 0, QTableWidgetItem(order["symbol"]))
+            self.kline_table.setItem(0, 1, QTableWidgetItem(order["price"]))
+            self.kline_table.setItem(0, 2, QTableWidgetItem(order["origQty"]))
+            self.kline_table.setItem(0, 3, QTableWidgetItem(order["executedQty"]))
 
 
     def api_calls(self):
