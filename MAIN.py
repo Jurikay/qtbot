@@ -8,6 +8,8 @@
 from PyQt5.QtWidgets import QApplication, QStyleFactory
 from app.gui import beeserBot
 import sys
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
@@ -18,5 +20,6 @@ if __name__ == "__main__":
 
     widget = beeserBot()
     widget.show()
+    app.aboutToQuit.connect(widget.shutdown_bot)
 
     sys.exit(app.exec_())
