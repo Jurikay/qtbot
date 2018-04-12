@@ -17,10 +17,7 @@ QWidget {
   background-color: #2e363d;
 }
 
-#top_bar {
-  font-size: 15px;
-  color: red;
-}
+
 
 
 
@@ -320,7 +317,7 @@ QPushButton#limit_sell_button::pressed {
 
 }
 #percent_frame, #percent_frame QLabel {
-    background-color: "#20262b";
+    background-color: "#262d33";
     color: white;
 
 }
@@ -566,4 +563,10 @@ QAbstractSpinBox::down-arrow:hover {
   color: white;
   margin: 1px;
   border: 1px solid #f3ba2e;
+}
+
+#top_groupBox, #top_groupBox QLabel, #top_groupBox #topl {
+    /* font-size: 15px; */
+    /* color: red; */
+    background-color: #20262b;
 }
