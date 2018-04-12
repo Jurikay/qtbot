@@ -152,7 +152,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>3</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -267,9 +267,29 @@
            </widget>
            <widget class="QWidget" name="tab_12">
             <attribute name="title">
-             <string>Page</string>
+             <string>chart2</string>
             </attribute>
-            <layout class="QHBoxLayout" name="horizontalLayout_36"/>
+            <layout class="QHBoxLayout" name="horizontalLayout_13">
+             <item>
+              <widget class="QWebEngineView" name="chart_2" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
            <widget class="QWidget" name="tab_2">
             <attribute name="title">
@@ -439,17 +459,10 @@
               <layout class="QVBoxLayout" name="verticalLayout_3">
                <item>
                 <layout class="QGridLayout" name="gridLayout_9">
-                 <item row="2" column="3">
-                  <widget class="QLabel" name="label_29">
+                 <item row="1" column="4">
+                  <widget class="QLabel" name="debug4">
                    <property name="text">
-                    <string>debug7</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="debug5">
-                   <property name="text">
-                    <string>debug5</string>
+                    <string>debug4</string>
                    </property>
                   </widget>
                  </item>
@@ -480,24 +493,38 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="4">
-                  <widget class="QLabel" name="debug4">
-                   <property name="text">
-                    <string>debug4</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
+                 <item row="3" column="1">
                   <widget class="QLabel" name="debug6">
                    <property name="text">
                     <string>debug6</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="4">
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="debug5">
+                   <property name="text">
+                    <string>debug5</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="3">
+                  <widget class="QLabel" name="label_29">
+                   <property name="text">
+                    <string>debug7</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="4">
                   <widget class="QLabel" name="debug8">
                    <property name="text">
                     <string>debug8</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QPushButton" name="reset_vol_direct">
+                   <property name="text">
+                    <string>reset</string>
                    </property>
                   </widget>
                  </item>
@@ -2239,7 +2266,7 @@
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>8000</height>
+            <height>16777215</height>
            </size>
           </property>
           <property name="autoFillBackground">
@@ -2252,7 +2279,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>4</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -2528,6 +2555,9 @@
                   <property name="cursor">
                    <cursorShape>SizeVerCursor</cursorShape>
                   </property>
+                  <property name="locale">
+                   <locale language="C" country="AnyCountry"/>
+                  </property>
                   <property name="maximum">
                    <double>1.000000000000000</double>
                   </property>
@@ -2629,6 +2659,9 @@
                   </property>
                   <property name="cursor">
                    <cursorShape>SizeVerCursor</cursorShape>
+                  </property>
+                  <property name="locale">
+                   <locale language="C" country="AnyCountry"/>
                   </property>
                   <property name="wrapping">
                    <bool>true</bool>
@@ -3109,6 +3142,9 @@
                   <property name="cursor">
                    <cursorShape>SizeVerCursor</cursorShape>
                   </property>
+                  <property name="locale">
+                   <locale language="C" country="AnyCountry"/>
+                  </property>
                   <property name="maximum">
                    <double>9999999.000000000000000</double>
                   </property>
@@ -3250,6 +3286,9 @@
                   <property name="cursor">
                    <cursorShape>SizeVerCursor</cursorShape>
                   </property>
+                  <property name="locale">
+                   <locale language="C" country="AnyCountry"/>
+                  </property>
                   <property name="maximum">
                    <double>1.000000000000000</double>
                   </property>
@@ -3273,6 +3312,18 @@
             <string>Spread Bot</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <layout class="QGridLayout" name="gridLayout">
               <item row="1" column="1">
@@ -3509,6 +3560,18 @@
             <string>Bollinger Bot</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_5">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QCheckBox" name="checkBox_3">
               <property name="sizePolicy">
@@ -3572,6 +3635,9 @@
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="locale">
+                 <locale language="C" country="AnyCountry"/>
                 </property>
                </widget>
               </item>
@@ -3719,6 +3785,9 @@
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="locale">
+                    <locale language="C" country="AnyCountry"/>
                    </property>
                   </widget>
                  </item>
@@ -3957,6 +4026,18 @@
             <string>Config</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_8">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <property name="verticalSpacing">
              <number>10</number>
             </property>
@@ -4839,6 +4920,12 @@
             </property>
             <item>
              <widget class="QLabel" name="label_42">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;BTC low:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -4849,6 +4936,12 @@
             </item>
             <item>
              <widget class="QLabel" name="label_43">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;6500,12$&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -4860,11 +4953,47 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_10">
+           <layout class="QVBoxLayout" name="verticalLayout_21">
+            <item>
+             <widget class="QLabel" name="label_65">
+              <property name="text">
+               <string>BTC 24h volume:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_66">
+              <property name="text">
+               <string>1345,23,43.34 $</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_20">
+            <item>
+             <widget class="QLabel" name="label_45">
+              <property name="text">
+               <string>BTC last:</string>
+              </property>
+             </widget>
+            </item>
             <item>
              <widget class="QLabel" name="btc_price_label">
               <property name="text">
                <string>9000$</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
+            <item>
+             <widget class="QLabel" name="label_46">
+              <property name="text">
+               <string>BTC 24h change:</string>
               </property>
              </widget>
             </item>

@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from functools import partial
 
 from binance.websockets import BinanceSocketManager
-from PyQt5.QtCore import QSize, Qt, QThreadPool, QTimer, QVariant  # , QUrl
+from PyQt5.QtCore import QSize, Qt, QThreadPool, QTimer, QVariant, QLocale  # , QUrl
 from PyQt5.QtGui import QColor, QCursor, QIcon, QPixmap, QFont
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 from PyQt5.QtWebEngineWidgets import QWebEngineView
@@ -70,6 +70,8 @@ class beeserBot(QMainWindow):
 
         self.widget_2.setWidget(qtLogger.widget)
 
+        QLocale.setDefault(QLocale(QLocale.C))
+
 
         logging.info('Initializing GUI')
 
@@ -84,7 +86,6 @@ class beeserBot(QMainWindow):
 
         # THREADING
         self.threadpool = QThreadPool()
-        print("Multithreading with a maximum of %d threads" % self.threadpool.maxThreadCount())
         logging.info('Enable multithreading with %d threads.' % self.threadpool.maxThreadCount())
         # connect elements to functions
 
@@ -105,6 +106,8 @@ class beeserBot(QMainWindow):
         self.limit_sbutton2.clicked.connect(self.limit_percentage_sell)
         self.limit_sbutton3.clicked.connect(self.limit_percentage_sell)
         self.limit_sbutton4.clicked.connect(self.limit_percentage_sell)
+
+        self.reset_vol_direct.clicked.connect(self.reset_vol_direction)
 
         self.save_config.clicked.connect(self.write_config)
 
@@ -314,7 +317,8 @@ class beeserBot(QMainWindow):
             self.api_calls()
 
 
-
+    def reset_vol_direction(self):
+        val["volDirection"] = 0
 
     def open_orders_cell_clicked(self, row, column):
         if column == 11:
@@ -406,6 +410,8 @@ class beeserBot(QMainWindow):
             self.btc_percent_label.setText(btc_percent)
 
             self.debug.setText(str(val["volDirection"]))
+
+            self.debug.setText('{number:.{digits}f}'.format(number=float(val["volDirection"]), digits=4) + "BTC")
 
             self.percent_changes()
             # new_5m_change_value = (str(val["klines"]["1m"]))
@@ -929,17 +935,27 @@ class beeserBot(QMainWindow):
         self.threadpool.start(worker)
 
     def schedule_kline_check(self, progress_callback):
+        maxThreads = self.threadpool.maxThreadCount()
+        if maxThreads <= 2:
+            sleepTime = 1
+        elif maxThreads <= 4:
+            sleepTime = 0.33
+            longSleep = 30
+        else:
+            sleepTime = 0.1
+            longSleep = 15
+
         while True:
 
             print("Spawning api call workers")
             for i in val["coins"]:
                 # print(str(i))
-                time.sleep(0.2)
+                time.sleep(sleepTime)
                 worker = Worker(partial(self.get_kline, str(i)))
                 worker.signals.progress.connect(self.klines_received)
-                self.threadpool.start(worker)
+                self.threadpool.tryStart(worker)
 
-            time.sleep(15)
+            time.sleep(longSleep)
 
 
 

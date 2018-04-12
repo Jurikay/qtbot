@@ -7,8 +7,9 @@
 
 
 from collections import defaultdict
-# import locale
+import locale
 
+locale.setlocale(locale.LC_ALL, 'C')
 # locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 val = defaultdict(dict)

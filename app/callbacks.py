@@ -42,12 +42,12 @@ def depthCallback(self, msg):
         worker = Worker(partial(socket_orderbook, msg["bids"]))
         worker.signals.progress.connect(self.progress_bids)
         # worker.signals.finished.connect(self.t_complete)
-        self.threadpool.start(worker)
+        self.threadpool.tryStart(worker)
     if old_asks != val["asks"]:
         worker = Worker(partial(socket_orderbook, msg["asks"]))
         worker.signals.progress.connect(self.progress_asks)
         # worker.signals.finished.connect(self.t_complete)
-        self.threadpool.start(worker)
+        self.threadpool.tryStart(worker)
     val["apiUpdates"] += 1
 
 
