@@ -155,8 +155,9 @@ QHeaderView::up-arrow {
 
 
  QPushButton {
-     border: 1px dotted grey;
-     padding: 5px;
+
+    border: 1px dashed grey;
+     padding: 4px;
      color: #cdcdcd;
 }
  QPushButton#limit_buy_button {
@@ -553,20 +554,31 @@ QAbstractSpinBox::down-arrow:off {
 QAbstractSpinBox::down-arrow:hover {
     image: url(images/qss_icons/rc/down_arrow.png);
 }
+/* 
 #holdings_table QPushButton{
-  /* color: #f3ba2e; */
   margin: 1px;
-  /* border: 1px solid g; */
   background: transparent;
 }
 #holdings_table QPushButton:hover{
   color: white;
   margin: 1px;
   border: 1px solid #f3ba2e;
-}
+} */
 
 #top_groupBox, #top_groupBox QLabel, #top_groupBox #topl {
     /* font-size: 15px; */
     /* color: red; */
     background-color: #20262b;
+}
+
+QTableWidget QPushButton {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    margin-left: 10px;
+    margin-right: 10px;
+    min-height: 13px;
+    /* color: #f3ba2e; */
+    text-align: center;
+    vertical-align: center;
+    background-color: transparent;
 }

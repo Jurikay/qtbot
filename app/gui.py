@@ -227,6 +227,7 @@ class beeserBot(QMainWindow):
 
 
 
+
         worker = Worker(api_all_orders)
         worker.signals.progress.connect(self.build_open_orders)
         self.threadpool.start(worker)
@@ -250,8 +251,10 @@ class beeserBot(QMainWindow):
         self.tradeTable.setColumnWidth(1, 75)
 
         self.open_orders.setColumnWidth(0, 130)
+        self.open_orders.setColumnWidth(3, 120)
         self.open_orders.setColumnWidth(7, 120)
-        self.open_orders.setColumnWidth(10, 0)
+        self.open_orders.setColumnWidth(9, 120)
+        # self.open_orders.setColumnWidth(10, 0)
 
         self.history_table.setColumnWidth(0, 130)
         self.history_table.setColumnWidth(2, 60)
@@ -271,7 +274,7 @@ class beeserBot(QMainWindow):
 
         self.asks_table.scrollToBottom()
 
-        self.set_stats
+        self.set_stats()
         self.timer.stop()
         logging.info('Finishing setup...')
 
@@ -402,6 +405,7 @@ class beeserBot(QMainWindow):
 
             self.btc_percent_label.setText(btc_percent)
 
+            self.debug.setText(str(val["volDirection"]))
 
             self.percent_changes()
             # new_5m_change_value = (str(val["klines"]["1m"]))
@@ -674,8 +678,11 @@ class beeserBot(QMainWindow):
         self.tradeTable.setItem(0, 2, QTableWidgetItem(str(datetime.fromtimestamp(int(str(trade["time"])[:-3])).strftime('%H:%M:%S.%f')[:-7])))
         if trade["maker"] is True:
             self.tradeTable.item(0, 0).setForeground(QColor(colors.color_pink))
+
+            val["volDirection"] -= float(trade["price"]) * float(trade["quantity"])
         else:
             self.tradeTable.item(0, 0).setForeground(QColor(colors.color_green))
+            val["volDirection"] += float(trade["price"]) * float(trade["quantity"])
 
         self.tradeTable.item(0, 2).setForeground(QColor(colors.color_lightgrey))
 
@@ -1195,11 +1202,11 @@ class beeserBot(QMainWindow):
         logging.info("Saving config.")
 
     def write_stats(self):
-        total_running = val["stats"]["timeRunning"] + val["timeRunning"]
-        total_trades = val["stats"]["execTrades"] + val["execTrades"]
-        total_bot_trades = val["stats"]["execBotTrades"] + val["execBotTrades"]
-        api_updates = val["stats"]["apiUpdates"] + val["apiUpdates"]
-        api_calls = val["stats"]["apiCalls"] + val["apiCalls"]
+        total_running = int(val["stats"]["timeRunning"]) + int(val["timeRunning"])
+        total_trades = int(val["stats"]["execTrades"]) + int(val["execTrades"])
+        total_bot_trades = int(val["stats"]["execBotTrades"]) + int(val["execBotTrades"])
+        api_updates = int(val["stats"]["apiUpdates"]) + int(val["apiUpdates"])
+        api_calls = int(val["stats"]["apiCalls"]) + int(val["apiCalls"])
 
         config = configparser.ConfigParser()
 
@@ -1208,6 +1215,9 @@ class beeserBot(QMainWindow):
                            "execBotTrades": total_bot_trades,
                            "apiUpdates": api_updates,
                            "apiCalls": api_calls}
+
+        print("WRITING CONFIG")
+        print(str(total_running) + " " + str(api_updates))
 
         with open('stats.ini', 'w') as configfile:
                     config.write(configfile)

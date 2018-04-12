@@ -45,6 +45,7 @@ val["stats"]["apiUpdates"] = 0
 val["klines"]["1m"] = dict()
 val["klines"]["5m"] = dict()
 
+val["volDirection"] = 0
 
 val["indexTabOpen"] = False
 proxies = {

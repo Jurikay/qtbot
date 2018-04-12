@@ -176,6 +176,7 @@ def build_coinindex(self):
 
     self.coin_index.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
     self.coin_index.setColumnWidth(2, 120)
+    self.coin_index.setColumnWidth(5, 130)
     self.coin_index.model().sort(4, Qt.DescendingOrder)
 
 

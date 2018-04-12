@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1527</width>
-    <height>803</height>
+    <height>808</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -142,7 +142,7 @@
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
              <horstretch>0</horstretch>
-             <verstretch>4</verstretch>
+             <verstretch>2</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
@@ -257,7 +257,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>820</width>
-                  <height>310</height>
+                  <height>311</height>
                  </rect>
                 </property>
                </widget>
@@ -381,7 +381,7 @@
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
-             <verstretch>3</verstretch>
+             <verstretch>2</verstretch>
             </sizepolicy>
            </property>
            <property name="minimumSize">
@@ -391,7 +391,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <property name="movable">
             <bool>false</bool>
@@ -1329,6 +1329,12 @@
         </property>
         <item>
          <widget class="QGroupBox" name="percent_frame">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <layout class="QHBoxLayout" name="percent_changes_bar">
            <property name="spacing">
             <number>0</number>
@@ -1351,13 +1357,13 @@
               <number>2</number>
              </property>
              <property name="topMargin">
-              <number>3</number>
+              <number>1</number>
              </property>
              <property name="rightMargin">
               <number>15</number>
              </property>
              <property name="bottomMargin">
-              <number>2</number>
+              <number>4</number>
              </property>
              <item>
               <widget class="QLabel" name="label_27">
@@ -1399,13 +1405,13 @@
               <number>2</number>
              </property>
              <property name="topMargin">
-              <number>3</number>
+              <number>1</number>
              </property>
              <property name="rightMargin">
               <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>2</number>
+              <number>4</number>
              </property>
              <item>
               <widget class="QLabel" name="label_23">
@@ -1447,13 +1453,13 @@
               <number>2</number>
              </property>
              <property name="topMargin">
-              <number>3</number>
+              <number>1</number>
              </property>
              <property name="rightMargin">
               <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>2</number>
+              <number>4</number>
              </property>
              <item>
               <widget class="QLabel" name="label_24">
@@ -1495,13 +1501,13 @@
               <number>2</number>
              </property>
              <property name="topMargin">
-              <number>3</number>
+              <number>1</number>
              </property>
              <property name="rightMargin">
               <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>2</number>
+              <number>4</number>
              </property>
              <item>
               <widget class="QLabel" name="label_22">
@@ -1546,13 +1552,13 @@
               <number>15</number>
              </property>
              <property name="topMargin">
-              <number>3</number>
+              <number>1</number>
              </property>
              <property name="rightMargin">
               <number>0</number>
              </property>
              <property name="bottomMargin">
-              <number>2</number>
+              <number>4</number>
              </property>
              <item>
               <widget class="QLabel" name="label_44">
@@ -1580,252 +1586,191 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_11">
-          <property name="spacing">
-           <number>20</number>
+         <widget class="QFrame" name="live_data">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>756</height>
+           </size>
           </property>
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>5</number>
-          </property>
-          <item>
-           <widget class="QWidget" name="widget" native="true">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="inputMethodHints">
-             <set>Qt::ImhUrlCharactersOnly</set>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_4">
-             <property name="sizeConstraint">
-              <enum>QLayout::SetNoConstraint</enum>
+          <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <property name="spacing">
+            <number>20</number>
+           </property>
+           <property name="leftMargin">
+            <number>1</number>
+           </property>
+           <property name="topMargin">
+            <number>1</number>
+           </property>
+           <property name="rightMargin">
+            <number>1</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QWidget" name="widget_3" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <property name="leftMargin">
-              <number>0</number>
+             <property name="inputMethodHints">
+              <set>Qt::ImhUrlCharactersOnly</set>
              </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <property name="verticalSpacing">
-              <number>0</number>
-             </property>
-             <item row="4" column="0">
-              <widget class="QTableWidget" name="bids_table">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="accessibleDescription">
-                <string notr="true"/>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Plain</enum>
-               </property>
-               <property name="lineWidth">
-                <number>1</number>
-               </property>
-               <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
-               </property>
-               <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
-               </property>
-               <property name="sizeAdjustPolicy">
-                <enum>QAbstractScrollArea::AdjustToContents</enum>
-               </property>
-               <property name="autoScroll">
-                <bool>false</bool>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="showDropIndicator" stdset="0">
-                <bool>false</bool>
-               </property>
-               <property name="dragDropOverwriteMode">
-                <bool>true</bool>
-               </property>
-               <property name="alternatingRowColors">
-                <bool>false</bool>
-               </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
-               </property>
-               <property name="selectionBehavior">
-                <enum>QAbstractItemView::SelectRows</enum>
-               </property>
-               <property name="verticalScrollMode">
-                <enum>QAbstractItemView::ScrollPerPixel</enum>
-               </property>
-               <property name="showGrid">
-                <bool>false</bool>
-               </property>
-               <property name="gridStyle">
-                <enum>Qt::NoPen</enum>
-               </property>
-               <property name="cornerButtonEnabled">
-                <bool>false</bool>
-               </property>
-               <attribute name="horizontalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="horizontalHeaderDefaultSectionSize">
-                <number>70</number>
-               </attribute>
-               <attribute name="horizontalHeaderHighlightSections">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="horizontalHeaderMinimumSectionSize">
-                <number>5</number>
-               </attribute>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="verticalHeaderDefaultSectionSize">
-                <number>16</number>
-               </attribute>
-               <attribute name="verticalHeaderHighlightSections">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="verticalHeaderMinimumSectionSize">
-                <number>0</number>
-               </attribute>
-               <attribute name="verticalHeaderStretchLastSection">
-                <bool>false</bool>
-               </attribute>
-               <column>
-                <property name="text">
-                 <string>#</string>
+             <layout class="QGridLayout" name="gridLayout_4">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetNoConstraint</enum>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>0</number>
+              </property>
+              <item row="4" column="0">
+               <widget class="QTableWidget" name="bids_table">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Price</string>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Quantity</string>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
                 </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Total BTC</string>
+                <property name="accessibleDescription">
+                 <string notr="true"/>
                 </property>
-               </column>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <layout class="QVBoxLayout" name="verticalLayout_9">
-               <property name="bottomMargin">
-                <number>6</number>
-               </property>
-               <item>
-                <widget class="QComboBox" name="coin_selector">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>30</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>775</width>
-                   <height>33</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>15</pointsize>
-                  </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="editable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="maxVisibleItems">
-                  <number>25</number>
-                 </property>
-                 <property name="insertPolicy">
-                  <enum>QComboBox::NoInsert</enum>
-                 </property>
-                 <property name="sizeAdjustPolicy">
-                  <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="3" column="0">
-              <widget class="QWidget" name="spread_area" native="true">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_10">
-                <property name="spacing">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Plain</enum>
+                </property>
+                <property name="lineWidth">
+                 <number>1</number>
+                </property>
+                <property name="verticalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+                <property name="horizontalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QAbstractScrollArea::AdjustToContents</enum>
+                </property>
+                <property name="autoScroll">
+                 <bool>false</bool>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="showDropIndicator" stdset="0">
+                 <bool>false</bool>
+                </property>
+                <property name="dragDropOverwriteMode">
+                 <bool>true</bool>
+                </property>
+                <property name="alternatingRowColors">
+                 <bool>false</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::NoSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="verticalScrollMode">
+                 <enum>QAbstractItemView::ScrollPerPixel</enum>
+                </property>
+                <property name="showGrid">
+                 <bool>false</bool>
+                </property>
+                <property name="gridStyle">
+                 <enum>Qt::NoPen</enum>
+                </property>
+                <property name="cornerButtonEnabled">
+                 <bool>false</bool>
+                </property>
+                <attribute name="horizontalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>70</number>
+                </attribute>
+                <attribute name="horizontalHeaderHighlightSections">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
                  <number>5</number>
-                </property>
-                <property name="leftMargin">
-                 <number>5</number>
-                </property>
-                <property name="topMargin">
-                 <number>5</number>
-                </property>
-                <property name="rightMargin">
-                 <number>5</number>
-                </property>
+                </attribute>
+                <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>16</number>
+                </attribute>
+                <attribute name="verticalHeaderHighlightSections">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>0</number>
+                </attribute>
+                <attribute name="verticalHeaderStretchLastSection">
+                 <bool>false</bool>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string>#</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Price</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Quantity</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Total BTC</string>
+                 </property>
+                </column>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <layout class="QVBoxLayout" name="verticalLayout_9">
                 <property name="bottomMargin">
-                 <number>5</number>
+                 <number>6</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="last_price">
+                 <widget class="QComboBox" name="coin_selector">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -1833,380 +1778,449 @@
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
-                    <height>0</height>
+                    <height>30</height>
                    </size>
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>16777215</width>
-                    <height>16777215</height>
+                    <width>775</width>
+                    <height>33</height>
                    </size>
                   </property>
-                  <property name="text">
-                   <string>-</string>
+                  <property name="font">
+                   <font>
+                    <pointsize>15</pointsize>
+                   </font>
                   </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <property name="styleSheet">
+                   <string notr="true"/>
                   </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="price_arrow">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>20</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>^</string>
-                  </property>
-                  <property name="scaledContents">
+                  <property name="editable">
                    <bool>true</bool>
                   </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="spread_label">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
+                  <property name="maxVisibleItems">
+                   <number>25</number>
                   </property>
-                  <property name="text">
-                   <string>-</string>
+                  <property name="insertPolicy">
+                   <enum>QComboBox::NoInsert</enum>
                   </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="usd_value">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignCenter</set>
+                  <property name="sizeAdjustPolicy">
+                   <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
                   </property>
                  </widget>
                 </item>
                </layout>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QTableWidget" name="asks_table">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="accessibleDescription">
-                <string notr="true"/>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Plain</enum>
-               </property>
-               <property name="lineWidth">
-                <number>1</number>
-               </property>
-               <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
-               </property>
-               <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
-               </property>
-               <property name="sizeAdjustPolicy">
-                <enum>QAbstractScrollArea::AdjustToContents</enum>
-               </property>
-               <property name="autoScroll">
-                <bool>false</bool>
-               </property>
-               <property name="autoScrollMargin">
-                <number>16</number>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="showDropIndicator" stdset="0">
-                <bool>false</bool>
-               </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
-               </property>
-               <property name="selectionBehavior">
-                <enum>QAbstractItemView::SelectRows</enum>
-               </property>
-               <property name="verticalScrollMode">
-                <enum>QAbstractItemView::ScrollPerPixel</enum>
-               </property>
-               <property name="showGrid">
-                <bool>false</bool>
-               </property>
-               <property name="cornerButtonEnabled">
-                <bool>false</bool>
-               </property>
-               <attribute name="horizontalHeaderVisible">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="horizontalHeaderCascadingSectionResizes">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="horizontalHeaderDefaultSectionSize">
-                <number>70</number>
-               </attribute>
-               <attribute name="horizontalHeaderHighlightSections">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="horizontalHeaderMinimumSectionSize">
-                <number>15</number>
-               </attribute>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="verticalHeaderCascadingSectionResizes">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="verticalHeaderDefaultSectionSize">
-                <number>16</number>
-               </attribute>
-               <attribute name="verticalHeaderHighlightSections">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="verticalHeaderMinimumSectionSize">
-                <number>0</number>
-               </attribute>
-               <attribute name="verticalHeaderStretchLastSection">
-                <bool>false</bool>
-               </attribute>
-               <column>
-                <property name="text">
-                 <string>#</string>
+              </item>
+              <item row="3" column="0">
+               <widget class="QWidget" name="spread_area" native="true">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
-                <property name="textAlignment">
-                 <set>AlignCenter</set>
+                <layout class="QHBoxLayout" name="horizontalLayout_10">
+                 <property name="spacing">
+                  <number>5</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>9</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>9</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="last_price">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>16777215</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="price_arrow">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>20</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>^</string>
+                   </property>
+                   <property name="scaledContents">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="spread_label">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="usd_value">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QTableWidget" name="asks_table">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Price</string>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
                 </property>
-                <property name="textAlignment">
-                 <set>AlignCenter</set>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
                 </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Quantity</string>
+                <property name="accessibleDescription">
+                 <string notr="true"/>
                 </property>
-                <property name="textAlignment">
-                 <set>AlignCenter</set>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
                 </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Total BTC</string>
+                <property name="frameShadow">
+                 <enum>QFrame::Plain</enum>
                 </property>
-                <property name="textAlignment">
-                 <set>AlignCenter</set>
+                <property name="lineWidth">
+                 <number>1</number>
                 </property>
-               </column>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QWidget" name="widget" native="true">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_8">
-             <property name="leftMargin">
-              <number>1</number>
+                <property name="verticalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+                <property name="horizontalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QAbstractScrollArea::AdjustToContents</enum>
+                </property>
+                <property name="autoScroll">
+                 <bool>false</bool>
+                </property>
+                <property name="autoScrollMargin">
+                 <number>16</number>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="showDropIndicator" stdset="0">
+                 <bool>false</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::NoSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="verticalScrollMode">
+                 <enum>QAbstractItemView::ScrollPerPixel</enum>
+                </property>
+                <property name="showGrid">
+                 <bool>false</bool>
+                </property>
+                <property name="cornerButtonEnabled">
+                 <bool>false</bool>
+                </property>
+                <attribute name="horizontalHeaderVisible">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>70</number>
+                </attribute>
+                <attribute name="horizontalHeaderHighlightSections">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
+                 <number>15</number>
+                </attribute>
+                <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderCascadingSectionResizes">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>16</number>
+                </attribute>
+                <attribute name="verticalHeaderHighlightSections">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>0</number>
+                </attribute>
+                <attribute name="verticalHeaderStretchLastSection">
+                 <bool>false</bool>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string>#</string>
+                 </property>
+                 <property name="textAlignment">
+                  <set>AlignCenter</set>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Price</string>
+                 </property>
+                 <property name="textAlignment">
+                  <set>AlignCenter</set>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Quantity</string>
+                 </property>
+                 <property name="textAlignment">
+                  <set>AlignCenter</set>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Total BTC</string>
+                 </property>
+                 <property name="textAlignment">
+                  <set>AlignCenter</set>
+                 </property>
+                </column>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget" native="true">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
-             <property name="topMargin">
-              <number>1</number>
-             </property>
-             <property name="rightMargin">
-              <number>1</number>
-             </property>
-             <property name="bottomMargin">
-              <number>1</number>
-             </property>
-             <item>
-              <widget class="QComboBox" name="comboBox">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="editable">
-                <bool>true</bool>
-               </property>
-               <item>
-                <property name="text">
-                 <string>BTC</string>
+             <layout class="QVBoxLayout" name="verticalLayout_8">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QComboBox" name="comboBox">
+                <property name="enabled">
+                 <bool>false</bool>
                 </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>ETH</string>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>USDT💩</string>
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>30</height>
+                 </size>
                 </property>
-               </item>
-              </widget>
-             </item>
-             <item>
-              <widget class="QTableWidget" name="tradeTable">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="autoFillBackground">
-                <bool>true</bool>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <property name="verticalScrollBarPolicy">
-                <enum>Qt::ScrollBarAsNeeded</enum>
-               </property>
-               <property name="horizontalScrollBarPolicy">
-                <enum>Qt::ScrollBarAlwaysOff</enum>
-               </property>
-               <property name="sizeAdjustPolicy">
-                <enum>QAbstractScrollArea::AdjustToContents</enum>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="showDropIndicator" stdset="0">
-                <bool>false</bool>
-               </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
-               </property>
-               <property name="selectionBehavior">
-                <enum>QAbstractItemView::SelectRows</enum>
-               </property>
-               <property name="showGrid">
-                <bool>false</bool>
-               </property>
-               <property name="rowCount">
-                <number>0</number>
-               </property>
-               <attribute name="horizontalHeaderVisible">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="horizontalHeaderCascadingSectionResizes">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="horizontalHeaderDefaultSectionSize">
-                <number>70</number>
-               </attribute>
-               <attribute name="horizontalHeaderHighlightSections">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="horizontalHeaderMinimumSectionSize">
-                <number>10</number>
-               </attribute>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="verticalHeaderDefaultSectionSize">
-                <number>16</number>
-               </attribute>
-               <attribute name="verticalHeaderHighlightSections">
-                <bool>false</bool>
-               </attribute>
-               <attribute name="verticalHeaderMinimumSectionSize">
-                <number>0</number>
-               </attribute>
-               <attribute name="verticalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <column>
-                <property name="text">
-                 <string>Price</string>
+                <property name="styleSheet">
+                 <string notr="true"/>
                 </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Quantity</string>
+                <property name="editable">
+                 <bool>true</bool>
                 </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Time</string>
+                <item>
+                 <property name="text">
+                  <string>BTC</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>ETH</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>USDT💩</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTableWidget" name="tradeTable">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
-               </column>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="autoFillBackground">
+                 <bool>true</bool>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <property name="verticalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAsNeeded</enum>
+                </property>
+                <property name="horizontalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOff</enum>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QAbstractScrollArea::AdjustToContents</enum>
+                </property>
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <property name="showDropIndicator" stdset="0">
+                 <bool>false</bool>
+                </property>
+                <property name="selectionMode">
+                 <enum>QAbstractItemView::NoSelection</enum>
+                </property>
+                <property name="selectionBehavior">
+                 <enum>QAbstractItemView::SelectRows</enum>
+                </property>
+                <property name="showGrid">
+                 <bool>false</bool>
+                </property>
+                <property name="rowCount">
+                 <number>0</number>
+                </property>
+                <attribute name="horizontalHeaderVisible">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderCascadingSectionResizes">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="horizontalHeaderDefaultSectionSize">
+                 <number>70</number>
+                </attribute>
+                <attribute name="horizontalHeaderHighlightSections">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="horizontalHeaderMinimumSectionSize">
+                 <number>10</number>
+                </attribute>
+                <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderDefaultSectionSize">
+                 <number>16</number>
+                </attribute>
+                <attribute name="verticalHeaderHighlightSections">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderMinimumSectionSize">
+                 <number>0</number>
+                </attribute>
+                <attribute name="verticalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string>Price</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Quantity</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Time</string>
+                 </property>
+                </column>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
          <widget class="QTabWidget" name="bot_tabs">
@@ -2225,7 +2239,7 @@
           <property name="maximumSize">
            <size>
             <width>16777215</width>
-            <height>16777215</height>
+            <height>8000</height>
            </size>
           </property>
           <property name="autoFillBackground">
@@ -2277,7 +2291,7 @@
            <attribute name="title">
             <string>Limit Order</string>
            </attribute>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
             <property name="spacing">
              <number>20</number>
             </property>
@@ -2311,7 +2325,7 @@
                <number>5</number>
               </property>
               <property name="verticalSpacing">
-               <number>10</number>
+               <number>-1</number>
               </property>
               <item row="3" column="0">
                <widget class="QLabel" name="label_8">
@@ -2813,7 +2827,7 @@
                <number>5</number>
               </property>
               <property name="verticalSpacing">
-               <number>10</number>
+               <number>-1</number>
               </property>
               <item row="0" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_26">
@@ -3513,7 +3527,7 @@
               <item row="0" column="2">
                <widget class="QLabel" name="label_61">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -3564,7 +3578,7 @@
               <item row="0" column="4">
                <widget class="QLabel" name="label_55">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -3892,6 +3906,11 @@
               <column>
                <property name="text">
                 <string>Amount</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>% until execution</string>
                </property>
               </column>
               <column>
@@ -4736,21 +4755,13 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_10">
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton_16">
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QLabel" name="label_50">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Status:</string>
             </property>
@@ -4758,13 +4769,29 @@
           </item>
           <item>
            <widget class="QLabel" name="label_51">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>status</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#84c232;&quot;&gt;connected&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_14"/>
+           <widget class="QLabel" name="label_11">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#c2c2c2; font-family: Arial Black;&quot;&gt;BTC:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -4783,7 +4810,7 @@
                <string>BTC high:</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -4793,7 +4820,7 @@
                <string>$7,777,77</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -4816,7 +4843,7 @@
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;BTC low:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -4826,35 +4853,38 @@
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;6500,12$&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="alignment">
-               <set>Qt::AlignCenter</set>
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
            </layout>
           </item>
           <item>
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>BTC:</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="btc_price_label">
-            <property name="text">
-             <string>9000$</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="btc_percent_label">
-            <property name="text">
-             <string>+5%</string>
-            </property>
-           </widget>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
+            <item>
+             <widget class="QLabel" name="btc_price_label">
+              <property name="text">
+               <string>9000$</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="btc_percent_label">
+              <property name="text">
+               <string>+5%</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QLabel" name="label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Arial Black'; font-size:14pt; font-weight:600; color:#cdcdcd;&quot;&gt;Account:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
@@ -4862,6 +4892,12 @@
           </item>
           <item>
            <widget class="QLabel" name="total_btc_label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>-</string>
             </property>
@@ -4869,6 +4905,12 @@
           </item>
           <item>
            <widget class="QLabel" name="total_usd_label">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>-</string>
             </property>
