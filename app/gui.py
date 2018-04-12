@@ -76,6 +76,9 @@ class beeserBot(QMainWindow):
         logging.info('Initializing GUI')
 
         self.setWindowTitle("Juris beeser Bot")
+
+        self.setWindowIcon(QIcon('images/assets/icon.png'))
+
         self.restart_warning.setStyleSheet("color: transparent;")
         # self.spread_area.setStyleSheet("background: #2e363d;")
 
