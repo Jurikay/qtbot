@@ -103,6 +103,7 @@ def set_pair_values():
 read_config()
 read_stats()
 
+
 try:
     client = Client(val["api_key"], val["api_secret"],
                     {"verify": True, "timeout": 61})

@@ -17,11 +17,11 @@ from PyQt5.QtCore import QSize, Qt, QThreadPool, QTimer, QVariant  # , QUrl
 from PyQt5.QtGui import QColor, QCursor, QIcon, QPixmap, QFont
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QPlainTextEdit
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QPlainTextEdit, QPushButton, QHeaderView
 from PyQt5.uic import loadUi
 
 from app.apiFunctions import percentage_ammount
-from app.callbacks import (Worker, api_depth, api_history, api_order_history,
+from app.callbacks import (Worker, api_depth, api_history, api_order_history, api_all_orders,
                            depthCallback, directCallback, tickerCallback,
                            userCallback, klineCallback)
 from app.charts import welcome_page
@@ -226,6 +226,11 @@ class beeserBot(QMainWindow):
         self.start_kline_check()
 
 
+
+        worker = Worker(api_all_orders)
+        worker.signals.progress.connect(self.build_open_orders)
+        self.threadpool.start(worker)
+
         # self.sound_1 = QSound('sounds/Tink.wav')
 
         self.timer = QTimer()
@@ -299,7 +304,7 @@ class beeserBot(QMainWindow):
             self.websockets_symbol()
 
             self.history_table.setRowCount(0)
-            self.open_orders.setRowCount(0)
+            # self.open_orders.setRowCount(0)
             val["history"] = dict()
 
 
@@ -309,10 +314,10 @@ class beeserBot(QMainWindow):
 
 
     def open_orders_cell_clicked(self, row, column):
-        if column == 9:
+        if column == 11:
 
-            order_id = str(self.open_orders.item(row, 8).text())
-            pair = str(self.open_orders.item(row, 1).text())
+            order_id = str(self.open_orders.item(row, 10).text())
+            pair = str(self.open_orders.item(row, 2).text())
 
             # cancel = (cancel_order(client, id, pair))
 
@@ -477,57 +482,75 @@ class beeserBot(QMainWindow):
         # QSoundEffect.play("sounds/Tink.mp3")
 
         # only add to open orders table if the coin is currently selected.
-        if order["symbol"] == val["pair"]:
-            self.open_orders.insertRow(0)
-            self.open_orders.setItem(0, 0, QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
-            self.open_orders.setItem(0, 1, QTableWidgetItem(order["symbol"]))
-            self.open_orders.setItem(0, 2, QTableWidgetItem(order["type"]))
-            self.open_orders.setItem(0, 3, QTableWidgetItem(order["side"]))
-            price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
-            self.open_orders.setItem(0, 4, QTableWidgetItem(price))
-            qty = '{number:.{digits}f}'.format(number=float(order["origQty"]), digits=val["assetDecimals"]) + " " + val["coin"]
-            self.open_orders.setItem(0, 5, QTableWidgetItem(qty))
+        # if order["symbol"] == val["pair"]:
+        self.open_orders.insertRow(0)
+        self.open_orders.setItem(0, 0, QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
 
-            filled_percent = '{number:.{digits}f}'.format(number=float(order["executedQty"]) / float(order["origQty"]), digits=2) + "%"
+        coin = order["symbol"].replace("BTC", "")
+        icon = QIcon("images/ico/" + coin + ".svg")
+        icon_item = QTableWidgetItem()
+        icon_item.setIcon(icon)
+        self.open_orders.setItem(0, 1, icon_item)
 
-            self.open_orders.setItem(0, 6, QTableWidgetItem(filled_percent))
-
-            total_btc = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
+        self.open_orders.setItem(0, 2, QTableWidgetItem(order["symbol"]))
 
 
-            self.open_orders.setItem(0, 7, QTableWidgetItem(total_btc))
+        self.btn_trade = QPushButton("Trade " + coin)
+        self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
 
-            self.open_orders.setItem(0, 8, QTableWidgetItem(str(order["orderId"])))
 
-            self.open_orders.setItem(0, 9, QTableWidgetItem("cancel"))
+        self.open_orders.setCellWidget(0, 3, self.btn_trade)
 
-            self.open_orders.item(0, 9).setForeground(QColor(colors.color_yellow))
+        self.open_orders.setItem(0, 4, QTableWidgetItem(order["type"]))
+        self.open_orders.setItem(0, 5, QTableWidgetItem(order["side"]))
+        price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
+        self.open_orders.setItem(0, 6, QTableWidgetItem(price))
+        qty = '{number:.{digits}f}'.format(number=float(order["origQty"]), digits=val["assetDecimals"]) + " " + coin
+        self.open_orders.setItem(0, 7, QTableWidgetItem(qty))
 
-            if order["side"] == "BUY":
-                self.open_orders.item(0, 3).setForeground(QColor(colors.color_green))
-            else:
-                self.open_orders.item(0, 3).setForeground(QColor(colors.color_pink))
+        filled_percent = '{number:.{digits}f}'.format(number=float(order["executedQty"]) / float(order["origQty"]), digits=2) + "%"
 
+        self.open_orders.setItem(0, 8, QTableWidgetItem(filled_percent))
+
+        total_btc = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
+
+
+        self.open_orders.setItem(0, 9, QTableWidgetItem(total_btc))
+
+        self.open_orders.setItem(0, 10, QTableWidgetItem(str(order["orderId"])))
+
+        self.open_orders.setItem(0, 11, QTableWidgetItem("cancel"))
+
+        self.open_orders.item(0, 11).setForeground(QColor(colors.color_yellow))
+
+        if order["side"] == "BUY":
+            self.open_orders.item(0, 5).setForeground(QColor(colors.color_green))
+        else:
+            self.open_orders.item(0, 5).setForeground(QColor(colors.color_pink))
+
+        orders_header = self.open_orders.horizontalHeader()
+
+        orders_header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        orders_header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
+        orders_header.setSectionResizeMode(5, QHeaderView.ResizeToContents)
 
     def remove_from_open_orders(self, order):
-        if order["symbol"] == val["pair"]:
-            for row in range(self.open_orders.rowCount()):
-                try:
-                    if str(self.open_orders.item(row, 8).text()) == str(order["orderId"]):
+        # if order["symbol"] == val["pair"]:
+        items = self.open_orders.findItems(str(order["orderId"]), Qt.MatchExactly)
 
-                        self.open_orders.removeRow(row)
+            # findItems returns a list hence we iterate through it. We only expect one result though.
+        for item in items:
 
-                    print("check")
-                    if order["status"] == "FILLED":
+                # get current row of coin to check
+            row = item.row()
+            self.open_orders.removeRow(row)
+
+        if order["status"] == "FILLED":
                         logging.info('[ ✓ ] ORDER FILLED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
 
-                    elif order["status"] == "CANCELED":
-                        logging.info('[ ✘ ] ORDER CANCELED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
+        elif order["status"] == "CANCELED":
+            logging.info('[ ✘ ] ORDER CANCELED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
 
-
-
-                except (AttributeError, TypeError):
-                    print("error")
 
     def add_to_history(self, order):
 
@@ -578,28 +601,37 @@ class beeserBot(QMainWindow):
         logging.info('ORDER UPDATED! %s' % str(order))
 
         for i in range(self.open_orders.rowCount()):
-            order_id = self.open_orders.item(i, 8).text()
+            order_id = self.open_orders.item(i, 10).text()
             if str(order_id) == str(order["orderId"]):
                 filled_percent = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float(order["origQty"]) * 100), digits=2) + "%"
 
-                self.open_orders.setItem(0, 6, QTableWidgetItem(filled_percent))
+                self.open_orders.setItem(0, 8, QTableWidgetItem(filled_percent))
                 return
 
+        # WIP check (fix)
         print("adde to open orders")
         self.add_to_open_orders(order)
 
     def orders_received(self, orders):
         """Callback function to draw order history."""
         for _, order in enumerate(orders):
-            if order["symbol"] == val["pair"]:
-                if order["status"] == "FILLED" or order["status"] == "PARTIALLY_FILLED":
-                    self.add_to_history(order)
+            # if order["symbol"] == val["pair"]:
+            if order["status"] == "FILLED":
+                self.add_to_history(order)
 
-                # handle open orders
-                # Date	Pair	Type	Side	Price	Amount	Filled%	Total	Trigger Conditions
-                elif order["status"] == "NEW":
+    def build_open_orders(self, orders):
+        """Callback function to draw list of open orders."""
+        for _, order in enumerate(orders):
+            if order["status"] == "NEW" or order["status"] == "PARTIALLY_FILLED":
 
-                    self.add_to_open_orders(order)
+                self.add_to_open_orders(order)
+
+
+            # handle open orders
+            # Date	Pair	Type	Side	Price	Amount	Filled%	Total	Trigger Conditions
+            # elif order["status"] == "NEW" or  order["status"] == "PARTIALLY_FILLED":
+
+            #     self.add_to_open_orders(order)
 
             # self.history_table.scrollToTop()
             # self.open_orders.scrollToTop()
@@ -990,7 +1022,6 @@ class beeserBot(QMainWindow):
         timeframe = klines_pair[2]
 
         val["klines"][timeframe][str(pair)] = kline_data
-        print("received")
 
 
 

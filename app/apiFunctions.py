@@ -52,12 +52,6 @@ def getDepth(client, symbol):
     return {"bids": bids, "asks": asks}
 
 
-
-# def get_open_orders(client, symbol):
-#     client.get_open_orders(symbol=symbol)
-
-
-
 def availablePairs(client):
     """
     Create a dictonary containing all BTC tradepairs excluding USDT.

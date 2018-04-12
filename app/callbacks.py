@@ -154,6 +154,13 @@ def api_depth(progress_callback):
     val["apiCalls"] += 1
 
 
+def api_all_orders(progress_callback):
+    orders = client.get_open_orders()
+    progress_callback.emit(orders)
+    numberPairs = sum(val["pairs"].values())
+    print("number pairs: " + str(numberPairs))
+
+
 def api_order_history(progress_callback):
     orders = getAllOrders(client, val["pair"])
     progress_callback.emit(orders)
