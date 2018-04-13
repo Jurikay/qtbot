@@ -106,7 +106,7 @@ candles = client.get_klines(symbol='BNBBTC', interval=Client.KLINE_INTERVAL_1MIN
 # print(str(candles))
 
 while True:
-    print(val["tickers"])
+    print(val["coin"])
     print("#########")
     time.sleep(1)
 

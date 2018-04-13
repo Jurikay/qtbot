@@ -671,3 +671,14 @@ QCheckBox::indicator:unchecked:disabled,
 QGroupBox::indicator:unchecked:disabled {
     image: url(images/qss_icons/rc/checkbox_unchecked_disabled.png);
 }
+
+#fishingbot QComboBox {
+    min-width: 0px;
+    min-height: 0px;
+    margin: 0px;
+    padding: 0px;
+    margin-right: 5px;
+    padding-left: 3px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}

@@ -494,7 +494,7 @@
                <number>0</number>
               </property>
               <property name="bottomMargin">
-               <number>0</number>
+               <number>5</number>
               </property>
               <item>
                <widget class="QWidget" name="index_buttons" native="true">
@@ -692,6 +692,32 @@
              </layout>
             </widget>
            </widget>
+           <widget class="QWidget" name="tab_7">
+            <attribute name="title">
+             <string>Coinmarketcap</string>
+            </attribute>
+            <layout class="QHBoxLayout" name="horizontalLayout_17">
+             <item>
+              <widget class="QWebEngineView" name="cmc_chart" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
           <widget class="QTabWidget" name="tabsBotLeft">
            <property name="sizePolicy">
@@ -707,7 +733,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>4</number>
            </property>
            <property name="movable">
             <bool>false</bool>
@@ -2403,7 +2429,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -2681,6 +2707,9 @@
                   </property>
                   <property name="locale">
                    <locale language="C" country="AnyCountry"/>
+                  </property>
+                  <property name="inputMethodHints">
+                   <set>Qt::ImhDigitsOnly|Qt::ImhFormattedNumbersOnly</set>
                   </property>
                   <property name="maximum">
                    <double>1.000000000000000</double>
@@ -4103,6 +4132,11 @@
               </column>
               <column>
                <property name="text">
+                <string>Price difference</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
                 <string>% until execution</string>
                </property>
               </column>
@@ -4111,17 +4145,12 @@
                 <string>Remove</string>
                </property>
               </column>
-              <column>
-               <property name="text">
-                <string/>
-               </property>
-              </column>
              </widget>
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
-               <widget class="QPushButton" name="pushButton_8">
+               <widget class="QPushButton" name="fish_add_trade">
                 <property name="text">
                  <string>Add Trade</string>
                 </property>
