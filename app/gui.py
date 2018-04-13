@@ -26,7 +26,7 @@ from app.callbacks import (Worker, api_depth, api_history, api_order_history, ap
 from app.charts import welcome_page
 from app.colors import colors
 from app.gui_functions import (build_coinindex, build_holdings, calc_total_btc,
-                               calc_wavg, filter_coinindex, filter_confirmed, initial_values,
+                               calc_wavg, filter_coinindex, global_filter, filter_confirmed, initial_values,
                                update_holding_prices, update_coin_index_prices)
 from app.init import val
 from app.initApi import (BinanceAPIException, client, read_config,
@@ -162,7 +162,7 @@ class beeserBot(QMainWindow):
 
         self.button_wavg.clicked.connect(calc_wavg)
 
-        self.coinindex_filter.textChanged.connect(partial(filter_coinindex, self))
+        self.coinindex_filter.textChanged.connect(partial(global_filter, self))
         self.coinindex_filter.returnPressed.connect(partial(filter_confirmed, self))
 
 
@@ -312,8 +312,8 @@ class beeserBot(QMainWindow):
     def set_corner_widget(self):
         tabIndex = self.tabsBotLeft.currentIndex()
         print("tab index: " + str(tabIndex))
-        time.sleep(0.1)
-        print(str(self))
+        # time.sleep(0.1)
+        # print(str(self))
         # if tabIndex <= 2:
         #     self.tabsBotLeft.setCornerWidget(self.corner_widget1, corner=Qt.TopRightCorner)
         # else:
@@ -344,9 +344,9 @@ class beeserBot(QMainWindow):
     def hide_other_pairs(self):
         for row in range(self.open_orders.rowCount()):
             self.open_orders.setRowHidden(row, True)
-        for row in range(self.holdings_table.rowCount()):            
+        for row in range(self.holdings_table.rowCount()):
             self.holdings_table.setRowHidden(row, True)
-        for row in range(self.coin_index.rowCount()):            
+        for row in range(self.coin_index.rowCount()):
             self.coin_index.setRowHidden(row, True)
         items = self.open_orders.findItems(str(val["coin"]), Qt.MatchContains)
         for item in items:
@@ -518,7 +518,7 @@ class beeserBot(QMainWindow):
             if tab_index_botLeft == 3:
                 update_holding_prices(self)
                 val["indexTabOpen"] = False
-            elif tab_index_botLeft == 4:
+            elif tab_index_botLeft == 0:
                 update_coin_index_prices(self)
                 self.start_kline_iterator()
                 val["indexTabOpen"] = True

@@ -9,7 +9,9 @@
             "name": "Python: MAIN",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/MAIN.py"
+            "env": {"QT_SCALE_FACTOR": 0.8},
+            "program": "${workspaceFolder}/MAIN.pyw"
+            // "runtimeArgs": ["QT_SCALE_FACTOR=0.7", "${workspaceFolder}/MAIN.pyw"]
         },
         {
             "name": "Python: Current File",

@@ -61,7 +61,53 @@ def initial_values(self):
     trades_header.setSectionResizeMode(1, QHeaderView.Stretch)
 
 
+def global_filter(self, text):
+    if str(text) != "":
+        self.open_orders.setSortingEnabled(False)
+        self.coin_index.setSortingEnabled(False)
+        self.holdings_table.setSortingEnabled(False)
+
+        for row in range(self.open_orders.rowCount()):
+            self.open_orders.setRowHidden(row, True)
+        items = self.open_orders.model().findItems(text, Qt.MatchContains, 2)
+        for item in items:
+            row = item.row()
+            self.open_orders.setRowHidden(row, False)
+
+        for row in range(self.coin_index.rowCount()):
+            self.coin_index.setRowHidden(row, True)
+        items = self.coin_index.model().findItems(text, Qt.MatchContains, 1)
+        for item in items:
+            row = item.row()
+            self.coin_index.setRowHidden(row, False)
+
+        for row in range(self.holdings_table.rowCount()):
+            self.holdings_table.setRowHidden(row, True)
+        items = self.holdings_table.model().findItems(text, Qt.MatchContains, 1)
+        for item in items:
+            row = item.row()
+            self.holdings_table.setRowHidden(row, False)
+    elif text == "":
+        for row in range(self.open_orders.rowCount()):
+            self.open_orders.setRowHidden(row, False)
+
+        for row in range(self.coin_index.rowCount()):
+            self.coin_index.setRowHidden(row, False)
+
+        for row in range(self.holdings_table.rowCount()):
+            self.holdings_table.setRowHidden(row, False)
+        self.open_orders.setSortingEnabled(False)
+        self.coin_index.setSortingEnabled(False)
+        self.holdings_table.setSortingEnabled(False)
+
+# todo: separate filter functions
+# check tab index
+# call all filters on change pair     
+
 def filter_coinindex(self, text):
+    # sort_order = self.coin_index.model().sortColumn()
+    # print(str(sort_order))
+    
     """Hide every row in coin index that does not contain the user input."""
     self.coin_index.setSortingEnabled(False)
     row_count = self.coin_index.rowCount()

@@ -66,6 +66,9 @@ QTabBar::tab:top:!selected:hover {
     /* border: none; */
 }
 
+QTabBar::tab::disabled {
+    color: #999;
+}
 
 QTabBar::tab {
   padding: 10px 15px;
