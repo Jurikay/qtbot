@@ -5,7 +5,6 @@
 
 """Main gui class."""
 
-
 import configparser
 import time
 from datetime import datetime, timedelta
@@ -72,6 +71,18 @@ class beeserBot(QMainWindow):
 
         QLocale.setDefault(QLocale(QLocale.C))
 
+        
+        if val["debug"] is False:
+            # self.tabsBotLeft.setTabEnabled(0, False)
+            self.tabsBotLeft.removeTab(0)
+            self.ChartTabs.removeTab(3)
+            self.ChartTabs.removeTab(4)
+            self.ChartTabs.removeTab(5)
+            self.ChartTabs.setTabEnabled(1, False)
+
+            self.tabsBotLeft.setCurrentIndex(0)
+            self.ChartTabs.setCurrentIndex(0)
+            self.bot_tabs.setCurrentIndex(0)
 
         logging.info('Initializing GUI')
 
@@ -133,6 +144,12 @@ class beeserBot(QMainWindow):
         self.limit_sell_input.valueChanged.connect(self.check_sell_ammount)
         self.limit_buy_input.valueChanged.connect(self.check_buy_amount)
 
+        self.hide_pairs.stateChanged.connect(self.toggle_other_pairs)
+
+        self.tabsBotLeft.setCornerWidget(self.coin_index_filter, corner=Qt.TopRightCorner)
+        print(str(self))
+        self.debug_corner.clicked.connect(self.set_corner_widget)
+
 
         self.button_klines.clicked.connect(self.iterate_through_klines)
         # self.player = QMediaPlayer()
@@ -148,6 +165,9 @@ class beeserBot(QMainWindow):
         self.coinindex_filter.textChanged.connect(partial(filter_coinindex, self))
         self.coinindex_filter.returnPressed.connect(partial(filter_confirmed, self))
 
+
+        # change corner widget bottom left tabs
+        self.tabsBotLeft.currentChanged.connect(self.set_corner_widget)
 
         self.get_all_orders_button.clicked.connect(self.get_all_orders)
         # Fix a linter error...
@@ -289,6 +309,70 @@ class beeserBot(QMainWindow):
     def shutdown_bot(self):
         self.write_stats()
 
+    def set_corner_widget(self):
+        tabIndex = self.tabsBotLeft.currentIndex()
+        print("tab index: " + str(tabIndex))
+        time.sleep(0.1)
+        print(str(self))
+        # if tabIndex <= 2:
+        #     self.tabsBotLeft.setCornerWidget(self.corner_widget1, corner=Qt.TopRightCorner)
+        # else:
+        # self.tabsBotLeft.setCornerWidget(QPushButton("Teasdasdsdst"), corner=Qt.TopRightCorner)
+        # self.tabsBotLeft.tabBar().setExpanding(False)
+        # self.tabsBotLeft.updateGeometry()
+        if tabIndex == 0:
+            self.hide_pairs.hide()
+        else:
+            self.hide_pairs.show()
+        if tabIndex == 1:
+            self.index_buttons.show()
+        else:
+            self.index_buttons.hide()
+            
+
+    def toggle_other_pairs(self, state):
+        print(str(state))
+        if state == 2:
+            self.hide_other_pairs()
+            self.open_orders.setSortingEnabled(False)
+        else:
+            self.show_other_pairs()
+            self.open_orders.setSortingEnabled(True)
+
+        
+
+    def hide_other_pairs(self):
+        for row in range(self.open_orders.rowCount()):
+            self.open_orders.setRowHidden(row, True)
+        for row in range(self.holdings_table.rowCount()):            
+            self.holdings_table.setRowHidden(row, True)
+        for row in range(self.coin_index.rowCount()):            
+            self.coin_index.setRowHidden(row, True)
+        items = self.open_orders.findItems(str(val["coin"]), Qt.MatchContains)
+        for item in items:
+            row = item.row()
+            self.open_orders.setRowHidden(row, False)
+
+        items = self.holdings_table.findItems(str(val["coin"]), Qt.MatchContains)
+        for item in items:
+            row = item.row()
+            self.holdings_table.setRowHidden(row, False)
+
+        items = self.coin_index.findItems(str(val["coin"]), Qt.MatchContains)
+        for item in items:
+            row = item.row()
+            self.coin_index.setRowHidden(row, False)
+
+
+    def show_other_pairs(self):
+        for row in range(self.open_orders.rowCount()):
+            self.open_orders.setRowHidden(row, False)
+        for row in range(self.holdings_table.rowCount()):
+            self.holdings_table.setRowHidden(row, False)
+        for row in range(self.coin_index.rowCount()):
+            self.coin_index.setRowHidden(row, False)
+
+
     def set_stats(self):
         self.total_running.setText(str(val["stats"]["timeRunning"]))
         self.total_trades.setText(str(val["stats"]["execTrades"]))
@@ -318,6 +402,10 @@ class beeserBot(QMainWindow):
 
 
             self.api_calls()
+
+
+            state = self.hide_pairs.checkState()
+            self.toggle_other_pairs(state)
 
 
     def reset_vol_direction(self):
@@ -1336,3 +1424,5 @@ def round_sell_amount(percent_val):
     else:
         sizeRounded = int(holding * 10**val["assetDecimals"]) / 10.0**val["assetDecimals"]
     return sizeRounded
+
+

@@ -8,11 +8,35 @@
 
 from collections import defaultdict
 import locale
+import argparse
 
+# questionable if needed. Same is PyQt QLocale
 locale.setlocale(locale.LC_ALL, 'C')
 # locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
+# parse arguments (debug, verbose)
+parser = argparse.ArgumentParser(description='Description of your program')
+parser.add_argument('-d', '--debug', help='Enable debug mode', required=False, action='store_true')
+parser.add_argument('-v', '--verbose', help='Enable verbose mode', required=False, action='store_true')
+args = vars(parser.parse_args())
+
 val = defaultdict(dict)
+
+# set debug / verbose flags
+if args['debug'] is True:
+    print("debug enabled")
+    # code here
+    val["debug"] = True
+else:
+    val["debug"] = False
+
+if args['verbose'] is True:
+    print("verbose mode enabled")
+    # code here
+    val["verbose"] = False
+else:
+    val["verbose"] = False
+
 val["test"] = "hi"
 
 val["globalList"] = list()
