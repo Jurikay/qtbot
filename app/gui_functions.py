@@ -71,13 +71,10 @@ def filter_coinindex(self, text):
         for i in range(row_count):
 
             if text.upper() not in str(self.coin_index.item(i, 1).text()):
-                print("hide row: " + str(i))
                 self.coin_index.hideRow(i)
             else:
-                print("show")
                 self.coin_index.showRow(i)
     else:
-        print("show all row count: " + str(row_count))
         for j in range(row_count):
             self.coin_index.showRow(j)
         self.coin_index.setSortingEnabled(True)

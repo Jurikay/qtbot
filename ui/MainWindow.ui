@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1527</width>
-    <height>808</height>
+    <height>813</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -260,7 +260,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>820</width>
-                  <height>311</height>
+                  <height>278</height>
                  </rect>
                 </property>
                </widget>
@@ -421,6 +421,12 @@
               </property>
               <item>
                <widget class="QCheckBox" name="checkBox_4">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>Hide Other Pairs</string>
                 </property>
@@ -429,7 +435,7 @@
               <item>
                <widget class="QLineEdit" name="coinindex_filter_2">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -628,22 +634,19 @@
                   <number>0</number>
                  </property>
                  <property name="horizontalSpacing">
-                  <number>0</number>
-                 </property>
-                 <property name="verticalSpacing">
-                  <number>-1</number>
+                  <number>15</number>
                  </property>
                  <item row="0" column="1">
                   <widget class="QLineEdit" name="coinindex_filter">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>300</width>
+                     <width>400</width>
                      <height>0</height>
                     </size>
                    </property>
@@ -672,6 +675,12 @@
                  </item>
                  <item row="0" column="0">
                   <widget class="QCheckBox" name="hide_pairs">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="text">
                     <string>Hide other pairs</string>
                    </property>
@@ -698,7 +707,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>2</number>
            </property>
            <property name="movable">
             <bool>false</bool>

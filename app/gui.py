@@ -320,11 +320,11 @@ class beeserBot(QMainWindow):
         # self.tabsBotLeft.setCornerWidget(QPushButton("Teasdasdsdst"), corner=Qt.TopRightCorner)
         # self.tabsBotLeft.tabBar().setExpanding(False)
         # self.tabsBotLeft.updateGeometry()
+        # if tabIndex == 0:
+            # self.hide_pairs.hide()
+        # else:
+        #     self.hide_pairs.show()
         if tabIndex == 0:
-            self.hide_pairs.hide()
-        else:
-            self.hide_pairs.show()
-        if tabIndex == 1:
             self.index_buttons.show()
         else:
             self.index_buttons.hide()
