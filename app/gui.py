@@ -72,7 +72,10 @@ class beeserBot(QtWidgets.QMainWindow):
 
         QtCore.QLocale.setDefault(QtCore.QLocale(QtCore.QLocale.C))
 
-        
+        self.update_count = 0
+        self.no_updates = 0
+
+
         if val["debug"] is False:
             # self.tabsBotLeft.setTabEnabled(0, False)
             self.tabsBotLeft.removeTab(0)
@@ -84,6 +87,8 @@ class beeserBot(QtWidgets.QMainWindow):
             self.tabsBotLeft.setCurrentIndex(0)
             self.ChartTabs.setCurrentIndex(0)
             self.bot_tabs.setCurrentIndex(0)
+        else:
+            logging.info("DEBUG mode enabled")
 
         logging.info('Initializing GUI')
 
@@ -185,7 +190,13 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.tabsBotLeft.setCornerWidget(self.coin_index_filter, corner=QtCore.Qt.TopRightCorner)
         self.debug_corner.clicked.connect(self.set_corner_widget)
-        self.fish_add_trade.clicked.connect(partial(fishing_bot.add_order, self))
+
+        # instantiate class
+        fishbot = fishing_bot(self)
+
+        self.fish_add_trade.clicked.connect(partial(fishbot.add_order, self))
+        self.fish_clear_all.clicked.connect(partial(fishbot.clear_all_orders, self))
+
 
         self.button_klines.clicked.connect(self.iterate_through_klines)
         # self.player = QMediaPlayer()
@@ -372,7 +383,7 @@ class beeserBot(QtWidgets.QMainWindow):
             self.index_buttons.show()
         else:
             self.index_buttons.hide()
-            
+
 
     def toggle_other_pairs(self, state):
         print(str(state))
@@ -383,7 +394,7 @@ class beeserBot(QtWidgets.QMainWindow):
             self.show_other_pairs()
             self.open_orders.setSortingEnabled(True)
 
-        
+
 
     def hide_other_pairs(self):
         for row in range(self.open_orders.rowCount()):
@@ -586,7 +597,7 @@ class beeserBot(QtWidgets.QMainWindow):
             # new_1h_change_value = (str(val["klines"]["1m"]))
             # self.change_15m.setText(new_15m_change_value)
             # self.change_1h.setText(new_1h_change_value)
-
+            self.check_websocket()
 
             tab_index_botLeft = self.tabsBotLeft.currentIndex()
 
@@ -606,6 +617,20 @@ class beeserBot(QtWidgets.QMainWindow):
             print("scroll to bottom")
             self.asks_table.scrollToBottom()
 
+    def check_websocket(self):
+        if self.update_count == int(val["apiUpdates"]):
+            self.no_updates += 1
+        else:
+            self.no_updates = 0
+
+        self.update_count = int(val["apiUpdates"])
+
+        if self.no_updates >= 2 and self.no_updates < 10:
+            self.status.setText("<span style='color:" + colors.color_yellow + "'>warning</span>")
+        elif self.no_updates >= 10:
+            self.status.setText("<span style='color:" + colors.color_pink + "'>disconnected</span>")
+        else:
+            self.status.setText("<span style='color:" + colors.color_green + "'>connected</span>")
 
     def percent_changes(self):
         try:

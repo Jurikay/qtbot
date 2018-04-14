@@ -2429,7 +2429,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>2</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -3740,6 +3740,9 @@
             </item>
             <item>
              <layout class="QGridLayout" name="gridLayout_15">
+              <property name="horizontalSpacing">
+               <number>5</number>
+              </property>
               <item row="0" column="2">
                <widget class="QLabel" name="label_61">
                 <property name="sizePolicy">
@@ -3803,7 +3806,10 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>%</string>
+                 <string>% </string>
+                </property>
+                <property name="wordWrap">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -3825,7 +3831,7 @@
               <item row="0" column="6">
                <widget class="QComboBox" name="comboBox_5">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -4157,7 +4163,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_9">
+               <widget class="QPushButton" name="fish_clear_all">
                 <property name="text">
                  <string>Clear All</string>
                 </property>
@@ -5011,7 +5017,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_51">
+           <widget class="QLabel" name="status">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>

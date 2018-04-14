@@ -61,7 +61,7 @@ def read_config():
 def read_stats():
     config = configparser.ConfigParser()
 
-    stat_vals = [val["stats"]["timeRunning"], val["stats"]["execTrades"], val["stats"]["execBotTrades"], val["stats"]["apiCalls"], val["stats"]["apiUpdates"]]
+    # stat_vals = [val["stats"]["timeRunning"], val["stats"]["execTrades"], val["stats"]["execBotTrades"], val["stats"]["apiCalls"], val["stats"]["apiUpdates"]]
 
 
     if os.path.isfile("stats.ini"):
