@@ -272,8 +272,10 @@ class beeserBot(QtWidgets.QMainWindow):
         self.api_calls()
 
         for coin in val["coins"]:
-
+            
             icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
+            
+                
 
             self.coin_selector.addItem(icon, coin[:-3])
 
@@ -282,6 +284,10 @@ class beeserBot(QtWidgets.QMainWindow):
 
         coinIndex = self.coin_selector.findText(val["coin"])
         self.coin_selector.setCurrentIndex(coinIndex)
+
+        icon = QtGui.QIcon("images/ico/" + "BTC" + ".svg")
+        self.quote_asset_box.addItem(icon, "BTC")
+        self.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
 
         initial_values(self)
 
@@ -925,14 +931,9 @@ class beeserBot(QtWidgets.QMainWindow):
 
             self.asks_table.setItem(19 - i, 3, QtWidgets.QTableWidgetItem(total_btc_asks + " BTC"))
             self.asks_table.item(19 - i, 1).setForeground(QtGui.QColor(Colors.color_pink))
+            self.set_spread()
 
             # self.asks_table.scrollToBottom()
-
-        spread = ((float(val["asks"][0][0]) / float(val["bids"][0][0])) - 1) * 100
-        spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
-
-        self.spread_label.setText("<span style='font-size: 14px; font-family: Arial Black; color:" +
-                                  Colors.color_lightgrey + "'>" + spread_formatted + "</span>")
 
     def progress_bids(self, bids):
         for i, _ in enumerate(bids):
@@ -947,6 +948,16 @@ class beeserBot(QtWidgets.QMainWindow):
 
             self.bids_table.setItem(i, 3, QtWidgets.QTableWidgetItem(total_btc_bids + " BTC"))
             self.bids_table.item(i, 1).setForeground(QtGui.QColor(Colors.color_green))
+            self.set_spread()
+
+
+    def set_spread(self):
+        spread = ((float(val["asks"][0][0]) / float(val["bids"][0][0])) - 1) * 100
+        spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
+
+        self.spread_label.setText("<span style='font-size: 18px; font-family: Arial Black; color:" +
+                                  Colors.color_lightgrey + "'>" + spread_formatted + "</span>")
+
 
     # Draw UI changes (bids, asks, history)
     def progress_fn(self, payload):

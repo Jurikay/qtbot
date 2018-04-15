@@ -232,7 +232,7 @@ class Webpages():
         return chart
 
 
-    def welcome_page():
+    def welcome_page(self):
         welcome_page = """
         <!DOCTYPE html>
         <html lang="en" dir="ltr">

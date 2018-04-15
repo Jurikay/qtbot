@@ -682,3 +682,7 @@ QGroupBox::indicator:unchecked:disabled {
     margin-top: 3px;
     margin-bottom: 3px;
 }
+
+#quote_asset_box {
+    color: #999;
+}

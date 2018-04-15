@@ -155,7 +155,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>5</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -2257,7 +2257,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QComboBox" name="comboBox">
+               <widget class="QComboBox" name="quote_asset_box">
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
@@ -2279,21 +2279,6 @@
                 <property name="editable">
                  <bool>true</bool>
                 </property>
-                <item>
-                 <property name="text">
-                  <string>BTC</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>ETH</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>USDT💩</string>
-                 </property>
-                </item>
                </widget>
               </item>
               <item>
@@ -5328,7 +5313,7 @@
   <tabstop>button_wavg</tabstop>
   <tabstop>button_klines</tabstop>
   <tabstop>coin_selector</tabstop>
-  <tabstop>comboBox</tabstop>
+  <tabstop>quote_asset_box</tabstop>
   <tabstop>bot_tabs</tabstop>
   <tabstop>limit_outbid</tabstop>
   <tabstop>limit_low</tabstop>
