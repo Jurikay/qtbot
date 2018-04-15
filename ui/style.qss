@@ -578,7 +578,7 @@ QAbstractSpinBox::down-arrow:hover {
 
 
 
-#coin_index_filter QPushButton {
+/* #coin_index_filter QPushButton {
     height: 5px;
     margin-top: 5px;
     margin-bottom: 5px;
@@ -588,7 +588,7 @@ QAbstractSpinBox::down-arrow:hover {
     padding-bottom: 0px;
     padding-top: 0px;
     border: 1px solid red;
-}
+} */
 
 QTableWidget QPushButton {
     margin-top: 3px;
