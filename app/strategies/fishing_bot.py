@@ -9,7 +9,7 @@ from functools import partial
 # import time
 
 
-class fishing_bot():
+class FishingBot():
     """Class containing fishing bot methods."""
     def __init__(self, bot):
         self.bot = bot
@@ -82,3 +82,6 @@ class fishing_bot():
         for i in range(bot.fishbot_table.rowCount()):
             # get values of every row and store in array
             pass
+
+    def start_fishing(self, bot):
+        pass

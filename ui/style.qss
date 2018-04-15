@@ -148,11 +148,11 @@ QHeaderView::section:checked {
 /* style the sort indicator */
 
 QHeaderView::down-arrow {
-    image: none;
+    image: url(images/qss_icons/rc/down_arrow.png);
 }
 
 QHeaderView::up-arrow {
-    image: none;
+    image: url(images/qss_icons/rc/up_arrow.png);
 }
 
 QTabWidget QPushButton {

@@ -6,7 +6,7 @@
 """Named color variables."""
 
 
-class colors:
+class Colors:
     color_pink = "#ff007a"
     color_yellow = "#f3ba2e"
     color_green = "#94c940"

@@ -7,46 +7,34 @@
 
 import configparser
 import time
-from datetime import datetime, timedelta
-# import _strptime
-from functools import partial
+import logging
 
+from datetime import datetime, timedelta
+from functools import partial
 from binance.websockets import BinanceSocketManager
 import PyQt5.QtCore as QtCore
+# import PyQt5.Qt as Qt
 import PyQt5.QtGui as QtGui
-# from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 import PyQt5.QtWidgets as QtWidgets
 from PyQt5.uic import loadUi
+# from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
+
 
 from app.apiFunctions import percentage_ammount
 from app.callbacks import (Worker, api_depth, api_history, api_order_history, api_all_orders,
                            depthCallback, directCallback, tickerCallback,
                            userCallback, klineCallback)
-from app.charts import welcome_page
-from app.colors import colors
+from app.charts import Webpages as Webpages
+from app.colors import Colors
 from app.gui_functions import (build_coinindex, build_holdings, calc_total_btc,
                                calc_wavg, filter_coin_index, global_filter, filter_confirmed, initial_values, filter_table,
                                update_holding_prices, update_coin_index_prices, init_filter)
 from app.init import val
 from app.initApi import (BinanceAPIException, client, read_config,
                          set_pair_values)
-from app.fishing_bot import fishing_bot
+from app.strategies.fishing_bot import FishingBot
 
-import logging
-
-
-class QPlainTextEditLogger(logging.Handler):
-    def __init__(self, parent):
-        super().__init__()
-        self.widget = QtWidgets.QPlainTextEdit(parent)
-        self.widget.setReadOnly(True)
-
-    def emit(self, record):
-        msg = self.format(record)
-        self.widget.appendPlainText(msg)
-        self.widget.update()
-        # print(msg)
 
 
 class beeserBot(QtWidgets.QMainWindow):
@@ -191,11 +179,12 @@ class beeserBot(QtWidgets.QMainWindow):
         self.tabsBotLeft.setCornerWidget(self.coin_index_filter, corner=QtCore.Qt.TopRightCorner)
         self.debug_corner.clicked.connect(self.set_corner_widget)
 
-        # instantiate class
-        fishbot = fishing_bot(self)
+        # instantiate fishing bot class
+        fish_bot = FishingBot(self)
 
-        self.fish_add_trade.clicked.connect(partial(fishbot.add_order, self))
-        self.fish_clear_all.clicked.connect(partial(fishbot.clear_all_orders, self))
+        # connect buttons to fishing bot methods
+        self.fish_add_trade.clicked.connect(partial(fish_bot.add_order, self))
+        self.fish_clear_all.clicked.connect(partial(fish_bot.clear_all_orders, self))
 
 
         self.button_klines.clicked.connect(self.iterate_through_klines)
@@ -221,9 +210,12 @@ class beeserBot(QtWidgets.QMainWindow):
         # Fix a linter error...
         self.chartLOL = QWebEngineView()
 
-        coin_name = val["coins"][val["pair"]]["baseAssetName"]
-        url = "https://coinmarketcap.com/currencies/" + coin_name.replace(" ", "-") + "/"
+        url = Webpages.build_cmc(self)
         self.cmc_chart.load(QtCore.QUrl(url))
+
+        # url = Webpages.build_binance_info(self)
+        # self.binance_info.load(QtCore.QUrl(url))
+
         # set config values
         try:
             self.default_pair.setText(val["defaultPair"])
@@ -259,7 +251,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # api credentials not valid; display welcome page
         else:
-            self.chart.setHtml(welcome_page())
+            self.chart.setHtml(Webpages.welcome_page())
             self.chart.show()
             self.bot_tabs.setCurrentIndex(4)
 
@@ -301,9 +293,6 @@ class beeserBot(QtWidgets.QMainWindow):
         build_coinindex(self)
 
         self.start_kline_check()
-
-
-
 
         worker = Worker(api_all_orders)
         worker.signals.progress.connect(self.build_open_orders)
@@ -458,9 +447,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
             self.api_calls()
 
-            coin_name = val["coins"][val["pair"]]["baseAssetName"]
-            url = "https://coinmarketcap.com/currencies/" + coin_name.replace(" ", "-") + "/"
+            url = Webpages.build_cmc(self)
             self.cmc_chart.load(QtCore.QUrl(url))
+
+            # url = Webpages.build_binance_info(self)
+            # self.binance_info.load(QtCore.QUrl(url))
 
             # state = self.hide_pairs.checkState()
             # self.toggle_other_pairs(state)
@@ -626,11 +617,11 @@ class beeserBot(QtWidgets.QMainWindow):
         self.update_count = int(val["apiUpdates"])
 
         if self.no_updates >= 2 and self.no_updates < 10:
-            self.status.setText("<span style='color:" + colors.color_yellow + "'>warning</span>")
+            self.status.setText("<span style='color:" + Colors.color_yellow + "'>warning</span>")
         elif self.no_updates >= 10:
-            self.status.setText("<span style='color:" + colors.color_pink + "'>disconnected</span>")
+            self.status.setText("<span style='color:" + Colors.color_pink + "'>disconnected</span>")
         else:
-            self.status.setText("<span style='color:" + colors.color_green + "'>connected</span>")
+            self.status.setText("<span style='color:" + Colors.color_green + "'>connected</span>")
 
     def percent_changes(self):
         try:
@@ -655,13 +646,13 @@ class beeserBot(QtWidgets.QMainWindow):
                 for i, change in enumerate(changes):
                     if change_values[i] > 0:
                         operator = "+"
-                        color = colors.color_green
+                        color = Colors.color_green
                     elif change_values[i] < 0:
                         operator = ""
-                        color = colors.color_pink
+                        color = Colors.color_pink
                     else:
                         operator = ""
-                        color = colors.color_grey
+                        color = Colors.color_grey
 
                     # print(str(change))
                     change.setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
@@ -722,12 +713,12 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.open_orders.setItem(0, 11, QtWidgets.QTableWidgetItem("cancel"))
 
-        self.open_orders.item(0, 11).setForeground(QtGui.QColor(colors.color_yellow))
+        self.open_orders.item(0, 11).setForeground(QtGui.QColor(Colors.color_yellow))
 
         if order["side"] == "BUY":
-            self.open_orders.item(0, 5).setForeground(QtGui.QColor(colors.color_green))
+            self.open_orders.item(0, 5).setForeground(QtGui.QColor(Colors.color_green))
         else:
-            self.open_orders.item(0, 5).setForeground(QtGui.QColor(colors.color_pink))
+            self.open_orders.item(0, 5).setForeground(QtGui.QColor(Colors.color_pink))
 
         orders_header = self.open_orders.horizontalHeader()
 
@@ -776,9 +767,9 @@ class beeserBot(QtWidgets.QMainWindow):
             self.history_table.setItem(0, 5, QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8) + " BTC"))
 
             if order["side"] == "BUY":
-                self.history_table.item(0, 2).setForeground(QtGui.QColor(colors.color_green))
+                self.history_table.item(0, 2).setForeground(QtGui.QColor(Colors.color_green))
             else:
-                self.history_table.item(0, 2).setForeground(QtGui.QColor(colors.color_pink))
+                self.history_table.item(0, 2).setForeground(QtGui.QColor(Colors.color_pink))
 
 
     def check_add_to_holdings(self, order):
@@ -870,18 +861,28 @@ class beeserBot(QtWidgets.QMainWindow):
 
     def progress_history(self, trade):
         self.tradeTable.insertRow(0)
-        self.tradeTable.setItem(0, 0, QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["price"]), digits=val["decimals"])))
-        self.tradeTable.setItem(0, 1, QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["quantity"]), digits=val["assetDecimals"])))
-        self.tradeTable.setItem(0, 2, QtWidgets.QTableWidgetItem(str(datetime.fromtimestamp(int(str(trade["time"])[:-3])).strftime('%H:%M:%S.%f')[:-7])))
+        price_item = QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["price"]), digits=val["decimals"]))
+        # price_item.setTextAlignment(QtCore.Qt.AlignHCenter)
+
+        self.tradeTable.setItem(0, 0, price_item)
+
+        qty_item = QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["quantity"]), digits=val["assetDecimals"]))
+        # qty_item.setTextAlignment(QtCore.Qt.AlignHCenter)
+        self.tradeTable.setItem(0, 1, qty_item)
+
+        time_item = QtWidgets.QTableWidgetItem(str(datetime.fromtimestamp(int(str(trade["time"])[:-3])).strftime('%H:%M:%S.%f')[:-7]))
+        # time_item.setTextAlignment(QtCore.Qt.AlignHCenter)
+        self.tradeTable.setItem(0, 2, time_item)
+
         if trade["maker"] is True:
-            self.tradeTable.item(0, 0).setForeground(QtGui.QColor(colors.color_pink))
+            self.tradeTable.item(0, 0).setForeground(QtGui.QColor(Colors.color_pink))
 
             val["volDirection"] -= float(trade["price"]) * float(trade["quantity"])
         else:
-            self.tradeTable.item(0, 0).setForeground(QtGui.QColor(colors.color_green))
+            self.tradeTable.item(0, 0).setForeground(QtGui.QColor(Colors.color_green))
             val["volDirection"] += float(trade["price"]) * float(trade["quantity"])
 
-        self.tradeTable.item(0, 2).setForeground(QtGui.QColor(colors.color_lightgrey))
+        self.tradeTable.item(0, 2).setForeground(QtGui.QColor(Colors.color_lightgrey))
 
 
         # # set last price, color and arrow
@@ -889,13 +890,13 @@ class beeserBot(QtWidgets.QMainWindow):
         try:
             if float(self.tradeTable.item(0, 0).text()) > float(self.tradeTable.item(1, 0).text()):
                 arrow = QtGui.QPixmap("images/assets/2arrow_up.png")
-                color = colors.color_green
+                color = Colors.color_green
             elif float(self.tradeTable.item(0, 0).text()) == float(self.tradeTable.item(1, 0).text()):
                 arrow = QtGui.QPixmap("images/assets/2arrow.png")
-                color = colors.color_yellow
+                color = Colors.color_yellow
             else:
                 arrow = QtGui.QPixmap("images/assets/2arrow_down.png")
-                color = colors.color_pink
+                color = Colors.color_pink
 
             formatted_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]), digits=val["decimals"])
             self.price_arrow.setPixmap(arrow)
@@ -904,7 +905,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
             usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
 
-            self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + colors.color_yellow + "'>$" + usd_price + "</span>")
+            self.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
         except AttributeError:
             pass
 
@@ -923,7 +924,7 @@ class beeserBot(QtWidgets.QMainWindow):
             self.asks_table.setItem(19 - i, 2, QtWidgets.QTableWidgetItem(ask_quantity))
 
             self.asks_table.setItem(19 - i, 3, QtWidgets.QTableWidgetItem(total_btc_asks + " BTC"))
-            self.asks_table.item(19 - i, 1).setForeground(QtGui.QColor(colors.color_pink))
+            self.asks_table.item(19 - i, 1).setForeground(QtGui.QColor(Colors.color_pink))
 
             # self.asks_table.scrollToBottom()
 
@@ -931,7 +932,7 @@ class beeserBot(QtWidgets.QMainWindow):
         spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
 
         self.spread_label.setText("<span style='font-size: 14px; font-family: Arial Black; color:" +
-                                  colors.color_lightgrey + "'>" + spread_formatted + "</span>")
+                                  Colors.color_lightgrey + "'>" + spread_formatted + "</span>")
 
     def progress_bids(self, bids):
         for i, _ in enumerate(bids):
@@ -945,7 +946,7 @@ class beeserBot(QtWidgets.QMainWindow):
             self.bids_table.setItem(i, 2, QtWidgets.QTableWidgetItem(bid_quantity))
 
             self.bids_table.setItem(i, 3, QtWidgets.QTableWidgetItem(total_btc_bids + " BTC"))
-            self.bids_table.item(i, 1).setForeground(QtGui.QColor(colors.color_green))
+            self.bids_table.item(i, 1).setForeground(QtGui.QColor(Colors.color_green))
 
     # Draw UI changes (bids, asks, history)
     def progress_fn(self, payload):
@@ -1459,7 +1460,7 @@ class beeserBot(QtWidgets.QMainWindow):
                 self.holdings_table.setItem(i, 5, QtWidgets.QTableWidgetItem("{0:g}".format(float(locked))))
                 self.holdings_table.setItem(i, 6, QtWidgets.QTableWidgetItem(total_btc_formatted))
                 self.holdings_table.item(i, 6).setFont(bold_font)
-                self.holdings_table.item(i, 6).setForeground(QtGui.QColor(colors.color_lightgrey))
+                self.holdings_table.item(i, 6).setForeground(QtGui.QColor(Colors.color_lightgrey))
 
 
                 if float(total) * float(price) < 0.001 and coin != "BTC":
@@ -1487,6 +1488,8 @@ class beeserBot(QtWidgets.QMainWindow):
         self.limit_sbutton2.setText(str(val["buttonPercentage"][2]) + "%")
         self.limit_sbutton3.setText(str(val["buttonPercentage"][3]) + "%")
         self.limit_sbutton4.setText(str(val["buttonPercentage"][4]) + "%")
+
+
 ####################################################################
 
 
@@ -1527,3 +1530,14 @@ def round_sell_amount(percent_val):
     return sizeRounded
 
 
+class QPlainTextEditLogger(logging.Handler):
+    def __init__(self, parent):
+        super().__init__()
+        self.widget = QtWidgets.QPlainTextEdit(parent)
+        self.widget.setReadOnly(True)
+
+    def emit(self, record):
+        msg = self.format(record)
+        self.widget.appendPlainText(msg)
+        self.widget.update()
+        # print(msg)

@@ -10,8 +10,8 @@ from PyQt5.QtCore import QSize, Qt, QVariant
 from PyQt5.QtGui import QColor, QFont, QIcon
 from PyQt5.QtWidgets import QHeaderView, QPushButton, QTableWidgetItem
 
-from app.charts import build_chart2
-from app.colors import colors
+from app.charts import Webpages as Webpages
+from app.colors import Colors
 from app.init import val
 from app.table_items import CoinDelegate
 
@@ -43,7 +43,7 @@ def initial_values(self):
     self.buy_asset.setText(val["coin"])
     self.sell_asset.setText(val["coin"])
 
-    self.chart.setHtml(build_chart2(val["pair"], val["defaultTimeframe"]))
+    self.chart.setHtml(Webpages.build_chart2(val["pair"], val["defaultTimeframe"]))
     self.chart.show()
 
     bids_header = self.bids_table.horizontalHeader()
@@ -178,16 +178,18 @@ def filter_coin_index(self, text, state):
             self.coin_index.setRowHidden(i, False)
 
 
+def filter_return(self):
+    print("filter return")
 # def filter_coinindex(self, text):
 #     # sort_order = self.coin_index.model().sortColumn()
 #     # print(str(sort_order))
-    
+
 #     """Hide every row in coin index that does not contain the user input."""
 #     self.coin_index.setSortingEnabled(False)
 #     row_count = self.coin_index.rowCount()
 
 #     if text != "":
-#         self.coin_index.item(0, 1).setForeground(QColor(colors.color_yellow))
+#         self.coin_index.item(0, 1).setForeground(QColor(Colors.color_yellow))
 #         for i in range(row_count):
 
 #             if text.upper() not in str(self.coin_index.item(i, 1).text()):
@@ -279,9 +281,9 @@ def build_coinindex(self):
                 self.coin_index.setItem(0, i, QTableWidgetItem(zero_item))
 
             if price_change_value < 0:
-                self.coin_index.item(0, 3).setForeground(QColor(colors.color_pink))
+                self.coin_index.item(0, 3).setForeground(QColor(Colors.color_pink))
             else:
-                self.coin_index.item(0, 3).setForeground(QColor(colors.color_green))
+                self.coin_index.item(0, 3).setForeground(QColor(Colors.color_green))
 
             self.btn_trade = QPushButton("Trade " + coin)
             self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
@@ -334,7 +336,7 @@ def build_holdings(self, *args):
                 self.holdings_table.setItem(0, 6, QTableWidgetItem(total_formatted))
 
                 self.holdings_table.item(0, 6).setFont(bold_font)
-                self.holdings_table.item(0, 6).setForeground(QColor(colors.color_lightgrey))
+                self.holdings_table.item(0, 6).setForeground(QColor(Colors.color_lightgrey))
 
                 self.btn_sell = QPushButton('Trade' + " BTC")
                 self.btn_sell.setEnabled(False)
@@ -363,7 +365,7 @@ def build_holdings(self, *args):
                     self.holdings_table.setItem(1, 6, QTableWidgetItem(total_btc_formatted))
 
                     self.holdings_table.item(1, 6).setFont(bold_font)
-                    self.holdings_table.item(1, 6).setForeground(QColor(colors.color_lightgrey))
+                    self.holdings_table.item(1, 6).setForeground(QColor(Colors.color_lightgrey))
 
                     self.btn_sell = QPushButton('Trade ' + str(holding))
                     self.btn_sell.clicked.connect(self.gotoTradeButtonClicked)
@@ -473,7 +475,7 @@ def update_holding_prices(self):
         if current_total != total_formatted:
             self.holdings_table.item(i, 6).setText(total_formatted)
             self.holdings_table.item(i, 6).setFont(bold_font)
-            self.holdings_table.item(i, 6).setForeground(QColor(colors.color_lightgrey))
+            self.holdings_table.item(i, 6).setForeground(QColor(Colors.color_lightgrey))
 
 
 def update_coin_index_prices(self):
