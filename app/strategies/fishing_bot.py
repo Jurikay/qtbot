@@ -46,13 +46,13 @@ class FishingBot():
         self.set_properties(bot)
 
     @staticmethod
-    def set_properties(self, bot):
+    def set_properties(bot):
         for i in range(bot.fishbot_table.rowCount()):
             widget = bot.fishbot_table.cellWidget(i, 3)
             widget.setProperty("row", i)
             bot.fishbot_table.setItem(i, 2, QtWidgets.QTableWidgetItem(str(i)))
 
-    @staticmethod
+
     def remove_order(self, bot):
         row = bot.sender().property("row")
         for i in range(bot.fishbot_table.rowCount()):
@@ -65,25 +65,25 @@ class FishingBot():
         self.set_properties(bot)
 
     @staticmethod
-    def clear_all_orders(self, bot):
-        row_count = bot.fishbot_table.rowCount()
-        print("clearing %i rows." % int(bot.fishbot_table.rowCount()))
+    def clear_all_orders(self):
+        row_count = self.fishbot_table.rowCount()
+        print("clearing %i rows." % int(self.fishbot_table.rowCount()))
         for i in reversed(range(row_count)):
             print(str(i))
-            bot.fishbot_table.removeRow(i)
+            self.fishbot_table.removeRow(i)
 
     @staticmethod
-    def update_table(self, bot):
-        for i in range(bot.fishbot_table.rowCount()):
+    def update_table(self):
+        for i in range(self.fishbot_table.rowCount()):
             # set current price from val tickers
             pass
 
     @staticmethod
-    def parse_table_contents(self, bot):
+    def parse_table_contents(bot):
         for i in range(bot.fishbot_table.rowCount()):
             # get values of every row and store in array
             pass
-            
+
     @staticmethod
-    def start_fishing(self, bot):
+    def start_fishing(bot):
         pass
