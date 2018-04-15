@@ -8,7 +8,8 @@
 from app.init import val
 
 class Webpages():
-        
+    
+    @staticmethod
     def build_chart(exchange, pair):
         tradingview = '<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>'
         tradingview += '<script type="text/javascript">'
@@ -35,7 +36,7 @@ class Webpages():
 
         return tradingview
 
-
+    @staticmethod
     def build_chart2(pair, timeframe):
         chart = """
         <!-- TradingView Widget BEGIN -->
@@ -231,8 +232,8 @@ class Webpages():
     """
         return chart
 
-
-    def welcome_page(self):
+    @staticmethod
+    def welcome_page():
         welcome_page = """
         <!DOCTYPE html>
         <html lang="en" dir="ltr">
@@ -314,8 +315,8 @@ class Webpages():
     """
         return welcome_page
 
-
-    def build_cmc(self):
+    @staticmethod
+    def build_cmc():
         """Make coin names coinmarketcap conform."""
         coin_name = val["coins"][val["pair"]]["baseAssetName"]
         if coin_name == "Wancoin":
@@ -346,7 +347,8 @@ class Webpages():
         url = "https://coinmarketcap.com/currencies/" + coin_name.replace(" ", "-").replace(".", "") + "/"
         return url
 
-    def build_binance_info(self):
+    @staticmethod
+    def build_binance_info():
         coin_name = val["coins"][val["pair"]]["baseAssetName"]
         url = "https://info.binance.com/currencies/" + coin_name.replace(" ", "-").replace(".", "") + "/"
         return url

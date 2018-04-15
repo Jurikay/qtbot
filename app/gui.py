@@ -210,7 +210,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # Fix a linter error...
         self.chartLOL = QWebEngineView()
 
-        url = Webpages.build_cmc(self)
+        url = Webpages.build_cmc()
         self.cmc_chart.load(QtCore.QUrl(url))
 
         # url = Webpages.build_binance_info(self)
@@ -453,7 +453,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
             self.api_calls()
 
-            url = Webpages.build_cmc(self)
+            url = Webpages.build_cmc()
             self.cmc_chart.load(QtCore.QUrl(url))
 
             # url = Webpages.build_binance_info(self)
