@@ -134,7 +134,7 @@ def filter_table(self, text, state):
     # if tabIndex == 0:
     filter_coin_index(self, text, state)
     # elif tabIndex == 1:
-    filter_open_orders(self, text, state)
+    self.open_orders.filter_open_orders(text, state)
     # elif tabIndex == 3:
     filter_holdings(self, text, state)
     if text != "" or state == 2:
@@ -163,17 +163,7 @@ def filter_holdings(self, text, state):
 
 
 
-def filter_open_orders(self, text, state):
-    for i in range(self.open_orders.rowCount()):
-        if state == 2 and not self.open_orders.item(i, 2).text().startswith(val["coin"]):
-            self.open_orders.setRowHidden(i, True)
-        elif not self.open_orders.item(i, 2).text().startswith(text.upper()):
-            self.open_orders.setRowHidden(i, True)
-        else:
-            self.open_orders.setRowHidden(i, False)
 
-        if text != "" and str(self.open_orders.item(i, 10).text()).startswith(str(text)):
-            self.open_orders.setRowHidden(i, False)
 
 
 def filter_coin_index(self, text, state):

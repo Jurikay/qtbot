@@ -37,10 +37,11 @@ from app.init import val
 from app.initApi import (BinanceAPIException, client,
                          set_pair_values)
 from app.strategies.fishing_bot import FishingBot
-from app.strategies.limit_order import LimitOrder
+# from app.strategies.limit_order import LimitOrder
 from app.bot import BotClass
 import app
 from app.elements.config import ConfigManager
+
 
 class beeserBot(QtWidgets.QMainWindow, BotClass):
 
@@ -77,14 +78,15 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
 
     
         # instantiate LimitOrder
-        limit_order = LimitOrder(self)
+        # limit_order = LimitOrder(self)
         # from app.strategies.limit_order_pane import LimitOrderPane
 
 
         self.debug2_button.clicked.connect(self.limit_pane.test_func)
 
-
-        self.open_orders.cellClicked.connect(limit_order.open_orders_cell_clicked)
+        # initialize open orders table
+        self.open_orders.initialize()
+        # self.open_orders.cellClicked.connect(self.limit_pane.open_orders_cell_clicked)
 
         self.coin_selector.activated.connect(self.change_pair)
 
@@ -176,9 +178,7 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
 
         self.start_kline_check()
 
-        worker = Worker(api_all_orders)
-        worker.signals.progress.connect(self.build_open_orders)
-        self.threadpool.start(worker)
+        
 
         # self.sound_1 = QSound('sounds/Tink.wav')
         self.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", val["defaultTimeframe"], "COINBASE"))
@@ -335,15 +335,15 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
     def reset_vol_direction(self):
         val["volDirection"] = 0
 
-    def open_orders_cell_clicked(self, row, column):
-        if column == 11:
+    # def open_orders_cell_clicked(self, row, column):
+    #     if column == 11:
 
-            order_id = str(self.open_orders.item(row, 10).text())
-            pair = str(self.open_orders.item(row, 2).text())
+    #         order_id = str(self.open_orders.item(row, 10).text())
+    #         pair = str(self.open_orders.item(row, 2).text())
 
-            # cancel = (cancel_order(client, id, pair))
+    #         # cancel = (cancel_order(client, id, pair))
 
-            self.cancel_order_byId(order_id, pair)
+    #         self.cancel_order_byId(order_id, pair)
 
     
     def hotkey_pressed(self, key):

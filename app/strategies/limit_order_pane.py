@@ -12,12 +12,6 @@ class LimitOrderPane(QtWidgets.QWidget):
         self.mw = app.mw
 
     def test_func(self):
-        # lineEdits = self.children()
-        # print("lineEdits")
-        # print(str(lineEdits))
-
-        # print(str(self))
-        # print(str(self.label))
         self.mw.limit_buy_label.setText("lello")
 
 

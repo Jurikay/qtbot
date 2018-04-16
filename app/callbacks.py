@@ -87,11 +87,11 @@ def userCallback(self, msg):
         worker = Worker(partial(socket_order, order))
 
         if userMsg["X"] == "NEW":
-            worker.signals.progress.connect(self.add_to_open_orders)
-            worker.signals.progress.connect(self.play_sound_effect)
+            worker.signals.progress.connect(self.open_orders.add_to_open_orders)
+            # worker.signals.progress.connect(self.play_sound_effect)
 
         elif userMsg["X"] == "CANCELED":
-            worker.signals.progress.connect(self.remove_from_open_orders)
+            worker.signals.progress.connect(self.open_orders.remove_from_open_orders)
 
             # if order was canceled but partially filled, add to history
             if float(order["executedQty"]) > 0:
@@ -99,10 +99,10 @@ def userCallback(self, msg):
 
 
         elif userMsg["X"] == "PARTIALLY_FILLED":
-            worker.signals.progress.connect(self.update_open_order)
+            worker.signals.progress.connect(self.open_orders.update_open_order)
 
         elif userMsg["X"] == "FILLED":
-            worker.signals.progress.connect(self.remove_from_open_orders)
+            worker.signals.progress.connect(self.open_orders.remove_from_open_orders)
             worker.signals.progress.connect(self.add_to_history)
             worker.signals.progress.connect(self.check_add_to_holdings)
 

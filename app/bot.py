@@ -63,81 +63,7 @@ class BotClass():
         self.limit_pane.check_sell_amount()
 
 
-    def add_to_open_orders(self, order):
-
-        # play a sound file to indicate a new order
-        # print("play sound")
-
-        # val["sound_1"].play()
-        # QSoundEffect.play("sounds/Tink.mp3")
-
-        # only add to open orders table if the coin is currently selected.
-        # if order["symbol"] == val["pair"]:
-        self.open_orders.insertRow(0)
-        self.open_orders.setItem(0, 0, QtWidgets.QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
-
-        coin = order["symbol"].replace("BTC", "")
-        icon = QtGui.QIcon("images/ico/" + coin + ".svg")
-        icon_item = QtWidgets.QTableWidgetItem()
-        icon_item.setIcon(icon)
-        self.open_orders.setItem(0, 1, icon_item)
-
-        self.open_orders.setItem(0, 2, QtWidgets.QTableWidgetItem(order["symbol"]))
-
-
-        self.btn_trade = QtWidgets.QPushButton("Trade " + coin)
-        self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
-
-
-        self.open_orders.setCellWidget(0, 3, self.btn_trade)
-
-        self.open_orders.setItem(0, 4, QtWidgets.QTableWidgetItem(order["type"]))
-        self.open_orders.setItem(0, 5, QtWidgets.QTableWidgetItem(order["side"]))
-        price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
-        self.open_orders.setItem(0, 6, QtWidgets.QTableWidgetItem(price))
-        qty = '{number:.{digits}f}'.format(number=float(order["origQty"]), digits=val["assetDecimals"]) + " " + coin
-        self.open_orders.setItem(0, 7, QtWidgets.QTableWidgetItem(qty))
-
-        filled_percent = '{number:.{digits}f}'.format(number=float(order["executedQty"]) / float(order["origQty"]), digits=2) + "%"
-
-        self.open_orders.setItem(0, 8, QtWidgets.QTableWidgetItem(filled_percent))
-
-        total_btc = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
-
-
-        self.open_orders.setItem(0, 9, QtWidgets.QTableWidgetItem(total_btc))
-
-        self.open_orders.setItem(0, 10, QtWidgets.QTableWidgetItem(str(order["orderId"])))
-
-        self.open_orders.setItem(0, 11, QtWidgets.QTableWidgetItem("cancel"))
-
-        self.open_orders.item(0, 11).setForeground(QtGui.QColor(Colors.color_yellow))
-
-        if order["side"] == "BUY":
-            self.open_orders.item(0, 5).setForeground(QtGui.QColor(Colors.color_green))
-        else:
-            self.open_orders.item(0, 5).setForeground(QtGui.QColor(Colors.color_pink))
-
-
-
-    def remove_from_open_orders(self, order):
-        # if order["symbol"] == val["pair"]:
-        items = self.open_orders.findItems(str(order["orderId"]), QtCore.Qt.MatchExactly)
-
-        # findItems returns a list hence we iterate through it. We only expect one result though.
-        for item in items:
-
-            # get current row of coin to check
-            row = item.row()
-            self.open_orders.removeRow(row)
-
-        # Log order
-        if order["status"] == "FILLED":
-            logging.info('[ ✓ ] ORDER FILLED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
-
-        elif order["status"] == "CANCELED":
-            logging.info('[ ✘ ] ORDER CANCELED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
-
+    
 
     def add_to_history(self, order):
 
@@ -214,7 +140,7 @@ class BotClass():
 
         # WIP check (fix)
         print("adde to open orders")
-        self.add_to_open_orders(order)
+        self.open_orders.add_to_open_orders(order)
 
     def orders_received(self, orders):
         """Callback function to draw order history."""
@@ -230,7 +156,7 @@ class BotClass():
         for _, order in enumerate(orders):
             if order["status"] == "NEW" or order["status"] == "PARTIALLY_FILLED":
 
-                self.add_to_open_orders(order)
+                self.open_orders.add_to_open_orders(order)
 
     def build_holdings(self, *args):
         self.holdings_table.setRowCount(0)
