@@ -17,7 +17,7 @@ from app.colors import Colors
 from app.init import val
 from app.table_items import CoinDelegate
 from app.workers import Worker
-from app.callbacks import api_order_history
+# from app.callbacks import api_order_history
 
 
 def initial_values(self):
@@ -113,7 +113,7 @@ def init_filter(self):
     text = self.coinindex_filter.text()
     state = self.hide_pairs.checkState()
 
-    print("text: " + str(text) + " state: " + str(state))
+    # print("text: " + str(text) + " state: " + str(state))
 
     filter_table(self, text, state)
 
@@ -132,11 +132,11 @@ def filter_table(self, text, state):
     # print("filter table state: " + str(state))
     # tabIndex = self.tabsBotLeft.currentIndex()
     # if tabIndex == 0:
-    filter_coin_index(self, text, state)
+    self.coin_index.filter_coin_index(text, state)
     # elif tabIndex == 1:
     self.open_orders.filter_open_orders(text, state)
     # elif tabIndex == 3:
-    filter_holdings(self, text, state)
+    self.holdings_table.filter_holdings(text, state)
     if text != "" or state == 2:
         self.holdings_table.setSortingEnabled(False)
         self.open_orders.setSortingEnabled(False)
@@ -151,29 +151,14 @@ def filter_table(self, text, state):
     #     self.toggle_other_pairs(state)
 
 
-def filter_holdings(self, text, state):
-    print("holdings row count: " + str(self.holdings_table.rowCount()))
-    for i in range(self.holdings_table.rowCount()):
-        if state == 2 and not self.holdings_table.item(i, 1).text().startswith(val["coin"]):
-            self.holdings_table.setRowHidden(i, True)
-        elif not self.holdings_table.item(i, 1).text().startswith(text.upper()):
-            self.holdings_table.setRowHidden(i, True)
-        else:
-            self.holdings_table.setRowHidden(i, False)
 
 
 
 
 
 
-def filter_coin_index(self, text, state):
-    for i in range(self.coin_index.rowCount()):
-        if state == 2 and not self.coin_index.item(i, 1).text().startswith(val["coin"]):
-            self.coin_index.setRowHidden(i, True)
-        elif not self.coin_index.item(i, 1).text().startswith(text.upper()):
-            self.coin_index.setRowHidden(i, True)
-        else:
-            self.coin_index.setRowHidden(i, False)
+
+
 
 
 def filter_return(self):
@@ -219,7 +204,7 @@ def filter_confirmed(self):
                 # return the first nonhidden row (might be inefficient)
                 coin = self.coin_index.item(i, 1).text()
                 # switch to that coin
-                print(str(coin) + "   " + str(val["pair"]))
+                # print(str(coin) + "   " + str(val["pair"]))
 
                 if coin != val["pair"].replace("BTC", ""):
                     coinIndex = self.coin_selector.findText(coin)
@@ -233,68 +218,6 @@ def filter_confirmed(self):
                     return
 
 
-def build_coinindex(self):
-    self.coin_index.setRowCount(0)
-    print("setze delegate")
-    self.coin_index.setItemDelegate(CoinDelegate(self))
-
-    for pair in val["tickers"]:
-        if "USDT" not in pair:
-            coin = str(val["tickers"][pair]["symbol"]).replace("BTC", "")
-            # print(str(holding))
-
-            icon = QIcon("images/ico/" + coin + ".svg")
-
-            icon_item = QTableWidgetItem()
-            icon_item.setIcon(icon)
-
-            # price_change = float(val["tickers"][pair]["priceChangePercent"])
-            # if price_change > 0:
-            #     operator = "+"
-            # else:
-            #     operator = ""
-
-            last_price = QTableWidgetItem()
-            last_price.setData(QtCore.Qt.EditRole, QtCore.QVariant(val["tickers"][pair]["lastPrice"]))
-
-            price_change = QTableWidgetItem()
-            price_change_value = float(val["tickers"][pair]["priceChangePercent"])
-            price_change.setData(QtCore.Qt.EditRole, QtCore.QVariant(price_change_value))
-
-            btc_volume = QTableWidgetItem()
-            btc_volume.setData(QtCore.Qt.EditRole, QtCore.QVariant(round(float(val["tickers"][pair]["quoteVolume"]), 2)))
-
-            zero_item = QTableWidgetItem()
-            zero_item.setData(QtCore.Qt.EditRole, QtCore.QVariant(0))
-            # price_change.setData(Qt.DisplayRole, QtCore.QVariant(str(val["tickers"][pair]["priceChangePercent"]) + "%"))
-
-            self.coin_index.insertRow(0)
-            self.coin_index.setItem(0, 0, icon_item)
-            self.coin_index.setItem(0, 1, QTableWidgetItem(coin))
-            self.coin_index.setItem(0, 2, last_price)
-            self.coin_index.setItem(0, 3, QTableWidgetItem(price_change))
-            self.coin_index.setItem(0, 4, QTableWidgetItem(btc_volume))
-
-            for i in (number + 6 for number in range(7)):
-                self.coin_index.setItem(0, i, QTableWidgetItem(zero_item))
-
-            if price_change_value < 0:
-                self.coin_index.item(0, 3).setForeground(QColor(Colors.color_pink))
-            else:
-                self.coin_index.item(0, 3).setForeground(QColor(Colors.color_green))
-
-            self.btn_trade = QPushButton("Trade " + coin)
-            self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
-            self.coin_index.setCellWidget(0, 5, self.btn_trade)
-
-    self.coin_index.model().sort(5, QtCore.Qt.AscendingOrder)
-    self.coin_index.setIconSize(QtCore.QSize(25, 25))
-    self.open_orders.setIconSize(QtCore.QSize(25, 25))
-
-    self.coin_index.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
-    self.coin_index.setColumnWidth(2, 120)
-    self.coin_index.setColumnWidth(5, 130)
-    self.coin_index.model().sort(4, QtCore.Qt.DescendingOrder)
 
 
 
@@ -447,7 +370,3 @@ def update_coin_index_prices(self):
             self.coin_index.setItem(i, 4, new_btc_volume)
 
 
-def get_trade_history(self, pair):
-        worker = Worker(partial(api_order_history, pair))
-        worker.signals.progress.connect(self.orders_received)
-        self.threadpool.start(worker)

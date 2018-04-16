@@ -7,11 +7,13 @@
 
 from functools import partial
 
-from app.apiFunctions import getAllOrders, getDepth, getTradehistory
+# from app.apiFunctions import getAllOrders
 from app.init import val
-from app.initApi import client
+# from app.initApi import client
 from app.workers import Worker
 from app.strategies.limit_order import LimitOrder
+import app
+
 
 def directCallback(self, msg):
     val["globalList"].insert(0, {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]})
@@ -25,7 +27,7 @@ def directCallback(self, msg):
 
     history = {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]}
     worker = Worker(partial(socket_history, history))
-    worker.signals.progress.connect(self.progress_history)
+    worker.signals.progress.connect(self.live_data.progress_history)
     # worker.signals.finished.connect(self.t_complete)
     self.threadpool.start(worker)
     val["apiUpdates"] += 1
@@ -40,12 +42,12 @@ def depthCallback(self, msg):
 
     if old_bids != val["bids"]:
         worker = Worker(partial(socket_orderbook, msg["bids"]))
-        worker.signals.progress.connect(self.progress_bids)
+        worker.signals.progress.connect(self.live_data.progress_bids)
         # worker.signals.finished.connect(self.t_complete)
         self.threadpool.tryStart(worker)
     if old_asks != val["asks"]:
         worker = Worker(partial(socket_orderbook, msg["asks"]))
-        worker.signals.progress.connect(self.progress_asks)
+        worker.signals.progress.connect(self.live_data.progress_asks)
         # worker.signals.finished.connect(self.t_complete)
         self.threadpool.tryStart(worker)
     val["apiUpdates"] += 1
@@ -73,7 +75,7 @@ def userCallback(self, msg):
         worker = Worker(update_holdings)
 
         # update values in holdings table
-        worker.signals.progress.connect(self.holding_updated)
+        worker.signals.progress.connect(self.holdings_table.holding_updated)
         self.threadpool.start(worker)
 
 
@@ -95,7 +97,7 @@ def userCallback(self, msg):
 
             # if order was canceled but partially filled, add to history
             if float(order["executedQty"]) > 0:
-                worker.signals.progress.connect(self.add_to_history)
+                worker.signals.progress.connect(self.history_table.add_to_history)
 
 
         elif userMsg["X"] == "PARTIALLY_FILLED":
@@ -103,8 +105,8 @@ def userCallback(self, msg):
 
         elif userMsg["X"] == "FILLED":
             worker.signals.progress.connect(self.open_orders.remove_from_open_orders)
-            worker.signals.progress.connect(self.add_to_history)
-            worker.signals.progress.connect(self.check_add_to_holdings)
+            worker.signals.progress.connect(self.history_table.add_to_history)
+            worker.signals.progress.connect(self.holdings_table.check_add_to_holdings)
 
 
         else:
@@ -144,33 +146,6 @@ def klineCallback(self, msg):
     # print(msg)
     pass
 
-
-def api_history(progress_callback):
-    val["globalList"] = getTradehistory(client, val["pair"])
-    progress_callback.emit({"history": reversed(val["globalList"])})
-    val["apiCalls"] += 1
-
-
-def api_depth(progress_callback):
-    depth = getDepth(client, val["pair"])
-    val["asks"] = depth["asks"]
-    progress_callback.emit({"asks": val["asks"]})
-    val["bids"] = depth["bids"]
-    progress_callback.emit({"bids": val["bids"]})
-    val["apiCalls"] += 1
-
-
-def api_all_orders(progress_callback):
-    orders = client.get_open_orders()
-    progress_callback.emit(orders)
-    numberPairs = sum(val["pairs"].values())
-    print("number pairs: " + str(numberPairs))
-
-
-def api_order_history(pair, progress_callback):
-    orders = getAllOrders(client, pair)
-    progress_callback.emit(orders)
-    val["apiCalls"] += 1
 
 
 def socket_history(history, progress_callback):

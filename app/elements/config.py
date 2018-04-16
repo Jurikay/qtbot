@@ -13,9 +13,7 @@ from app.init import val
 
 class ConfigManager:
     def __init__(self, mw):
-        print("init")
         self.mw = app.mw
-        print(str(self.mw))
 
 
     def read_config(self):
@@ -28,6 +26,7 @@ class ConfigManager:
             print("Config found!")
 
         else:
+            print("no config file present. Generating default config.")
             config['CONFIG'] = {'DefaultPair': 'BNBBTC',
                                 'ButtonPercentages': '10, 25, 33, 50, 100',
                                 'DefaultTimeframe': 15,
@@ -50,8 +49,6 @@ class ConfigManager:
         val["copy_qty"] = config["CONFIG"]["CopyQuantity"]
 
     def connect_cfg(self):
-        print("CONNECT CFG")
-        print(str(self.mw))
         print(str(self.mw.save_config))
         app.mw.save_config.clicked.connect(self.write_config)
 

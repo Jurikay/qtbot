@@ -1,9 +1,11 @@
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
+from functools import partial
+import logging
 import app
 from app.init import val
-from app.apiFunctions import percentage_amount
+from app.callbacks import Worker
 
 
 class LimitOrderPane(QtWidgets.QWidget):
@@ -19,7 +21,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         buy_percent_val = str(self.mw.limit_buy_slider.value())
         self.mw.buy_slider_label.setText(buy_percent_val + "%")
 
-        buy_value = percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(buy_percent_val), val["assetDecimals"])
+        buy_value = self.mw.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(buy_percent_val), val["assetDecimals"])
         self.mw.limit_buy_amount.setValue(float(buy_value))
         order_cost = float(buy_value) * float(self.mw.limit_buy_input.value())
         self.mw.limit_buy_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC")
@@ -40,7 +42,7 @@ class LimitOrderPane(QtWidgets.QWidget):
     def limit_percentage(self):
         button_number = int(self.mw.sender().objectName()[-1:])
 
-        value = percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(val["buttonPercentage"][button_number]), val["assetDecimals"])
+        value = self.mw.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(val["buttonPercentage"][button_number]), val["assetDecimals"])
 
         self.mw.limit_buy_amount.setValue(float(value))
 
@@ -111,6 +113,10 @@ class LimitOrderPane(QtWidgets.QWidget):
         self.mw.bids_table.cellClicked.connect(self.bids_cell_clicked)
 
         self.mw.asks_table.cellClicked.connect(self.asks_cell_clicked)
+
+        self.mw.limit_buy_button.clicked.connect(self.create_buy_order)
+        self.mw.limit_sell_button.clicked.connect(self.create_sell_order)
+
 
 
     def round_sell_amount(self, percent_val):
@@ -203,3 +209,36 @@ class LimitOrderPane(QtWidgets.QWidget):
     def asks_cell_clicked(self, row, column):
         self.mw.limit_buy_input.setValue(float(val["asks"][19 - row][0]))
         self.mw.limit_sell_input.setValue(float(val["asks"][19 - row][0]))
+
+
+    def create_buy_order(self):
+        if val["buyAllowed"] is True:
+            pair = val["pair"]
+            price = '{number:.{digits}f}'.format(number=self.mw.limit_buy_input.value(), digits=val["decimals"])
+
+            amount = '{number:.{digits}f}'.format(number=self.mw.limit_buy_amount.value(), digits=val["assetDecimals"])
+            side = "Buy"
+
+            worker = Worker(partial(self.mw.api_calls_obj.api_create_order, app.client, side, pair, price, amount))
+            # worker.signals.progress.connect(self.create_order_callback)
+            self.mw.threadpool.start(worker)
+            logging.info('[ + ] BUY ORDER CREATED! %s' % str(pair) + " " + str(amount) + " at " + str(price))
+
+
+    def create_sell_order(self):
+        if val["sellAllowed"] is True:
+            pair = val["pair"]
+            price = '{number:.{digits}f}'.format(number=self.mw.limit_sell_input.value(), digits=val["decimals"])
+
+            amount = '{number:.{digits}f}'.format(number=self.mw.limit_sell_amount.value(), digits=val["assetDecimals"])
+
+            side = "Sell"
+
+            worker = Worker(partial(self.mw.api_calls_obj.api_create_order, app.client, side, pair, price, amount))
+            # worker.signals.progress.connect(self.create_order_callback)
+            self.mw.threadpool.start(worker)
+            logging.info('[ - ] SELL ORDER CREATED! %s' % str(pair) + " " + str(amount) + " at " + str(price))
+
+
+    # do stuff once api data has arrived
+   

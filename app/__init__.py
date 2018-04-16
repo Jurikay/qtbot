@@ -1,1 +1,2 @@
 mw = None
+client = None

@@ -1,3 +1,10 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""OpenOrdersTable main class."""
+
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
@@ -7,7 +14,9 @@ from app.init import val
 from app.colors import Colors
 import app
 import logging
-from app.callbacks import Worker, api_all_orders
+from app.callbacks import Worker
+from app.apiFunctions import ApiCalls
+from functools import partial
 
 
 class OpenOrdersTable(QtWidgets.QTableWidget):
@@ -47,7 +56,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
 
 
         self.mw.btn_trade = QtWidgets.QPushButton("Trade " + coin)
-        self.mw.btn_trade.clicked.connect(self.mw.gotoTradeButtonClicked)
+        self.mw.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
 
 
         self.mw.open_orders.setCellWidget(0, 3, self.mw.btn_trade)
@@ -148,6 +157,16 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
 
         self.cellClicked.connect(self.open_orders_cell_clicked)
 
-        worker = Worker(api_all_orders)
+        worker = Worker(self.mw.api_calls_obj.api_all_orders)
         worker.signals.progress.connect(self.build_open_orders)
         self.mw.threadpool.start(worker)
+
+
+    def gotoTradeButtonClicked(self):
+        button_text = self.sender().text()
+        coin = button_text.replace("Trade ", "")
+
+        coinIndex = self.mw.coin_selector.findText(coin)
+        self.mw.coin_selector.setCurrentIndex(coinIndex)
+
+        self.mw.change_pair()

@@ -11,7 +11,7 @@ from binance.client import Client
 # from config import binance_credentials
 from app.init import val
 
-from app.apiFunctions import getHoldings, getTickers, availablePairs
+# from app.apiFunctions import ApiCalls
 # from binance.depthcache import DepthCacheManager
 #
 
@@ -45,7 +45,6 @@ def read_stats():
     print("reading stats")
     # for i, cfg in enumerate(config["Stats"]):
     #     stat_vals[i] = int(config["Stats"][cfg])
-        
 
     #     print(str(config["Stats"][cfg]))
     val["stats"]["timeRunning"] = config["Stats"]["timeRunning"]
@@ -55,52 +54,17 @@ def read_stats():
     val["stats"]["apiUpdates"] = config["Stats"]["apiUpdates"]
 
 
-def set_pair_values():
-    val["coin"] = val["pair"][:-3]
-
-
-    val["decimals"] = len(str(val["coins"][val["pair"]]["tickSize"])) - 2
-
-
-    if int(val["coins"][val["pair"]]["minTrade"]) == 1:
-        val["assetDecimals"] = 0
-    else:
-        val["assetDecimals"] = len(str(val["coins"][val["pair"]]["minTrade"])) - 2
-
 
 
 
 read_stats()
 
-cfg = ConfigManager("init")
-cfg.read_config()
 
-try:
-    client = Client(val["api_key"], val["api_secret"],
-                    {"verify": True, "timeout": 61})
-    val["client"] = client
-except (TypeError, InvalidHeader):
-    print("NO API KEY!")
+
 # print("API CREDENTIALS:")
 # print(str(val["api_key"]))
 
 
-try:
-    val["coins"] = availablePairs(client)
+# instantiate ApiCalls object
 
-    val["accHoldings"] = getHoldings(client)
 
-    # val["tether"] = get_tether(client)
-
-    val["tickers"] = getTickers(client)
-
-    val["apiCalls"] += 3
-    # userMsg = dict()
-    # accHoldings = dict()
-
-    set_pair_values()
-except (BinanceAPIException, NameError) as e:
-    print("API ERROR")
-    print(str(e))
-    if "code=-1003" in str(e):
-        print("ja ein api error :)")

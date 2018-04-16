@@ -20,8 +20,8 @@ class LimitOrder():
     def __init__(self, gui):
         LimitOrder.gui = gui
 
-    def test_func(self):
-        print(self)
+    # def test_func(self):
+    #     print(self)
 
 
     @staticmethod

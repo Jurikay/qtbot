@@ -9,6 +9,7 @@
             "name": "Python: MAIN",
             "type": "python",
             "request": "launch",
+            "pythonPath": "~/.pyenv/versions/3.6.4/Python.framework/Versions/3.6/bin/python3.6",
             "env": {"QT_SCALE_FACTOR": 0.8},
             "program": "${workspaceFolder}/MAIN.pyw"
             // "runtimeArgs": ["QT_SCALE_FACTOR=0.7", "${workspaceFolder}/MAIN.pyw"]
