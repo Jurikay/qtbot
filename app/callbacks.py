@@ -11,7 +11,7 @@ from app.apiFunctions import getAllOrders, getDepth, getTradehistory
 from app.init import val
 from app.initApi import client
 from app.workers import Worker
-
+from app.strategies.limit_order import LimitOrder
 
 def directCallback(self, msg):
     val["globalList"].insert(0, {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]})
@@ -76,6 +76,7 @@ def userCallback(self, msg):
         worker.signals.progress.connect(self.holding_updated)
         self.threadpool.start(worker)
 
+
     elif userMsg["e"] == "executionReport":
 
         # prepare order dictionary
@@ -91,6 +92,11 @@ def userCallback(self, msg):
 
         elif userMsg["X"] == "CANCELED":
             worker.signals.progress.connect(self.remove_from_open_orders)
+
+            # if order was canceled but partially filled, add to history
+            if float(order["executedQty"]) > 0:
+                worker.signals.progress.connect(self.add_to_history)
+
 
         elif userMsg["X"] == "PARTIALLY_FILLED":
             worker.signals.progress.connect(self.update_open_order)
@@ -141,7 +147,7 @@ def klineCallback(self, msg):
 
 def api_history(progress_callback):
     val["globalList"] = getTradehistory(client, val["pair"])
-    progress_callback.emit({"history": val["globalList"]})
+    progress_callback.emit({"history": reversed(val["globalList"])})
     val["apiCalls"] += 1
 
 
@@ -161,8 +167,8 @@ def api_all_orders(progress_callback):
     print("number pairs: " + str(numberPairs))
 
 
-def api_order_history(progress_callback):
-    orders = getAllOrders(client, val["pair"])
+def api_order_history(pair, progress_callback):
+    orders = getAllOrders(client, pair)
     progress_callback.emit(orders)
     val["apiCalls"] += 1
 

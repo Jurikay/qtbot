@@ -39,10 +39,10 @@ class Webpages():
     @staticmethod
     def build_chart2(pair, timeframe):
         chart = """
-        <!-- TradingView Widget BEGIN -->
+    <!-- TradingView Widget BEGIN -->
     <style>
         * {background: black;}
-        html,
+      html,
       body
       {
         background: #000 none repeat scroll 0 0;
@@ -231,6 +231,159 @@ class Webpages():
     <!-- TradingView Widget END -->
     """
         return chart
+
+
+    def build_chart_btc(pair, timeframe, exchange):
+    	chart = """
+		<!-- TradingView Widget BEGIN --> <style> * {
+			background: black;
+		}
+
+		html,
+		body {
+			background: #000 none repeat scroll 0 0;
+			color: #333;
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		}
+
+		a:hover {
+			color: #58c3e5;
+		}
+
+		.chart-page .chart-container {
+			background-color: #222;
+			border-color: #444;
+		}
+
+		.header-chart-panel {
+			background-color: #222;
+		}
+
+		.tv-side-toolbar {
+			background-color: #222;
+			border-color: #444;
+			color: #999;
+		}
+
+		.tv-side-toolbar .tools-group:not(:first-child):not(.no-delimiter)::before {
+			background-color: #444;
+		}
+
+		.tv-side-toolbar .tools-group .button:active:not(.subgroup),
+		.tv-side-toolbar .tools-group .button.active:not(.subgroup),
+		.tv-side-toolbar .tools-group .button.selected:not(.subgroup),
+		.properties-toolbar .tools-group .button:active,
+		.properties-toolbar .tools-group .button.active,
+		.drawing-favorites-toolbar .tools-group .button:active,
+		.drawing-favorites-toolbar .tools-group .button.active,
+		.tv-side-toolbar .tools-group .button.selected .main,
+		.tv-side-toolbar .tools-group .button:active .side,
+		.tv-side-toolbar .tools-group .button.active .side {
+			background-color: #444;
+		}
+
+		.tv-side-toolbar .tools-group .button .side {
+			background-color: #444;
+			border-color: #999;
+		}
+
+		.tv-main-panel {
+			background-color: #222;
+		}
+
+		.chart-controls-bar {
+			background: #222 !important;
+		}
+
+		input.symbol-edit,
+		.symbol-search-dialog input {
+			background-color: #222;
+			border-color: #666;
+			color: #aaa;
+		}
+
+		.favored-list-container span {
+			background-color: #222;
+			border-color: #666;
+			color: #aaa !important;
+		}
+
+		body {
+			background-color: black;
+			margin: 0px;
+		}
+
+		span.pane-legend-line.apply-overflow-tooltip {
+			display: none!important;
+		}
+
+		</style> <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script> <script type="text/javascript"> var widgetLOL=new TradingView.widget( {
+			supports_search: false, supports_group_request: false, supports_marks: true, exchanges: [ {
+				value: "", name: "All Exchanges", desc: ""
+			}
+			], symbolsTypes: [ {
+				name: "All types", value: ""
+			}
+			, {
+				name: "Stock", value: "stock"
+			}
+			, {
+				name: "Index", value: "index"
+			}
+			], supportedResolutions: [ "1", "15"], fullscreen: false, symbol: '""" + exchange + """:""" + pair + """', autosize: true, timezone: "Europe/Berlin", interval: '""" + timeframe + """', toolbar_bg: '#333333', allow_symbol_change: false, container_id: "tv_chart_container", //library_path: "charting_library/",
+			locale: "en", save_image: false, hideideas: true, hide_side_toolbar: false, show_popup_button: false, withdateranges: true, theme: "Dark", studies: [ "BB@tv-basicstudies", "StochasticRSI@tv-basicstudies"], // "popup_width": "1000",
+			// "popup_height": "650"
+			drawings_access: {
+				type: 'black', tools: [ {
+					name: "Regression Trend"
+				}
+				]
+			}
+			, disabled_features: ["header_compare", "study_market_minimized", "control_bar", "items_favoriting"], //"volume_force_overlay",
+			enabled_features: ["seconds_resolution", "caption_buttons_text_if_possible", "narrow_chart_enabled"], overrides: {
+				"paneProperties.background": "#6ab9ff", // "paneProperties.gridProperties.color": "black",
+				//
+				"paneProperties.vertGridProperties.color": "#323c45", "paneProperties.horzGridProperties.color": "#323c45", "paneProperties.crossHairProperties.color": "white", //
+				// "mainSeriesProperties.style": 0,
+				// "symbolWatermarkProperties.color": "rgba(0, 0, 0, 0)",
+				// "volumePaneSize": "small",
+				"paneProperties.background": "red", // works
+				// "mainSeriesProperties.style": 1, // candles
+				// "mainSeriesProperties.priceAxisProperties.autoScale": false,
+				//
+				// "mainSeriesProperties.priceAxisProperties.autoScaleDisabled": "true",
+				"mainSeriesProperties.candleStyle.upColor": "#94c940", "mainSeriesProperties.candleStyle.downColor": "#ff007a", // remove title etc
+				"paneProperties.legendProperties.showStudyArguments": false, // "paneProperties.legendProperties.showStudyTitles": false,
+				// "paneProperties.legendProperties.showStudyValues": false,
+				// "paneProperties.legendProperties.showSeriesTitle": false,
+				"paneProperties.legendProperties.showSeriesOHLC": false,
+			}
+			, studies_overrides: {
+				"bollinger bands.median.color": "blue", "bollinger bands.upper.color": "red", //   "bollinger bands.lower.color": "red",
+				"BB@tv-basicstudies.upper.color": "blue", "bollinger bands.upper.linewidth": 14, //   "bollinger bands.color": "red",
+				//   "bollinger bands.areaStyle.color": "red",
+				//
+				//   // study_Overlay@tv-basicstudies.areaStyle.color1: color
+				//   // study_Overlay@tv-basicstudies.areaStyle.color2: color
+				//
+				//   "stochastic rsi.areaStyle.color": "red",
+				//
+				//   "basicstudies.areaStyle.color1": "red",
+				//   "study_Overlay@tv-basicstudies.areaStyle.color2": "green",
+				//   "StochasticRSI@tv-basicstudies.background.color": "green"
+			}
+			, debug: true, time_frames: [ //{ text: "50y", resolution: "6M" },
+			//{ text: "1d", resolution: "5" },
+			], charts_storage_url: 'http://saveload.tradingview.com', client_id: 'tradingview.com', user_id: 'public_user', // favorites: {
+			// 	intervals: ["1D", "3D", "3W", "W", "M"],
+			// 	chartTypes: ["Area", "Line"]
+			// },
+		}
+
+		);
+		</script> <!-- TradingView Widget END -->
+    	"""
+    	return chart
 
     @staticmethod
     def welcome_page():

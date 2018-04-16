@@ -11,12 +11,19 @@ from functools import partial
 
 class FishingBot():
     """Class containing fishing bot methods."""
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, gui):
+        FishingBot.gui = gui
 
-    def add_order(self, bot):
+    @classmethod
+    def add_order(self, arg2):
         """Ad a new order to the fishing bot table."""
+        print("adde order")
+        print(str(self) + " " + str(arg2))
+        gui = FishingBot.gui
+
         coin_combo_box = QtWidgets.QComboBox()
+
+
 
         for coin in val["coins"]:
             icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
@@ -31,19 +38,19 @@ class FishingBot():
         side_combo_box.addItem("Buy")
         side_combo_box.addItem("Sell")
 
-        row_count = bot.fishbot_table.rowCount()
+        row_count = gui.fishbot_table.rowCount()
 
-        bot.fishbot_table.insertRow(row_count)
-        bot.fishbot_table.setCellWidget(row_count, 0, coin_combo_box)
-        bot.fishbot_table.setCellWidget(row_count, 1, side_combo_box)
+        gui.fishbot_table.insertRow(row_count)
+        gui.fishbot_table.setCellWidget(row_count, 0, coin_combo_box)
+        gui.fishbot_table.setCellWidget(row_count, 1, side_combo_box)
 
         cancel_button = QtWidgets.QPushButton("cancel")
         # cancel_button.setProperty("row", row_count)
-        cancel_button.clicked.connect(partial(self.remove_order, bot))
-        bot.fishbot_table.setCellWidget(row_count, 3, cancel_button)
+        cancel_button.clicked.connect(partial(self.remove_order, gui))
+        gui.fishbot_table.setCellWidget(row_count, 3, cancel_button)
 
-        bot.fishbot_table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(str(row_count)))
-        self.set_properties(bot)
+        gui.fishbot_table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(str(row_count)))
+        self.set_properties(gui)
 
     @staticmethod
     def set_properties(bot):
@@ -54,6 +61,7 @@ class FishingBot():
 
 
     def remove_order(self, bot):
+        
         row = bot.sender().property("row")
         for i in range(bot.fishbot_table.rowCount()):
             widget = bot.fishbot_table.cellWidget(i, 3)

@@ -1,0 +1,7 @@
+open orders trade colun width
+add 
+
+# Hugi fragen:
+
+auf klassen zugreifen:
+idee: in __init__ von beeserbot einmalig andere klassen instanzieren

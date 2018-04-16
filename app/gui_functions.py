@@ -5,6 +5,7 @@
 
 """Collection of functions that concern the gui."""
 
+from functools import partial
 
 from PyQt5.QtCore import QSize, Qt, QVariant
 from PyQt5.QtGui import QColor, QFont, QIcon
@@ -14,6 +15,8 @@ from app.charts import Webpages as Webpages
 from app.colors import Colors
 from app.init import val
 from app.table_items import CoinDelegate
+from app.workers import Worker
+from app.callbacks import api_order_history
 
 
 def initial_values(self):
@@ -45,6 +48,9 @@ def initial_values(self):
 
     self.chart.setHtml(Webpages.build_chart2(val["pair"], val["defaultTimeframe"]))
     self.chart.show()
+
+    self.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", val["defaultTimeframe"], "COINBASE"))
+    self.btc_chart.show()
 
     bids_header = self.bids_table.horizontalHeader()
     asks_header = self.asks_table.horizontalHeader()
@@ -299,86 +305,7 @@ def build_coinindex(self):
     self.coin_index.model().sort(4, Qt.DescendingOrder)
 
 
-def build_holdings(self, *args):
-    self.holdings_table.setRowCount(0)
-    for holding in val["accHoldings"]:
 
-        try:
-            # if holding != "BTC" and holding != "BNC":
-            if holding + "BTC" in val["coins"]:
-                name = val["coins"][holding + "BTC"]["baseAssetName"]
-            elif holding == "BTC":
-                name = "Bitcoin"
-        except KeyError:
-            name = "Bitcoin"
-        free = val["accHoldings"][holding]["free"]
-        locked = val["accHoldings"][holding]["locked"]
-        total = float(free) + float(locked)
-        total_formatted = '{number:.{digits}f}'.format(number=total, digits=8)
-
-        bold_font = QFont()
-        bold_font.setBold(True)
-
-        try:
-            if holding == "BTC":
-                icon = QIcon("images/ico/" + str(holding) + ".svg")
-
-                icon_item = QTableWidgetItem()
-                icon_item.setIcon(icon)
-                self.holdings_table.insertRow(0)
-                self.holdings_table.setItem(0, 0, icon_item)
-
-                self.holdings_table.setItem(0, 1, QTableWidgetItem(holding))
-                self.holdings_table.setItem(0, 2, QTableWidgetItem(name))
-                self.holdings_table.setItem(0, 3, QTableWidgetItem("{0:.8f}".format(float(total))))
-                self.holdings_table.setItem(0, 4, QTableWidgetItem("{0:g}".format(float(free))))
-                self.holdings_table.setItem(0, 5, QTableWidgetItem("{0:g}".format(float(locked))))
-                self.holdings_table.setItem(0, 6, QTableWidgetItem(total_formatted))
-
-                self.holdings_table.item(0, 6).setFont(bold_font)
-                self.holdings_table.item(0, 6).setForeground(QColor(Colors.color_lightgrey))
-
-                self.btn_sell = QPushButton('Trade' + " BTC")
-                self.btn_sell.setEnabled(False)
-                self.btn_sell.setStyleSheet("color: #666;")
-                self.btn_sell.clicked.connect(self.gotoTradeButtonClicked)
-                self.holdings_table.setCellWidget(0, 7, self.btn_sell)
-
-            elif holding + "BTC" in val["coins"]:
-                if float(total) * float(val["coins"][holding + "BTC"]["close"]) >= 0.001:
-                    icon = QIcon("images/ico/" + str(holding) + ".svg")
-
-                    icon_item = QTableWidgetItem()
-                    icon_item.setIcon(icon)
-
-                    total_btc = total * float(val["coins"][holding + "BTC"]["close"])
-                    total_btc_formatted = '{number:.{digits}f}'.format(number=total_btc, digits=8)
-
-                    self.holdings_table.insertRow(1)
-                    self.holdings_table.setItem(1, 0, icon_item)
-
-                    self.holdings_table.setItem(1, 1, QTableWidgetItem(holding))
-                    self.holdings_table.setItem(1, 2, QTableWidgetItem(name))
-                    self.holdings_table.setItem(1, 3, QTableWidgetItem("{0:.8f}".format(float(total))))
-                    self.holdings_table.setItem(1, 4, QTableWidgetItem("{0:g}".format(float(free))))
-                    self.holdings_table.setItem(1, 5, QTableWidgetItem("{0:g}".format(float(locked))))
-                    self.holdings_table.setItem(1, 6, QTableWidgetItem(total_btc_formatted))
-
-                    self.holdings_table.item(1, 6).setFont(bold_font)
-                    self.holdings_table.item(1, 6).setForeground(QColor(Colors.color_lightgrey))
-
-                    self.btn_sell = QPushButton('Trade ' + str(holding))
-                    self.btn_sell.clicked.connect(self.gotoTradeButtonClicked)
-                    self.holdings_table.setCellWidget(1, 7, self.btn_sell)
-
-        except KeyError:
-            pass
-
-        header = self.holdings_table.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        # header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
-
-        self.holdings_table.setIconSize(QSize(25, 25))
 
 
 def calc_total_btc():
@@ -402,8 +329,21 @@ def calc_total_btc():
     return total_formatted
 
 
-def calc_wavg():
-    coin = val["coin"]
+def calc_all_wavgs(self):
+    for i in range(self.holdings_table.rowCount()):
+
+        coin = self.holdings_table.item(i, 1).text()
+        if coin != "BTC":
+            wavg = calc_wavg(coin)
+            self.holdings_table.item(i, 8).setText(wavg)
+
+
+
+
+
+def calc_wavg(symbol):
+    coin = symbol
+    pair = symbol + "BTC"
     current_free = val["accHoldings"][coin]["free"]
     current_locked = val["accHoldings"][coin]["locked"]
     current_total = float(current_free) + float(current_locked)
@@ -415,8 +355,7 @@ def calc_wavg():
     print("calculating wavg for " + str(coin))
     print("currently holding " + str(remaining))
     try:
-        for i, order in enumerate(val["history"]):
-            print(str(order))
+        for i, order in enumerate(reversed(val["history"][pair])):
             if order["side"] == "BUY":
                 sum_traded += float(order["executedQty"])
                 remaining -= float(order["executedQty"])
@@ -441,13 +380,20 @@ def calc_wavg():
                 if remaining <= float(val["coins"][coin + "BTC"]["minTrade"]):
 
                     if current_total > 0:
-                        print("ENOUGH! " + str(total_cost / (current_total - remaining)))
-                        final = ('{number:,.{digits}f}'.format(number=total_cost / (current_total - remaining), digits=8))
+                        # if remaining < 0:
+                        final = ('{number:.{digits}f}'.format(number=total_cost / (current_total - remaining), digits=8))
+                        # else:
+                            # final = ('{number:.{digits}f}'.format(number=total_cost / (current_total + remaining), digits=8))
+
+                        
+                        print("ENOUGH! " + final)
+                        print("total amount: " + str((current_total - remaining)) + " total cost: " + str(total_cost))
+
                         return str(final)
 
-                    return ""
-    except KeyError:
-        return ""
+                    return "0"
+    except Exception as e:
+        print("Error: " + str(e))
 
 
 def update_holding_prices(self):
@@ -509,3 +455,9 @@ def update_coin_index_prices(self):
         if float(btc_volume) != new_btc_volume_value:
 
             self.coin_index.setItem(i, 4, new_btc_volume)
+
+
+def get_trade_history(self, pair):
+        worker = Worker(partial(api_order_history, pair))
+        worker.signals.progress.connect(self.orders_received)
+        self.threadpool.start(worker)

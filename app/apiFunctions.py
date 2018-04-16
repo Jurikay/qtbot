@@ -3,6 +3,8 @@
 
 # made by Jirrik
 
+from app.init import val
+
 """Collection of functions concerning api calls."""
 
 

@@ -10,9 +10,14 @@ from collections import defaultdict
 import locale
 import argparse
 
-# questionable if needed. Same is PyQt QLocale
+# questionable if needed. Same as PyQt QLocale
 locale.setlocale(locale.LC_ALL, 'C')
+
 # locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+
+# store many values in this giant dictionary:
+val = defaultdict(dict)
+
 
 # parse arguments (debug, verbose)
 parser = argparse.ArgumentParser(description='Description of your program')
@@ -20,7 +25,6 @@ parser.add_argument('-d', '--debug', help='Enable debug mode', required=False, a
 parser.add_argument('-v', '--verbose', help='Enable verbose mode', required=False, action='store_true')
 args = vars(parser.parse_args())
 
-val = defaultdict(dict)
 
 # set debug / verbose flags
 if args['debug'] is True:
@@ -37,7 +41,6 @@ if args['verbose'] is True:
 else:
     val["verbose"] = False
 
-val["test"] = "hi"
 
 val["globalList"] = list()
 val["tradeHistory"] = list()
@@ -46,14 +49,13 @@ val["tickers"] = dict()
 val["buyAllowed"] = False
 val["sellAllowed"] = False
 
-val["history"] = dict()
+val["history"] = defaultdict(dict)
 
 val["validTimeframes"] = ["1m", "3m", "5m", "15m", "30m", "45m", "1h", "2h", "3h", "4h", "1d", "1w"]
 
 val["ticker"] = dict()
 
 val["stats"] = dict()
-
 
 val["websocketCheck"] = 0
 val["timeRunning"] = 0
@@ -75,6 +77,7 @@ val["klines"]["5m"] = dict()
 val["volDirection"] = 0
 
 val["indexTabOpen"] = False
+
 proxies = {
     'http': 'http://10.10.1.10:3128',
     'https': 'http://10.10.1.10:1080'

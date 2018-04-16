@@ -12,12 +12,13 @@ import logging
 from datetime import datetime, timedelta
 from functools import partial
 from binance.websockets import BinanceSocketManager
+
 import PyQt5.QtCore as QtCore
-# import PyQt5.Qt as Qt
 import PyQt5.QtGui as QtGui
-from PyQt5.QtWebEngineWidgets import QWebEngineView
 import PyQt5.QtWidgets as QtWidgets
 from PyQt5.uic import loadUi
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 
 
@@ -27,17 +28,18 @@ from app.callbacks import (Worker, api_depth, api_history, api_order_history, ap
                            userCallback, klineCallback)
 from app.charts import Webpages as Webpages
 from app.colors import Colors
-from app.gui_functions import (build_coinindex, build_holdings, calc_total_btc,
+from app.gui_functions import (build_coinindex, calc_total_btc,
                                calc_wavg, filter_coin_index, global_filter, filter_confirmed, initial_values, filter_table,
-                               update_holding_prices, update_coin_index_prices, init_filter)
+                               update_holding_prices, update_coin_index_prices, init_filter, calc_all_wavgs, get_trade_history)
 from app.init import val
 from app.initApi import (BinanceAPIException, client, read_config,
                          set_pair_values)
 from app.strategies.fishing_bot import FishingBot
+from app.strategies.limit_order import LimitOrder
+from app.bot import BotClass
 
 
-
-class beeserBot(QtWidgets.QMainWindow):
+class beeserBot(QtWidgets.QMainWindow, BotClass):
 
     """Main ui class."""
 
@@ -50,89 +52,15 @@ class beeserBot(QtWidgets.QMainWindow):
         with open("ui/style.qss", "r") as fh:
             self.setStyleSheet(fh.read())
 
-        qtLogger = QPlainTextEditLogger(self)
-        qtLogger.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-        logging.getLogger().addHandler(qtLogger)
-        # You can control the logging level
-        logging.getLogger().setLevel(logging.INFO)
+        init_logging(self)
+        init_hotkeys(self)
+        set_modes(self)
+        set_config_values(self)
 
-        self.widget_2.setWidget(qtLogger.widget)
-
-        QtCore.QLocale.setDefault(QtCore.QLocale(QtCore.QLocale.C))
-
-        self.update_count = 0
-        self.no_updates = 0
-
-
-        if val["debug"] is False:
-            # self.tabsBotLeft.setTabEnabled(0, False)
-            self.tabsBotLeft.removeTab(0)
-            self.ChartTabs.removeTab(3)
-            self.ChartTabs.removeTab(4)
-            self.ChartTabs.removeTab(5)
-            self.ChartTabs.setTabEnabled(1, False)
-
-            self.tabsBotLeft.setCurrentIndex(0)
-            self.ChartTabs.setCurrentIndex(0)
-            self.bot_tabs.setCurrentIndex(0)
-        else:
-            logging.info("DEBUG mode enabled")
-
-        logging.info('Initializing GUI')
-
-        self.setWindowTitle("Juris beeser Bot")
-
-        self.setWindowIcon(QtGui.QIcon('images/assets/256.png'))
-
-        self.restart_warning.setStyleSheet("color: transparent;")
-        # self.spread_area.setStyleSheet("background: #2e363d;")
-
-        self.holdings_table.setStyleSheet("alternate-background-color: #2e363d;")
-
-        self.counter = 0
-        self.counter2 = 0
-
-        # THREADING
-        self.threadpool = QtCore.QThreadPool()
-        logging.info('Enable multithreading with %d threads.' % self.threadpool.maxThreadCount())
-
-        # define hotkeys
-        hotkey_F = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F), self)
-        hotkey_F.activated.connect(partial(self.hotkey_pressed, "F"))
-
-        hotkey_1 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_1), self)
-        hotkey_1.activated.connect(partial(self.hotkey_pressed, "1"))
-
-        hotkey_2 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_2), self)
-        hotkey_2.activated.connect(partial(self.hotkey_pressed, "2"))
-
-        hotkey_3 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_3), self)
-        hotkey_3.activated.connect(partial(self.hotkey_pressed, "3"))
-
-        hotkey_4 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_4), self)
-        hotkey_4.activated.connect(partial(self.hotkey_pressed, "4"))
-
-        hotkey_5 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_5), self)
-        hotkey_5.activated.connect(partial(self.hotkey_pressed, "5"))
-
-        hotkey_6 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_6), self)
-        hotkey_6.activated.connect(partial(self.hotkey_pressed, "6"))
-
-        hotkey_B = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_B), self)
-        hotkey_B.activated.connect(partial(self.hotkey_pressed, "B"))
-
-        hotkey_S = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_S), self)
-        hotkey_S.activated.connect(partial(self.hotkey_pressed, "S"))
-
-        hotkey_P = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_P), self)
-        hotkey_P.activated.connect(partial(self.hotkey_pressed, "P"))
-
-        hotkey_A = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_A), self)
-        hotkey_A.activated.connect(partial(self.hotkey_pressed, "A"))
+        main_init(self)
 
 
         # connect elements to functions
-
         self.limit_buy_slider.valueChanged.connect(self.buy_slider)
         self.limit_sell_slider.valueChanged.connect(self.sell_slider)
 
@@ -155,18 +83,23 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.save_config.clicked.connect(self.write_config)
 
-        self.tradeTable.cellClicked.connect(self.cell_was_clicked)
-        self.bids_table.cellClicked.connect(self.bids_cell_clicked)
-        self.asks_table.cellClicked.connect(self.asks_cell_clicked)
+        # instantiate LimitOrder
+        limit_order = LimitOrder(self)
 
-        self.open_orders.cellClicked.connect(self.open_orders_cell_clicked)
+        self.tradeTable.cellClicked.connect(limit_order.cell_was_clicked)
+        self.debug2_button.clicked.connect(limit_order.test_func)
+
+        self.bids_table.cellClicked.connect(limit_order.bids_cell_clicked)
+        self.asks_table.cellClicked.connect(limit_order.asks_cell_clicked)
+
+        self.open_orders.cellClicked.connect(limit_order.open_orders_cell_clicked)
 
         self.coin_selector.activated.connect(self.change_pair)
 
-        self.limit_outbid.clicked.connect(self.overbid_undercut)
-        self.limit_undercut.clicked.connect(self.overbid_undercut)
-        self.limit_high.clicked.connect(self.overbid_undercut)
-        self.limit_low.clicked.connect(self.overbid_undercut)
+        self.limit_outbid.clicked.connect(limit_order.overbid_undercut)
+        self.limit_undercut.clicked.connect(limit_order.overbid_undercut)
+        self.limit_high.clicked.connect(limit_order.overbid_undercut)
+        self.limit_low.clicked.connect(limit_order.overbid_undercut)
 
         self.limit_sell_amount.valueChanged.connect(self.check_sell_ammount)
         self.limit_buy_amount.valueChanged.connect(self.check_buy_amount)
@@ -179,11 +112,15 @@ class beeserBot(QtWidgets.QMainWindow):
         self.tabsBotLeft.setCornerWidget(self.coin_index_filter, corner=QtCore.Qt.TopRightCorner)
         self.debug_corner.clicked.connect(self.set_corner_widget)
 
+        self.wavg_button.clicked.connect(calc_wavg)
+        self.calc_all_wavg_button.clicked.connect(partial(calc_all_wavgs, self))
+
         # instantiate fishing bot class
         fish_bot = FishingBot(self)
 
         # connect buttons to fishing bot methods
-        self.fish_add_trade.clicked.connect(partial(fish_bot.add_order, self))
+        self.fish_add_trade.clicked.connect(fish_bot.add_order)
+
         self.fish_clear_all.clicked.connect(partial(fish_bot.clear_all_orders, self))
 
 
@@ -213,34 +150,8 @@ class beeserBot(QtWidgets.QMainWindow):
         url = Webpages.build_cmc()
         self.cmc_chart.load(QtCore.QUrl(url))
 
-        # url = Webpages.build_binance_info(self)
-        # self.binance_info.load(QtCore.QUrl(url))
 
-        # set config values
-        try:
-            self.default_pair.setText(val["defaultPair"])
-
-            self.api_key.setText(val["api_key"])
-            self.api_secret.setText(val["api_secret"])
-
-            self.percent_1.setText(str(int(val["buttonPercentage"][0])))
-            self.percent_2.setText(str(int(val["buttonPercentage"][1])))
-            self.percent_3.setText(str(int(val["buttonPercentage"][2])))
-            self.percent_4.setText(str(int(val["buttonPercentage"][3])))
-            self.percent_5.setText(str(int(val["buttonPercentage"][4])))
-            self.set_button_text()
-
-            # self.default_timeframe.setText(str(val["defaultTimeframe"]))
-
-            raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440]
-
-            # dtf = self.dtf_selector.currentText()
-            for i, tf in enumerate(raw_timeframes):
-                if val["defaultTimeframe"] == str(tf):
-                    self.dtf_selector.setCurrentIndex(i)
-
-        except (TypeError, KeyError):
-            pass
+        
 
         # check if coin is an empty dict. If yes, api calls have not been answered.
         current_coin = val.get("coin", None)
@@ -258,25 +169,14 @@ class beeserBot(QtWidgets.QMainWindow):
             self.api_key.setStyleSheet("border: 2px solid #f3ba2e;")
             self.api_secret.setStyleSheet("border: 2px solid #f3ba2e;")
 
-        for _ in range(20):
-            self.bids_table.insertRow(0)
-            self.asks_table.insertRow(0)
-            self.new_table.insertRow(0)
-
-        for _ in range(50):
-            self.tradeTable.insertRow(0)
-
 
     def initialize(self):
 
         self.api_calls()
 
         for coin in val["coins"]:
-            
-            icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
-            
-                
 
+            icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
             self.coin_selector.addItem(icon, coin[:-3])
 
         self.coin_selector.model().sort(0)
@@ -294,7 +194,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.schedule_websockets()
         self.schedule_work()
 
-        build_holdings(self)
+        self.build_holdings()
 
         build_coinindex(self)
 
@@ -305,6 +205,8 @@ class beeserBot(QtWidgets.QMainWindow):
         self.threadpool.start(worker)
 
         # self.sound_1 = QSound('sounds/Tink.wav')
+
+
 
         self.timer = QtCore.QTimer()
         self.timer.setInterval(200)
@@ -329,17 +231,29 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.open_orders.setColumnWidth(10, 0)
 
         self.history_table.setColumnWidth(0, 130)
-        self.history_table.setColumnWidth(2, 60)
-        self.history_table.setColumnWidth(5, 120)
-        self.holdings_table.setColumnWidth(0, 150)
+        self.history_table.setColumnWidth(2, 75)
+        self.history_table.setColumnWidth(3, 75)
+        self.history_table.setColumnWidth(6, 120)
 
+        self.holdings_table.setColumnWidth(0, 150)
         self.holdings_table.setColumnWidth(1, 75)
         self.holdings_table.setColumnWidth(7, 120)
 
+        self.fishbot_table.setColumnWidth(0, 100)
         self.fishbot_table.setColumnWidth(1, 60)
         self.fishbot_table.setColumnWidth(2, 60)
         self.fishbot_table.setColumnWidth(4, 100)
         self.fishbot_table.setColumnWidth(5, 120)
+
+
+        orders_header = self.open_orders.horizontalHeader()
+
+        orders_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        orders_header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        orders_header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
+
+        history_header = self.history_table.horizontalHeader()
+        history_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
         # self.check_buy_amount()
         # self.check_sell_ammount()
 
@@ -356,28 +270,16 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
 
-    def shutdown_bot(self):
-        self.write_stats()
+
 
     def set_corner_widget(self):
         tabIndex = self.tabsBotLeft.currentIndex()
         print("tab index: " + str(tabIndex))
-        # time.sleep(0.1)
-        # print(str(self))
-        # if tabIndex <= 2:
-        #     self.tabsBotLeft.setCornerWidget(self.corner_widget1, corner=QtCore.Qt.TopRightCorner)
-        # else:
-        # self.tabsBotLeft.setCornerWidget(QtWidgets.QPushButton("Teasdasdsdst"), corner=QtCore.Qt.TopRightCorner)
-        # self.tabsBotLeft.tabBar().setExpanding(False)
-        # self.tabsBotLeft.updateGeometry()
+
         # if tabIndex == 0:
-            # self.hide_pairs.hide()
+        #     self.index_buttons.show()
         # else:
-        #     self.hide_pairs.show()
-        if tabIndex == 0:
-            self.index_buttons.show()
-        else:
-            self.index_buttons.hide()
+        #     self.index_buttons.hide()
 
 
     def toggle_other_pairs(self, state):
@@ -447,20 +349,13 @@ class beeserBot(QtWidgets.QMainWindow):
             self.websockets_symbol()
 
             self.history_table.setRowCount(0)
-            # self.open_orders.setRowCount(0)
-            val["history"] = dict()
-
 
             self.api_calls()
+
 
             url = Webpages.build_cmc()
             self.cmc_chart.load(QtCore.QUrl(url))
 
-            # url = Webpages.build_binance_info(self)
-            # self.binance_info.load(QtCore.QUrl(url))
-
-            # state = self.hide_pairs.checkState()
-            # self.toggle_other_pairs(state)
             init_filter(self)
 
     def reset_vol_direction(self):
@@ -480,42 +375,6 @@ class beeserBot(QtWidgets.QMainWindow):
             #     self.open_orders.removeRow(row)
 
 
-    def cell_was_clicked(self, row, column):
-
-        try:
-            self.limit_buy_input.setValue(float(val["globalList"][row]["price"]))
-            self.limit_sell_input.setValue(float(val["globalList"][row]["price"]))
-            # value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
-            # self.limit_buy_amount.setValue(value)
-        except IndexError:
-            pass
-
-    def bids_cell_clicked(self, row, column):
-        self.limit_buy_input.setValue(float(val["bids"][row][0]))
-        self.limit_sell_input.setValue(float(val["bids"][row][0]))
-        # value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
-        # self.limit_buy_amount.setValue(value)
-
-
-
-    def asks_cell_clicked(self, row, column):
-        self.limit_buy_input.setValue(float(val["asks"][19 - row][0]))
-        self.limit_sell_input.setValue(float(val["asks"][19 - row][0]))
-        # value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
-        # self.limit_buy_amount.setValue(value)
-
-    def overbid_undercut(self):
-        try:
-            if self.sender().text() == "outbid":
-                self.limit_buy_input.setValue(float(val["bids"][0][0]) + float(val["coins"][val["pair"]]["tickSize"]))
-            elif self.sender().text() == "undercut":
-                self.limit_sell_input.setValue(float(val["asks"][0][0]) - float(val["coins"][val["pair"]]["tickSize"]))
-            elif self.sender().text() == "daily low":
-                self.limit_buy_input.setValue(float(val["coins"][val["pair"]]["low"]))
-            elif self.sender().text() == "daily high":
-                self.limit_sell_input.setValue(float(val["coins"][val["pair"]]["high"]))
-        except KeyError:
-            pass
 
 
 
@@ -671,158 +530,7 @@ class beeserBot(QtWidgets.QMainWindow):
         print("playung sound")
 
 
-    def add_to_open_orders(self, order):
-
-        # play a sound file to indicate a new order
-        # print("play sound")
-
-        # val["sound_1"].play()
-        # QSoundEffect.play("sounds/Tink.mp3")
-
-        # only add to open orders table if the coin is currently selected.
-        # if order["symbol"] == val["pair"]:
-        self.open_orders.insertRow(0)
-        self.open_orders.setItem(0, 0, QtWidgets.QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
-
-        coin = order["symbol"].replace("BTC", "")
-        icon = QtGui.QIcon("images/ico/" + coin + ".svg")
-        icon_item = QtWidgets.QTableWidgetItem()
-        icon_item.setIcon(icon)
-        self.open_orders.setItem(0, 1, icon_item)
-
-        self.open_orders.setItem(0, 2, QtWidgets.QTableWidgetItem(order["symbol"]))
-
-
-        self.btn_trade = QtWidgets.QPushButton("Trade " + coin)
-        self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
-
-
-        self.open_orders.setCellWidget(0, 3, self.btn_trade)
-
-        self.open_orders.setItem(0, 4, QtWidgets.QTableWidgetItem(order["type"]))
-        self.open_orders.setItem(0, 5, QtWidgets.QTableWidgetItem(order["side"]))
-        price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
-        self.open_orders.setItem(0, 6, QtWidgets.QTableWidgetItem(price))
-        qty = '{number:.{digits}f}'.format(number=float(order["origQty"]), digits=val["assetDecimals"]) + " " + coin
-        self.open_orders.setItem(0, 7, QtWidgets.QTableWidgetItem(qty))
-
-        filled_percent = '{number:.{digits}f}'.format(number=float(order["executedQty"]) / float(order["origQty"]), digits=2) + "%"
-
-        self.open_orders.setItem(0, 8, QtWidgets.QTableWidgetItem(filled_percent))
-
-        total_btc = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
-
-
-        self.open_orders.setItem(0, 9, QtWidgets.QTableWidgetItem(total_btc))
-
-        self.open_orders.setItem(0, 10, QtWidgets.QTableWidgetItem(str(order["orderId"])))
-
-        self.open_orders.setItem(0, 11, QtWidgets.QTableWidgetItem("cancel"))
-
-        self.open_orders.item(0, 11).setForeground(QtGui.QColor(Colors.color_yellow))
-
-        if order["side"] == "BUY":
-            self.open_orders.item(0, 5).setForeground(QtGui.QColor(Colors.color_green))
-        else:
-            self.open_orders.item(0, 5).setForeground(QtGui.QColor(Colors.color_pink))
-
-        orders_header = self.open_orders.horizontalHeader()
-
-        orders_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        orders_header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
-        orders_header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
-
-    def remove_from_open_orders(self, order):
-        # if order["symbol"] == val["pair"]:
-        items = self.open_orders.findItems(str(order["orderId"]), QtCore.Qt.MatchExactly)
-
-            # findItems returns a list hence we iterate through it. We only expect one result though.
-        for item in items:
-
-                # get current row of coin to check
-            row = item.row()
-            self.open_orders.removeRow(row)
-
-        if order["status"] == "FILLED":
-                        logging.info('[ ✓ ] ORDER FILLED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
-
-        elif order["status"] == "CANCELED":
-            logging.info('[ ✘ ] ORDER CANCELED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
-
-
-    def add_to_history(self, order):
-
-        if order["symbol"] == val["pair"]:
-
-            self.history_table.insertRow(0)
-            self.history_table.setItem(0, 0, QtWidgets.QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
-            self.history_table.setItem(0, 1, QtWidgets.QTableWidgetItem(order["symbol"]))
-
-            self.history_table.setItem(0, 2, QtWidgets.QTableWidgetItem(order["side"]))
-
-
-            price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
-            self.history_table.setItem(0, 3, QtWidgets.QTableWidgetItem(price))
-
-            qty = '{number:.{digits}f}'.format(number=float(order["executedQty"]), digits=val["assetDecimals"]) + " " + val["coin"]
-            self.history_table.setItem(0, 4, QtWidgets.QTableWidgetItem(qty))
-
-
-            # total = '{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8)
-
-            self.history_table.setItem(0, 5, QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(order["price"]) * float(order["executedQty"]), digits=8) + " BTC"))
-
-            if order["side"] == "BUY":
-                self.history_table.item(0, 2).setForeground(QtGui.QColor(Colors.color_green))
-            else:
-                self.history_table.item(0, 2).setForeground(QtGui.QColor(Colors.color_pink))
-
-
-    def check_add_to_holdings(self, order):
-        """Check if the coin has to be added to the holdings table"""
-        pair = order["symbol"]
-        symbol = pair.replace("BTC", "")
-        holdings = list()
-
-        # collect holdings from table
-        for i in range(self.holdings_table.rowCount()):
-            holdings.append(self.holdings_table.item(i, 1).text())
-
-        # check if the symbol of the order is in the holdings table
-        if not any(symbol in s for s in holdings):
-            # if not, rebuild holdings table
-            build_holdings(self)
-
-    # remove canceled order from open orders table
-
-    def update_open_order(self, order):
-        logging.info('ORDER UPDATED! %s' % str(order))
-
-        for i in range(self.open_orders.rowCount()):
-            order_id = self.open_orders.item(i, 10).text()
-            if str(order_id) == str(order["orderId"]):
-                filled_percent = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float(order["origQty"]) * 100), digits=2) + "%"
-
-                self.open_orders.setItem(0, 8, QtWidgets.QTableWidgetItem(filled_percent))
-                return
-
-        # WIP check (fix)
-        print("adde to open orders")
-        self.add_to_open_orders(order)
-
-    def orders_received(self, orders):
-        """Callback function to draw order history."""
-        for _, order in enumerate(orders):
-            # if order["symbol"] == val["pair"]:
-            if order["status"] == "FILLED":
-                self.add_to_history(order)
-
-    def build_open_orders(self, orders):
-        """Callback function to draw list of open orders."""
-        for _, order in enumerate(orders):
-            if order["status"] == "NEW" or order["status"] == "PARTIALLY_FILLED":
-
-                self.add_to_open_orders(order)
+    
 
 
             # handle open orders
@@ -864,6 +572,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.coin_selector.setCurrentIndex(coinIndex)
 
         self.change_pair()
+
 
     def progress_history(self, trade):
         self.tradeTable.insertRow(0)
@@ -1275,10 +984,9 @@ class beeserBot(QtWidgets.QMainWindow):
         worker.signals.finished.connect(self.t_complete)
         self.threadpool.start(worker)
 
-        worker = Worker(api_order_history)
-        worker.signals.progress.connect(self.orders_received)
-        self.threadpool.start(worker)
+        get_trade_history(self, val["pair"])
 
+        
 
     # cancel an order from a separate thread
     def cancel_order_byId(self, order_id, symbol):
@@ -1325,20 +1033,11 @@ class beeserBot(QtWidgets.QMainWindow):
     def check_for_update(self, progress_callback):
         current_height = self.frameGeometry().height()
         while True:
-            # print("check")
-            # try:
-
             if current_height > self.frameGeometry().height():
                 progress_callback.emit(15)
 
-
-            # except (KeyError, UnboundLocalError):
-            #     pass
-
             current_height = self.frameGeometry().height()
-
             progress_callback.emit(1)
-
             time.sleep(1)
 
 
@@ -1442,49 +1141,7 @@ class beeserBot(QtWidgets.QMainWindow):
         with open('stats.ini', 'w') as configfile:
                     config.write(configfile)
 
-    def holding_updated(self):
-        print("holding updated")
-        self.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
-        self.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
-
-        bold_font = QtGui.QFont()
-        bold_font.setBold(True)
-
-        for i in range(self.holdings_table.rowCount()):
-            try:
-                coin = self.holdings_table.item(i, 1).text()
-                free = val["accHoldings"][coin]["free"]
-                locked = val["accHoldings"][coin]["locked"]
-                total = '{number:.{digits}f}'.format(number=float(free) + float(locked), digits=8)
-
-                if coin != "BTC":
-                    price = val["coins"][coin + "BTC"]["close"]
-                    # print("wavg: " + str(wAvg))
-                elif coin == "BTC":
-                    price = 1
-
-                total_btc = float(total) * float(price)
-                total_btc_formatted = '{number:.{digits}f}'.format(number=total_btc, digits=8)
-
-                self.holdings_table.setItem(i, 3, QtWidgets.QTableWidgetItem("{0:.8f}".format(float(total))))
-                self.holdings_table.setItem(i, 4, QtWidgets.QTableWidgetItem("{0:g}".format(float(free))))
-                self.holdings_table.setItem(i, 5, QtWidgets.QTableWidgetItem("{0:g}".format(float(locked))))
-                self.holdings_table.setItem(i, 6, QtWidgets.QTableWidgetItem(total_btc_formatted))
-                self.holdings_table.item(i, 6).setFont(bold_font)
-                self.holdings_table.item(i, 6).setForeground(QtGui.QColor(Colors.color_lightgrey))
-
-
-                if float(total) * float(price) < 0.001 and coin != "BTC":
-                    self.holdings_table.removeRow(i)
-
-
-
-
-            except AttributeError:
-                print("attr error: " + str(i))
-
-        self.check_buy_amount()
-        self.check_sell_ammount()
+    
 
 
     def set_button_text(self):
@@ -1541,6 +1198,120 @@ def round_sell_amount(percent_val):
     return sizeRounded
 
 
+def init_hotkeys(self):
+    hotkey_F = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F), self)
+    hotkey_F.activated.connect(partial(self.hotkey_pressed, "F"))
+
+    hotkey_1 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_1), self)
+    hotkey_1.activated.connect(partial(self.hotkey_pressed, "1"))
+
+    hotkey_2 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_2), self)
+    hotkey_2.activated.connect(partial(self.hotkey_pressed, "2"))
+
+    hotkey_3 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_3), self)
+    hotkey_3.activated.connect(partial(self.hotkey_pressed, "3"))
+
+    hotkey_4 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_4), self)
+    hotkey_4.activated.connect(partial(self.hotkey_pressed, "4"))
+
+    hotkey_5 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_5), self)
+    hotkey_5.activated.connect(partial(self.hotkey_pressed, "5"))
+
+    hotkey_6 = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_6), self)
+    hotkey_6.activated.connect(partial(self.hotkey_pressed, "6"))
+
+    hotkey_B = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_B), self)
+    hotkey_B.activated.connect(partial(self.hotkey_pressed, "B"))
+
+    hotkey_S = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_S), self)
+    hotkey_S.activated.connect(partial(self.hotkey_pressed, "S"))
+
+    hotkey_P = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_P), self)
+    hotkey_P.activated.connect(partial(self.hotkey_pressed, "P"))
+
+    hotkey_A = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_A), self)
+    hotkey_A.activated.connect(partial(self.hotkey_pressed, "A"))
+
+
+def set_config_values(self):
+    try:
+        self.default_pair.setText(val["defaultPair"])
+
+        self.api_key.setText(val["api_key"])
+        self.api_secret.setText(val["api_secret"])
+
+        self.percent_1.setText(str(int(val["buttonPercentage"][0])))
+        self.percent_2.setText(str(int(val["buttonPercentage"][1])))
+        self.percent_3.setText(str(int(val["buttonPercentage"][2])))
+        self.percent_4.setText(str(int(val["buttonPercentage"][3])))
+        self.percent_5.setText(str(int(val["buttonPercentage"][4])))
+        self.set_button_text()
+
+        # self.default_timeframe.setText(str(val["defaultTimeframe"]))
+
+        raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440]
+
+        # dtf = self.dtf_selector.currentText()
+        for i, tf in enumerate(raw_timeframes):
+            if val["defaultTimeframe"] == str(tf):
+                self.dtf_selector.setCurrentIndex(i)
+
+    except (TypeError, KeyError):
+        pass
+
+
+def set_modes(self):
+    if val["debug"] is False:
+        # self.tabsBotLeft.setTabEnabled(0, False)
+        self.tabsBotLeft.removeTab(0)
+        self.ChartTabs.removeTab(5)
+        self.ChartTabs.removeTab(4)
+        self.ChartTabs.removeTab(3)
+        self.ChartTabs.setTabEnabled(1, False)
+
+        self.tabsBotLeft.setCurrentIndex(0)
+        self.ChartTabs.setCurrentIndex(0)
+        self.bot_tabs.setCurrentIndex(0)
+    else:
+        logging.info("DEBUG mode enabled")
+
+
+def main_init(self):
+    # set default locale
+    QtCore.QLocale.setDefault(QtCore.QLocale(QtCore.QLocale.C))
+
+    logging.info('Initializing GUI')
+
+    self.setWindowTitle("Juris beeser Bot")
+
+    self.setWindowIcon(QtGui.QIcon('images/assets/256.png'))
+
+    self.restart_warning.setStyleSheet("color: transparent;")
+    # self.spread_area.setStyleSheet("background: #2e363d;")
+
+    self.holdings_table.setStyleSheet("alternate-background-color: #2e363d;")
+
+    self.counter = 0
+    self.counter2 = 0
+
+    self.update_count = 0
+    self.no_updates = 0
+
+
+    for _ in range(20):
+        self.bids_table.insertRow(0)
+        self.asks_table.insertRow(0)
+        self.new_table.insertRow(0)
+
+    for _ in range(50):
+        self.tradeTable.insertRow(0)
+
+
+    # INIT THREADING
+    self.threadpool = QtCore.QThreadPool()
+    logging.info('Enable multithreading with %d threads.' % self.threadpool.maxThreadCount())
+
+
 class QPlainTextEditLogger(logging.Handler):
     def __init__(self, parent):
         super().__init__()
@@ -1552,3 +1323,14 @@ class QPlainTextEditLogger(logging.Handler):
         self.widget.appendPlainText(msg)
         self.widget.update()
         # print(msg)
+
+
+def init_logging(self):
+    qtLogger = QPlainTextEditLogger(self)
+    qtLogger.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logging.getLogger().addHandler(qtLogger)
+    
+    # You can control the logging level
+    logging.getLogger().setLevel(logging.INFO)
+
+    self.widget_2.setWidget(qtLogger.widget)

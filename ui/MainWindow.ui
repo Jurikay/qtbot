@@ -155,7 +155,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>5</number>
+            <number>8</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -691,12 +691,84 @@
               </item>
              </layout>
             </widget>
+            <widget class="QWidget" name="horizontalLayoutWidget_2">
+             <property name="geometry">
+              <rect>
+               <x>219</x>
+               <y>150</y>
+               <width>301</width>
+               <height>41</height>
+              </rect>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_40">
+              <item>
+               <widget class="QComboBox" name="comboBox_11">
+                <property name="insertPolicy">
+                 <enum>QComboBox::NoInsert</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_10"/>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+           <widget class="QWidget" name="tab_11">
+            <attribute name="title">
+             <string>BTC Chart</string>
+            </attribute>
+            <layout class="QHBoxLayout" name="horizontalLayout_38">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QWebEngineView" name="btc_chart" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="contextMenuPolicy">
+                <enum>Qt::NoContextMenu</enum>
+               </property>
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
            <widget class="QWidget" name="tab_7">
             <attribute name="title">
              <string>Coinmarketcap</string>
             </attribute>
             <layout class="QHBoxLayout" name="horizontalLayout_17">
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
              <item>
               <widget class="QWebEngineView" name="cmc_chart" native="true">
                <property name="sizePolicy">
@@ -718,6 +790,51 @@
              </item>
             </layout>
            </widget>
+           <widget class="QWidget" name="tab_13">
+            <attribute name="title">
+             <string>DEBUG</string>
+            </attribute>
+            <layout class="QVBoxLayout" name="verticalLayout_22">
+             <item>
+              <widget class="QScrollArea" name="wavg_log">
+               <property name="widgetResizable">
+                <bool>true</bool>
+               </property>
+               <widget class="QWidget" name="scrollAreaWidgetContents_2">
+                <property name="geometry">
+                 <rect>
+                  <x>0</x>
+                  <y>0</y>
+                  <width>804</width>
+                  <height>230</height>
+                 </rect>
+                </property>
+               </widget>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="wavg_button">
+               <property name="text">
+                <string>calc wAvg</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="calc_all_wavg_button">
+               <property name="text">
+                <string>calc all</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="debug2_button">
+               <property name="text">
+                <string>2nd debug</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </widget>
           <widget class="QTabWidget" name="tabsBotLeft">
            <property name="sizePolicy">
@@ -733,7 +850,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>4</number>
+            <number>2</number>
            </property>
            <property name="movable">
             <bool>false</bool>
@@ -1290,6 +1407,11 @@
                </column>
                <column>
                 <property name="text">
+                 <string>Icon</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
                  <string>Pair</string>
                 </property>
                </column>
@@ -1507,7 +1629,7 @@
         <item>
          <widget class="QGroupBox" name="percent_frame">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -2695,6 +2817,18 @@
                   </property>
                   <property name="inputMethodHints">
                    <set>Qt::ImhDigitsOnly|Qt::ImhFormattedNumbersOnly</set>
+                  </property>
+                  <property name="wrapping">
+                   <bool>true</bool>
+                  </property>
+                  <property name="buttonSymbols">
+                   <enum>QAbstractSpinBox::PlusMinus</enum>
+                  </property>
+                  <property name="specialValueText">
+                   <string/>
+                  </property>
+                  <property name="accelerated">
+                   <bool>true</bool>
                   </property>
                   <property name="maximum">
                    <double>1.000000000000000</double>
@@ -4188,8 +4322,18 @@
             <property name="verticalSpacing">
              <number>10</number>
             </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_41">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Settings:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
             <item row="3" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_20">
+              <property name="spacing">
+               <number>15</number>
+              </property>
               <item>
                <widget class="QCheckBox" name="checkBox">
                 <property name="text">
@@ -4288,7 +4432,7 @@
               </property>
              </widget>
             </item>
-            <item row="8" column="3">
+            <item row="9" column="3">
              <widget class="QLabel" name="restart_warning">
               <property name="enabled">
                <bool>true</bool>
@@ -4305,14 +4449,14 @@
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
+            <item row="7" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
                <string>Copy on click:</string>
               </property>
              </widget>
             </item>
-            <item row="6" column="3">
+            <item row="7" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_24">
               <property name="spacing">
                <number>10</number>
@@ -4412,14 +4556,14 @@
               </item>
              </widget>
             </item>
-            <item row="7" column="0">
+            <item row="8" column="0">
              <widget class="QLabel" name="label_53">
               <property name="text">
                <string>UI updates:</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="3">
+            <item row="8" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_34">
               <property name="spacing">
                <number>10</number>
@@ -4481,19 +4625,102 @@
               </item>
              </layout>
             </item>
-            <item row="9" column="3">
+            <item row="10" column="3">
              <widget class="QPushButton" name="save_config">
               <property name="text">
                <string>save</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_41">
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_51">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Settings:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>BTC Chart:</string>
               </property>
              </widget>
+            </item>
+            <item row="6" column="3">
+             <layout class="QHBoxLayout" name="horizontalLayout_39">
+              <item>
+               <widget class="QLabel" name="label_68">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Timeframe: </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_3">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_67">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string> Exchange:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>COINBASE</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>GEMINI</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BISTSTAMP</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BITFINEX</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>OKCOIN</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>BINANCE</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </widget>
@@ -5306,14 +5533,14 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>limit_buy_input</tabstop>
   <tabstop>limit_buy_amount</tabstop>
+  <tabstop>limit_buy_button</tabstop>
+  <tabstop>limit_sell_input</tabstop>
   <tabstop>limit_sell_amount</tabstop>
+  <tabstop>limit_sell_button</tabstop>
   <tabstop>tabsBotLeft</tabstop>
-  <tabstop>debugPlain</tabstop>
-  <tabstop>button_wavg</tabstop>
-  <tabstop>button_klines</tabstop>
-  <tabstop>coin_selector</tabstop>
-  <tabstop>quote_asset_box</tabstop>
+  <tabstop>ChartTabs</tabstop>
   <tabstop>bot_tabs</tabstop>
   <tabstop>limit_outbid</tabstop>
   <tabstop>limit_low</tabstop>
@@ -5323,11 +5550,11 @@
   <tabstop>limit_button2</tabstop>
   <tabstop>limit_button3</tabstop>
   <tabstop>limit_button4</tabstop>
-  <tabstop>ChartTabs</tabstop>
-  <tabstop>limit_buy_button</tabstop>
+  <tabstop>quote_asset_box</tabstop>
+  <tabstop>button_wavg</tabstop>
   <tabstop>limit_buy_slider</tabstop>
   <tabstop>limit_sell_slider</tabstop>
-  <tabstop>limit_sell_button</tabstop>
+  <tabstop>button_klines</tabstop>
   <tabstop>limit_undercut</tabstop>
   <tabstop>limit_high</tabstop>
   <tabstop>limit_sbutton0</tabstop>
@@ -5354,6 +5581,63 @@
   <tabstop>percent_4</tabstop>
   <tabstop>percent_5</tabstop>
   <tabstop>copy_qty_box</tabstop>
+  <tabstop>reset_vol_direct</tabstop>
+  <tabstop>get_all_orders_button</tabstop>
+  <tabstop>debug_corner</tabstop>
+  <tabstop>debugPlain</tabstop>
+  <tabstop>coin_selector</tabstop>
+  <tabstop>checkBox_3</tabstop>
+  <tabstop>checkBox_2</tabstop>
+  <tabstop>comboBox_4</tabstop>
+  <tabstop>doubleSpinBox_2</tabstop>
+  <tabstop>comboBox_6</tabstop>
+  <tabstop>comboBox_5</tabstop>
+  <tabstop>lineEdit_7</tabstop>
+  <tabstop>comboBox_8</tabstop>
+  <tabstop>doubleSpinBox_3</tabstop>
+  <tabstop>comboBox_2</tabstop>
+  <tabstop>comboBox_9</tabstop>
+  <tabstop>lineEdit_8</tabstop>
+  <tabstop>comboBox_7</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>fish_add_trade</tabstop>
+  <tabstop>fish_clear_all</tabstop>
+  <tabstop>pushButton_7</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>default_pair</tabstop>
+  <tabstop>copy_price_box</tabstop>
+  <tabstop>dtf_selector</tabstop>
+  <tabstop>spinBox</tabstop>
+  <tabstop>save_config</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>session_running</tabstop>
+  <tabstop>total_trades</tabstop>
+  <tabstop>total_bot_trades</tabstop>
+  <tabstop>lineEdit_11</tabstop>
+  <tabstop>total_running</tabstop>
+  <tabstop>explicit_api_updates</tabstop>
+  <tabstop>lineEdit_5</tabstop>
+  <tabstop>explicit_api_calls_label</tabstop>
+  <tabstop>total_api_updates</tabstop>
+  <tabstop>total_api_calls</tabstop>
+  <tabstop>widget_2</tabstop>
+  <tabstop>checkBox_4</tabstop>
+  <tabstop>coinindex_filter_2</tabstop>
+  <tabstop>pushButton_5</tabstop>
+  <tabstop>pushButton_4</tabstop>
+  <tabstop>pushButton_3</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>pushButton_6</tabstop>
+  <tabstop>coinindex_filter</tabstop>
+  <tabstop>hide_pairs</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>comboBox_3</tabstop>
+  <tabstop>comboBox_10</tabstop>
+  <tabstop>comboBox_11</tabstop>
+  <tabstop>wavg_button</tabstop>
+  <tabstop>wavg_log</tabstop>
+  <tabstop>calc_all_wavg_button</tabstop>
+  <tabstop>debug2_button</tabstop>
  </tabstops>
  <resources/>
  <connections/>
