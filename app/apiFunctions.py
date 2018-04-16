@@ -5,17 +5,14 @@
 from functools import partial
 from app.init import val
 from binance.exceptions import BinanceAPIException
-from requests.exceptions import InvalidHeader
+# from requests.exceptions import InvalidHeader
 import app
 from app.callbacks import Worker
 # from app.initApi import set_pair_values
 
-"""Collection of functions concerning api calls."""
-
-
-
 
 class ApiCalls:
+    """Class containing api related methods."""
     def __init__(self, mw, client):
         self.mw = mw
         # self.client = None
@@ -55,7 +52,7 @@ class ApiCalls:
 
 
 
-
+    @classmethod
     def availablePairs(self, client):
         """
         Create a dictonary containing all BTC tradepairs excluding USDT.
@@ -83,14 +80,10 @@ class ApiCalls:
                 # Add every temp dictionary to the coin dictionary
                 coins[tempdict["symbol"]] = tempdict
 
-        # return the newly created coin dictionary
-
-        # with open("coins.txt", "w") as f:
-        #         f.write(str(coins))
-        print("das läuft")
         return coins
 
 
+    @classmethod
     def getHoldings(self, client):
         """Make an inital API call to get BTC and coin holdings."""
         # API Call:
@@ -101,7 +94,7 @@ class ApiCalls:
 
         return accHoldings
 
-
+    @classmethod
     def getTickers(self, client):
         """Make an initial API call to get ticker data."""
         ticker = client.get_ticker()
@@ -115,6 +108,7 @@ class ApiCalls:
         return all_tickers
 
 
+    @classmethod
     def getTradehistory(self, client, pair):
         """Make an initial API call to get the trade history of a given pair. This is used until updated by websocket data."""
         # API call
@@ -126,6 +120,7 @@ class ApiCalls:
         return globalList
 
 
+    @classmethod
     def getDepth(self, client, symbol):
         """Make an initial API call to get market depth (bids and asks)."""
         # API Call
@@ -135,6 +130,8 @@ class ApiCalls:
         bids = depth["bids"]
         return {"bids": bids, "asks": asks}
 
+
+    @classmethod
     def api_create_order(self, client, side, pair, price, amount, progress_callback):
         print("create order: " + str(price) + " " + str(amount))
         try:
@@ -155,12 +152,19 @@ class ApiCalls:
             print("create order failed")
 
 
+    @classmethod
     def api_cancel_order(self, client, order_id, symbol, progress_callback):
         print("cancel order " + str(symbol) + " " + str(order_id))
         try:
             client.cancel_order(symbol=symbol, orderId=order_id)
         except BinanceAPIException:
             print("cancel failed")
+
+    @classmethod
+    def api_order_history(self, pair, progress_callback):
+        orders = app.client.get_all_orders(symbol=pair)
+        progress_callback.emit(orders)
+        val["apiCalls"] += 1
 
 
     def api_history(self, progress_callback):
@@ -176,8 +180,7 @@ class ApiCalls:
         val["bids"] = depth["bids"]
         progress_callback.emit({"bids": val["bids"]})
         val["apiCalls"] += 1
-# def create_order(client):
-#     pass
+
 
     def get_kline(self, pair, progress_callback):
         """Make an API call to get historical data of a coin pair."""
@@ -188,23 +191,13 @@ class ApiCalls:
         progress_callback.emit([klines, pair, interval])
         val["apiCalls"] += 1
 
+
     def api_all_orders(self, progress_callback):
         print("CLEINT;" + str(self.client))
         orders = self.client.get_open_orders()
         progress_callback.emit(orders)
         numberPairs = sum(val["pairs"].values())
         print("number pairs: " + str(numberPairs))
-
-    # def get_all_orders(self):
-    #     orders = self.client.get_open_orders()
-        # print(str(orders))
-        # for _, order in enumerate(orders):
-        #     # print(str(order))
-        #     self.kline_table.insertRow(0)
-        #     self.kline_table.setItem(0, 0, QtWidgets.QTableWidgetItem(order["symbol"]))
-        #     self.kline_table.setItem(0, 1, QtWidgets.QTableWidgetItem(order["price"]))
-        #     self.kline_table.setItem(0, 2, QtWidgets.QTableWidgetItem(order["origQty"]))
-        #     self.kline_table.setItem(0, 3, QtWidgets.QTableWidgetItem(order["executedQty"]))
 
 
     def api_calls(self):
@@ -226,10 +219,6 @@ class ApiCalls:
         worker.signals.progress.connect(self.mw.history_table.orders_received)
         self.mw.threadpool.start(worker)
 
-    def api_order_history(self, pair, progress_callback):
-        orders = app.client.get_all_orders(symbol=pair)
-        progress_callback.emit(orders)
-        val["apiCalls"] += 1
 
     def t_complete(self):
         # print("We don now")
@@ -237,7 +226,6 @@ class ApiCalls:
         self.mw.limit_sell_input.setValue(float(val["asks"][0][0]))
         value = self.mw.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), val["assetDecimals"])
         self.mw.limit_buy_amount.setValue(value)
-
 
         # print(val["accHoldings"][val["coin"]]["free"])
         sell_percent = str(self.mw.limit_sell_slider.value())

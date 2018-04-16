@@ -9,7 +9,7 @@ import configparser
 import time
 import logging
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from functools import partial
 from binance.websockets import BinanceSocketManager
 
@@ -36,7 +36,6 @@ from app.gui_functions import (calc_total_btc,
 from app.init import val
 from app.strategies.fishing_bot import FishingBot
 # from app.strategies.limit_order import LimitOrder
-from app.bot import BotClass
 import app
 from app.elements.config import ConfigManager
 from app.elements.hotkeys import HotKeys
