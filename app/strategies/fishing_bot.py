@@ -6,6 +6,7 @@ import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 from app.init import val
 from functools import partial
+import app
 # import time
 
 
@@ -13,6 +14,7 @@ class FishingBot():
     """Class containing fishing bot methods."""
     def __init__(self, gui):
         FishingBot.gui = gui
+        self.mw = gui
 
     @classmethod
     def add_order(self, arg2):
@@ -61,7 +63,7 @@ class FishingBot():
 
 
     def remove_order(self, bot):
-        
+        print("selfmw: " + str(self.mw))
         row = bot.sender().property("row")
         for i in range(bot.fishbot_table.rowCount()):
             widget = bot.fishbot_table.cellWidget(i, 3)
@@ -74,6 +76,7 @@ class FishingBot():
 
     @staticmethod
     def clear_all_orders(self):
+        print(str(app.mw))
         row_count = self.fishbot_table.rowCount()
         print("clearing %i rows." % int(self.fishbot_table.rowCount()))
         for i in reversed(range(row_count)):

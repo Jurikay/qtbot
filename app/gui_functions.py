@@ -7,7 +7,8 @@
 
 from functools import partial
 
-from PyQt5.QtCore import QSize, Qt, QVariant
+import PyQt5.QtCore as QtCore
+# from PyQt5.QtCore import QtCore.QSize, Qt, QtCore.QVariant
 from PyQt5.QtGui import QColor, QFont, QIcon
 from PyQt5.QtWidgets import QHeaderView, QPushButton, QTableWidgetItem
 
@@ -20,7 +21,8 @@ from app.callbacks import api_order_history
 
 
 def initial_values(self):
-    """Set various values needed for further tasks."""
+    """Set various values needed for further tasks. Gets called when the pair
+    is changed."""
     self.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
     self.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
 
@@ -49,8 +51,8 @@ def initial_values(self):
     self.chart.setHtml(Webpages.build_chart2(val["pair"], val["defaultTimeframe"]))
     self.chart.show()
 
-    self.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", val["defaultTimeframe"], "COINBASE"))
-    self.btc_chart.show()
+    url = Webpages.build_cmc()
+    self.cmc_chart.load(QtCore.QUrl(url))
 
     bids_header = self.bids_table.horizontalHeader()
     asks_header = self.asks_table.horizontalHeader()
@@ -75,21 +77,21 @@ def global_filter(self, text):
 
         for row in range(self.open_orders.rowCount()):
             self.open_orders.setRowHidden(row, True)
-        items = self.open_orders.model().findItems(text, Qt.MatchContains, 2)
+        items = self.open_orders.model().findItems(text, QtCore.Qt.MatchContains, 2)
         for item in items:
             row = item.row()
             self.open_orders.setRowHidden(row, False)
 
         for row in range(self.coin_index.rowCount()):
             self.coin_index.setRowHidden(row, True)
-        items = self.coin_index.model().findItems(text, Qt.MatchContains, 1)
+        items = self.coin_index.model().findItems(text, QtCore.Qt.MatchContains, 1)
         for item in items:
             row = item.row()
             self.coin_index.setRowHidden(row, False)
 
         for row in range(self.holdings_table.rowCount()):
             self.holdings_table.setRowHidden(row, True)
-        items = self.holdings_table.model().findItems(text, Qt.MatchContains, 1)
+        items = self.holdings_table.model().findItems(text, QtCore.Qt.MatchContains, 1)
         for item in items:
             row = item.row()
             self.holdings_table.setRowHidden(row, False)
@@ -263,18 +265,18 @@ def build_coinindex(self):
             #     operator = ""
 
             last_price = QTableWidgetItem()
-            last_price.setData(Qt.EditRole, QVariant(val["tickers"][pair]["lastPrice"]))
+            last_price.setData(QtCore.Qt.EditRole, QtCore.QVariant(val["tickers"][pair]["lastPrice"]))
 
             price_change = QTableWidgetItem()
             price_change_value = float(val["tickers"][pair]["priceChangePercent"])
-            price_change.setData(Qt.EditRole, QVariant(price_change_value))
+            price_change.setData(QtCore.Qt.EditRole, QtCore.QVariant(price_change_value))
 
             btc_volume = QTableWidgetItem()
-            btc_volume.setData(Qt.EditRole, QVariant(round(float(val["tickers"][pair]["quoteVolume"]), 2)))
+            btc_volume.setData(QtCore.Qt.EditRole, QtCore.QVariant(round(float(val["tickers"][pair]["quoteVolume"]), 2)))
 
             zero_item = QTableWidgetItem()
-            zero_item.setData(Qt.EditRole, QVariant(0))
-            # price_change.setData(Qt.DisplayRole, QVariant(str(val["tickers"][pair]["priceChangePercent"]) + "%"))
+            zero_item.setData(QtCore.Qt.EditRole, QtCore.QVariant(0))
+            # price_change.setData(Qt.DisplayRole, QtCore.QVariant(str(val["tickers"][pair]["priceChangePercent"]) + "%"))
 
             self.coin_index.insertRow(0)
             self.coin_index.setItem(0, 0, icon_item)
@@ -295,14 +297,14 @@ def build_coinindex(self):
             self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
             self.coin_index.setCellWidget(0, 5, self.btn_trade)
 
-    self.coin_index.model().sort(5, Qt.AscendingOrder)
-    self.coin_index.setIconSize(QSize(25, 25))
-    self.open_orders.setIconSize(QSize(25, 25))
+    self.coin_index.model().sort(5, QtCore.Qt.AscendingOrder)
+    self.coin_index.setIconSize(QtCore.QSize(25, 25))
+    self.open_orders.setIconSize(QtCore.QSize(25, 25))
 
     self.coin_index.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
     self.coin_index.setColumnWidth(2, 120)
     self.coin_index.setColumnWidth(5, 130)
-    self.coin_index.model().sort(4, Qt.DescendingOrder)
+    self.coin_index.model().sort(4, QtCore.Qt.DescendingOrder)
 
 
 
@@ -382,10 +384,8 @@ def calc_wavg(symbol):
                     if current_total > 0:
                         # if remaining < 0:
                         final = ('{number:.{digits}f}'.format(number=total_cost / (current_total - remaining), digits=8))
-                        # else:
-                            # final = ('{number:.{digits}f}'.format(number=total_cost / (current_total + remaining), digits=8))
 
-                        
+
                         print("ENOUGH! " + final)
                         print("total amount: " + str((current_total - remaining)) + " total cost: " + str(total_cost))
 
@@ -440,9 +440,9 @@ def update_coin_index_prices(self):
         new_price_change_value = float(val["tickers"][coin + "BTC"]["priceChangePercent"])
         new_btc_volume_value = float(val["tickers"][coin + "BTC"]["quoteVolume"])
 
-        new_price.setData(Qt.EditRole, QVariant(new_price_value))
-        new_price_change.setData(Qt.EditRole, QVariant(new_price_change_value))
-        new_btc_volume.setData(Qt.EditRole, QVariant(new_btc_volume_value))
+        new_price.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_price_value))
+        new_price_change.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_price_change_value))
+        new_btc_volume.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_btc_volume_value))
 
 
         if price != new_price_value:

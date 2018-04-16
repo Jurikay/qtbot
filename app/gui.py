@@ -22,22 +22,25 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 
 
-from app.apiFunctions import percentage_ammount
-from app.callbacks import (Worker, api_depth, api_history, api_order_history, api_all_orders,
+from app.apiFunctions import percentage_amount
+from app.callbacks import (Worker, api_depth, api_history, api_all_orders,
                            depthCallback, directCallback, tickerCallback,
                            userCallback, klineCallback)
+# api_order_history
 from app.charts import Webpages as Webpages
 from app.colors import Colors
 from app.gui_functions import (build_coinindex, calc_total_btc,
-                               calc_wavg, filter_coin_index, global_filter, filter_confirmed, initial_values, filter_table,
+                               calc_wavg, initial_values, filter_table,
                                update_holding_prices, update_coin_index_prices, init_filter, calc_all_wavgs, get_trade_history)
+# filter_coin_index, global_filter, filter_confirmed,
 from app.init import val
-from app.initApi import (BinanceAPIException, client, read_config,
+from app.initApi import (BinanceAPIException, client,
                          set_pair_values)
 from app.strategies.fishing_bot import FishingBot
 from app.strategies.limit_order import LimitOrder
 from app.bot import BotClass
-
+import app
+from app.elements.config import ConfigManager
 
 class beeserBot(QtWidgets.QMainWindow, BotClass):
 
@@ -45,6 +48,7 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
 
     def __init__(self):
         """Init method."""
+        app.mw = self
         super(beeserBot, self).__init__()
         loadUi("ui/MainWindow.ui", self)
 
@@ -60,52 +64,29 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
         main_init(self)
 
 
+        cfg = ConfigManager(self)
+        cfg.connect_cfg()
+
+        # initialize limit order signals and slots
+        self.limit_pane.initialize()
+
         # connect elements to functions
-        self.limit_buy_slider.valueChanged.connect(self.buy_slider)
-        self.limit_sell_slider.valueChanged.connect(self.sell_slider)
-
-        self.limit_buy_input.valueChanged.connect(self.calc_total_buy)
-        self.limit_sell_input.valueChanged.connect(self.calc_total_sell)
-
-        self.limit_button0.clicked.connect(self.limit_percentage)
-        self.limit_button1.clicked.connect(self.limit_percentage)
-        self.limit_button2.clicked.connect(self.limit_percentage)
-        self.limit_button3.clicked.connect(self.limit_percentage)
-        self.limit_button4.clicked.connect(self.limit_percentage)
-
-        self.limit_sbutton0.clicked.connect(self.limit_percentage_sell)
-        self.limit_sbutton1.clicked.connect(self.limit_percentage_sell)
-        self.limit_sbutton2.clicked.connect(self.limit_percentage_sell)
-        self.limit_sbutton3.clicked.connect(self.limit_percentage_sell)
-        self.limit_sbutton4.clicked.connect(self.limit_percentage_sell)
+        
 
         self.reset_vol_direct.clicked.connect(self.reset_vol_direction)
 
-        self.save_config.clicked.connect(self.write_config)
-
+    
         # instantiate LimitOrder
         limit_order = LimitOrder(self)
+        # from app.strategies.limit_order_pane import LimitOrderPane
 
-        self.tradeTable.cellClicked.connect(limit_order.cell_was_clicked)
-        self.debug2_button.clicked.connect(limit_order.test_func)
 
-        self.bids_table.cellClicked.connect(limit_order.bids_cell_clicked)
-        self.asks_table.cellClicked.connect(limit_order.asks_cell_clicked)
+        self.debug2_button.clicked.connect(self.limit_pane.test_func)
+
 
         self.open_orders.cellClicked.connect(limit_order.open_orders_cell_clicked)
 
         self.coin_selector.activated.connect(self.change_pair)
-
-        self.limit_outbid.clicked.connect(limit_order.overbid_undercut)
-        self.limit_undercut.clicked.connect(limit_order.overbid_undercut)
-        self.limit_high.clicked.connect(limit_order.overbid_undercut)
-        self.limit_low.clicked.connect(limit_order.overbid_undercut)
-
-        self.limit_sell_amount.valueChanged.connect(self.check_sell_ammount)
-        self.limit_buy_amount.valueChanged.connect(self.check_buy_amount)
-
-        self.limit_sell_input.valueChanged.connect(self.check_sell_ammount)
-        self.limit_buy_input.valueChanged.connect(self.check_buy_amount)
 
         self.hide_pairs.stateChanged.connect(partial(partial(filter_table, self), self.coinindex_filter.text(), self.hide_pairs.checkState()))
 
@@ -147,11 +128,6 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
         # Fix a linter error...
         self.chartLOL = QWebEngineView()
 
-        url = Webpages.build_cmc()
-        self.cmc_chart.load(QtCore.QUrl(url))
-
-
-        
 
         # check if coin is an empty dict. If yes, api calls have not been answered.
         current_coin = val.get("coin", None)
@@ -205,7 +181,8 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
         self.threadpool.start(worker)
 
         # self.sound_1 = QSound('sounds/Tink.wav')
-
+        self.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", val["defaultTimeframe"], "COINBASE"))
+        self.btc_chart.show()
 
 
         self.timer = QtCore.QTimer()
@@ -274,7 +251,7 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
 
     def set_corner_widget(self):
         tabIndex = self.tabsBotLeft.currentIndex()
-        print("tab index: " + str(tabIndex))
+        # self.index_buttons.hide()
 
         # if tabIndex == 0:
         #     self.index_buttons.show()
@@ -283,7 +260,7 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
 
 
     def toggle_other_pairs(self, state):
-        print(str(state))
+        # print(str(state))
         if state == 2:
             filter_table(self, self.coinindex_filter.text(), state)
             # self.open_orders.setSortingEnabled(False)
@@ -353,9 +330,6 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
             self.api_calls()
 
 
-            url = Webpages.build_cmc()
-            self.cmc_chart.load(QtCore.QUrl(url))
-
             init_filter(self)
 
     def reset_vol_direction(self):
@@ -371,17 +345,7 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
 
             self.cancel_order_byId(order_id, pair)
 
-            # if str(cancel["orderId"]) == str(id):
-            #     self.open_orders.removeRow(row)
-
-
-
-
-
-    # def print_output(self, s):
-    #     print("scroll print_o")
-    #     # self.asks_table.scrollToBottom()
-
+    
     def hotkey_pressed(self, key):
         if key == "F":
             print("F")
@@ -530,27 +494,12 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
         print("playung sound")
 
 
-    
-
-
-            # handle open orders
-            # Date	Pair	Type	Side	Price	Amount	Filled%	Total	Trigger Conditions
-            # elif order["status"] == "NEW" or  order["status"] == "PARTIALLY_FILLED":
-
-            #     self.add_to_open_orders(order)
-
-            # self.history_table.scrollToTop()
-            # self.open_orders.scrollToTop()
-
-
-
-
     # do stuff once api data has arrived
     def t_complete(self):
         # print("We don now")
         self.limit_buy_input.setValue(float(val["bids"][0][0]))
         self.limit_sell_input.setValue(float(val["asks"][0][0]))
-        value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
+        value = percentage_amount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(self.buy_slider_label.text().strip("%")), val["assetDecimals"])
         self.limit_buy_amount.setValue(value)
 
 
@@ -699,118 +648,10 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
             pass
 
 
-    def limit_percentage(self):
-        button_number = int(self.sender().objectName()[-1:])
-
-        value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(val["buttonPercentage"][button_number]), val["assetDecimals"])
-
-        self.limit_buy_amount.setValue(float(value))
-
-        self.limit_buy_slider.setValue(int(val["buttonPercentage"][button_number]))
-
-    def limit_percentage_sell(self):
-        button_number = int(self.sender().objectName()[-1:])
-        # value = float(val["accHoldings"][val["coin"]]["free"]) * (float(val["buttonPercentage"][button_number]) / 100)
-
-        # print(val["accHoldings"][val["coin"]]["free"])
-        # self.limit_sell_amount.setValue(value)
-
-        self.limit_sell_slider.setValue(int(val["buttonPercentage"][button_number]))
+    
 
 
-    def calc_total_buy(self):
-        try:
-            total = float(self.limit_buy_input.value()) * float(self.limit_buy_amount.text())
-            total_formatted = '{number:.{digits}f}'.format(number=total, digits=8)
-
-            self.limit_buy_total.setText(str(total_formatted) + " BTC")
-        except ValueError:
-            pass
-
-
-    def calc_total_sell(self):
-        try:
-            total = float(self.limit_sell_input.value()) * float(self.limit_sell_amount.text())
-            total_formatted = '{number:.{digits}f}'.format(number=total, digits=8)
-            self.limit_sell_total.setText(str(total_formatted) + " BTC")
-        except ValueError:
-            pass
-
-
-    def buy_slider(self):
-        buy_percent_val = str(self.limit_buy_slider.value())
-        self.buy_slider_label.setText(buy_percent_val + "%")
-
-        buy_value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(buy_percent_val), val["assetDecimals"])
-        self.limit_buy_amount.setValue(float(buy_value))
-        order_cost = float(buy_value) * float(self.limit_buy_input.value())
-        self.limit_buy_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC")
-
-        # if order_cost < 0.002:
-        #     self.limit_buy_button.setStyleSheet("border: 2px solid #bf4a3d;")
-        # else:
-        #     self.limit_buy_button.setStyleSheet("border: 2px solid #151a1e;")
-
-    def sell_slider(self):
-        # Text to value
-        print("ich slide")
-        # print(val["accHoldings"][val["coin"]]["free"])
-        sell_percent = str(self.limit_sell_slider.value())
-
-        sell_size = round_sell_amount(sell_percent)
-
-        self.limit_sell_amount.setValue(sell_size)
-
-
-        self.sell_slider_label.setText(sell_percent + "%")
-
-
-    ####################################
-    #           VALIDATATION
-    ####################################
-
-    def check_sell_ammount(self):
-        # total = float(self.limit_sell_amount.text()) *
-
-        try:
-            sell_amount = float(self.limit_sell_amount.text())
-            free_amount = float(val["accHoldings"][val["coin"]]["free"])
-            sell_price = float(self.limit_sell_input.text())
-
-            if sell_amount > free_amount or sell_amount * sell_price < 0.001:
-                self.limit_sell_button.setStyleSheet("border: 2px solid transparent; background: #ff077a; color: #f3f3f3;")
-                self.limit_sell_button.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
-                val["sellAllowed"] = False
-            else:
-                self.limit_sell_button.setStyleSheet("border: 2px solid transparent;")
-                self.limit_sell_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-                val["sellAllowed"] = True
-
-        except ValueError:
-            print("val error")
-            # pass
-        self.calc_total_sell()
-
-    def check_buy_amount(self):
-        total = int(((float(self.limit_buy_amount.value()) * float(self.limit_buy_input.value())) / float(val["accHoldings"]["BTC"]["free"])) * 100)
-        # print("check buy")
-        self.calc_total_buy()
-
-        try:
-            total = float(self.limit_buy_input.value()) * float(self.limit_buy_amount.text())
-
-            if total > float(val["accHoldings"]["BTC"]["free"]) or total < 0.001:
-                self.limit_buy_button.setStyleSheet("border: 2px solid transparent; background: #70a800; color: #f3f3f3;")
-                self.limit_buy_button.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
-                val["buyAllowed"] = False
-
-            else:
-                self.limit_buy_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-                self.limit_buy_button.setStyleSheet("border: 2px solid transparent;")
-                val["buyAllowed"] = True
-
-        except ValueError as error:
-            print(str(error))
+    
 
 
 
@@ -986,7 +827,7 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
 
         get_trade_history(self, val["pair"])
 
-        
+
 
     # cancel an order from a separate thread
     def cancel_order_byId(self, order_id, symbol):
@@ -1066,59 +907,7 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
 
 
 
-    def write_config(self):
-        key = self.api_key.text()
-        secret = self.api_secret.text()
-        defaultPair = self.default_pair.text()
-        # defaultTimeframe = self.default_timeframe.text()
-
-        raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, "1w"]
-
-        dtf = self.dtf_selector.currentText()
-        for i, tf in enumerate(val["validTimeframes"]):
-            if str(dtf) == str(tf):
-                # self.dtf_selector.setCurrentIndex(i)
-                tf_index = i
-
-        copy_price = self.copy_price_box.isChecked()
-        copy_qty = self.copy_qty_box.isChecked()
-        print("checkbox state:" + str(copy_price) + " " + str(copy_qty))
-
-        percent_texts = [self.percent_1, self.percent_2, self.percent_3, self.percent_4, self.percent_5]
-        percent = val["buttonPercentage"]
-
-        for i, _ in enumerate(percent):
-
-            try:
-                if float(percent_texts[i].text()) >= 0 and float(percent_texts[i].text()) <= 100:
-                    percent[i] = percent_texts[i].text()
-                    percent_texts[i].setStyleSheet("color: #f3f3f3;")
-                else:
-                    percent_texts[i].setStyleSheet("color: #ff077a;")
-            except ValueError:
-                percent_texts[i].setStyleSheet("color: #ff077a;")
-
-        config = configparser.ConfigParser()
-
-        if key != val["api_key"] or secret != val["api_secret"]:
-            self.restart_warning.setStyleSheet("color: red;")
-
-        print("saving config...")
-
-        config['CONFIG'] = {'DefaultPair': defaultPair,
-                            'ButtonPercentages': percent[0] + ", " + percent[1] + ", " + percent[2] + ", " + percent[3] + ", " + percent[4],
-                            'DefaultTimeframe': raw_timeframes[tf_index],
-                            'CopyPrice': copy_price,
-                            'CopyQuantity': copy_qty,
-                            }
-        config["API"] = {"Key": key, "Secret": secret}
-
-        with open('config.ini', 'w') as configfile:
-            config.write(configfile)
-
-        read_config()
-        self.set_button_text()
-        logging.info("Saving config.")
+    
 
     def write_stats(self):
         total_running = int(val["stats"]["timeRunning"]) + int(val["timeRunning"])
@@ -1141,7 +930,6 @@ class beeserBot(QtWidgets.QMainWindow, BotClass):
         with open('stats.ini', 'w') as configfile:
                     config.write(configfile)
 
-    
 
 
     def set_button_text(self):
@@ -1329,7 +1117,7 @@ def init_logging(self):
     qtLogger = QPlainTextEditLogger(self)
     qtLogger.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
     logging.getLogger().addHandler(qtLogger)
-    
+
     # You can control the logging level
     logging.getLogger().setLevel(logging.INFO)
 

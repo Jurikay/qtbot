@@ -14,9 +14,9 @@ print(type(val["tickers"]["BNBBTC"]))
 
 # print(holdings["BTC"]["free"])
 # print(val["decimals"])
-# #percentage_ammount(totoal_btc, price, percentage):
+# #percentage_amount(totoal_btc, price, percentage):
 # # time.sleep(2)
-# # print(percentage_ammount(holdings["BTC"]["free"], 0.0013781, 50, val["assetDecimals"]))
+# # print(percentage_amount(holdings["BTC"]["free"], 0.0013781, 50, val["assetDecimals"]))
 # #
 # # print(val["coins"]["BNBBTC"])
 #

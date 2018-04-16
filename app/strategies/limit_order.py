@@ -11,7 +11,7 @@ from app.colors import Colors
 
 
 # change
-# from app.apiFunctions import percentage_ammount, round_sell_amount
+# from app.apiFunctions import percentage_amount, round_sell_amount
 
 
 class LimitOrder():
@@ -40,11 +40,6 @@ class LimitOrder():
 
     @staticmethod
     def cell_was_clicked(row, column):
-        print("click")
-        print(str(row))
-        # print(str(self))
-        # print(str(self))
-        # print(str(self.gui))
         try:
             reversed_list = val["tradeHistory"]
 
@@ -86,7 +81,7 @@ class LimitOrder():
     # def limit_percentage(self):
     #     button_number = int(self.sender().objectName()[-1:])
 
-    #     value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(val["buttonPercentage"][button_number]), val["assetDecimals"])
+    #     value = percentage_amount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(val["buttonPercentage"][button_number]), val["assetDecimals"])
 
     #     self.limit_buy_amount.setValue(float(value))
 
@@ -125,7 +120,7 @@ class LimitOrder():
     #     buy_percent_val = str(self.limit_buy_slider.value())
     #     self.buy_slider_label.setText(buy_percent_val + "%")
 
-    #     buy_value = percentage_ammount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(buy_percent_val), val["assetDecimals"])
+    #     buy_value = percentage_amount(val["accHoldings"]["BTC"]["free"], self.limit_buy_input.value(), int(buy_percent_val), val["assetDecimals"])
     #     self.limit_buy_amount.setValue(float(buy_value))
     #     order_cost = float(buy_value) * float(self.limit_buy_input.value())
     #     self.limit_buy_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC")

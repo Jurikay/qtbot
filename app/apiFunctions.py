@@ -5,6 +5,7 @@
 
 from app.init import val
 
+
 """Collection of functions concerning api calls."""
 
 
@@ -88,7 +89,7 @@ def availablePairs(client):
     return coins
 
 
-def percentage_ammount(total_btc, price, percentage, decimals):
+def percentage_amount(total_btc, price, percentage, decimals):
 
     try:
         maxSize = (float(total_btc) / float(price)) * (percentage / 100)

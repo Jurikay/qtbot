@@ -18,44 +18,8 @@ from app.apiFunctions import getHoldings, getTickers, availablePairs
 from binance.exceptions import BinanceAPIException
 
 from requests.exceptions import InvalidHeader
-
-
-# get api credentials from config
-# def init_api():
-# binanceAcc = binance_credentials["MainAcc"]
-
-# val["api_key"] = binanceAcc[0]
-# val["api_secret"] = binanceAcc[1]
-def read_config():
-    config = configparser.ConfigParser()
-
-
-    if os.path.isfile("config.ini"):
-        config.read('config.ini')
-
-        print("Config found!")
-
-    else:
-        config['CONFIG'] = {'DefaultPair': 'BNBBTC',
-                            'ButtonPercentages': '10, 25, 33, 50, 100',
-                            'DefaultTimeframe': 15,
-                            'CopyPrice': True,
-                            'CopyQuantity': False,
-                            }
-        config["API"] = {"Key": "PLEASE ENTER YOUR API KEY HERE", "Secret": "PLEASE ENTER YOUR API SECRET HERE"}
-
-        with open('config.ini', 'w') as configfile:
-            config.write(configfile)
-        print("Config file has been written.")
-
-    val["pair"] = config["CONFIG"]["DefaultPair"]
-    val["defaultPair"] = config["CONFIG"]["DefaultPair"]
-    val["buttonPercentage"] = config["CONFIG"]["ButtonPercentages"].split(",")
-    val["api_key"] = config["API"]["Key"]
-    val["api_secret"] = config["API"]["Secret"]
-    val["defaultTimeframe"] = config["CONFIG"]["DefaultTimeframe"]
-    val["copy_price"] = config["CONFIG"]["CopyPrice"]
-    val["copy_qty"] = config["CONFIG"]["CopyQuantity"]
+from app.elements.config import ConfigManager
+import app
 
 
 def read_stats():
@@ -105,9 +69,11 @@ def set_pair_values():
 
 
 
-read_config()
+
 read_stats()
 
+cfg = ConfigManager("init")
+cfg.read_config()
 
 try:
     client = Client(val["api_key"], val["api_secret"],

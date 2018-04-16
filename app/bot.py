@@ -6,6 +6,7 @@ import logging
 from datetime import datetime, timedelta
 from app.init import val
 from app.colors import Colors
+# from app.strategies.limit_order_pane import LimitOrderPane
 import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
@@ -58,8 +59,8 @@ class BotClass():
             except AttributeError:
                 print("attr error: " + str(i))
 
-        self.check_buy_amount()
-        self.check_sell_ammount()
+        self.limit_pane.check_buy_amount()
+        self.limit_pane.check_sell_amount()
 
 
     def add_to_open_orders(self, order):
