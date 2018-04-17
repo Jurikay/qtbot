@@ -6,10 +6,10 @@
 """Main gui class."""
 
 # import configparser
-import time
+# import time
 import logging
 
-from datetime import timedelta
+# from datetime import timedelta
 from functools import partial
 from binance.websockets import BinanceSocketManager
 
@@ -27,9 +27,8 @@ from app.callbacks import (depth_callback, trade_callback, ticker_callback,
                            user_callback, kline_callback)
 # api_order_history
 from app.charts import Webpages as Webpages
-from app.colors import Colors
-from app.gui_functions import (calc_total_btc,
-                               calc_wavg, filter_table,
+# from app.colors import Colors
+from app.gui_functions import (calc_wavg, filter_table,
                                init_filter, calc_all_wavgs)
 # filter_coin_index, global_filter, filter_confirmed,
 from app.workers import Worker
@@ -42,6 +41,8 @@ from app.elements.hotkeys import HotKeys
 # from app.elements.kline_data import KlineManager
 from app.elements.test_class import TestKlasse
 from app.elements.init_manager import InitManager
+from app.elements.custom_logger import BotLogger
+from app.elements.gui_manager import GuiManager
 
 
 class beeserBot(QtWidgets.QMainWindow):
@@ -65,7 +66,6 @@ class beeserBot(QtWidgets.QMainWindow):
         self.update_count = 0
         self.no_updates = 0
 
-        init_logging(self)
 
         # INIT THREADING
         self.threadpool = QtCore.QThreadPool()
@@ -74,6 +74,10 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         # instantiate various helper classes
+
+        self.log_manager = BotLogger(self)
+        self.log_manager.init_logging()
+
 
         self.cfg_manager = ConfigManager(self)
         # self.cfg.connect_cfg()
@@ -92,16 +96,16 @@ class beeserBot(QtWidgets.QMainWindow):
         self.test_klasse.create_signal()
 
         self.init_manager = InitManager(self)
-        # self.init_manager.initialize()
+        self.init_manager.initialize()
 
+        self.gui_manager = GuiManager(self)
+        self.gui_manager.initialize()
 
         # self.kline_manager = KlineManager(self)
         # self.kline_manager.start_kline_check()
         self.coin_index.start_kline_check()
 
-        self.init_manager.set_modes()
 
-        self.init_manager.main_init()
 
         # initialize open orders table
         self.open_orders.initialize()
@@ -112,18 +116,10 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # connect elements to functions
 
-        # self.reset_vol_direct.clicked.connect(self.reset_vol_direction)
-
         self.debug2_button.clicked.connect(self.limit_pane.test_func)
-
-        # self.open_orders.cellClicked.connect(self.limit_pane.open_orders_cell_clicked)
-
-        self.coin_selector.activated.connect(self.change_pair)
-
+        self.coin_selector.activated.connect(self.gui_manager.change_pair)
         self.hide_pairs.stateChanged.connect(partial(partial(filter_table, self), self.coinindex_filter.text(), self.hide_pairs.checkState()))
-
         self.tabsBotLeft.setCornerWidget(self.coin_index_filter, corner=QtCore.Qt.TopRightCorner)
-        # self.debug_corner.clicked.connect(self.set_corner_widget)
 
         # debug
         self.wavg_button.clicked.connect(calc_wavg)
@@ -131,15 +127,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.button_wavg.clicked.connect(calc_wavg)
 
-
-
-        # connect buttons to fishing bot methods
+        # connect buttons to fishing bot methods (refactor)
         self.fish_add_trade.clicked.connect(self.fish_bot.add_order)
 
         self.fish_clear_all.clicked.connect(partial(self.fish_bot.clear_all_orders, self))
 
-
-        # self.button_klines.clicked.connect(self.iterate_through_klines)
 
         # filter
         self.hide_pairs.stateChanged.connect(partial(init_filter, self))
@@ -164,16 +156,16 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # api credentials not valid; display welcome page
         else:
-            self.chart.setHtml(Webpages.welcome_page())
-            self.chart.show()
-            self.bot_tabs.setCurrentIndex(4)
-
-            self.api_key.setStyleSheet("border: 2px solid #f3ba2e;")
-            self.api_secret.setStyleSheet("border: 2px solid #f3ba2e;")
+            self.show_error_page()
 
 
+    def show_error_page(self):
+        self.chart.setHtml(Webpages.welcome_page())
+        self.chart.show()
+        self.bot_tabs.setCurrentIndex(4)
 
-    
+        self.api_key.setStyleSheet("border: 2px solid #f3ba2e;")
+        self.api_secret.setStyleSheet("border: 2px solid #f3ba2e;")
 
     # refactor into tables, config etc
     def delayed_stuff(self):
@@ -243,198 +235,15 @@ class beeserBot(QtWidgets.QMainWindow):
         return maxSizeRounded
 
 
-
-    # filter tables
-    # def hide_other_pairs(self):
-    #     for row in range(self.open_orders.rowCount()):
-    #         self.open_orders.setRowHidden(row, True)
-    #     for row in range(self.holdings_table.rowCount()):
-    #         self.holdings_table.setRowHidden(row, True)
-    #     for row in range(self.coin_index.rowCount()):
-    #         self.coin_index.setRowHidden(row, True)
-    #     items = self.open_orders.findItems(str(val["coin"]), QtCore.Qt.MatchContains)
-    #     for item in items:
-    #         row = item.row()
-    #         self.open_orders.setRowHidden(row, False)
-
-    #     items = self.holdings_table.findItems(str(val["coin"]), QtCore.Qt.MatchContains)
-    #     for item in items:
-    #         row = item.row()
-    #         self.holdings_table.setRowHidden(row, False)
-
-    #     items = self.coin_index.findItems(str(val["coin"]), QtCore.Qt.MatchContains)
-    #     for item in items:
-    #         row = item.row()
-    #         self.coin_index.setRowHidden(row, False)
-
-    # filter tables
-    # def show_other_pairs(self):
-    #     for row in range(self.open_orders.rowCount()):
-    #         self.open_orders.setRowHidden(row, False)
-    #     for row in range(self.holdings_table.rowCount()):
-    #         self.holdings_table.setRowHidden(row, False)
-    #     for row in range(self.coin_index.rowCount()):
-    #         self.coin_index.setRowHidden(row, False)
-
-    # main gui
-    def change_pair(self):
-        newcoin = self.coin_selector.currentText()
-
-        if any(newcoin + "BTC" in s for s in val["coins"]) and newcoin != val["coin"]:
-            val["pair"] = newcoin + "BTC"
-            val["bm"].stop_socket(val["aggtradeWebsocket"])
-            val["bm"].stop_socket(val["depthWebsocket"])
-            val["bm"].stop_socket(val["klineWebsocket"])
-            logging.info('Switching to %s' % newcoin + " / BTC")
-
-            self.api_manager.set_pair_values()
-
-            self.init_manager.initial_values()
-
-            self.websockets_symbol()
-
-            self.history_table.setRowCount(0)
-
-            self.api_manager.api_calls()
-
-            init_filter(self)
-
-
-    # global ui
-    def tick(self, payload):
-        if payload == 1:
-            self.one_second_update()
-
-        elif payload == 15:
-            print("scroll to bottom")
-            self.asks_table.scrollToBottom()
-
-
-    # global ui
-    def one_second_update(self):
-        self.session_running.setText(str(timedelta(seconds=val["timeRunning"])))
-        val["timeRunning"] += 1
-
-        self.current_time.setText(str(time.strftime('%a, %d %b %Y %H:%M:%S')))
-
-        self.explicit_api_calls_label.setText(str(val["apiCalls"]))
-        self.explicit_api_updates.setText(str(val["apiUpdates"]))
-
-        total_btc_value = calc_total_btc()
-        self.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
-
-        total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2) + "$"
-
-        self.total_usd_label.setText("<span style='font-size: 14px; color: white; font-family: Arial Black;'>" + total_usd_value + "</span>")
-
-        self.btc_price_label.setText('{number:,.{digits}f}'.format(number=float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2) + "$")
-
-        operator = ""
-        percent_change = float(val["tickers"]["BTCUSDT"]["priceChangePercent"])
-        if percent_change > 0:
-            operator = "+"
-
-        btc_percent = operator + '{number:,.{digits}f}'.format(number=percent_change, digits=2) + "%"
-
-        self.btc_percent_label.setText(btc_percent)
-
-        self.debug.setText(str(val["volDirection"]))
-
-        self.debug.setText('{number:.{digits}f}'.format(number=float(val["volDirection"]), digits=4) + "BTC")
-
-        self.percent_changes()
-
-        self.check_websocket()
-
-        # only update the currently active table
-        tab_index_botLeft = self.tabsBotLeft.currentIndex()
-
-        if tab_index_botLeft == 3:
-            self.holdings_table.update_holding_prices()
-            val["indexTabOpen"] = False
-        elif tab_index_botLeft == 0:
-            self.coin_index.update_coin_index_prices()
-
-            # decouple eventually
-            self.coin_index.start_kline_iterator()
-            val["indexTabOpen"] = True
-            # self.start_kline_iterator()
-        else:
-            val["indexTabOpen"] = False
-
-    # global ui / logic
-    def check_websocket(self):
-        if self.update_count == int(val["apiUpdates"]):
-            self.no_updates += 1
-        else:
-            self.no_updates = 0
-
-        self.update_count = int(val["apiUpdates"])
-
-        if self.no_updates >= 2 and self.no_updates < 10:
-            self.status.setText("<span style='color:" + Colors.color_yellow + "'>warning</span>")
-        elif self.no_updates >= 10:
-            self.status.setText("<span style='color:" + Colors.color_pink + "'>disconnected</span>")
-        else:
-            self.status.setText("<span style='color:" + Colors.color_green + "'>connected</span>")
-
-    # global ui
-    def percent_changes(self):
-        try:
-                close_5m = float(val["klines"]["1m"][val["pair"]][-5][4])
-                close_15m = float(val["klines"]["1m"][val["pair"]][-15][4])
-                # close_30m = float(val["klines"]["1m"][val["pair"]][-30][4])
-                close_1h = float(val["klines"]["1m"][val["pair"]][-60][4])
-                close_4h = float(val["klines"]["1m"][val["pair"]][-240][4])
-
-                change_5m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_5m)) - 1) * 100
-                change_15m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_15m)) - 1) * 100
-                # change_30m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_30m)) - 1) * 100
-                change_1h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_1h)) - 1) * 100
-                change_4h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_4h)) - 1) * 100
-
-                change_1d_value = float(val["tickers"][val["pair"]]["priceChangePercent"])
-
-
-                changes = [self.change_5m, self.change_15m, self.change_1h, self.change_4h, self.change_1d]
-                change_values = [change_5m_value, change_15m_value, change_1h_value, change_4h_value, change_1d_value]
-
-                for i, change in enumerate(changes):
-                    if change_values[i] > 0:
-                        operator = "+"
-                        color = Colors.color_green
-                    elif change_values[i] < 0:
-                        operator = ""
-                        color = Colors.color_pink
-                    else:
-                        operator = ""
-                        color = Colors.color_grey
-
-                    # print(str(change))
-                    change.setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
-
-        except Exception as e:
-            print(str(e))
-
-    # debug
-    # def play_sound_effect(self):
-    #     # self.sound_1.play()
-    #     print("playung sound")
-
-    # debug
-    # def reset_vol_direction(self):
-    #     val["volDirection"] = 0
-
-
     # global ui
     def schedule_work(self):
 
         # Pass the function to execute
-        worker = Worker(self.check_for_update)
+        worker = Worker(self.gui_manager.check_for_update)
 
         # Any other args, kwargs are passed to the run function
         # worker.signals.result.connect(self.print_output)
-        worker.signals.progress.connect(self.tick)
+        worker.signals.progress.connect(self.gui_manager.tick)
 
         # start thread
         self.threadpool.start(worker)
@@ -459,19 +268,6 @@ class beeserBot(QtWidgets.QMainWindow):
         self.threadpool.start(worker)
 
 
-
-    # global ui
-    def check_for_update(self, progress_callback):
-        current_height = self.frameGeometry().height()
-        while True:
-            if current_height > self.frameGeometry().height():
-                progress_callback.emit(15)
-
-            current_height = self.frameGeometry().height()
-            progress_callback.emit(1)
-            time.sleep(1)
-
-
     # sockets
     def start_sockets(self, progress_callback):
         val["bm"] = BinanceSocketManager(app.client)
@@ -491,30 +287,3 @@ class beeserBot(QtWidgets.QMainWindow):
 
     def shutdown_bot(self):
         self.cfg_manager.write_stats()
-
-#################################
-
-
-# logging
-class QPlainTextEditLogger(logging.Handler):
-    def __init__(self, parent):
-        super().__init__()
-        self.widget = QtWidgets.QPlainTextEdit(parent)
-        self.widget.setReadOnly(True)
-
-    def emit(self, record):
-        msg = self.format(record)
-        self.widget.appendPlainText(msg)
-        self.widget.update()
-        # print(msg)
-
-
-def init_logging(self):
-    qtLogger = QPlainTextEditLogger(self)
-    qtLogger.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-    logging.getLogger().addHandler(qtLogger)
-
-    # You can control the logging level
-    logging.getLogger().setLevel(logging.INFO)
-
-    self.widget_2.setWidget(qtLogger.widget)

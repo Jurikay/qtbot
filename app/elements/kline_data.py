@@ -66,7 +66,7 @@ class KlineManager():
     @classmethod
     def iterate_through_klines(self, progress_callback):
         """Iterate through the global klines dict and calculate values based on historical data."""
-        for i, kline in enumerate(dict(val["klines"]["1m"])):
+        for _, kline in enumerate(dict(val["klines"]["1m"])):
             coin = kline.replace("BTC", "")
             # items = self.coin_index.findItems(coin, QtCore.Qt.MatchExactly)
             change_dict = dict()
