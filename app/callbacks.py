@@ -11,8 +11,8 @@ from functools import partial
 from app.init import val
 # from app.initApi import client
 from app.workers import Worker
-from app.strategies.limit_order import LimitOrder
-import app
+# from app.strategies.limit_order import LimitOrder
+# import app
 
 
 def directCallback(self, msg):

@@ -108,7 +108,6 @@ class CoinIndex(QtWidgets.QTableWidget):
 
         self.mw.change_pair()
 
-    
     def update_coin_index_prices(self):
         for i in range(self.rowCount()):
             coin = self.item(i, 1).text()
@@ -138,8 +137,7 @@ class CoinIndex(QtWidgets.QTableWidget):
             if float(btc_volume) != new_btc_volume_value:
 
                 self.setItem(i, 4, new_btc_volume)
-        
-        ##########################################
+            ##########################################
         # kline api calls
         ##########################################
 
@@ -247,7 +245,6 @@ class CoinIndex(QtWidgets.QTableWidget):
                     newItem.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_data))
                     self.setItem(row, colIndex, newItem)
 
-    
 
     def klines_received(self, klines_pair):
         """Save kline data received from api call callback in array."""

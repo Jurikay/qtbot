@@ -193,7 +193,7 @@ class HoldingsTable(QtWidgets.QTableWidget):
 
 
     def update_holding_prices(self):
-    
+
         """Update the total value of every coin in the holdings table."""
 
         bold_font = QtGui.QFont()

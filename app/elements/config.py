@@ -7,7 +7,7 @@ import configparser
 import os.path
 import logging
 
-import app
+# import app
 from app.init import val
 
 

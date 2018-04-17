@@ -5,7 +5,7 @@
 
 """Main gui class."""
 
-import configparser
+# import configparser
 import time
 import logging
 
@@ -89,7 +89,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.test_klasse = TestKlasse(self)
         self.test_klasse.create_signal()
-        
+
         # self.kline_manager = KlineManager(self)
         # self.kline_manager.start_kline_check()
         self.coin_index.start_kline_check()
@@ -135,7 +135,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         # self.button_klines.clicked.connect(self.iterate_through_klines)
-        
+
         # filter
         self.hide_pairs.stateChanged.connect(partial(init_filter, self))
         self.coinindex_filter.textChanged.connect(partial(init_filter, self))
@@ -144,7 +144,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.tabsBotLeft.currentChanged.connect(self.set_corner_widget)
 
         # self.get_all_orders_button.clicked.connect(self.get_all_orders)
-        
+
         # Fix a linter error...
         self.chartLOL = QWebEngineView()
 
@@ -167,7 +167,7 @@ class beeserBot(QtWidgets.QMainWindow):
             self.api_secret.setStyleSheet("border: 2px solid #f3ba2e;")
 
 
-        
+
     # gui init
     def initialize(self):
         """One-time gui initialization."""
@@ -209,7 +209,6 @@ class beeserBot(QtWidgets.QMainWindow):
         self.timer.timeout.connect(self.delayed_stuff)
         self.timer.start()
 
-  
     # refactor into tables, config etc
     def delayed_stuff(self):
 
@@ -310,7 +309,6 @@ class beeserBot(QtWidgets.QMainWindow):
         for row in range(self.coin_index.rowCount()):
             self.coin_index.setRowHidden(row, False)
 
-    
     # main gui
     def change_pair(self):
         newcoin = self.coin_selector.currentText()
@@ -530,8 +528,6 @@ class beeserBot(QtWidgets.QMainWindow):
 #################################
 
 
-
-
 # gui init
 def set_modes(self):
     if val["debug"] is False:
@@ -579,8 +575,6 @@ def main_init(self):
 
     for _ in range(50):
         self.tradeTable.insertRow(0)
-
-
 
 
 # logging

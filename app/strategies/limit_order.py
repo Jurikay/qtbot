@@ -7,7 +7,7 @@
 # import PyQt5.QtWidgets as QtWidgets
 
 from app.init import val
-from app.colors import Colors
+# from app.colors import Colors
 
 
 # change
@@ -142,4 +142,3 @@ class LimitOrder():
 
 
     #     self.sell_slider_label.setText(sell_percent + "%")
-

@@ -16,7 +16,7 @@ import app
 class KlineManager():
 
     def __init__(self):
-    #     self.mw = mw
+        # self.mw = mw
         self.client = app.client
     #     self.threadpool2 = QtCore.QThreadPool()
     #     self.threadpool = app.threadpool
@@ -127,7 +127,7 @@ class KlineManager():
                     newItem.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_data))
                     self.coin_index.setItem(row, colIndex, newItem)
 
-    
+
 
     def klines_received(self, klines_pair):
         """Save kline data received from api call callback in array."""
@@ -136,8 +136,7 @@ class KlineManager():
         timeframe = klines_pair[2]
 
         val["klines"][timeframe][str(pair)] = kline_data
-    
+
     @staticmethod
     def test():
         print("rec")
-

@@ -5,18 +5,18 @@
 
 """Collection of functions that concern the gui."""
 
-from functools import partial
+# from functools import partial
 
 import PyQt5.QtCore as QtCore
 # from PyQt5.QtCore import QtCore.QSize, Qt, QtCore.QVariant
-from PyQt5.QtGui import QColor, QFont, QIcon
-from PyQt5.QtWidgets import QHeaderView, QPushButton, QTableWidgetItem
+# from PyQt5.QtGui import QColor, QFont, QIcon
+from PyQt5.QtWidgets import QtWidgets
 
 from app.charts import Webpages as Webpages
-from app.colors import Colors
+# from app.colors import Colors
 from app.init import val
-from app.table_items import CoinDelegate
-from app.workers import Worker
+# from app.table_items import CoinDelegate
+# from app.workers import Worker
 # from app.callbacks import api_order_history
 
 
@@ -56,17 +56,17 @@ def initial_values(self):
 
     bids_header = self.bids_table.horizontalHeader()
     asks_header = self.asks_table.horizontalHeader()
-    bids_header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-    bids_header.setSectionResizeMode(1, QHeaderView.Stretch)
-    bids_header.setSectionResizeMode(2, QHeaderView.Stretch)
+    bids_header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+    bids_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+    bids_header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
 
-    asks_header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
-    asks_header.setSectionResizeMode(1, QHeaderView.Stretch)
-    asks_header.setSectionResizeMode(2, QHeaderView.Stretch)
+    asks_header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
+    asks_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+    asks_header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
 
     trades_header = self.tradeTable.horizontalHeader()
-    trades_header.setSectionResizeMode(0, QHeaderView.Stretch)
-    trades_header.setSectionResizeMode(1, QHeaderView.Stretch)
+    trades_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+    trades_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
 
 def global_filter(self, text):
@@ -300,6 +300,3 @@ def calc_wavg(symbol):
                     return "0"
     except Exception as e:
         print("Error: " + str(e))
-
-
-
