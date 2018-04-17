@@ -183,7 +183,6 @@ class HoldingsTable(QtWidgets.QTableWidget):
 
 
     def filter_holdings(self, text, state):
-        print("holdings row count: " + str(self.rowCount()))
         for i in range(self.rowCount()):
             if state == 2 and not self.item(i, 1).text().startswith(val["coin"]):
                 self.setRowHidden(i, True)
@@ -191,3 +190,31 @@ class HoldingsTable(QtWidgets.QTableWidget):
                 self.setRowHidden(i, True)
             else:
                 self.setRowHidden(i, False)
+
+
+    def update_holding_prices(self):
+    
+        """Update the total value of every coin in the holdings table."""
+
+        bold_font = QtGui.QFont()
+        bold_font.setBold(True)
+
+        for i in range(self.rowCount()):
+
+            current_total = self.item(i, 6).text()
+
+            coin = self.item(i, 1).text()
+            total = float(self.item(i, 3).text())
+
+            if coin != "BTC":
+                current_price = float(val["tickers"][coin + "BTC"]["lastPrice"])
+            elif coin == "BTC":
+                current_price = 1
+
+            total_value = total * current_price
+            total_formatted = '{number:.{digits}f}'.format(number=float(total_value), digits=8)
+
+            if current_total != total_formatted:
+                self.item(i, 6).setText(total_formatted)
+                self.item(i, 6).setFont(bold_font)
+                self.item(i, 6).setForeground(QtGui.QColor(Colors.color_lightgrey))

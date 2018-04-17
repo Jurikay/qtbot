@@ -3,7 +3,7 @@
 
 # made by Jirrik
 
-"""PyQt threads and worker classes."""
+"""PyQt thread and worker classes."""
 
 import traceback
 import sys

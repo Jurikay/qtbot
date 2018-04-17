@@ -49,8 +49,7 @@ class ConfigManager:
         val["copy_qty"] = config["CONFIG"]["CopyQuantity"]
 
     def connect_cfg(self):
-        print(str(self.mw.save_config))
-        app.mw.save_config.clicked.connect(self.write_config)
+        self.mw.save_config.clicked.connect(self.write_config)
 
     def write_config(self):
         print("write cfg")

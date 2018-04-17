@@ -1,15 +1,14 @@
-from PyQt5.QtWidgets import (QApplication, QStyledItemDelegate, QStyleOptionViewItem)
-from PyQt5.QtWidgets import QStyle
-from PyQt5.QtGui import QTextDocument, QAbstractTextDocumentLayout, QPalette
+import PyQt5.QtWidgets as QtWidgets
+import PyQt5.QtGui as QtGui
+import PyQt5.QtCore as QtCore
 # from app.colors import colors
-from PyQt5.QtCore import QSize
 from PyQt5 import Qt
 
 
-class CoinDelegate(QStyledItemDelegate):
+class CoinDelegate(QtWidgets.QStyledItemDelegate):
     """
     TAKEN FROM https://stackoverflow.com/questions/43300034/qt-itemdelegate-displaytext-with-a-qtablewidget-how-can-i-access-the-table-in/43300126#43300126
-    AND https://stackoverflow.com/questions/41760474/pyqt-qstyleditemdelegate-word-wrap-and-html/43417837
+    AND https://stackoverflow.com/questions/41760474/pyqt-QtWidgets.QStyledItemDelegate-word-wrap-and-html/43417837
     The following methods are subclassed to replace display and editor of the
     QTableWidget.
     """
@@ -112,25 +111,25 @@ class CoinDelegate(QStyledItemDelegate):
 
     def paint(self, painter, option, index):
         """Reimplement paint method to allow html rendering within tableWidgets."""
-        options = QStyleOptionViewItem(option)
+        options = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
 
-        style = QApplication.style() if options.widget is None else options.widget.style()
+        style = QtWidgets.QApplication.style() if options.widget is None else options.widget.style()
 
-        doc = QTextDocument()
+        doc = QtGui.QTextDocument()
         doc.setHtml(options.text)
 
         options.text = ""
-        style.drawControl(QStyle.CE_ItemViewItem, options, painter)
+        style.drawControl(QtWidgets.QStyle.CE_ItemViewItem, options, painter)
 
-        ctx = QAbstractTextDocumentLayout.PaintContext()
-        if option.state & QStyle.State_Selected:
-            ctx.palette.setColor(QPalette.Text, option.palette.color(QPalette.Active, QPalette.HighlightedText))
+        ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
+        if option.state & QtWidgets.QStyle.State_Selected:
+            ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
         else:
-            ctx.palette.setColor(QPalette.Text, option.palette.color(QPalette.Active, QPalette.HighlightedText))
+            ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
 
 
-        textRect = style.subElementRect(QStyle.SE_ItemViewItemText, options)
+        textRect = style.subElementRect(QtWidgets.QStyle.SE_ItemViewItemText, options)
         painter.save()
         painter.translate(textRect.topLeft())
         painter.setClipRect(textRect.translated(-textRect.topLeft()))
@@ -139,11 +138,11 @@ class CoinDelegate(QStyledItemDelegate):
         painter.restore()
 
     def sizeHint(self, option, index):
-        """sizeHint has also to be reimplemented."""
-        options = QStyleOptionViewItem(option)
+        """sizeHint has to be reimplemented as well."""
+        options = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
 
-        doc = QTextDocument()
+        doc = QtGui.QTextDocument()
         doc.setHtml(options.text)
         doc.setTextWidth(options.rect.width())
-        return QSize(doc.idealWidth(), doc.size().height())
+        return QtCore.QSize(doc.idealWidth(), doc.size().height())

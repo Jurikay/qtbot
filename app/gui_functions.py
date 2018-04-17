@@ -154,13 +154,6 @@ def filter_table(self, text, state):
 
 
 
-
-
-
-
-
-
-
 def filter_return(self):
     print("filter return")
 # def filter_coinindex(self, text):
@@ -309,32 +302,6 @@ def calc_wavg(symbol):
         print("Error: " + str(e))
 
 
-def update_holding_prices(self):
-
-    """Update the total value of every coin in the holdings table."""
-
-    bold_font = QFont()
-    bold_font.setBold(True)
-
-    for i in range(self.holdings_table.rowCount()):
-
-        current_total = self.holdings_table.item(i, 6).text()
-
-        coin = self.holdings_table.item(i, 1).text()
-        total = float(self.holdings_table.item(i, 3).text())
-
-        if coin != "BTC":
-            current_price = float(val["tickers"][coin + "BTC"]["lastPrice"])
-        elif coin == "BTC":
-            current_price = 1
-
-        total_value = total * current_price
-        total_formatted = '{number:.{digits}f}'.format(number=float(total_value), digits=8)
-
-        if current_total != total_formatted:
-            self.holdings_table.item(i, 6).setText(total_formatted)
-            self.holdings_table.item(i, 6).setFont(bold_font)
-            self.holdings_table.item(i, 6).setForeground(QColor(Colors.color_lightgrey))
 
 
 def update_coin_index_prices(self):

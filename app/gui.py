@@ -31,7 +31,7 @@ from app.charts import Webpages as Webpages
 from app.colors import Colors
 from app.gui_functions import (calc_total_btc,
                                calc_wavg, initial_values, filter_table,
-                               update_holding_prices, update_coin_index_prices, init_filter, calc_all_wavgs)
+                               init_filter, calc_all_wavgs)
 # filter_coin_index, global_filter, filter_confirmed,
 from app.init import val
 from app.strategies.fishing_bot import FishingBot
@@ -47,7 +47,7 @@ class beeserBot(QtWidgets.QMainWindow):
     """Main ui class."""
 
     def __init__(self):
-        """Init method."""
+        """Main gui init method."""
         app.mw = self
         self.client = app.client
         super(beeserBot, self).__init__()
@@ -57,7 +57,7 @@ class beeserBot(QtWidgets.QMainWindow):
         with open("ui/style.qss", "r") as fh:
             self.setStyleSheet(fh.read())
 
-
+        # config (refactor)
         cfg = ConfigManager(self)
         cfg.connect_cfg()
         cfg.read_config()
@@ -66,6 +66,7 @@ class beeserBot(QtWidgets.QMainWindow):
         init_logging(self)
 
         print("setting client: " + str(val["api_key"]))
+
         client = Client(val["api_key"], val["api_secret"], {"verify": True, "timeout": 61})
 
 
@@ -73,7 +74,6 @@ class beeserBot(QtWidgets.QMainWindow):
         self.api_calls_obj.initialize()
 
         hot_keys = HotKeys(self)
-
         hot_keys.init_hotkeys()
 
         set_modes(self)
@@ -81,30 +81,24 @@ class beeserBot(QtWidgets.QMainWindow):
 
         main_init(self)
 
-
-        
-
-        # instantiate ApiCalls object
-        
+        # initialize open orders table
+        self.open_orders.initialize()
 
         # initialize limit order signals and slots
         self.limit_pane.initialize()
+
+        # instantiate fishing bot class
+        fish_bot = FishingBot(self)
+
 
         # connect elements to functions
         
 
         self.reset_vol_direct.clicked.connect(self.reset_vol_direction)
 
-    
-        # instantiate LimitOrder
-        # limit_order = LimitOrder(self)
-        # from app.strategies.limit_order_pane import LimitOrderPane
-
-
         self.debug2_button.clicked.connect(self.limit_pane.test_func)
 
-        # initialize open orders table
-        self.open_orders.initialize()
+        
         # self.open_orders.cellClicked.connect(self.limit_pane.open_orders_cell_clicked)
 
         self.coin_selector.activated.connect(self.change_pair)
@@ -114,11 +108,13 @@ class beeserBot(QtWidgets.QMainWindow):
         self.tabsBotLeft.setCornerWidget(self.coin_index_filter, corner=QtCore.Qt.TopRightCorner)
         # self.debug_corner.clicked.connect(self.set_corner_widget)
 
+        # debug
         self.wavg_button.clicked.connect(calc_wavg)
         self.calc_all_wavg_button.clicked.connect(partial(calc_all_wavgs, self))
 
-        # instantiate fishing bot class
-        fish_bot = FishingBot(self)
+        self.button_wavg.clicked.connect(calc_wavg)
+
+        
 
         # connect buttons to fishing bot methods
         self.fish_add_trade.clicked.connect(fish_bot.add_order)
@@ -127,16 +123,8 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.button_klines.clicked.connect(self.iterate_through_klines)
-        # self.player = QMediaPlayer()
-        # sound = QMediaContent(QtCore.QUrl.fromLocalFile("sounds/Tink.wav"))
-        # self.player.setMedia(sound)
-        # self.player.setVolume(1)
-
-
-        self.button_wavg.clicked.connect(calc_wavg)
-
-        # self.coinindex_filter.textChanged.connect(partial(filter_table, self))
-        # self.coinindex_filter.returnPressed.connect(partial(filter_confirmed, self))
+        
+        # filter
         self.hide_pairs.stateChanged.connect(partial(init_filter, self))
         self.coinindex_filter.textChanged.connect(partial(init_filter, self))
 
@@ -144,11 +132,13 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.tabsBotLeft.currentChanged.connect(self.set_corner_widget)
 
         # self.get_all_orders_button.clicked.connect(self.get_all_orders)
+        
         # Fix a linter error...
         self.chartLOL = QWebEngineView()
 
 
         # check if coin is an empty dict. If yes, api calls have not been answered.
+        # TODO: refactor
         current_coin = val.get("coin", None)
         if current_coin is not None:
             print("authenticated!")
@@ -164,7 +154,7 @@ class beeserBot(QtWidgets.QMainWindow):
             self.api_key.setStyleSheet("border: 2px solid #f3ba2e;")
             self.api_secret.setStyleSheet("border: 2px solid #f3ba2e;")
 
-
+    # gui init
     def initialize(self):
         """One-time gui initialization."""
         self.api_calls_obj.api_calls()
@@ -273,6 +263,7 @@ class beeserBot(QtWidgets.QMainWindow):
         maxSizeRounded = int(maxSize * 10**decimals) / 10.0**decimals
         return maxSizeRounded
 
+
     # this is used often
     def set_pair_values(self):
         """Set various values based on the chosen pair."""
@@ -283,7 +274,6 @@ class beeserBot(QtWidgets.QMainWindow):
             val["assetDecimals"] = 0
         else:
             val["assetDecimals"] = len(str(val["coins"][val["pair"]]["minTrade"])) - 2
-
 
 
     # filter tables
@@ -327,8 +317,8 @@ class beeserBot(QtWidgets.QMainWindow):
         self.total_api_updates.setText(str(val["stats"]["apiUpdates"]))
 
 
+    # main gui
     def change_pair(self):
-
         newcoin = self.coin_selector.currentText()
 
         if any(newcoin + "BTC" in s for s in val["coins"]) and newcoin != val["coin"]:
@@ -349,15 +339,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
             init_filter(self)
 
-    # debug
-    def reset_vol_direction(self):
-        val["volDirection"] = 0
 
     # global ui
     def tick(self, payload):
         if payload == 1:
             self.one_second_update()
-
 
         elif payload == 15:
             print("scroll to bottom")
@@ -404,10 +390,10 @@ class beeserBot(QtWidgets.QMainWindow):
         tab_index_botLeft = self.tabsBotLeft.currentIndex()
 
         if tab_index_botLeft == 3:
-            update_holding_prices(self)
+            self.holdings_table.update_holding_prices()
             val["indexTabOpen"] = False
         elif tab_index_botLeft == 0:
-            update_coin_index_prices(self)
+            self.coin_index.update_coin_index_prices()
             self.start_kline_iterator()
             val["indexTabOpen"] = True
             # self.start_kline_iterator()
@@ -473,7 +459,12 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.sound_1.play()
         print("playung sound")
 
+    # debug
+    def reset_vol_direction(self):
+        val["volDirection"] = 0
 
+
+    # global ui
     def schedule_work(self):
 
         # Pass the function to execute
@@ -486,7 +477,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # start thread
         self.threadpool.start(worker)
 
-
+    # websockets
     def schedule_websockets(self):
         # Pass the function to execute
         worker = Worker(self.start_sockets)
@@ -496,6 +487,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # Execute
         self.threadpool.start(worker)
 
+    # kline data coin index
     def start_kline_check(self):
         worker = Worker(self.schedule_kline_check)
         # worker.signals.progress.connect(self.klines_received)
@@ -528,11 +520,6 @@ class beeserBot(QtWidgets.QMainWindow):
                 self.threadpool.tryStart(worker)
 
             time.sleep(longSleep)
-
-
-
-        # worker = Worker(partial(get_kline, self, ))
-
 
 
     # wip
@@ -701,6 +688,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 #################################
 
+
 # config
 def set_config_values(self):
     try:
@@ -728,7 +716,7 @@ def set_config_values(self):
     except (TypeError, KeyError):
         pass
 
-
+# gui init
 def set_modes(self):
     if val["debug"] is False:
         # self.tabsBotLeft.setTabEnabled(0, False)
@@ -746,6 +734,7 @@ def set_modes(self):
 
 
 def main_init(self):
+    """One time gui initialization."""
     # set default locale
     QtCore.QLocale.setDefault(QtCore.QLocale(QtCore.QLocale.C))
 
@@ -781,6 +770,7 @@ def main_init(self):
     logging.info('Enable multithreading with %d threads.' % self.threadpool.maxThreadCount())
 
 
+# logging
 class QPlainTextEditLogger(logging.Handler):
     def __init__(self, parent):
         super().__init__()
