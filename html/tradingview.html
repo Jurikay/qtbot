@@ -3,9 +3,12 @@
 body {background-color: black; margin: 0px;}
 span.pane-legend-line.apply-overflow-tooltip {display: none!important;}
 </style>
-<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<script type="text/javascript" src="tv.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
 <script type="text/javascript">
-var widgetLOL = new TradingView.widget({
+console.log("Hallo?")
+var widget = new TradingView.widget({
 
 	supports_search: false,
 	supports_group_request: false,
@@ -27,7 +30,7 @@ var widgetLOL = new TradingView.widget({
   autosize: true,
 	interval: '15',
 	toolbar_bg: '#333333',
-	allow_symbol_change: false,
+	allow_symbol_change: true,
 	container_id: "tv_chart_container",
 	library_path: "charting_library/",
 	locale: "en",
@@ -41,77 +44,67 @@ var widgetLOL = new TradingView.widget({
      "BB@tv-basicstudies",
      "StochasticRSI@tv-basicstudies"
    ],
- // "popup_width": "1000",
- // "popup_height": "650"
+
 	drawings_access: { type: 'black', tools: [ { name: "Regression Trend" } ] },
 	disabled_features: ["header_compare", "study_market_minimized", "control_bar", "items_favoriting" ], //"volume_force_overlay",
 	enabled_features: ["seconds_resolution", "caption_buttons_text_if_possible", "narrow_chart_enabled" ],
 	overrides: {
     "paneProperties.background": "#262d33",
-    // "paneProperties.gridProperties.color": "black",
-    //
+
     "paneProperties.vertGridProperties.color": "#323c45",
     "paneProperties.horzGridProperties.color": "#323c45",
     "paneProperties.crossHairProperties.color": "white",
-    //
-		// "mainSeriesProperties.style": 0,
-		// "symbolWatermarkProperties.color": "rgba(0, 0, 0, 0)",
-		// "volumePaneSize": "small",
-    // // "paneProperties.background": "red", // works
-    // "mainSeriesProperties.style": 1, // candles
-    // "mainSeriesProperties.priceAxisProperties.autoScale": false,
-    //
-    // "mainSeriesProperties.priceAxisProperties.autoScaleDisabled": "true",
-    // "mainSeriesProperties.candleStyle.upColor": "#6ba583",
+
     "mainSeriesProperties.candleStyle.downColor": "#ca2c78",
 
-    // remove title etc
+
     "paneProperties.legendProperties.showStudyArguments": false,
-    // "paneProperties.legendProperties.showStudyTitles": false,
-    // "paneProperties.legendProperties.showStudyValues": false,
-    // "paneProperties.legendProperties.showSeriesTitle": false,
+
     "paneProperties.legendProperties.showSeriesOHLC": false,
 
 	},
 	studies_overrides: {
     "bollinger bands.median.color": "blue",
-  //   "bollinger bands.upper.color": "red",
-  //   "bollinger bands.lower.color": "red",
+
 		"bollinger bands.upper.linewidth": 14,
-  //   "bollinger bands.color": "red",
-  //   "bollinger bands.areaStyle.color": "red",
-  //
-  //   // study_Overlay@tv-basicstudies.areaStyle.color1: color
-  //   // study_Overlay@tv-basicstudies.areaStyle.color2: color
-  //
-  //   "stochastic rsi.areaStyle.color": "red",
-  //
-  //   "basicstudies.areaStyle.color1": "red",
-  //   "study_Overlay@tv-basicstudies.areaStyle.color2": "green",
-  //   "StochasticRSI@tv-basicstudies.background.color": "green"
+
 	},
-	// // debug: true,
 	time_frames: [
 		{ text: "50y", resolution: "6M" },
 		{ text: "1d", resolution: "5" },
 	],
-	// charts_storage_url: 'http://saveload.tradingview.com',
-	// client_id: 'tradingview.com',
-	// user_id: 'public_user',
-	// favorites: {
-	// 	intervals: ["1D", "3D", "3W", "W", "M"],
-	// 	chartTypes: ["Area", "Line"]
-	// },
-});
-console.log("asdfaf")
-console.log(widgetLOL)
-var chart=_widget.activeChart();
-console.log(chart)
-// console.log(widget.type)
-widgetLOL.onChartReady(testfunction());
 
-function testfunction() {
-  console.log("asdgsdfasff")
-}
+});
+
+
+var modifyIframe = function() {
+  console.log("procc")
+
+  $("iframe").contents().find(".dl-header").attr("style", "text-align:center; padding:0;");
+  $("iframe").contents().find(".dl-header-price").attr("style", "display:block; font-size:44px; line-height:1em;");
+  $("iframe").contents().find(".dl-header-change").attr("style", "display:block; font-size:24px; line-height:1em; margin-bottom:0;");
+  $("iframe").contents().find(".symbol-list-item").attr("style", "height:auto;");
+  $("iframe").contents().find(".symbol-list-item > div").attr("style", "margin:0;");
+  $("iframe").contents().find(".symbol-list-item:even").css("background-color", "#eeeeee");
+  $("iframe").contents().find("*").css("background-color", "#eeeeee");
+
+  // drag & drop handle to resize watchlist
+  // var $handle = $("iframe").contents().find(".widgetbar-handle");
+  // $handle.simulate("drag-n-drop", { dx: -120 }
+};
+
+</script>
+
+<script>
+  function callback() {
+    console.log("callback");
+  }
+
+  console.log("das hier?")
+  // widget.setSymbol("ADABTC", 15, callback);
+
+  widget.reload();
+
+  console.log("WHYYY")
 </script>
 <!-- TradingView Widget END -->

@@ -159,4 +159,4 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         coinIndex = self.mw.coin_selector.findText(coin)
         self.mw.coin_selector.setCurrentIndex(coinIndex)
 
-        self.mw.change_pair()
+        self.mw.gui_manager.change_pair()

@@ -55,7 +55,7 @@ class GuiManager:
 
             self.mw.api_manager.api_calls()
 
-            self.mw.init_filter()
+            self.mw.filter_manager.init_filter()
 
 
     # refactor

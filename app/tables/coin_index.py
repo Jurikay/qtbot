@@ -17,7 +17,7 @@ from app.workers import Worker
 
 
 class CoinIndex(QtWidgets.QTableWidget):
-    
+
     """CoinIndex main class."""
 
     def __init__(self, parent=None):
@@ -108,7 +108,7 @@ class CoinIndex(QtWidgets.QTableWidget):
         coinIndex = self.mw.coin_selector.findText(coin)
         self.mw.coin_selector.setCurrentIndex(coinIndex)
 
-        self.mw.change_pair()
+        self.mw.gui_manager.change_pair()
 
     def update_coin_index_prices(self):
         for i in range(self.rowCount()):
@@ -248,7 +248,7 @@ class CoinIndex(QtWidgets.QTableWidget):
                     newItem.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_data))
                     self.setItem(row, colIndex, newItem)
 
-    
+
     def klines_received(self, klines_pair):
         """Save kline data received from api call callback in array."""
         kline_data = klines_pair[0]

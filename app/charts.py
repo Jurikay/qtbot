@@ -146,7 +146,6 @@ class Webpages():
             autosize: true,
             timezone: "Europe/Berlin",
           interval: '""" + timeframe + """',
-          toolbar_bg: '#333333',
           allow_symbol_change: false,
           container_id: "tv_chart_container",
           //library_path: "charting_library/",
@@ -156,6 +155,7 @@ class Webpages():
           hide_side_toolbar: false,
           show_popup_button: false,
           withdateranges: true,
+          toolbar_bg: "rgba(32,38,43,1)",
           theme: "Dark",
           studies: [
             "BB@tv-basicstudies",

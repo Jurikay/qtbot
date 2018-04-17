@@ -61,106 +61,110 @@ def global_filter(self, text):
         self.holdings_table.setSortingEnabled(False)
 
 
-def init_filter(self):
-    text = self.coinindex_filter.text()
-    state = self.hide_pairs.checkState()
+class TableFilters:
+    def __init__(self, mw):
+        self.mw = mw
 
-    # print("text: " + str(text) + " state: " + str(state))
+    def init_filter(self):
+        text = self.mw.coinindex_filter.text()
+        state = self.mw.hide_pairs.checkState()
 
-    filter_table(self, text, state)
+        # print("text: " + str(text) + " state: " + str(state))
 
-    # reset filter
-    if state == 0 and text == "":
-        for i in range(self.holdings_table.rowCount()):
-            self.holdings_table.setRowHidden(i, False)
-        for i in range(self.open_orders.rowCount()):
-            self.open_orders.setRowHidden(i, False)
-        for i in range(self.coin_index.rowCount()):
-            self.coin_index.setRowHidden(i, False)
+        self.filter_table(text, state)
 
-
-
-def filter_table(self, text, state):
-    # print("filter table state: " + str(state))
-    # tabIndex = self.tabsBotLeft.currentIndex()
-    # if tabIndex == 0:
-    self.coin_index.filter_coin_index(text, state)
-    # elif tabIndex == 1:
-    self.open_orders.filter_open_orders(text, state)
-    # elif tabIndex == 3:
-    self.holdings_table.filter_holdings(text, state)
-    if text != "" or state == 2:
-        self.holdings_table.setSortingEnabled(False)
-        self.open_orders.setSortingEnabled(False)
-        self.coin_index.setSortingEnabled(False)
-    else:
-        self.holdings_table.setSortingEnabled(True)
-        self.open_orders.setSortingEnabled(True)
-        self.coin_index.setSortingEnabled(True)
-
-    # state = self.hide_pairs.checkState()
-    # if state == 2:
-    #     self.toggle_other_pairs(state)
+        # reset filter
+        if state == 0 and text == "":
+            for i in range(self.mw.holdings_table.rowCount()):
+                self.mw.holdings_table.setRowHidden(i, False)
+            for i in range(self.mw.open_orders.rowCount()):
+                self.mw.open_orders.setRowHidden(i, False)
+            for i in range(self.mw.coin_index.rowCount()):
+                self.mw.coin_index.setRowHidden(i, False)
 
 
 
+    def filter_table(self, text, state):
+        # print("filter table state: " + str(state))
+        # tabIndex = self.tabsBotLeft.currentIndex()
+        # if tabIndex == 0:
+        self.mw.coin_index.filter_coin_index(text, state)
+        # elif tabIndex == 1:
+        self.mw.open_orders.filter_open_orders(text, state)
+        # elif tabIndex == 3:
+        self.mw.holdings_table.filter_holdings(text, state)
+        if text != "" or state == 2:
+            self.mw.holdings_table.setSortingEnabled(False)
+            self.mw.open_orders.setSortingEnabled(False)
+            self.mw.coin_index.setSortingEnabled(False)
+        else:
+            self.mw.holdings_table.setSortingEnabled(True)
+            self.mw.open_orders.setSortingEnabled(True)
+            self.mw.coin_index.setSortingEnabled(True)
+
+        # state = self.hide_pairs.checkState()
+        # if state == 2:
+        #     self.toggle_other_pairs(state)
 
 
-def filter_return(self):
-    print("filter return")
-# def filter_coinindex(self, text):
-#     # sort_order = self.coin_index.model().sortColumn()
-#     # print(str(sort_order))
-
-#     """Hide every row in coin index that does not contain the user input."""
-#     self.coin_index.setSortingEnabled(False)
-#     row_count = self.coin_index.rowCount()
-
-#     if text != "":
-#         self.coin_index.item(0, 1).setForeground(QColor(Colors.color_yellow))
-#         for i in range(row_count):
-
-#             if text.upper() not in str(self.coin_index.item(i, 1).text()):
-#                 self.coin_index.hideRow(i)
-#             else:
-#                 self.coin_index.showRow(i)
-#     else:
-#         for j in range(row_count):
-#             self.coin_index.showRow(j)
-#         self.coin_index.setSortingEnabled(True)
-
-    # print("procc")
 
 
-def filter_confirmed(self):
-    """Switch to the topmost coin of the coin index that is not hidden."""
-    # check if input is empty
-    if self.coinindex_filter.text() != "":
-        # self.coin_index.setSortingEnabled(False)
-        # test = self.coin_index.
-        # print(str(test))
 
-        # iterate through all rows
-        for i in (range(self.coin_index.rowCount())):
-            # skip the row if hidden
-            if self.coin_index.isRowHidden(i):
-                continue
-            else:
-                # return the first nonhidden row (might be inefficient)
-                coin = self.coin_index.item(i, 1).text()
-                # switch to that coin
-                # print(str(coin) + "   " + str(val["pair"]))
+    def filter_return(self):
+        print("filter return")
+    # def filter_coinindex(self, text):
+    #     # sort_order = self.coin_index.model().sortColumn()
+    #     # print(str(sort_order))
 
-                if coin != val["pair"].replace("BTC", ""):
-                    coinIndex = self.coin_selector.findText(coin)
-                    self.coin_selector.setCurrentIndex(coinIndex)
-                    self.change_pair()
-                    # self.coin_index.setSortingEnabled(True)
-                    return
+    #     """Hide every row in coin index that does not contain the user input."""
+    #     self.coin_index.setSortingEnabled(False)
+    #     row_count = self.coin_index.rowCount()
 
-                elif coin == val["pair"].replace("BTC", ""):
-                    # self.coin_index.setSortingEnabled(True)
-                    return
+    #     if text != "":
+    #         self.coin_index.item(0, 1).setForeground(QColor(Colors.color_yellow))
+    #         for i in range(row_count):
+
+    #             if text.upper() not in str(self.coin_index.item(i, 1).text()):
+    #                 self.coin_index.hideRow(i)
+    #             else:
+    #                 self.coin_index.showRow(i)
+    #     else:
+    #         for j in range(row_count):
+    #             self.coin_index.showRow(j)
+    #         self.coin_index.setSortingEnabled(True)
+
+        # print("procc")
+
+
+    def filter_confirmed(self):
+        """Switch to the topmost coin of the coin index that is not hidden."""
+        # check if input is empty
+        if self.mw.coinindex_filter.text() != "":
+            # self.coin_index.setSortingEnabled(False)
+            # test = self.coin_index.
+            # print(str(test))
+
+            # iterate through all rows
+            for i in (range(self.mw.coin_index.rowCount())):
+                # skip the row if hidden
+                if self.mw.coin_index.isRowHidden(i):
+                    continue
+                else:
+                    # return the first nonhidden row (might be inefficient)
+                    coin = self.mw.coin_index.item(i, 1).text()
+                    # switch to that coin
+                    # print(str(coin) + "   " + str(val["pair"]))
+
+                    if coin != val["pair"].replace("BTC", ""):
+                        coinIndex = self.mw.coin_selector.findText(coin)
+                        self.mw.coin_selector.setCurrentIndex(coinIndex)
+                        self.mw.gui_manager.change_pair()
+                        # self.coin_index.setSortingEnabled(True)
+                        return
+
+                    elif coin == val["pair"].replace("BTC", ""):
+                        # self.coin_index.setSortingEnabled(True)
+                        return
 
 
 

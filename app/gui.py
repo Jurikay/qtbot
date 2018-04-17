@@ -28,8 +28,7 @@ from app.callbacks import (depth_callback, trade_callback, ticker_callback,
 # api_order_history
 from app.charts import Webpages as Webpages
 # from app.colors import Colors
-from app.gui_functions import (calc_wavg, filter_table,
-                               init_filter, calc_all_wavgs)
+from app.gui_functions import (calc_wavg, calc_all_wavgs)
 # filter_coin_index, global_filter, filter_confirmed,
 from app.workers import Worker
 from app.init import val
@@ -43,6 +42,7 @@ from app.elements.test_class import TestKlasse
 from app.elements.init_manager import InitManager
 from app.elements.custom_logger import BotLogger
 from app.elements.gui_manager import GuiManager
+from app.gui_functions import TableFilters
 
 
 class beeserBot(QtWidgets.QMainWindow):
@@ -101,6 +101,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.gui_manager = GuiManager(self)
         self.gui_manager.initialize()
 
+        self.filter_manager = TableFilters(self)
+        self.filter_manager.init_filter()
+
         # self.kline_manager = KlineManager(self)
         # self.kline_manager.start_kline_check()
         self.coin_index.start_kline_check()
@@ -118,7 +121,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.debug2_button.clicked.connect(self.limit_pane.test_func)
         self.coin_selector.activated.connect(self.gui_manager.change_pair)
-        self.hide_pairs.stateChanged.connect(partial(partial(filter_table, self), self.coinindex_filter.text(), self.hide_pairs.checkState()))
+        self.hide_pairs.stateChanged.connect(partial(self.filter_manager.filter_table, self.coinindex_filter.text(), self.hide_pairs.checkState()))
         self.tabsBotLeft.setCornerWidget(self.coin_index_filter, corner=QtCore.Qt.TopRightCorner)
 
         # debug
@@ -134,8 +137,8 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         # filter
-        self.hide_pairs.stateChanged.connect(partial(init_filter, self))
-        self.coinindex_filter.textChanged.connect(partial(init_filter, self))
+        self.hide_pairs.stateChanged.connect(self.filter_manager.init_filter)
+        self.coinindex_filter.textChanged.connect(self.filter_manager.init_filter)
 
         # change corner widget bottom left tabs
         # self.tabsBotLeft.currentChanged.connect(self.set_corner_widget)
