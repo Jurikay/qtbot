@@ -10,7 +10,7 @@
 import PyQt5.QtCore as QtCore
 # from PyQt5.QtCore import QtCore.QSize, Qt, QtCore.QVariant
 # from PyQt5.QtGui import QColor, QFont, QIcon
-from PyQt5.QtWidgets import QtWidgets
+import PyQt5.QtWidgets as QtWidgets
 
 from app.charts import Webpages as Webpages
 # from app.colors import Colors

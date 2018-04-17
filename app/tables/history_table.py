@@ -12,10 +12,12 @@ from app.init import val
 # from app.table_items import CoinDelegate
 from app.colors import Colors
 
-"""CoinIndex main class."""
 
 
 class HistoryTable(QtWidgets.QTableWidget):
+
+    """CoinIndex main class."""
+
     def __init__(self, parent=None):
         super(QtWidgets.QTableWidget, self).__init__(parent)
         self.mw = app.mw
@@ -25,7 +27,7 @@ class HistoryTable(QtWidgets.QTableWidget):
         # if order["symbol"] == val["pair"]:
         # print(str(val["histoy"][order["symbol"]]))
 
-        if not type(val["history"][order["symbol"]]) is list:
+        if not isinstance(val["history"][order["symbol"]], list):
             val["history"][order["symbol"]] = list()
 
         self.insertRow(0)

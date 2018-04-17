@@ -118,8 +118,8 @@ class LimitOrderPane(QtWidgets.QWidget):
         self.mw.limit_sell_button.clicked.connect(self.create_sell_order)
 
 
-
-    def round_sell_amount(self, percent_val):
+    @staticmethod
+    def round_sell_amount(percent_val):
         holding = float(val["accHoldings"][val["coin"]]["free"]) * (float(percent_val) / 100)
         if val["coins"][val["pair"]]["minTrade"] == 1:
             sizeRounded = int(holding)

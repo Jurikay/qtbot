@@ -260,7 +260,8 @@ class beeserBot(QtWidgets.QMainWindow):
         logging.info('Finishing setup...')
 
     # this is used often; See if it fits somewhere though
-    def percentage_amount(self, total_btc, price, percentage, decimals):
+    @staticmethod
+    def percentage_amount(total_btc, price, percentage, decimals):
         """Calculate the buy/sell amount based on price and percentage value."""
         try:
             maxSize = (float(total_btc) / float(price)) * (percentage / 100)

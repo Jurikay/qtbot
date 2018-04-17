@@ -85,13 +85,13 @@ class FishingBot():
 
     @staticmethod
     def update_table(self):
-        for i in range(self.fishbot_table.rowCount()):
+        for _ in range(self.fishbot_table.rowCount()):
             # set current price from val tickers
             pass
 
     @staticmethod
     def parse_table_contents(bot):
-        for i in range(bot.fishbot_table.rowCount()):
+        for _ in range(bot.fishbot_table.rowCount()):
             # get values of every row and store in array
             pass
 

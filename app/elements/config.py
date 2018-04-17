@@ -155,7 +155,8 @@ class ConfigManager:
     # stats
     ##########################
 
-    def read_stats(self):
+    @staticmethod
+    def read_stats():
         config = configparser.ConfigParser()
 
         # stat_vals = [val["stats"]["timeRunning"], val["stats"]["execTrades"], val["stats"]["execBotTrades"], val["stats"]["apiCalls"], val["stats"]["apiUpdates"]]
@@ -186,7 +187,8 @@ class ConfigManager:
         val["stats"]["apiCalls"] = config["Stats"]["apiCalls"]
         val["stats"]["apiUpdates"] = config["Stats"]["apiUpdates"]
 
-    def write_stats(self):
+    @staticmethod
+    def write_stats():
         total_running = int(val["stats"]["timeRunning"]) + int(val["timeRunning"])
         total_trades = int(val["stats"]["execTrades"]) + int(val["execTrades"])
         total_bot_trades = int(val["stats"]["execBotTrades"]) + int(val["execBotTrades"])
@@ -207,7 +209,7 @@ class ConfigManager:
         with open('stats.ini', 'w') as configfile:
                     config.write(configfile)
 
-
+    
     def set_stats(self):
         self.mw.total_running.setText(str(val["stats"]["timeRunning"]))
         self.mw.total_trades.setText(str(val["stats"]["execTrades"]))

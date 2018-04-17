@@ -8,7 +8,7 @@
 from app.init import val
 
 class Webpages():
-    
+
     @staticmethod
     def build_chart(exchange, pair):
         tradingview = '<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>'

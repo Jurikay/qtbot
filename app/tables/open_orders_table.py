@@ -15,8 +15,8 @@ from app.colors import Colors
 import app
 import logging
 from app.callbacks import Worker
-from app.apiFunctions import ApiCalls
-from functools import partial
+# from app.apiFunctions import ApiCalls
+# from functools import partial
 
 
 class OpenOrdersTable(QtWidgets.QTableWidget):
@@ -29,20 +29,10 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         print(str(self))
         print(str(self.parent()))
 
-    def test_func(self):
-        print("TEST FUNC")
-
 
     def add_to_open_orders(self, order):
 
-        # play a sound file to indicate a new order
-        # print("play sound")
 
-        # val["sound_1"].play()
-        # QSoundEffect.play("sounds/Tink.mp3")
-
-        # only add to open orders table if the coin is currently selected.
-        # if order["symbol"] == val["pair"]:
         self.mw.open_orders.insertRow(0)
         self.mw.open_orders.setItem(0, 0, QtWidgets.QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
 

@@ -21,6 +21,7 @@ class KlineManager():
     #     self.threadpool2 = QtCore.QThreadPool()
     #     self.threadpool = app.threadpool
 
+    @classmethod    
     def rec_func(self):
         print("CALLBACK WHOOP")
 
@@ -61,6 +62,7 @@ class KlineManager():
 
 
     # wip
+    @classmethod
     def iterate_through_klines(self, progress_callback):
         """Iterate through the global klines dict and calculate values based on historical data."""
         for i, kline in enumerate(dict(val["klines"]["1m"])):
@@ -128,7 +130,7 @@ class KlineManager():
                     self.coin_index.setItem(row, colIndex, newItem)
 
 
-
+    @classmethod
     def klines_received(self, klines_pair):
         """Save kline data received from api call callback in array."""
         kline_data = klines_pair[0]
