@@ -14,10 +14,12 @@ from app.colors import Colors
 from app.workers import Worker
 
 
-"""CoinIndex main class."""
 
 
 class CoinIndex(QtWidgets.QTableWidget):
+    
+    """CoinIndex main class."""
+
     def __init__(self, parent=None):
         super(QtWidgets.QTableWidget, self).__init__(parent)
         self.mw = app.mw
@@ -246,7 +248,7 @@ class CoinIndex(QtWidgets.QTableWidget):
                     newItem.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_data))
                     self.setItem(row, colIndex, newItem)
 
-
+    
     def klines_received(self, klines_pair):
         """Save kline data received from api call callback in array."""
         kline_data = klines_pair[0]

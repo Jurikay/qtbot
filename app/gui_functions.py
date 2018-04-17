@@ -3,8 +3,8 @@
 
 # made by Jirrik
 
-"""Collection of functions that concern the gui."""
-
+"""Collection of functions that concern the gui.
+filter and wavg"""
 # from functools import partial
 
 import PyQt5.QtCore as QtCore
@@ -163,26 +163,6 @@ def filter_confirmed(self):
                     return
 
 
-# global ui
-def calc_total_btc():
-    total_btc_val = 0
-    for holding in val["accHoldings"]:
-        free = val["accHoldings"][holding]["free"]
-        locked = val["accHoldings"][holding]["locked"]
-        total = float(free) + float(locked)
-
-        if holding + "BTC" in val["coins"]:
-            if holding != "BTC" and total * float(val["tickers"][holding + "BTC"]["lastPrice"]) > 0.001:
-
-                coin_total = total * float(val["tickers"][holding + "BTC"]["lastPrice"])
-                total_btc_val += coin_total
-
-        elif holding == "BTC":
-            total_btc_val += total
-
-    total_formatted = '{number:.{digits}f}'.format(number=float(total_btc_val), digits=8) + " BTC"
-    # print("total: " + total_formatted)
-    return total_formatted
 
 
 def calc_all_wavgs(self):
