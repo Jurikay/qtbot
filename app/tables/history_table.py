@@ -21,7 +21,7 @@ class HistoryTable(QtWidgets.QTableWidget):
         self.mw = app.mw
 
     def add_to_history(self, order):
-        print("add to history")
+        # print("add to history")
         # if order["symbol"] == val["pair"]:
         # print(str(val["histoy"][order["symbol"]]))
 

@@ -19,7 +19,7 @@ class FishingBot():
     @classmethod
     def add_order(self, arg2):
         """Ad a new order to the fishing bot table."""
-        print("adde order")
+        # print("adde order")
         print(str(self) + " " + str(arg2))
         gui = FishingBot.gui
 

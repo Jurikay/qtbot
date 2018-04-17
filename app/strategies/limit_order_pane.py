@@ -219,7 +219,7 @@ class LimitOrderPane(QtWidgets.QWidget):
             amount = '{number:.{digits}f}'.format(number=self.mw.limit_buy_amount.value(), digits=val["assetDecimals"])
             side = "Buy"
 
-            worker = Worker(partial(self.mw.api_calls_obj.api_create_order, app.client, side, pair, price, amount))
+            worker = Worker(partial(self.mw.api_manager.api_create_order, app.client, side, pair, price, amount))
             # worker.signals.progress.connect(self.create_order_callback)
             self.mw.threadpool.start(worker)
             logging.info('[ + ] BUY ORDER CREATED! %s' % str(pair) + " " + str(amount) + " at " + str(price))
@@ -234,11 +234,24 @@ class LimitOrderPane(QtWidgets.QWidget):
 
             side = "Sell"
 
-            worker = Worker(partial(self.mw.api_calls_obj.api_create_order, app.client, side, pair, price, amount))
+            worker = Worker(partial(self.mw.api_manager.api_create_order, app.client, side, pair, price, amount))
             # worker.signals.progress.connect(self.create_order_callback)
             self.mw.threadpool.start(worker)
             logging.info('[ - ] SELL ORDER CREATED! %s' % str(pair) + " " + str(amount) + " at " + str(price))
 
 
     # do stuff once api data has arrived
-   
+
+    def t_complete(self):
+        # print("We don now")
+        self.mw.limit_buy_input.setValue(float(val["bids"][0][0]))
+        self.mw.limit_sell_input.setValue(float(val["asks"][0][0]))
+        value = self.mw.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), val["assetDecimals"])
+        self.mw.limit_buy_amount.setValue(value)
+
+        # print(val["accHoldings"][val["coin"]]["free"])
+        sell_percent = str(self.mw.limit_sell_slider.value())
+
+        sell_size = self.mw.limit_pane.round_sell_amount(sell_percent)
+
+        self.mw.limit_sell_amount.setValue(sell_size)

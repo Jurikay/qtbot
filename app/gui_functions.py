@@ -303,37 +303,3 @@ def calc_wavg(symbol):
 
 
 
-
-def update_coin_index_prices(self):
-    for i in range(self.coin_index.rowCount()):
-        coin = self.coin_index.item(i, 1).text()
-        price = self.coin_index.item(i, 2).text()
-        price_change = self.coin_index.item(i, 3).text()
-        btc_volume = self.coin_index.item(i, 4).text()
-
-
-        new_price = QTableWidgetItem()
-        new_price_change = QTableWidgetItem()
-        new_btc_volume = QTableWidgetItem()
-
-        new_price_value = "{0:.8f}".format(float(val["tickers"][coin + "BTC"]["lastPrice"]))
-        new_price_change_value = float(val["tickers"][coin + "BTC"]["priceChangePercent"])
-        new_btc_volume_value = float(val["tickers"][coin + "BTC"]["quoteVolume"])
-
-        new_price.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_price_value))
-        new_price_change.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_price_change_value))
-        new_btc_volume.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_btc_volume_value))
-
-
-        if price != new_price_value:
-            self.coin_index.setItem(i, 2, new_price)
-
-        if float(price_change) != new_price_change_value:
-
-            self.coin_index.setItem(i, 3, new_price_change)
-
-        if float(btc_volume) != new_btc_volume_value:
-
-            self.coin_index.setItem(i, 4, new_btc_volume)
-
-

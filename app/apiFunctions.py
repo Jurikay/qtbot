@@ -7,17 +7,19 @@ from app.init import val
 from binance.exceptions import BinanceAPIException
 # from requests.exceptions import InvalidHeader
 import app
-from app.callbacks import Worker
+from app.workers import Worker
 # from app.initApi import set_pair_values
+from binance.client import Client
 
 
 class ApiCalls:
     """Class containing api related methods."""
-    def __init__(self, mw, client):
+    def __init__(self, mw):
         self.mw = mw
-        # self.client = None
-        self.client = client
-        app.client = client
+
+        self.client = Client(val["api_key"], val["api_secret"], {"verify": True, "timeout": 61})
+
+        app.client = self.client
 
     def initialize(self):
 
@@ -36,7 +38,7 @@ class ApiCalls:
             # userMsg = dict()
             # accHoldings = dict()
 
-            self.mw.set_pair_values()
+            self.set_pair_values()
         except (BinanceAPIException, NameError) as e:
             print("API ERROR")
             print(str(e))
@@ -48,8 +50,16 @@ class ApiCalls:
     # def get_tether(client):
     #     tether_info = client.get_ticker(symbol="BTCUSDT")
     #     return tether_info
+    @staticmethod
+    def set_pair_values():
+        """Set various values based on the chosen pair."""
+        val["coin"] = val["pair"][:-3]
+        val["decimals"] = len(str(val["coins"][val["pair"]]["tickSize"])) - 2
 
-
+        if int(val["coins"][val["pair"]]["minTrade"]) == 1:
+            val["assetDecimals"] = 0
+        else:
+            val["assetDecimals"] = len(str(val["coins"][val["pair"]]["minTrade"])) - 2
 
 
     @classmethod
@@ -182,14 +192,6 @@ class ApiCalls:
         val["apiCalls"] += 1
 
 
-    def get_kline(self, pair, progress_callback):
-        """Make an API call to get historical data of a coin pair."""
-        interval = "1m"
-
-        klines = self.client.get_klines(symbol=pair, interval=interval)
-
-        progress_callback.emit([klines, pair, interval])
-        val["apiCalls"] += 1
 
 
     def api_all_orders(self, progress_callback):
@@ -208,7 +210,7 @@ class ApiCalls:
 
         worker = Worker(self.api_depth)
         worker.signals.progress.connect(self.mw.live_data.progress_fn)
-        worker.signals.finished.connect(self.t_complete)
+        worker.signals.finished.connect(self.mw.limit_pane.t_complete)
         self.mw.threadpool.start(worker)
 
         self.get_trade_history(val["pair"])
@@ -219,17 +221,11 @@ class ApiCalls:
         worker.signals.progress.connect(self.mw.history_table.orders_received)
         self.mw.threadpool.start(worker)
 
+    def get_kline(self, pair, progress_callback):
+        """Make an API call to get historical data of a coin pair."""
+        interval = "1m"
 
-    def t_complete(self):
-        # print("We don now")
-        self.mw.limit_buy_input.setValue(float(val["bids"][0][0]))
-        self.mw.limit_sell_input.setValue(float(val["asks"][0][0]))
-        value = self.mw.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), val["assetDecimals"])
-        self.mw.limit_buy_amount.setValue(value)
-
-        # print(val["accHoldings"][val["coin"]]["free"])
-        sell_percent = str(self.mw.limit_sell_slider.value())
-
-        sell_size = self.mw.limit_pane.round_sell_amount(sell_percent)
-
-        self.mw.limit_sell_amount.setValue(sell_size)
+        klines = self.client.get_klines(symbol=pair, interval=interval)
+        # progress_callback.emit([klines, pair, interval])
+        progress_callback.emit([klines, pair, interval])
+        val["apiCalls"] += 1
