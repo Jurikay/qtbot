@@ -21,7 +21,8 @@ class KlineManager():
     #     self.threadpool2 = QtCore.QThreadPool()
     #     self.threadpool = app.threadpool
 
-    @classmethod    
+
+    @classmethod
     def rec_func(self):
         print("CALLBACK WHOOP")
 

@@ -15,7 +15,7 @@ from app.workers import Worker
 # import app
 
 
-def directCallback(self, msg):
+def trade_callback(self, msg):
     val["globalList"].insert(0, {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]})
 
     if len(val["globalList"]) > 50:
@@ -33,7 +33,7 @@ def directCallback(self, msg):
     val["apiUpdates"] += 1
 
 
-def depthCallback(self, msg):
+def depth_callback(self, msg):
     old_bids = val["bids"]
     old_asks = val["asks"]
 
@@ -53,7 +53,7 @@ def depthCallback(self, msg):
     val["apiUpdates"] += 1
 
 
-def userCallback(self, msg):
+def user_callback(self, msg):
 
     # print("user callback")
     # print("####################")
@@ -117,7 +117,7 @@ def userCallback(self, msg):
         print(msg)
 
 
-def tickerCallback(self, msg):
+def ticker_callback(self, msg):
     val["apiUpdates"] += 1
     # print("TICKER:" + str(dt.datetime.now()))
     for _, value in enumerate(msg):
@@ -141,7 +141,7 @@ def tickerCallback(self, msg):
     #     f.write(str(msg))
 
 
-def klineCallback(self, msg):
+def kline_callback(self, msg):
     # print("kline msg:")
     # print(msg)
     pass

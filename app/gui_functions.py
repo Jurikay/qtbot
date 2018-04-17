@@ -10,63 +10,15 @@
 import PyQt5.QtCore as QtCore
 # from PyQt5.QtCore import QtCore.QSize, Qt, QtCore.QVariant
 # from PyQt5.QtGui import QColor, QFont, QIcon
-import PyQt5.QtWidgets as QtWidgets
+# import PyQt5.QtWidgets as QtWidgets
 
-from app.charts import Webpages as Webpages
+# from app.charts import Webpages as Webpages
 # from app.colors import Colors
 from app.init import val
 # from app.table_items import CoinDelegate
 # from app.workers import Worker
 # from app.callbacks import api_order_history
 
-
-def initial_values(self):
-    """Set various values needed for further tasks. Gets called when the pair
-    is changed."""
-    self.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
-    self.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
-
-    self.limit_buy_label.setText("<span style='font-weight: bold; font-size: 12px;'>Buy " + val["coin"] + "</span>")
-    self.limit_sell_label.setText("<span style='font-weight: bold; font-size: 12px;'>Sell " + val["coin"] + "</span>")
-
-    # self.limit_coin_label_buy.setText("<span style='font-weight: bold; color: white;'>" + val["coin"] + "</span>")
-    # self.limit_coin_label_sell.setText("<span style='font-weight: bold; color: white;'>" + val["coin"] + "</span>")
-
-    # self.limit_buy_input.setText("kernoschmaus")
-    self.limit_buy_input.setDecimals(val["decimals"])
-    self.limit_buy_input.setSingleStep(float(val["coins"][val["pair"]]["tickSize"]))
-
-    self.limit_sell_input.setDecimals(val["decimals"])
-    self.limit_sell_input.setSingleStep(float(val["coins"][val["pair"]]["tickSize"]))
-
-    self.limit_buy_amount.setDecimals(val["assetDecimals"])
-    self.limit_buy_amount.setSingleStep(float(val["coins"][val["pair"]]["minTrade"]))
-
-    self.limit_sell_amount.setDecimals(val["assetDecimals"])
-    self.limit_sell_amount.setSingleStep(float(val["coins"][val["pair"]]["minTrade"]))
-
-    self.buy_asset.setText(val["coin"])
-    self.sell_asset.setText(val["coin"])
-
-    self.chart.setHtml(Webpages.build_chart2(val["pair"], val["defaultTimeframe"]))
-    self.chart.show()
-
-    url = Webpages.build_cmc()
-    self.cmc_chart.load(QtCore.QUrl(url))
-
-    bids_header = self.bids_table.horizontalHeader()
-    asks_header = self.asks_table.horizontalHeader()
-    bids_header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-    bids_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-    bids_header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-
-    asks_header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-    asks_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
-    asks_header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-
-    trades_header = self.tradeTable.horizontalHeader()
-    trades_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
-    trades_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
 
 
 def global_filter(self, text):
@@ -211,11 +163,7 @@ def filter_confirmed(self):
                     return
 
 
-
-
-
-
-
+# global ui
 def calc_total_btc():
     total_btc_val = 0
     for holding in val["accHoldings"]:

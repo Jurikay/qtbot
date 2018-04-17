@@ -209,7 +209,7 @@ class ConfigManager:
         with open('stats.ini', 'w') as configfile:
                     config.write(configfile)
 
-    
+
     def set_stats(self):
         self.mw.total_running.setText(str(val["stats"]["timeRunning"]))
         self.mw.total_trades.setText(str(val["stats"]["execTrades"]))

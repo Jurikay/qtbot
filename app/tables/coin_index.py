@@ -179,8 +179,8 @@ class CoinIndex(QtWidgets.QTableWidget):
 
 
     # wip
-    @classmethod
-    def iterate_through_klines(self, progress_callback):
+    @staticmethod
+    def iterate_through_klines(progress_callback):
         """Iterate through the global klines dict and calculate values based on historical data."""
         for i, kline in enumerate(dict(val["klines"]["1m"])):
             coin = kline.replace("BTC", "")
@@ -246,7 +246,7 @@ class CoinIndex(QtWidgets.QTableWidget):
                     newItem.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_data))
                     self.setItem(row, colIndex, newItem)
 
-    @classmethod
+
     def klines_received(self, klines_pair):
         """Save kline data received from api call callback in array."""
         kline_data = klines_pair[0]

@@ -14,7 +14,7 @@ from functools import partial
 from binance.websockets import BinanceSocketManager
 
 import PyQt5.QtCore as QtCore
-import PyQt5.QtGui as QtGui
+# import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 from PyQt5.uic import loadUi
 from PyQt5.QtWebEngineWidgets import QWebEngineView
@@ -23,16 +23,16 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 
 from app.apiFunctions import ApiCalls
-from app.callbacks import (Worker,
-                           depthCallback, directCallback, tickerCallback,
-                           userCallback, klineCallback)
+from app.callbacks import (depth_callback, trade_callback, ticker_callback,
+                           user_callback, kline_callback)
 # api_order_history
 from app.charts import Webpages as Webpages
 from app.colors import Colors
 from app.gui_functions import (calc_total_btc,
-                               calc_wavg, initial_values, filter_table,
+                               calc_wavg, filter_table,
                                init_filter, calc_all_wavgs)
 # filter_coin_index, global_filter, filter_confirmed,
+from app.workers import Worker
 from app.init import val
 from app.strategies.fishing_bot import FishingBot
 # from app.strategies.limit_order import LimitOrder
@@ -41,6 +41,7 @@ from app.elements.config import ConfigManager
 from app.elements.hotkeys import HotKeys
 # from app.elements.kline_data import KlineManager
 from app.elements.test_class import TestKlasse
+from app.elements.init_manager import InitManager
 
 
 class beeserBot(QtWidgets.QMainWindow):
@@ -90,13 +91,17 @@ class beeserBot(QtWidgets.QMainWindow):
         self.test_klasse = TestKlasse(self)
         self.test_klasse.create_signal()
 
+        self.init_manager = InitManager(self)
+        # self.init_manager.initialize()
+
+
         # self.kline_manager = KlineManager(self)
         # self.kline_manager.start_kline_check()
         self.coin_index.start_kline_check()
 
-        set_modes(self)
+        self.init_manager.set_modes()
 
-        main_init(self)
+        self.init_manager.main_init()
 
         # initialize open orders table
         self.open_orders.initialize()
@@ -155,7 +160,7 @@ class beeserBot(QtWidgets.QMainWindow):
         if current_coin is not None:
             print("authenticated!")
 
-            self.initialize()
+            self.init_manager.api_init()
 
         # api credentials not valid; display welcome page
         else:
@@ -168,46 +173,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
 
-    # gui init
-    def initialize(self):
-        """One-time gui initialization."""
-        self.api_manager.api_calls()
-
-        for coin in val["coins"]:
-
-            icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
-            self.coin_selector.addItem(icon, coin[:-3])
-
-        self.coin_selector.model().sort(0)
-        self.coin_selector.setIconSize(QtCore.QSize(25, 25))
-
-        coinIndex = self.coin_selector.findText(val["coin"])
-        self.coin_selector.setCurrentIndex(coinIndex)
-
-        icon = QtGui.QIcon("images/ico/" + "BTC" + ".svg")
-        self.quote_asset_box.addItem(icon, "BTC")
-        self.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
-        self.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
-
-        initial_values(self)
-
-        self.schedule_websockets()
-        self.schedule_work()
-
-        self.holdings_table.initialize()
-
-        self.coin_index.build_coinindex()
-
-
-        # self.sound_1 = QSound('sounds/Tink.wav')
-        self.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", val["defaultTimeframe"], "COINBASE"))
-        self.btc_chart.show()
-
-
-        self.timer = QtCore.QTimer()
-        self.timer.setInterval(200)
-        self.timer.timeout.connect(self.delayed_stuff)
-        self.timer.start()
+    
 
     # refactor into tables, config etc
     def delayed_stuff(self):
@@ -279,36 +245,36 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
     # filter tables
-    def hide_other_pairs(self):
-        for row in range(self.open_orders.rowCount()):
-            self.open_orders.setRowHidden(row, True)
-        for row in range(self.holdings_table.rowCount()):
-            self.holdings_table.setRowHidden(row, True)
-        for row in range(self.coin_index.rowCount()):
-            self.coin_index.setRowHidden(row, True)
-        items = self.open_orders.findItems(str(val["coin"]), QtCore.Qt.MatchContains)
-        for item in items:
-            row = item.row()
-            self.open_orders.setRowHidden(row, False)
+    # def hide_other_pairs(self):
+    #     for row in range(self.open_orders.rowCount()):
+    #         self.open_orders.setRowHidden(row, True)
+    #     for row in range(self.holdings_table.rowCount()):
+    #         self.holdings_table.setRowHidden(row, True)
+    #     for row in range(self.coin_index.rowCount()):
+    #         self.coin_index.setRowHidden(row, True)
+    #     items = self.open_orders.findItems(str(val["coin"]), QtCore.Qt.MatchContains)
+    #     for item in items:
+    #         row = item.row()
+    #         self.open_orders.setRowHidden(row, False)
 
-        items = self.holdings_table.findItems(str(val["coin"]), QtCore.Qt.MatchContains)
-        for item in items:
-            row = item.row()
-            self.holdings_table.setRowHidden(row, False)
+    #     items = self.holdings_table.findItems(str(val["coin"]), QtCore.Qt.MatchContains)
+    #     for item in items:
+    #         row = item.row()
+    #         self.holdings_table.setRowHidden(row, False)
 
-        items = self.coin_index.findItems(str(val["coin"]), QtCore.Qt.MatchContains)
-        for item in items:
-            row = item.row()
-            self.coin_index.setRowHidden(row, False)
+    #     items = self.coin_index.findItems(str(val["coin"]), QtCore.Qt.MatchContains)
+    #     for item in items:
+    #         row = item.row()
+    #         self.coin_index.setRowHidden(row, False)
 
     # filter tables
-    def show_other_pairs(self):
-        for row in range(self.open_orders.rowCount()):
-            self.open_orders.setRowHidden(row, False)
-        for row in range(self.holdings_table.rowCount()):
-            self.holdings_table.setRowHidden(row, False)
-        for row in range(self.coin_index.rowCount()):
-            self.coin_index.setRowHidden(row, False)
+    # def show_other_pairs(self):
+    #     for row in range(self.open_orders.rowCount()):
+    #         self.open_orders.setRowHidden(row, False)
+    #     for row in range(self.holdings_table.rowCount()):
+    #         self.holdings_table.setRowHidden(row, False)
+    #     for row in range(self.coin_index.rowCount()):
+    #         self.coin_index.setRowHidden(row, False)
 
     # main gui
     def change_pair(self):
@@ -323,7 +289,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
             self.api_manager.set_pair_values()
 
-            initial_values(self)
+            self.init_manager.initial_values()
 
             self.websockets_symbol()
 
@@ -511,15 +477,15 @@ class beeserBot(QtWidgets.QMainWindow):
         val["bm"] = BinanceSocketManager(app.client)
         self.websockets_symbol()
         # start user and ticker websocket separately since it does not need to be restarted
-        val["userWebsocket"] = val["bm"].start_user_socket(partial(userCallback, self))
-        val["tickerWebsocket"] = val["bm"].start_ticker_socket(partial(tickerCallback, self))
+        val["userWebsocket"] = val["bm"].start_user_socket(partial(user_callback, self))
+        val["tickerWebsocket"] = val["bm"].start_ticker_socket(partial(ticker_callback, self))
         val["bm"].start()
 
     def websockets_symbol(self):
         """Symbol specific websockets. This gets called on pair change."""
-        val["aggtradeWebsocket"] = val["bm"].start_aggtrade_socket(val["pair"], partial(directCallback, self))
-        val["depthWebsocket"] = val["bm"].start_depth_socket(val["pair"], partial(depthCallback, self), depth=20)
-        val["klineWebsocket"] = val["bm"].start_kline_socket(val["pair"], partial(klineCallback, self))
+        val["aggtradeWebsocket"] = val["bm"].start_aggtrade_socket(val["pair"], partial(trade_callback, self))
+        val["depthWebsocket"] = val["bm"].start_depth_socket(val["pair"], partial(depth_callback, self), depth=20)
+        val["klineWebsocket"] = val["bm"].start_kline_socket(val["pair"], partial(kline_callback, self))
         # logging.info('Starting websockets for %s' % str(val["pair"]))
 
 
@@ -527,55 +493,6 @@ class beeserBot(QtWidgets.QMainWindow):
         self.cfg_manager.write_stats()
 
 #################################
-
-
-# gui init
-def set_modes(self):
-    if val["debug"] is False:
-        # self.tabsBotLeft.setTabEnabled(0, False)
-        self.tabsBotLeft.removeTab(0)
-        self.ChartTabs.removeTab(5)
-        self.ChartTabs.removeTab(4)
-        self.ChartTabs.removeTab(3)
-        self.ChartTabs.setTabEnabled(1, False)
-
-        self.tabsBotLeft.setCurrentIndex(0)
-        self.ChartTabs.setCurrentIndex(0)
-        self.bot_tabs.setCurrentIndex(0)
-    else:
-        logging.info("DEBUG mode enabled")
-
-
-def main_init(self):
-    """One time gui initialization."""
-    # set default locale
-    QtCore.QLocale.setDefault(QtCore.QLocale(QtCore.QLocale.C))
-
-    logging.info('Initializing GUI')
-
-    self.setWindowTitle("Juris beeser Bot")
-
-    self.setWindowIcon(QtGui.QIcon('images/assets/256.png'))
-
-    self.restart_warning.setStyleSheet("color: transparent;")
-    # self.spread_area.setStyleSheet("background: #2e363d;")
-
-    self.holdings_table.setStyleSheet("alternate-background-color: #2e363d;")
-
-    self.counter = 0
-    self.counter2 = 0
-
-    self.update_count = 0
-    self.no_updates = 0
-
-
-    for _ in range(20):
-        self.bids_table.insertRow(0)
-        self.asks_table.insertRow(0)
-        self.new_table.insertRow(0)
-
-    for _ in range(50):
-        self.tradeTable.insertRow(0)
 
 
 # logging

@@ -63,7 +63,7 @@ class FishingBot():
 
 
     def remove_order(self, bot):
-        print("selfmw: " + str(self.mw))
+        # print("selfmw: " + str(self.mw))
         row = bot.sender().property("row")
         for i in range(bot.fishbot_table.rowCount()):
             widget = bot.fishbot_table.cellWidget(i, 3)
