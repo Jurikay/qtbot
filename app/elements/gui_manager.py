@@ -1,7 +1,7 @@
 # from app.workers import Worker
 # import PyQt5.QtWidgets as QtWidgets
 # import PyQt5.QtGui as QtGui
-import PyQt5.QtCore as QtCore
+# import PyQt5.QtCore as QtCore
 from app.init import val
 from app.colors import Colors
 from datetime import timedelta
@@ -13,7 +13,6 @@ class GuiManager:
 
     def __init__(self, mw):
         self.mw = mw
-        self.threadpool = QtCore.QThreadPool()
         self.update_count = 0
         self.no_updates = 0
 
@@ -23,6 +22,8 @@ class GuiManager:
 
     # global ui
     def check_for_update(self, progress_callback):
+        """Check if main window height has changed. If so,
+        scroll asks to bottom."""
         current_height = self.mw.frameGeometry().height()
         while True:
             if current_height > self.mw.frameGeometry().height():
@@ -34,6 +35,7 @@ class GuiManager:
 
     # main gui
     def change_pair(self):
+        """Change the active pair and call symbol specific functions."""
         newcoin = self.mw.coin_selector.currentText()
 
         if any(newcoin + "BTC" in s for s in val["coins"]) and newcoin != val["coin"]:
@@ -56,7 +58,7 @@ class GuiManager:
             self.mw.init_filter()
 
 
-    # global ui
+    # refactor
     def tick(self, payload):
         if payload == 1:
             self.one_second_update()
@@ -68,6 +70,7 @@ class GuiManager:
 
     # global ui
     def one_second_update(self):
+        """Update some values every second."""
         self.mw.session_running.setText(str(timedelta(seconds=val["timeRunning"])))
         val["timeRunning"] += 1
 
@@ -118,8 +121,10 @@ class GuiManager:
         else:
             val["indexTabOpen"] = False
 
+
     # global ui / logic
     def check_websocket(self):
+        """Check if websocket updates stop occuring."""
         if self.update_count == int(val["apiUpdates"]):
             self.no_updates += 1
         else:
@@ -136,6 +141,7 @@ class GuiManager:
 
     # global ui
     def percent_changes(self):
+        """Calculate and display price change values."""
         try:
                 close_5m = float(val["klines"]["1m"][val["pair"]][-5][4])
                 close_15m = float(val["klines"]["1m"][val["pair"]][-15][4])
@@ -173,8 +179,10 @@ class GuiManager:
             print(str(e))
 
 
-    # global ui
-    def calc_total_btc(self):
+    @staticmethod
+    def calc_total_btc():
+        """Multiply holdings by their current price to get
+        the total account value."""
         total_btc_val = 0
         for holding in val["accHoldings"]:
             free = val["accHoldings"][holding]["free"]
