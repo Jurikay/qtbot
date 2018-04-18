@@ -127,7 +127,7 @@ class ApiCalls:
         for _, trade in enumerate(reversed(trades)):
             globalList.insert(0, {"price": str(trade["p"]), "quantity": str(trade["q"]), "maker": bool(trade["m"]), "time": str(trade["T"])})
 
-        return globalList
+        return list(reversed(globalList))
 
 
     @classmethod
