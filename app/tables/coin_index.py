@@ -21,10 +21,19 @@ class CoinIndex(QtWidgets.QTableWidget):
     """CoinIndex main class."""
 
     def __init__(self, parent=None):
-        super(QtWidgets.QTableWidget, self).__init__(parent)
+        super(CoinIndex, self).__init__(parent)
         self.mw = app.mw
         self.threadpool = QtCore.QThreadPool()
+        self.setIconSize(QtCore.QSize(25, 25))
+        # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        # self.horizontalHeader().resizeSections(QtWidgets.QHeaderView.ResizeToContents)
+        # self.horizontalHeader().resizeSection(0, 30)
+        # self.horizontalHeader().resizeSection(1, 300)
+        self.setColumnWidth(0, 30)
+        self.setColumnWidth(2, 120)
+        self.setColumnWidth(5, 130)
 
+        
 
     def filter_coin_index(self, text, state):
         for i in range(self.rowCount()):
@@ -51,11 +60,6 @@ class CoinIndex(QtWidgets.QTableWidget):
                 icon_item = QtWidgets.QTableWidgetItem()
                 icon_item.setIcon(icon)
 
-                # price_change = float(val["tickers"][pair]["priceChangePercent"])
-                # if price_change > 0:
-                #     operator = "+"
-                # else:
-                #     operator = ""
 
                 last_price = QtWidgets.QTableWidgetItem()
                 last_price.setData(QtCore.Qt.EditRole, QtCore.QVariant(val["tickers"][pair]["lastPrice"]))
@@ -90,13 +94,7 @@ class CoinIndex(QtWidgets.QTableWidget):
                 self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
                 self.setCellWidget(0, 5, self.btn_trade)
 
-        self.model().sort(5, QtCore.Qt.AscendingOrder)
-        self.setIconSize(QtCore.QSize(25, 25))
-        self.setIconSize(QtCore.QSize(25, 25))
-
-        self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
-        self.setColumnWidth(2, 120)
-        self.setColumnWidth(5, 130)
+                
         self.model().sort(4, QtCore.Qt.DescendingOrder)
 
 

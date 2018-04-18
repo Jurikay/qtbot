@@ -17,7 +17,7 @@ import PyQt5.QtCore as QtCore
 # import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 from PyQt5.uic import loadUi
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
 
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 
@@ -181,29 +181,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.tradeTable.setColumnWidth(0, 100)
         self.tradeTable.setColumnWidth(1, 75)
 
-        self.open_orders.setColumnWidth(0, 130)
-        self.open_orders.setColumnWidth(3, 120)
-        self.open_orders.setColumnWidth(7, 120)
-        self.open_orders.setColumnWidth(9, 120)
+        
         # self.open_orders.setColumnWidth(10, 0)
 
-        self.history_table.setColumnWidth(0, 130)
-        self.history_table.setColumnWidth(2, 75)
-        self.history_table.setColumnWidth(3, 75)
-        self.history_table.setColumnWidth(6, 120)
-
-        self.fishbot_table.setColumnWidth(0, 100)
-        self.fishbot_table.setColumnWidth(1, 60)
-        self.fishbot_table.setColumnWidth(2, 60)
-        self.fishbot_table.setColumnWidth(4, 100)
-        self.fishbot_table.setColumnWidth(5, 120)
-
-
-        orders_header = self.open_orders.horizontalHeader()
-
-        orders_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        orders_header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
-        orders_header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
 
         history_header = self.history_table.horizontalHeader()
         history_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)

@@ -5,7 +5,7 @@ import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
 from app.init import val
 from app.charts import Webpages
-
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
 
 class InitManager:
 
@@ -50,6 +50,7 @@ class InitManager:
         self.mw.sell_asset.setText(val["coin"])
 
         self.mw.chart.setHtml(Webpages.build_chart2(val["pair"], val["defaultTimeframe"]))
+        # self.mw.chart.backgroundColor(QtGui.QColor("#000000"))
         self.mw.chart.show()
 
         url = Webpages.build_cmc()

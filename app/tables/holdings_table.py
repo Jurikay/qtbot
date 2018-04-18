@@ -15,8 +15,10 @@ from app.init import val
 
 class HoldingsTable(QtWidgets.QTableWidget):
     def __init__(self, parent=None):
-        super(QtWidgets.QTableWidget, self).__init__(parent)
+        super(HoldingsTable, self).__init__(parent)
         self.mw = app.mw
+        self.setIconSize(QtCore.QSize(25, 25))
+
 
 
     def holding_updated(self):
@@ -146,7 +148,6 @@ class HoldingsTable(QtWidgets.QTableWidget):
             header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
             # header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
 
-            self.setIconSize(QtCore.QSize(25, 25))
 
 
     def check_add_to_holdings(self, order):
@@ -162,6 +163,7 @@ class HoldingsTable(QtWidgets.QTableWidget):
         # check if the symbol of the order is in the holdings table
         if not any(symbol in s for s in holdings):
             # if not, rebuild holdings table
+            print("rebuilde holdigns table!!")
             self.build_holdings()
 
 
@@ -170,6 +172,7 @@ class HoldingsTable(QtWidgets.QTableWidget):
         self.setColumnWidth(0, 150)
         self.setColumnWidth(1, 75)
         self.setColumnWidth(7, 120)
+        self.setIconSize(QtCore.QSize(25, 25))
 
 
     def gotoTradeButtonClicked(self):

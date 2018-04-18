@@ -21,8 +21,21 @@ from app.callbacks import Worker
 
 class OpenOrdersTable(QtWidgets.QTableWidget):
     def __init__(self, parent=None):
-        super(QtWidgets.QTableWidget, self).__init__(parent)
+        super(OpenOrdersTable, self).__init__(parent)
         self.mw = app.mw
+        self.setIconSize(QtCore.QSize(25, 25))
+
+        self.setColumnWidth(0, 130)
+        self.setColumnWidth(3, 120)
+        self.setColumnWidth(7, 120)
+        self.setColumnWidth(9, 120)
+
+        orders_header = self.horizontalHeader()
+        orders_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        orders_header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        orders_header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
+
+
 
     def mouseDoubleClickEvent(self, event):
         print("CLICK")
@@ -58,7 +71,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         qty = '{number:.{digits}f}'.format(number=float(order["origQty"]), digits=val["assetDecimals"]) + " " + coin
         self.mw.open_orders.setItem(0, 7, QtWidgets.QTableWidgetItem(qty))
 
-        filled_percent = '{number:.{digits}f}'.format(number=float(order["executedQty"]) / float(order["origQty"]), digits=2) + "%"
+        filled_percent = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float(order["origQty"]) * 100), digits=2) + "%"
 
         self.mw.open_orders.setItem(0, 8, QtWidgets.QTableWidgetItem(filled_percent))
 

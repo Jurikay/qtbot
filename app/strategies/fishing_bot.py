@@ -16,6 +16,12 @@ class FishingBot():
         FishingBot.gui = gui
         self.mw = gui
 
+        self.mw.fishbot_table.setColumnWidth(0, 100)
+        self.mw.fishbot_table.setColumnWidth(1, 60)
+        self.mw.fishbot_table.setColumnWidth(2, 60)
+        self.mw.fishbot_table.setColumnWidth(4, 100)
+        self.mw.fishbot_table.setColumnWidth(5, 120)
+
     @classmethod
     def add_order(self, arg2):
         """Ad a new order to the fishing bot table."""

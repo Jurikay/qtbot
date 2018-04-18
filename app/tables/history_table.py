@@ -4,7 +4,7 @@
 # made by Jirrik
 
 import PyQt5.QtWidgets as QtWidgets
-# import PyQt5.QtCore as QtCore
+import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
 from datetime import datetime
 import app
@@ -19,8 +19,14 @@ class HistoryTable(QtWidgets.QTableWidget):
     """CoinIndex main class."""
 
     def __init__(self, parent=None):
-        super(QtWidgets.QTableWidget, self).__init__(parent)
+        super(HistoryTable, self).__init__(parent)
         self.mw = app.mw
+        self.setIconSize(QtCore.QSize(25, 25))
+
+        self.setColumnWidth(0, 130)
+        self.setColumnWidth(2, 75)
+        self.setColumnWidth(3, 75)
+        self.setColumnWidth(6, 120)
 
     def add_to_history(self, order):
         # print("add to history")
@@ -70,6 +76,8 @@ class HistoryTable(QtWidgets.QTableWidget):
         for _, order in enumerate(orders):
 
             # if add order to history if it was completely filled or canceled but partially filled.
-            if order["status"] == "FILLED" or order["status"] == "CANCELED":
+            if order["status"] == "FILLED" or order["status"] == "CANCELED" or order["status"] == "PARTIALLY_FILLED":
                 if float(order["executedQty"]) > 0:
                     self.add_to_history(order)
+            else:
+                print(str(order))

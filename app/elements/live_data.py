@@ -16,8 +16,10 @@ from app.colors import Colors
 class LiveData(QtWidgets.QWidget):
     """Widget containing other widgets to display live websocket data."""
     def __init__(self, parent=None):
-        super(QtWidgets.QWidget, self).__init__(parent)
+        super(LiveData, self).__init__(parent)
         self.mw = app.mw
+
+        
 
 
 
