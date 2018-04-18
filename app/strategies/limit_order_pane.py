@@ -5,7 +5,7 @@ from functools import partial
 import logging
 import app
 from app.init import val
-from app.callbacks import Worker
+from app.workers import Worker
 
 
 class LimitOrderPane(QtWidgets.QWidget):
@@ -21,7 +21,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         buy_percent_val = str(self.mw.limit_buy_slider.value())
         self.mw.buy_slider_label.setText(buy_percent_val + "%")
 
-        buy_value = self.mw.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(buy_percent_val), val["assetDecimals"])
+        buy_value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(buy_percent_val), val["assetDecimals"])
         self.mw.limit_buy_amount.setValue(float(buy_value))
         order_cost = float(buy_value) * float(self.mw.limit_buy_input.value())
         self.mw.limit_buy_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC")
@@ -42,7 +42,7 @@ class LimitOrderPane(QtWidgets.QWidget):
     def limit_percentage(self):
         button_number = int(self.mw.sender().objectName()[-1:])
 
-        value = self.mw.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(val["buttonPercentage"][button_number]), val["assetDecimals"])
+        value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(val["buttonPercentage"][button_number]), val["assetDecimals"])
 
         self.mw.limit_buy_amount.setValue(float(value))
 
@@ -246,7 +246,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         # print("We don now")
         self.mw.limit_buy_input.setValue(float(val["bids"][0][0]))
         self.mw.limit_sell_input.setValue(float(val["asks"][0][0]))
-        value = self.mw.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), val["assetDecimals"])
+        value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), val["assetDecimals"])
         self.mw.limit_buy_amount.setValue(value)
 
         # print(val["accHoldings"][val["coin"]]["free"])
@@ -255,3 +255,20 @@ class LimitOrderPane(QtWidgets.QWidget):
         sell_size = self.mw.limit_pane.round_sell_amount(sell_percent)
 
         self.mw.limit_sell_amount.setValue(sell_size)
+
+
+    @staticmethod
+    def percentage_amount(total_btc, price, percentage, decimals):
+        """Calculate the buy/sell amount based on price and percentage value."""
+        try:
+            maxSize = (float(total_btc) / float(price)) * (percentage / 100)
+        except ZeroDivisionError:
+            maxSize = 0
+
+
+        if decimals == 0:
+            return int(maxSize)
+
+
+        maxSizeRounded = int(maxSize * 10**decimals) / 10.0**decimals
+        return maxSizeRounded

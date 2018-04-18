@@ -19,10 +19,6 @@ class LiveData(QtWidgets.QWidget):
         super(LiveData, self).__init__(parent)
         self.mw = app.mw
 
-        
-
-
-
     # live data
     def progress_history(self, trade):
         self.mw.tradeTable.insertRow(0)

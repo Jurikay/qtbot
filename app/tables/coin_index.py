@@ -33,7 +33,6 @@ class CoinIndex(QtWidgets.QTableWidget):
         self.setColumnWidth(2, 120)
         self.setColumnWidth(5, 130)
 
-        
 
     def filter_coin_index(self, text, state):
         for i in range(self.rowCount()):
@@ -94,7 +93,6 @@ class CoinIndex(QtWidgets.QTableWidget):
                 self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
                 self.setCellWidget(0, 5, self.btn_trade)
 
-                
         self.model().sort(4, QtCore.Qt.DescendingOrder)
 
 

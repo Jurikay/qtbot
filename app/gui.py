@@ -11,21 +11,17 @@ import logging
 
 # from datetime import timedelta
 from functools import partial
-from binance.websockets import BinanceSocketManager
 
 import PyQt5.QtCore as QtCore
 # import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 from PyQt5.uic import loadUi
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
+from PyQt5.QtWebEngineWidgets import QWebEngineView  # QWebEnginePage
 
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 
 
 from app.apiFunctions import ApiCalls
-from app.callbacks import (depth_callback, trade_callback, ticker_callback,
-                           user_callback, kline_callback)
-# api_order_history
 from app.charts import Webpages as Webpages
 # from app.colors import Colors
 from app.gui_functions import (calc_wavg, calc_all_wavgs)
@@ -43,6 +39,7 @@ from app.elements.init_manager import InitManager
 from app.elements.custom_logger import BotLogger
 from app.elements.gui_manager import GuiManager
 from app.gui_functions import TableFilters
+from app.elements.websocket_manager import WebsocketManager
 
 
 class beeserBot(QtWidgets.QMainWindow):
@@ -55,33 +52,83 @@ class beeserBot(QtWidgets.QMainWindow):
 
         super(beeserBot, self).__init__()
 
-        app.mw = self
         self.client = app.client
+        self.threadpool = QtCore.QThreadPool()
+        app.threadpool = self.threadpool
+        app.mw = self
+
+        # load QtDesigner UI file
         loadUi("ui/MainWindow.ui", self)
 
         # set external stylesheet
         with open("ui/style.qss", "r") as fh:
             self.setStyleSheet(fh.read())
 
-        self.update_count = 0
-        self.no_updates = 0
-
-
-        # INIT THREADING
-        self.threadpool = QtCore.QThreadPool()
-        app.threadpool = self.threadpool
-        logging.info('Enable multithreading with %d threads.' % self.threadpool.maxThreadCount())
-
-
         # instantiate various helper classes
+        self.instantiate_managers()
 
+        # self.kline_manager = KlineManager(self)
+        # self.kline_manager.start_kline_check()
+        self.coin_index.start_kline_check()
+
+
+
+        # initialize open orders table
+        self.open_orders.initialize()
+
+        # initialize limit order signals and slots
+        self.limit_pane.initialize()
+
+
+        # belongs into filters class
+        self.tabsBotLeft.setCornerWidget(self.coin_index_filter, corner=QtCore.Qt.TopRightCorner)
+        # filter
+        self.hide_pairs.stateChanged.connect(self.filter_manager.init_filter)
+        self.coinindex_filter.textChanged.connect(self.filter_manager.init_filter)
+
+        # connect elements to functions
+
+        self.debug2_button.clicked.connect(self.limit_pane.test_func)
+        self.coin_selector.activated.connect(self.gui_manager.change_pair)
+        self.hide_pairs.stateChanged.connect(partial(self.filter_manager.filter_table, self.coinindex_filter.text(), self.hide_pairs.checkState()))
+
+        # debug
+        self.wavg_button.clicked.connect(calc_wavg)
+        self.calc_all_wavg_button.clicked.connect(partial(calc_all_wavgs, self))
+
+        self.button_wavg.clicked.connect(calc_wavg)
+
+        # connect buttons to fishing bot methods (refactor)
+        self.fish_add_trade.clicked.connect(self.fish_bot.add_order)
+
+        self.fish_clear_all.clicked.connect(partial(self.fish_bot.clear_all_orders, self))
+
+        # Fix a linter error...
+        self.chartLOL = QWebEngineView()
+
+
+        # check if coin is an empty dict. If yes, api calls have not been answered.
+        # TODO: refactor move into init manager
+        current_coin = val.get("coin", None)
+        if current_coin is not None:
+            print("authenticated!")
+
+            self.init_manager.api_init()
+
+        # api credentials not valid; display welcome page
+        else:
+            self.show_error_page()
+
+
+    def instantiate_managers(self):
         self.log_manager = BotLogger(self)
         self.log_manager.init_logging()
-
 
         self.cfg_manager = ConfigManager(self)
         # self.cfg.connect_cfg()
         self.cfg_manager.read_config()
+
+        self.websocket_manager = WebsocketManager(self)
 
         self.api_manager = ApiCalls(self)
         self.api_manager.initialize()
@@ -104,64 +151,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.filter_manager = TableFilters(self)
         self.filter_manager.init_filter()
 
-        # self.kline_manager = KlineManager(self)
-        # self.kline_manager.start_kline_check()
-        self.coin_index.start_kline_check()
-
-
-
-        # initialize open orders table
-        self.open_orders.initialize()
-
-        # initialize limit order signals and slots
-        self.limit_pane.initialize()
-
-
-        # connect elements to functions
-
-        self.debug2_button.clicked.connect(self.limit_pane.test_func)
-        self.coin_selector.activated.connect(self.gui_manager.change_pair)
-        self.hide_pairs.stateChanged.connect(partial(self.filter_manager.filter_table, self.coinindex_filter.text(), self.hide_pairs.checkState()))
-        self.tabsBotLeft.setCornerWidget(self.coin_index_filter, corner=QtCore.Qt.TopRightCorner)
-
-        # debug
-        self.wavg_button.clicked.connect(calc_wavg)
-        self.calc_all_wavg_button.clicked.connect(partial(calc_all_wavgs, self))
-
-        self.button_wavg.clicked.connect(calc_wavg)
-
-        # connect buttons to fishing bot methods (refactor)
-        self.fish_add_trade.clicked.connect(self.fish_bot.add_order)
-
-        self.fish_clear_all.clicked.connect(partial(self.fish_bot.clear_all_orders, self))
-
-
-        # filter
-        self.hide_pairs.stateChanged.connect(self.filter_manager.init_filter)
-        self.coinindex_filter.textChanged.connect(self.filter_manager.init_filter)
-
-        # change corner widget bottom left tabs
-        # self.tabsBotLeft.currentChanged.connect(self.set_corner_widget)
-
-        # self.get_all_orders_button.clicked.connect(self.get_all_orders)
-
-        # Fix a linter error...
-        self.chartLOL = QWebEngineView()
-
-
-        # check if coin is an empty dict. If yes, api calls have not been answered.
-        # TODO: refactor
-        current_coin = val.get("coin", None)
-        if current_coin is not None:
-            print("authenticated!")
-
-            self.init_manager.api_init()
-
-        # api credentials not valid; display welcome page
-        else:
-            self.show_error_page()
-
-
+    # refactor: move; global ui
     def show_error_page(self):
         self.chart.setHtml(Webpages.welcome_page())
         self.chart.show()
@@ -181,19 +171,13 @@ class beeserBot(QtWidgets.QMainWindow):
         self.tradeTable.setColumnWidth(0, 100)
         self.tradeTable.setColumnWidth(1, 75)
 
-        
+
         # self.open_orders.setColumnWidth(10, 0)
 
 
         history_header = self.history_table.horizontalHeader()
         history_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        # self.check_buy_amount()
-        # self.check_sell_ammount()
 
-        # val["sound_1"] = QSoundEffect()
-        # val["sound_1"].setSource(QtCore.QUrl.fromLocalFile("sounds/Tink.wav"))
-        # val["sound_1"].setVolume(1)
-        print("scroll")
 
         self.asks_table.scrollToBottom()
 
@@ -218,54 +202,12 @@ class beeserBot(QtWidgets.QMainWindow):
         return maxSizeRounded
 
 
-    # global ui
-    def schedule_work(self):
-
-        # Pass the function to execute
-        worker = Worker(self.gui_manager.check_for_update)
-
-        # Any other args, kwargs are passed to the run function
-        # worker.signals.result.connect(self.print_output)
-        worker.signals.progress.connect(self.gui_manager.tick)
-
-        # start thread
-        self.threadpool.start(worker)
-
-    # websockets
-    def schedule_websockets(self):
-        # Pass the function to execute
-        worker = Worker(self.start_sockets)
-
-        worker.signals.progress.connect(self.live_data.progress_fn)
-
-        # Execute
-        self.threadpool.start(worker)
-
-
-
-
     # cancel an order from a separate thread
     def cancel_order_byId(self, order_id, symbol):
         worker = Worker(partial(self.api_manager.api_cancel_order, app.client, order_id, symbol))
         # worker.signals.progress.connect(self.cancel_callback)
         self.threadpool.start(worker)
 
-
-    # sockets
-    def start_sockets(self, progress_callback):
-        val["bm"] = BinanceSocketManager(app.client)
-        self.websockets_symbol()
-        # start user and ticker websocket separately since it does not need to be restarted
-        val["userWebsocket"] = val["bm"].start_user_socket(partial(user_callback, self))
-        val["tickerWebsocket"] = val["bm"].start_ticker_socket(partial(ticker_callback, self))
-        val["bm"].start()
-
-    def websockets_symbol(self):
-        """Symbol specific websockets. This gets called on pair change."""
-        val["aggtradeWebsocket"] = val["bm"].start_aggtrade_socket(val["pair"], partial(trade_callback, self))
-        val["depthWebsocket"] = val["bm"].start_depth_socket(val["pair"], partial(depth_callback, self), depth=20)
-        val["klineWebsocket"] = val["bm"].start_kline_socket(val["pair"], partial(kline_callback, self))
-        # logging.info('Starting websockets for %s' % str(val["pair"]))
 
 
     def shutdown_bot(self):

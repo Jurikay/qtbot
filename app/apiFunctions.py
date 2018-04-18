@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # made by Jirrik
+
 from functools import partial
 from app.init import val
 from binance.exceptions import BinanceAPIException
@@ -13,7 +14,7 @@ from binance.client import Client
 
 
 class ApiCalls:
-    """Class containing api related methods."""
+    """Collection of api related methods."""
     def __init__(self, mw):
         self.mw = mw
 

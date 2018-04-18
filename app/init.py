@@ -10,6 +10,16 @@ from collections import defaultdict
 import locale
 import argparse
 
+
+def init_argparser():
+    # parse arguments (debug, verbose)
+    parser = argparse.ArgumentParser(description='Description of your program')
+    parser.add_argument('-d', '--debug', help='Enable debug mode', required=False, action='store_true')
+    parser.add_argument('-v', '--verbose', help='Enable verbose mode', required=False, action='store_true')
+    args = vars(parser.parse_args())
+    return args
+
+
 # questionable if needed. Same as PyQt QLocale
 locale.setlocale(locale.LC_ALL, 'C')
 
@@ -19,12 +29,7 @@ locale.setlocale(locale.LC_ALL, 'C')
 val = defaultdict(dict)
 
 
-# parse arguments (debug, verbose)
-parser = argparse.ArgumentParser(description='Description of your program')
-parser.add_argument('-d', '--debug', help='Enable debug mode', required=False, action='store_true')
-parser.add_argument('-v', '--verbose', help='Enable verbose mode', required=False, action='store_true')
-args = vars(parser.parse_args())
-
+args = init_argparser()
 
 # set debug / verbose flags
 if args['debug'] is True:

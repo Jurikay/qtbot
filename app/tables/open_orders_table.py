@@ -9,12 +9,13 @@ import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
 
+from functools import partial
 from datetime import datetime
 from app.init import val
 from app.colors import Colors
 import app
 import logging
-from app.callbacks import Worker
+from app.workers import Worker
 # from app.apiFunctions import ApiCalls
 # from functools import partial
 
@@ -23,6 +24,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
     def __init__(self, parent=None):
         super(OpenOrdersTable, self).__init__(parent)
         self.mw = app.mw
+        self.threadpool = QtCore.QThreadPool()
         self.setIconSize(QtCore.QSize(25, 25))
 
         self.setColumnWidth(0, 130)
@@ -153,7 +155,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
             order_id = str(self.item(row, 10).text())
             pair = str(self.item(row, 2).text())
 
-            self.mw.cancel_order_byId(order_id, pair)
+            self.cancel_order_byId(order_id, pair)
 
 
     def initialize(self):
@@ -173,3 +175,8 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         self.mw.coin_selector.setCurrentIndex(coinIndex)
 
         self.mw.gui_manager.change_pair()
+
+    def cancel_order_byId(self, order_id, symbol):
+        worker = Worker(partial(self.mw.api_manager.api_cancel_order, app.client, order_id, symbol))
+        # worker.signals.progress.connect(self.cancel_callback)
+        self.threadpool.start(worker)

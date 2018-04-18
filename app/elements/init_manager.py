@@ -5,7 +5,8 @@ import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
 from app.init import val
 from app.charts import Webpages
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
+# from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
+
 
 class InitManager:
 
@@ -142,8 +143,8 @@ class InitManager:
         self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
 
 
-        self.mw.schedule_websockets()
-        self.mw.schedule_work()
+        self.mw.websocket_manager.schedule_websockets()
+        self.mw.gui_manager.schedule_work()
 
         self.mw.holdings_table.initialize()
 

@@ -1,12 +1,13 @@
 # from app.workers import Worker
 # import PyQt5.QtWidgets as QtWidgets
 # import PyQt5.QtGui as QtGui
-# import PyQt5.QtCore as QtCore
+import PyQt5.QtCore as QtCore
 from app.init import val
 from app.colors import Colors
 from datetime import timedelta
 import time
 from app.gui import logging
+from app.workers import Worker
 
 
 class GuiManager:
@@ -15,6 +16,8 @@ class GuiManager:
         self.mw = mw
         self.update_count = 0
         self.no_updates = 0
+        self.threadpool = QtCore.QThreadPool()
+
 
 
     def initialize(self):
@@ -49,7 +52,7 @@ class GuiManager:
 
             self.mw.init_manager.initial_values()
 
-            self.mw.websockets_symbol()
+            self.mw.websocket_manager.websockets_symbol()
 
             self.mw.history_table.setRowCount(0)
 
@@ -201,3 +204,16 @@ class GuiManager:
         total_formatted = '{number:.{digits}f}'.format(number=float(total_btc_val), digits=8) + " BTC"
         # print("total: " + total_formatted)
         return total_formatted
+
+    # global ui
+    def schedule_work(self):
+
+        # Pass the function to execute
+        worker = Worker(self.check_for_update)
+
+        # Any other args, kwargs are passed to the run function
+        # worker.signals.result.connect(self.print_output)
+        worker.signals.progress.connect(self.tick)
+
+        # start thread
+        self.threadpool.start(worker)
