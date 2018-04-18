@@ -202,18 +202,18 @@ class WebsocketManager:
         pass
 
 
-
-    def socket_history(self, history, progress_callback):
+    @staticmethod
+    def socket_history(history, progress_callback):
         progress_callback.emit(history)
 
-
-    def socket_orderbook(self, depth, progress_callback):
+    @staticmethod
+    def socket_orderbook(depth, progress_callback):
         progress_callback.emit(depth)
 
-
-    def socket_order(self, order, progress_callback):
+    @staticmethod
+    def socket_order(order, progress_callback):
         progress_callback.emit(order)
 
-
-    def socket_update_holdings(self, progress_callback):
+    @staticmethod
+    def socket_update_holdings(progress_callback):
         progress_callback.emit("update")
