@@ -18,6 +18,8 @@ class LiveData(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(LiveData, self).__init__(parent)
         self.mw = app.mw
+        self.history_progressed = False
+
 
     # live data
     def progress_history(self, trade):
@@ -48,7 +50,7 @@ class LiveData(QtWidgets.QWidget):
 
         # # set last price, color and arrow
         #
-        try:
+        if self.history_progressed is True:
             if float(self.mw.tradeTable.item(0, 0).text()) > float(self.mw.tradeTable.item(1, 0).text()):
                 arrow = QtGui.QPixmap("images/assets/2arrow_up.png")
                 color = Colors.color_green
@@ -67,8 +69,7 @@ class LiveData(QtWidgets.QWidget):
             usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
 
             self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
-        except AttributeError:
-            pass
+
 
         if self.mw.tradeTable.rowCount() >= 50:
             self.mw.tradeTable.removeRow(50)
@@ -115,31 +116,23 @@ class LiveData(QtWidgets.QWidget):
 
 
     # Draw UI changes (bids, asks, history)
-    def progress_fn(self, payload):
+    def batch_orderbook(self, payload):
         # logging.info("progress FN")
+            asks = payload.get("asks", "")
+            bids = payload.get("bids", "")
 
-        try:
-            asks = payload["asks"]
             if len(asks) == 20:
                 for _ in enumerate(asks):
                     self.progress_asks(asks)
 
-        except (TypeError, KeyError):
-            pass
-
-        try:
-            bids = payload["bids"]
             if len(bids) == 20:
                 for _ in enumerate(bids):
                     self.progress_bids(bids)
 
-        except (TypeError, KeyError):
-            pass
 
-        try:
-            history = payload["history"]
-            for trade in enumerate(history):
-                self.progress_history(trade[1])
-
-        except (TypeError, KeyError, ValueError):
-            pass
+    def batch_history(self, payload):
+        history = payload.get("history", "")
+        # if len(list(history)) > 10:
+        for trade in enumerate(history):
+            self.progress_history(trade[1])
+        self.history_progressed = True

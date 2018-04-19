@@ -20,7 +20,6 @@ class TableFilters:
         self.mw.cancel_all.clicked.connect(self.mw.open_orders.cancel_all_orders)
 
     def init_filter(self):
-        print("init filter")
         text = self.mw.coinindex_filter.text()
         state = self.mw.hide_pairs.checkState()
 
@@ -30,7 +29,6 @@ class TableFilters:
 
         # reset filter
         if state == 0 and text == "":
-            print("UNHIDE ALL")
             for i in range(self.mw.holdings_table.rowCount()):
                 self.mw.holdings_table.setRowHidden(i, False)
             for i in range(self.mw.open_orders.rowCount()):
@@ -38,11 +36,10 @@ class TableFilters:
             for i in range(self.mw.coin_index.rowCount()):
                 self.mw.coin_index.setRowHidden(i, False)
                 self.mw.coin_index.update()
-                print("unhide: " + str(i))
 
 
     def filter_table(self, text, state):
-        print("filter table")
+        # print("filter table")
         # print("filter table state: " + str(state))
         # tabIndex = self.mw.tabsBotLeft.currentIndex()
         # if tabIndex == 0:

@@ -142,10 +142,11 @@ class GuiManager:
         else:
             self.mw.status_label.setText("<span style='color:" + Colors.color_green + "'>connected</span>")
 
-    # global ui
+    # global ui # todo: refactor
     def percent_changes(self):
         """Calculate and display price change values."""
         try:
+                # close_t = float(val["klines"]["1m"].get(val["pair"], {})[-5][4])
                 close_5m = float(val["klines"]["1m"][val["pair"]][-5][4])
                 close_15m = float(val["klines"]["1m"][val["pair"]][-15][4])
                 # close_30m = float(val["klines"]["1m"][val["pair"]][-30][4])

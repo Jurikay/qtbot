@@ -1,3 +1,8 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
 from PyQt5.QtWebEngineWidgets import (QWebEngineView, QWebEnginePage,
                                       QWebEngineScript)
 

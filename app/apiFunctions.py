@@ -207,11 +207,11 @@ class ApiCalls:
     def api_calls(self):
         """Inital and coin specific api calls"""
         worker = Worker(self.api_history)
-        worker.signals.progress.connect(self.mw.live_data.progress_fn)
+        worker.signals.progress.connect(self.mw.live_data.batch_history)
         self.mw.threadpool.start(worker)
 
         worker = Worker(self.api_depth)
-        worker.signals.progress.connect(self.mw.live_data.progress_fn)
+        worker.signals.progress.connect(self.mw.live_data.batch_orderbook)
         worker.signals.finished.connect(self.mw.limit_pane.t_complete)
         self.mw.threadpool.start(worker)
 

@@ -41,7 +41,7 @@ class WebsocketManager:
         # Pass the function to execute
         worker = Worker(self.start_sockets)
 
-        worker.signals.progress.connect(self.mw.live_data.progress_fn)
+        # worker.signals.progress.connect(self.mw.live_data.progress_fn)
 
         # Execute
         self.threadpool.start(worker)
