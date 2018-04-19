@@ -177,6 +177,7 @@ class CoinIndex(QtWidgets.QTableWidget):
 
             time.sleep(longSleep)
 
+
     def klines_received(self, klines_pair):
         """Save kline data received from api call callback in array."""
         kline_data = klines_pair[0]
@@ -184,6 +185,8 @@ class CoinIndex(QtWidgets.QTableWidget):
         timeframe = klines_pair[2]
 
         val["klines"][timeframe][str(pair)] = kline_data
+        self.kline_data = kline_data
+
 
     def start_kline_iterator(self):
         worker = Worker(self.iterate_through_klines)

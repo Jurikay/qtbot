@@ -174,7 +174,8 @@ class WebsocketManager:
             print(msg)
 
 
-    def ticker_callback(self, msg):
+    @staticmethod
+    def ticker_callback(msg):
         val["apiUpdates"] += 1
         # print("TICKER:" + str(dt.datetime.now()))
         for _, value in enumerate(msg):
