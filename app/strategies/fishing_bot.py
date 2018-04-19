@@ -2,36 +2,33 @@
 # -*- coding: utf-8 -*-
 
 # made by Jirrik
+
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 from app.init import val
-from functools import partial
+# from functools import partial
 import app
 # import time
 
 
-class FishingBot():
+class FishingBot(QtWidgets.QTableWidget):
+
     """Class containing fishing bot methods."""
-    def __init__(self, gui):
-        FishingBot.gui = gui
-        self.mw = gui
 
-        self.mw.fishbot_table.setColumnWidth(0, 100)
-        self.mw.fishbot_table.setColumnWidth(1, 60)
-        self.mw.fishbot_table.setColumnWidth(2, 60)
-        self.mw.fishbot_table.setColumnWidth(4, 100)
-        self.mw.fishbot_table.setColumnWidth(5, 120)
+    def __init__(self, parent=None):
+        super(FishingBot, self).__init__(parent)
 
-    @classmethod
+        self.mw = app.mw
+
+
+
+
     def add_order(self, arg2):
         """Ad a new order to the fishing bot table."""
         # print("adde order")
         print(str(self) + " " + str(arg2))
-        gui = FishingBot.gui
 
         coin_combo_box = QtWidgets.QComboBox()
-
-
 
         for coin in val["coins"]:
             icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
@@ -46,61 +43,71 @@ class FishingBot():
         side_combo_box.addItem("Buy")
         side_combo_box.addItem("Sell")
 
-        row_count = gui.fishbot_table.rowCount()
+        row_count = self.rowCount()
 
-        gui.fishbot_table.insertRow(row_count)
-        gui.fishbot_table.setCellWidget(row_count, 0, coin_combo_box)
-        gui.fishbot_table.setCellWidget(row_count, 1, side_combo_box)
+        self.insertRow(row_count)
+        self.setCellWidget(row_count, 0, coin_combo_box)
+        self.setCellWidget(row_count, 1, side_combo_box)
 
         cancel_button = QtWidgets.QPushButton("cancel")
         # cancel_button.setProperty("row", row_count)
-        cancel_button.clicked.connect(partial(self.remove_order, gui))
-        gui.fishbot_table.setCellWidget(row_count, 3, cancel_button)
+        cancel_button.clicked.connect(self.remove_order)
+        self.setCellWidget(row_count, 3, cancel_button)
 
-        gui.fishbot_table.setItem(row_count, 2, QtWidgets.QTableWidgetItem(str(row_count)))
-        self.set_properties(gui)
+        self.setItem(row_count, 2, QtWidgets.QTableWidgetItem(str(row_count)))
+        
+        self.set_properties()
 
-    @staticmethod
-    def set_properties(bot):
-        for i in range(bot.fishbot_table.rowCount()):
-            widget = bot.fishbot_table.cellWidget(i, 3)
+
+    def set_properties(self):
+        for i in range(self.rowCount()):
+            widget = self.cellWidget(i, 3)
             widget.setProperty("row", i)
-            bot.fishbot_table.setItem(i, 2, QtWidgets.QTableWidgetItem(str(i)))
+            self.setItem(i, 2, QtWidgets.QTableWidgetItem(str(i)))
 
 
-    def remove_order(self, bot):
+    def remove_order(self):
         # print("selfmw: " + str(self.mw))
-        row = bot.sender().property("row")
-        for i in range(bot.fishbot_table.rowCount()):
-            widget = bot.fishbot_table.cellWidget(i, 3)
+        row = self.mw.sender().property("row")
+        for i in range(self.rowCount()):
+            widget = self.cellWidget(i, 3)
             try:
                 if widget.property("row") == row:
-                    bot.fishbot_table.removeRow(i)
+                    self.removeRow(i)
             except Exception as e:
                 print(str(e))
-        self.set_properties(bot)
+        self.set_properties()
 
-    @staticmethod
+
     def clear_all_orders(self):
         print(str(app.mw))
-        row_count = self.fishbot_table.rowCount()
-        print("clearing %i rows." % int(self.fishbot_table.rowCount()))
+        row_count = self.rowCount()
+        print("clearing %i rows." % int(self.rowCount()))
         for i in reversed(range(row_count)):
             print(str(i))
-            self.fishbot_table.removeRow(i)
+            self.removeRow(i)
 
-    @staticmethod
+
     def update_table(self):
-        for _ in range(self.fishbot_table.rowCount()):
+        for _ in range(self.rowCount()):
             # set current price from val tickers
             pass
 
-    @staticmethod
-    def parse_table_contents(bot):
-        for _ in range(bot.fishbot_table.rowCount()):
+
+    def parse_table_contents(self):
+        for _ in range(self.rowCount()):
             # get values of every row and store in array
             pass
 
-    @staticmethod
-    def start_fishing(bot):
+
+    def start_fishing(self):
         pass
+
+    def initialize(self):
+        self.setColumnWidth(0, 100)
+        self.setColumnWidth(1, 50)
+        self.setColumnWidth(2, 75)
+        self.setColumnWidth(4, 100)
+        self.setColumnWidth(5, 120)
+        self.mw.fish_add_trade.clicked.connect(self.add_order)
+        self.mw.fish_clear_all.clicked.connect(self.clear_all_orders)

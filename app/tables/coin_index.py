@@ -10,7 +10,7 @@ import PyQt5.QtGui as QtGui
 import app
 from app.init import val
 from app.table_items import CoinDelegate
-from app.colors import Colors
+# from app.colors import Colors
 from app.workers import Worker
 
 
@@ -25,6 +25,8 @@ class CoinIndex(QtWidgets.QTableWidget):
         self.mw = app.mw
         self.threadpool = QtCore.QThreadPool()
         self.setIconSize(QtCore.QSize(25, 25))
+
+    def initialize(self):
         # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         # self.horizontalHeader().resizeSections(QtWidgets.QHeaderView.ResizeToContents)
         # self.horizontalHeader().resizeSection(0, 30)
@@ -33,8 +35,11 @@ class CoinIndex(QtWidgets.QTableWidget):
         self.setColumnWidth(2, 120)
         self.setColumnWidth(5, 130)
 
+        self.start_kline_check()
 
     def filter_coin_index(self, text, state):
+        print("FILTER COIN INDEX")
+        print(str(state))
         for i in range(self.rowCount()):
             if state == 2 and not self.item(i, 1).text().startswith(val["coin"]):
                 self.setRowHidden(i, True)
@@ -55,10 +60,8 @@ class CoinIndex(QtWidgets.QTableWidget):
                 # print(str(holding))
 
                 icon = QtGui.QIcon("images/ico/" + coin + ".svg")
-
                 icon_item = QtWidgets.QTableWidgetItem()
                 icon_item.setIcon(icon)
-
 
                 last_price = QtWidgets.QTableWidgetItem()
                 last_price.setData(QtCore.Qt.EditRole, QtCore.QVariant(val["tickers"][pair]["lastPrice"]))
@@ -70,29 +73,26 @@ class CoinIndex(QtWidgets.QTableWidget):
                 btc_volume = QtWidgets.QTableWidgetItem()
                 btc_volume.setData(QtCore.Qt.EditRole, QtCore.QVariant(round(float(val["tickers"][pair]["quoteVolume"]), 2)))
 
-                zero_item = QtWidgets.QTableWidgetItem()
-                zero_item.setData(QtCore.Qt.EditRole, QtCore.QVariant(0))
-                # price_change.setData(Qt.DisplayRole, QtCore.QVariant(str(val["tickers"][pair]["priceChangePercent"]) + "%"))
-
+                btn_trade = QtWidgets.QPushButton("Trade " + coin)
+                btn_trade.clicked.connect(self.gotoTradeButtonClicked)
                 self.insertRow(0)
                 self.setItem(0, 0, icon_item)
                 self.setItem(0, 1, QtWidgets.QTableWidgetItem(coin))
                 self.setItem(0, 2, last_price)
                 self.setItem(0, 3, QtWidgets.QTableWidgetItem(price_change))
                 self.setItem(0, 4, QtWidgets.QTableWidgetItem(btc_volume))
+                self.setCellWidget(0, 5, btn_trade)
+
+
+                # Add empty items to be replaced by kline iterator data
+                zero_item = QtWidgets.QTableWidgetItem()
+                zero_item.setData(QtCore.Qt.EditRole, QtCore.QVariant(0))
 
                 for i in (number + 6 for number in range(7)):
                     self.setItem(0, i, QtWidgets.QTableWidgetItem(zero_item))
 
-                if price_change_value < 0:
-                    self.item(0, 3).setForeground(QtGui.QColor(Colors.color_pink))
-                else:
-                    self.item(0, 3).setForeground(QtGui.QColor(Colors.color_green))
 
-                self.btn_trade = QtWidgets.QPushButton("Trade " + coin)
-                self.btn_trade.clicked.connect(self.gotoTradeButtonClicked)
-                self.setCellWidget(0, 5, self.btn_trade)
-
+        # Sort the table by 24h volume in descending order by default
         self.model().sort(4, QtCore.Qt.DescendingOrder)
 
 
@@ -106,7 +106,9 @@ class CoinIndex(QtWidgets.QTableWidget):
 
         self.mw.gui_manager.change_pair()
 
+
     def update_coin_index_prices(self):
+        """Update 24h values from generic api data."""
         for i in range(self.rowCount()):
             coin = self.item(i, 1).text()
             price = self.item(i, 2).text()
@@ -135,9 +137,11 @@ class CoinIndex(QtWidgets.QTableWidget):
             if float(btc_volume) != new_btc_volume_value:
 
                 self.setItem(i, 4, new_btc_volume)
-            ##########################################
-        # kline api calls
-        ##########################################
+
+
+    ##########################################
+    # kline api calls
+    ##########################################
 
 
     # kline data coin index
@@ -145,11 +149,6 @@ class CoinIndex(QtWidgets.QTableWidget):
         print("start kline check")
         worker = Worker(self.schedule_kline_check)
         # worker.signals.progress.connect(self.rec_func)
-        self.threadpool.start(worker)
-
-    def start_kline_iterator(self):
-        worker = Worker(self.iterate_through_klines)
-        worker.signals.progress.connect(self.draw_kline_changes)
         self.threadpool.start(worker)
 
     def schedule_kline_check(self, progress_callback):
@@ -160,25 +159,39 @@ class CoinIndex(QtWidgets.QTableWidget):
         elif maxThreads <= 4:
             sleepTime = 0.33
             longSleep = 30
-        else:
+        elif maxThreads <= 8:
             sleepTime = 0.15
             longSleep = 15
+        else:
+            sleepTime = 0.1
+            longSleep = 1
 
         # kline api call loop
         while True:
             print("Spawning api call workers")
-            for i in val["coins"]:
+            for coin in val["coins"]:
                 time.sleep(sleepTime)
-                worker = Worker(partial(self.mw.api_manager.get_kline, str(i)))
+                worker = Worker(partial(self.mw.api_manager.get_kline, coin))
                 worker.signals.progress.connect(self.klines_received)
                 self.threadpool.tryStart(worker)
 
             time.sleep(longSleep)
 
+    def klines_received(self, klines_pair):
+        """Save kline data received from api call callback in array."""
+        kline_data = klines_pair[0]
+        pair = klines_pair[1]
+        timeframe = klines_pair[2]
 
-    # wip
-    @staticmethod
-    def iterate_through_klines(progress_callback):
+        val["klines"][timeframe][str(pair)] = kline_data
+
+    def start_kline_iterator(self):
+        worker = Worker(self.iterate_through_klines)
+        worker.signals.progress.connect(self.final_draw)
+        self.threadpool.start(worker)
+
+
+    def iterate_through_klines(self, progress_callback):
         """Iterate through the global klines dict and calculate values based on historical data."""
         for _, kline in enumerate(dict(val["klines"]["1m"])):
             coin = kline.replace("BTC", "")
@@ -214,12 +227,17 @@ class CoinIndex(QtWidgets.QTableWidget):
             change_dict[11] = new_change_15m_value
             change_dict[12] = new_change_1h_value
 
-            progress_callback.emit({coin: change_dict})
+            # progress_callback.emit({coin: change_dict})
+            row_to_change = self.draw_kline_changes({coin: change_dict})
+
+            if row_to_change is not None:
+                progress_callback.emit(row_to_change)
 
 
     def draw_kline_changes(self, kline_list):
         """Update coin_index values as needed."""
         for kline_dataset in kline_list.items():
+            kline_list = list()
             coin = kline_dataset[0]
 
             items = self.findItems(coin, QtCore.Qt.MatchExactly)
@@ -232,23 +250,33 @@ class CoinIndex(QtWidgets.QTableWidget):
 
             # iterate through received kline data
             for kline_data in kline_dataset[1].items():
+
                 colIndex = int(kline_data[0])
                 new_data = kline_data[1]
 
                 # read old data from table
                 old_data = self.item(row, colIndex).text()
 
+
+                # spawn in thread?
                 # if data differs from old data, create an item, set new data and update.
                 if float(old_data) != float(new_data):
-                    newItem = QtWidgets.QTableWidgetItem()
-                    newItem.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_data))
-                    self.setItem(row, colIndex, newItem)
+                    # newItem = QtWidgets.QTableWidgetItem()
+                    # newItem.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_data))
+                    # self.setItem(row, colIndex, newItem)
+                    kline_list.append([coin, colIndex, new_data])
+        return kline_list
+
+    def final_draw(self, change):
+        for i in range(len(change)):
+
+            newItem = QtWidgets.QTableWidgetItem()
+            newItem.setData(QtCore.Qt.EditRole, QtCore.QVariant(change[i][2]))
+
+            items = self.findItems(change[i][0], QtCore.Qt.MatchExactly)
+            for item in items:
+                row = item.row()
 
 
-    def klines_received(self, klines_pair):
-        """Save kline data received from api call callback in array."""
-        kline_data = klines_pair[0]
-        pair = klines_pair[1]
-        timeframe = klines_pair[2]
-
-        val["klines"][timeframe][str(pair)] = kline_data
+            # print("item: " + str(change))
+            self.setItem(row, change[i][1], newItem)

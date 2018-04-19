@@ -89,6 +89,8 @@ QLabel {
   color: #999;
 }
 
+
+
 #limit_buy_total, #limit_sell_total, #limit_buy_label, #limit_sell_label, #limit_total_btc, #limit_total_coin {
   color: white;
 }
@@ -685,4 +687,21 @@ QGroupBox::indicator:unchecked:disabled {
 
 #quote_asset_box {
     color: #999;
+}
+
+#limit_pane QPushButton {
+    min-height: 20px;
+    /* max-height: 5px;
+    height: 5px; */
+}
+
+#cancel_all {
+    border: 0px solid transparent;
+    margin: 0px;
+    padding: 0px;
+    color: #f3ba2e;
+}
+
+#cancel_all:hover {
+    color: white;
 }

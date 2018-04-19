@@ -1,0 +1,43 @@
+from PyQt5.QtWebEngineWidgets import (QWebEngineView, QWebEnginePage,
+                                      QWebEngineScript)
+
+# import PyQt5.QtGui as QtGui
+# import PyQt5.QtCore as QtCore
+
+
+class ChartPage(QWebEngineView):
+
+    """Custom WebEngineView subclass"""
+
+    def __init__(self, parent=None):
+        super(ChartPage, self).__init__(parent)
+
+        # theme_color = self.style().standardPalette().color(QtGui.QPalette.Base)
+        # profile = webenginesettings.default_profile
+
+        page = WebEnginePage()
+        self.setPage(page)
+        self.page().JavaScriptConsoleMessageLevel(2)
+        print("CHART JESCHISCHTEN")
+
+    def inject_script(self):
+        script = QWebEngineScript()
+        script.setSourceCode('''
+            console.log("hi javascript!");
+
+        ''')
+        script.setWorldId(QWebEngineScript.MainWorld)
+        script.setInjectionPoint(QWebEngineScript.DocumentReady)
+        script.setRunsOnSubFrames(False)
+        self.page().scripts().insert(script)
+
+
+
+class WebEnginePage(QWebEnginePage):
+    """Custom QWebEnginePage subclass."""
+    def __init__(self, parent=None):
+        super(WebEnginePage, self).__init__()
+        # self.theme_color = theme_color
+        # self.setBackgroundColor(QtGui.QColor(QtCore.Qt.blue))
+
+        # self.JavaScriptConsoleMessageLevel(2)

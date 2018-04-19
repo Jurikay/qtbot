@@ -15,12 +15,13 @@ from binance.client import Client
 
 class ApiCalls:
     """Collection of api related methods."""
-    def __init__(self, mw):
+    def __init__(self, mw, tp):
         self.mw = mw
 
         self.client = Client(val["api_key"], val["api_secret"], {"verify": True, "timeout": 61})
 
         app.client = self.client
+        self.threadpool = tp
 
     def initialize(self):
 
@@ -230,3 +231,9 @@ class ApiCalls:
         # progress_callback.emit([klines, pair, interval])
         progress_callback.emit([klines, pair, interval])
         val["apiCalls"] += 1
+
+    def cancel_order_byId(self, order_id, symbol):
+        """Cancel an order by id from within a separate thread."""
+        worker = Worker(partial(self.mw.api_manager.api_cancel_order, app.client, order_id, symbol))
+        # worker.signals.progress.connect(self.cancel_callback)
+        self.threadpool.start(worker)

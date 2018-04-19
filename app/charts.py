@@ -165,7 +165,7 @@ class Webpages():
         // "popup_height": "650"
           drawings_access: { type: 'black', tools: [ { name: "Regression Trend" } ] },
           disabled_features: ["header_compare", "study_market_minimized", "control_bar", "items_favoriting" ], //"volume_force_overlay",
-          enabled_features: ["seconds_resolution", "caption_buttons_text_if_possible", "narrow_chart_enabled" ],
+          enabled_features: ["seconds_resolution", "caption_buttons_text_if_possible", "narrow_chart_enabled", "use_localstorage_for_settings" ],
           overrides: {
             "paneProperties.background": "#6ab9ff",
             // "paneProperties.gridProperties.color": "black",
@@ -218,9 +218,6 @@ class Webpages():
             //{ text: "50y", resolution: "6M" },
             //{ text: "1d", resolution: "5" },
           ],
-          charts_storage_url: 'http://saveload.tradingview.com',
-          client_id: 'tradingview.com',
-          user_id: 'public_user',
 
           // favorites: {
           // 	intervals: ["1D", "3D", "3W", "W", "M"],

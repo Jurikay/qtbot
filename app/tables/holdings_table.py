@@ -57,11 +57,17 @@ class HoldingsTable(QtWidgets.QTableWidget):
                 if float(total) * float(price) < 0.001 and coin != "BTC":
                     self.removeRow(i)
 
-            except AttributeError:
+            except AttributeError as e:
                 print("attr error: " + str(i))
+                print(str(e))
 
         self.mw.limit_pane.check_buy_amount()
         self.mw.limit_pane.check_sell_amount()
+
+
+        state = self.mw.hide_pairs.checkState()
+        text = self.mw.coinindex_filter.text()
+        self.filter_holdings(text, state)
 
 
     def build_holdings(self, *args):

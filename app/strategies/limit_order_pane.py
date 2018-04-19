@@ -96,7 +96,6 @@ class LimitOrderPane(QtWidgets.QWidget):
         self.mw.limit_sbutton3.clicked.connect(self.limit_percentage_sell)
         self.mw.limit_sbutton4.clicked.connect(self.limit_percentage_sell)
 
-
         self.mw.limit_outbid.clicked.connect(self.overbid_undercut)
         self.mw.limit_undercut.clicked.connect(self.overbid_undercut)
         self.mw.limit_high.clicked.connect(self.overbid_undercut)

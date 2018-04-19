@@ -9,7 +9,7 @@ import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
 
-from functools import partial
+# from functools import partial
 from datetime import datetime
 from app.init import val
 from app.colors import Colors
@@ -26,17 +26,6 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         self.mw = app.mw
         self.threadpool = QtCore.QThreadPool()
         self.setIconSize(QtCore.QSize(25, 25))
-
-        self.setColumnWidth(0, 130)
-        self.setColumnWidth(3, 120)
-        self.setColumnWidth(7, 120)
-        self.setColumnWidth(9, 120)
-
-        orders_header = self.horizontalHeader()
-        orders_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
-        orders_header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
-        orders_header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
-
 
 
     def mouseDoubleClickEvent(self, event):
@@ -155,7 +144,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
             order_id = str(self.item(row, 10).text())
             pair = str(self.item(row, 2).text())
 
-            self.cancel_order_byId(order_id, pair)
+            self.mw.api_manager.cancel_order_byId(order_id, pair)
 
 
     def initialize(self):
@@ -166,6 +155,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         worker.signals.progress.connect(self.build_open_orders)
         self.mw.threadpool.start(worker)
 
+        self.set_width()
 
     def gotoTradeButtonClicked(self):
         button_text = self.sender().text()
@@ -176,7 +166,22 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
 
         self.mw.gui_manager.change_pair()
 
-    def cancel_order_byId(self, order_id, symbol):
-        worker = Worker(partial(self.mw.api_manager.api_cancel_order, app.client, order_id, symbol))
-        # worker.signals.progress.connect(self.cancel_callback)
-        self.threadpool.start(worker)
+    def set_width(self):
+        self.setColumnWidth(0, 130)
+        self.setColumnWidth(1, 10)
+        self.setColumnWidth(3, 120)
+        self.setColumnWidth(7, 120)
+        self.setColumnWidth(9, 120)
+
+        # orders_header = self.horizontalHeader()
+        # orders_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        # orders_header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        # orders_header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
+
+    def cancel_all_orders(self):
+        if self.rowCount() > 0:
+            logging.info("Cancel all open Orders!")
+            for row in reversed(range(self.rowCount())):
+                pair = self.item(row, 2).text()
+                order_id = self.item(row, 10).text()
+                self.mw.api_manager.cancel_order_byId(order_id, pair)

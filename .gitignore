@@ -107,5 +107,5 @@ ENV/
 
 # mypy
 .mypy_cache/
-scrapetest.py
 
+Pipfile.lock

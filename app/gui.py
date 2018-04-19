@@ -5,13 +5,9 @@
 
 """Main gui class."""
 
-# import configparser
-# import time
+
 import logging
-
-# from datetime import timedelta
 from functools import partial
-
 import PyQt5.QtCore as QtCore
 # import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
@@ -20,15 +16,12 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView  # QWebEnginePage
 
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 
-
 from app.apiFunctions import ApiCalls
 from app.charts import Webpages as Webpages
-# from app.colors import Colors
 from app.gui_functions import (calc_wavg, calc_all_wavgs)
 # filter_coin_index, global_filter, filter_confirmed,
-from app.workers import Worker
 from app.init import val
-from app.strategies.fishing_bot import FishingBot
+# from app.strategies.fishing_bot import FishingBot
 # from app.strategies.limit_order import LimitOrder
 import app
 from app.elements.config import ConfigManager
@@ -38,7 +31,7 @@ from app.elements.test_class import TestKlasse
 from app.elements.init_manager import InitManager
 from app.elements.custom_logger import BotLogger
 from app.elements.gui_manager import GuiManager
-from app.gui_functions import TableFilters
+from app.elements.table_filters import TableFilters
 from app.elements.websocket_manager import WebsocketManager
 
 
@@ -69,28 +62,30 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # self.kline_manager = KlineManager(self)
         # self.kline_manager.start_kline_check()
-        self.coin_index.start_kline_check()
 
-
-
-        # initialize open orders table
+        # initialize tables
+        self.coin_index.initialize()
         self.open_orders.initialize()
+        self.open_orders.initialize()
+        self.holdings_table.initialize()
 
         # initialize limit order signals and slots
         self.limit_pane.initialize()
 
+        self.fishbot_table.initialize()
+
+
+        self.chart.inject_script()
+        # self.chart_button.clicked.connect(self.chart.inject_script)
 
         # belongs into filters class
-        self.tabsBotLeft.setCornerWidget(self.coin_index_filter, corner=QtCore.Qt.TopRightCorner)
         # filter
-        self.hide_pairs.stateChanged.connect(self.filter_manager.init_filter)
-        self.coinindex_filter.textChanged.connect(self.filter_manager.init_filter)
 
         # connect elements to functions
 
         self.debug2_button.clicked.connect(self.limit_pane.test_func)
         self.coin_selector.activated.connect(self.gui_manager.change_pair)
-        self.hide_pairs.stateChanged.connect(partial(self.filter_manager.filter_table, self.coinindex_filter.text(), self.hide_pairs.checkState()))
+        # self.hide_pairs.stateChanged.connect(partial(self.filter_manager.filter_table, self.coinindex_filter.text(), self.hide_pairs.checkState()))
 
         # debug
         self.wavg_button.clicked.connect(calc_wavg)
@@ -99,9 +94,6 @@ class beeserBot(QtWidgets.QMainWindow):
         self.button_wavg.clicked.connect(calc_wavg)
 
         # connect buttons to fishing bot methods (refactor)
-        self.fish_add_trade.clicked.connect(self.fish_bot.add_order)
-
-        self.fish_clear_all.clicked.connect(partial(self.fish_bot.clear_all_orders, self))
 
         # Fix a linter error...
         self.chartLOL = QWebEngineView()
@@ -125,16 +117,15 @@ class beeserBot(QtWidgets.QMainWindow):
         self.log_manager.init_logging()
 
         self.cfg_manager = ConfigManager(self)
-        # self.cfg.connect_cfg()
         self.cfg_manager.read_config()
 
         self.websocket_manager = WebsocketManager(self)
 
-        self.api_manager = ApiCalls(self)
+        self.api_manager = ApiCalls(self, self.threadpool)
         self.api_manager.initialize()
 
         # instantiate fishing bot class
-        self.fish_bot = FishingBot(self)
+        # self.fishbot_table = FishingBot(self)
 
         self.hotkey_manager = HotKeys(self)
         self.hotkey_manager.init_hotkeys()
@@ -184,29 +175,8 @@ class beeserBot(QtWidgets.QMainWindow):
         self.timer.stop()
         logging.info('Finishing setup...')
 
-    # this is used often; See if it fits somewhere though
-    @staticmethod
-    def percentage_amount(total_btc, price, percentage, decimals):
-        """Calculate the buy/sell amount based on price and percentage value."""
-        try:
-            maxSize = (float(total_btc) / float(price)) * (percentage / 100)
-        except ZeroDivisionError:
-            maxSize = 0
 
 
-        if decimals == 0:
-            return int(maxSize)
-
-
-        maxSizeRounded = int(maxSize * 10**decimals) / 10.0**decimals
-        return maxSizeRounded
-
-
-    # cancel an order from a separate thread
-    def cancel_order_byId(self, order_id, symbol):
-        worker = Worker(partial(self.api_manager.api_cancel_order, app.client, order_id, symbol))
-        # worker.signals.progress.connect(self.cancel_callback)
-        self.threadpool.start(worker)
 
 
 
