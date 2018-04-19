@@ -699,9 +699,9 @@ QGroupBox::indicator:unchecked:disabled {
     border: 0px solid transparent;
     margin: 0px;
     padding: 0px;
-    color: #f3ba2e;
+    color: white;
 }
 
 #cancel_all:hover {
-    color: white;
+    color: #f3ba2e;
 }

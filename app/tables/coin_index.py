@@ -268,7 +268,7 @@ class CoinIndex(QtWidgets.QTableWidget):
         return kline_list
 
     def final_draw(self, change):
-        for i in range(len(change)):
+        for i, _ in enumerate(change):
 
             newItem = QtWidgets.QTableWidgetItem()
             newItem.setData(QtCore.Qt.EditRole, QtCore.QVariant(change[i][2]))

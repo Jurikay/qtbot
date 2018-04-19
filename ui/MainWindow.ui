@@ -964,7 +964,7 @@
                     <cursorShape>PointingHandCursor</cursorShape>
                    </property>
                    <property name="text">
-                    <string>Hide other pairs</string>
+                    <string>Hide other</string>
                    </property>
                   </widget>
                  </item>

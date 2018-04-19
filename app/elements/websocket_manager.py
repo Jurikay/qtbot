@@ -157,6 +157,8 @@ class WebsocketManager:
 
             elif userMsg["X"] == "PARTIALLY_FILLED":
                 worker.signals.progress.connect(self.mw.open_orders.update_open_order)
+                worker.signals.progress.connect(self.mw.holdings_table.check_add_to_holdings)
+
 
             elif userMsg["X"] == "FILLED":
                 worker.signals.progress.connect(self.mw.open_orders.remove_from_open_orders)
