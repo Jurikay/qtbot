@@ -155,6 +155,7 @@ class InitManager:
         self.mw.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", val["defaultTimeframe"], "COINBASE"))
         self.mw.btc_chart.show()
 
+        self.mw.ChartTabs.setCornerWidget(self.mw.volume_widget)
 
         self.mw.timer = QtCore.QTimer()
         self.mw.timer.setInterval(200)

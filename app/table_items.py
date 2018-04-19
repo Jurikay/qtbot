@@ -3,6 +3,8 @@ import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
 # from app.colors import colors
 from PyQt5 import Qt
+from app.colors import Colors
+import app
 
 
 class CoinDelegate(QtWidgets.QStyledItemDelegate):
@@ -18,6 +20,7 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
         """
         super(CoinDelegate, self).__init__(parent)
         self.parent = parent  # instance of the parent (not the base) class
+        self.mw = app.mw
 
     def initStyleOption(self, option, index):
         """
@@ -28,7 +31,33 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
         # print("delegate stuff")
         # print(self.parent.name())
 
+        if self.parent.name == "CoinIndex":
+            self.style_coin_index(option, index)
         # set default values:
+        if self.mw.coinindex_filter.text() != "":
+            for row in range(self.parent.rowCount()):
+                if self.parent.isRowHidden(row):
+                    continue
+                else:
+                    marked_row = row
+                    break
+            
+            if index.row() == marked_row and index.column() == 1:
+                option.text = "<span style='border-bottom: 3px solid #f3ba2e; color:" + Colors.color_yellow + ";'>" + str(index.data()) + " / BTC</span>"
+
+            
+
+    # def displayText(self, text, locale):
+    #     """
+    #     Display `text` in the selected with the selected number
+    #     of digits
+
+    #     text:   string / QVariant from QTableWidget to be rendered
+    #     locale: locale for the text
+    #     """
+    #     data = text  # .toString() # Python 2: need to convert to "normal" string
+    #     return "{0:>{1}}".format(data, 4)
+    def style_coin_index(self, option, index):
         color = "#cdcdcd"
 
         if index.column() == 1:
@@ -56,8 +85,6 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
             else:
                 operator = ""
                 color = "#ff007a"
-
-
 
             option.text = "<span style='color:" + color + ";'>" + operator + "{0:.2f}".format(percent_value) + "%"
             option.textAlignmentRole = Qt.Qt.AlignRight
@@ -89,25 +116,9 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
 
             option.text = "<span style='font-weight: " + weight + "; color:" + color + ";'>" + "{0:,.2f}".format(percent_value) + " BTC</span>"
 
-
-
         else:
-            # print(index.data())
             # continue with the original `initStyleOption()`
             super(CoinDelegate, self).initStyleOption(option, index)
-
-
-    # def displayText(self, text, locale):
-    #     """
-    #     Display `text` in the selected with the selected number
-    #     of digits
-
-    #     text:   string / QVariant from QTableWidget to be rendered
-    #     locale: locale for the text
-    #     """
-    #     data = text  # .toString() # Python 2: need to convert to "normal" string
-    #     return "{0:>{1}}".format(data, 4)
-
 
     def paint(self, painter, option, index):
         """Reimplement paint method to allow html rendering within tableWidgets."""

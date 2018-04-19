@@ -7,7 +7,7 @@
 filter and wavg"""
 # from functools import partial
 
-import PyQt5.QtCore as QtCore
+# import PyQt5.QtCore as QtCore
 # from PyQt5.QtCore import QtCore.QSize, Qt, QtCore.QVariant
 # from PyQt5.QtGui import QColor, QFont, QIcon
 # import PyQt5.QtWidgets as QtWidgets
@@ -21,50 +21,6 @@ from app.init import val
 
 
 
-def global_filter(self, text):
-    if str(text) != "":
-        self.open_orders.setSortingEnabled(False)
-        self.coin_index.setSortingEnabled(False)
-        self.holdings_table.setSortingEnabled(False)
-
-        for row in range(self.open_orders.rowCount()):
-            self.open_orders.setRowHidden(row, True)
-        items = self.open_orders.model().findItems(text, QtCore.Qt.MatchContains, 2)
-        for item in items:
-            row = item.row()
-            self.open_orders.setRowHidden(row, False)
-
-        for row in range(self.coin_index.rowCount()):
-            self.coin_index.setRowHidden(row, True)
-        items = self.coin_index.model().findItems(text, QtCore.Qt.MatchContains, 1)
-        for item in items:
-            row = item.row()
-            self.coin_index.setRowHidden(row, False)
-
-        for row in range(self.holdings_table.rowCount()):
-            self.holdings_table.setRowHidden(row, True)
-        items = self.holdings_table.model().findItems(text, QtCore.Qt.MatchContains, 1)
-        for item in items:
-            row = item.row()
-            self.holdings_table.setRowHidden(row, False)
-    elif text == "":
-        for row in range(self.open_orders.rowCount()):
-            self.open_orders.setRowHidden(row, False)
-
-        for row in range(self.coin_index.rowCount()):
-            self.coin_index.setRowHidden(row, False)
-
-        for row in range(self.holdings_table.rowCount()):
-            self.holdings_table.setRowHidden(row, False)
-        self.open_orders.setSortingEnabled(False)
-        self.coin_index.setSortingEnabled(False)
-        self.holdings_table.setSortingEnabled(False)
-
-
-
-
-
-
 
 def calc_all_wavgs(self):
     for i in range(self.holdings_table.rowCount()):
@@ -75,9 +31,7 @@ def calc_all_wavgs(self):
             self.holdings_table.item(i, 8).setText(wavg)
 
 
-
-
-
+# test
 def calc_wavg(symbol):
     coin = symbol
     pair = symbol + "BTC"

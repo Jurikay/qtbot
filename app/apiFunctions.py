@@ -227,9 +227,13 @@ class ApiCalls:
         """Make an API call to get historical data of a coin pair."""
         interval = "1m"
 
-        klines = self.client.get_klines(symbol=pair, interval=interval)
-        # progress_callback.emit([klines, pair, interval])
+        try:  # try since this is used heavily
+            klines = self.client.get_klines(symbol=pair, interval=interval)
+        except ConnectionError:
+            pass
+
         progress_callback.emit([klines, pair, interval])
+
         val["apiCalls"] += 1
 
     def cancel_order_byId(self, order_id, symbol):

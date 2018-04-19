@@ -25,6 +25,7 @@ class CoinIndex(QtWidgets.QTableWidget):
         self.mw = app.mw
         self.threadpool = QtCore.QThreadPool()
         self.setIconSize(QtCore.QSize(25, 25))
+        self.name = "CoinIndex"
 
     def initialize(self):
         # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)

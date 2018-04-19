@@ -3,11 +3,14 @@
 
 # made by Jirrik
 
-from PyQt5.QtWebEngineWidgets import (QWebEngineView, QWebEnginePage,
-                                      QWebEngineScript)
 
 # import PyQt5.QtGui as QtGui
 # import PyQt5.QtCore as QtCore
+# import PyQt5.QtWidgets as QtWidgets
+
+
+from PyQt5.QtWebEngineWidgets import (QWebEngineView, QWebEnginePage,
+                                      QWebEngineScript)
 
 
 class ChartPage(QWebEngineView):

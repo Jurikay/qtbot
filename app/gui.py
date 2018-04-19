@@ -58,17 +58,13 @@ class beeserBot(QtWidgets.QMainWindow):
         with open("ui/style.qss", "r") as fh:
             self.setStyleSheet(fh.read())
 
+
         # instantiate various helper classes
         self.instantiate_managers()
 
-        # self.kline_manager = KlineManager(self)
-        # self.kline_manager.start_kline_check()
+        self.centerOnScreen()
 
-        # initialize tables
-        self.coin_index.initialize()
-        self.open_orders.initialize()
-        self.open_orders.initialize()
-        self.holdings_table.initialize()
+        self.initialize_tables()
 
         # initialize limit order signals and slots
         self.limit_pane.initialize()
@@ -76,28 +72,23 @@ class beeserBot(QtWidgets.QMainWindow):
         self.fishbot_table.initialize()
 
 
-        self.chart.inject_script()
         # self.chart_button.clicked.connect(self.chart.inject_script)
 
         # belongs into filters class
         # filter
 
         # connect elements to functions
-
+        self.chart.inject_script()
         self.debug2_button.clicked.connect(self.limit_pane.test_func)
         self.coin_selector.activated.connect(self.gui_manager.change_pair)
-        # self.hide_pairs.stateChanged.connect(partial(self.filter_manager.filter_table, self.coinindex_filter.text(), self.hide_pairs.checkState()))
-
-        # debug
         self.wavg_button.clicked.connect(calc_wavg)
         self.calc_all_wavg_button.clicked.connect(partial(calc_all_wavgs, self))
-
         self.button_wavg.clicked.connect(calc_wavg)
 
         # connect buttons to fishing bot methods (refactor)
 
         # Fix a linter error...
-        self.chartLOL = QWebEngineView()
+        self.linterfix = QWebEngineView()
 
 
         # check if coin is an empty dict. If yes, api calls have not been answered.
@@ -143,6 +134,14 @@ class beeserBot(QtWidgets.QMainWindow):
         self.filter_manager = TableFilters(self)
         self.filter_manager.init_filter()
 
+
+    def initialize_tables(self):
+        self.coin_index.initialize()
+        self.open_orders.initialize()
+        self.open_orders.initialize()
+        self.holdings_table.initialize()
+
+
     # refactor: move; global ui
     def show_error_page(self):
         self.chart.setHtml(Webpages.welcome_page())
@@ -178,7 +177,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
 
-
+    def centerOnScreen(self):
+        """Centers the main window on the screen."""
+        resolution = QtWidgets.QDesktopWidget().screenGeometry()
+        self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
+                  (resolution.height() / 2) - (self.frameSize().height() / 2))
 
 
     def shutdown_bot(self):
