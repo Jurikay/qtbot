@@ -136,11 +136,11 @@ class GuiManager:
         self.update_count = int(val["apiUpdates"])
 
         if self.no_updates >= 2 and self.no_updates < 10:
-            self.mw.status.setText("<span style='color:" + Colors.color_yellow + "'>warning</span>")
+            self.mw.status_label.setText("<span style='color:" + Colors.color_yellow + "'>waiting</span>")
         elif self.no_updates >= 10:
-            self.mw.status.setText("<span style='color:" + Colors.color_pink + "'>disconnected</span>")
+            self.mw.status_label.setText("<span style='color:" + Colors.color_pink + "'>disconnected!</span>")
         else:
-            self.mw.status.setText("<span style='color:" + Colors.color_green + "'>connected</span>")
+            self.mw.status_label.setText("<span style='color:" + Colors.color_green + "'>connected</span>")
 
     # global ui
     def percent_changes(self):

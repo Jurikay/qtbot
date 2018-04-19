@@ -202,7 +202,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="status">
+           <widget class="QLabel" name="status_label">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>

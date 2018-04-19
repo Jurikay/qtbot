@@ -53,6 +53,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # load QtDesigner UI file
         loadUi("ui/MainWindow.ui", self)
 
+
         # set external stylesheet
         with open("ui/style.qss", "r") as fh:
             self.setStyleSheet(fh.read())
