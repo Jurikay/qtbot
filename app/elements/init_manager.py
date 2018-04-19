@@ -5,6 +5,7 @@ import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
 from app.init import val
 from app.charts import Webpages
+from app.colors import Colors
 # from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
 
 
@@ -106,25 +107,18 @@ class InitManager:
         self.mw.holdings_table.setStyleSheet("alternate-background-color: #2e363d;")
 
         self.mw.counter = 0
-        self.mw.counter2 = 0
+        # self.mw.counter2 = 0
 
-        self.mw.update_count = 0
-        self.mw.no_updates = 0
-
-
-        for _ in range(20):
-            self.mw.bids_table.insertRow(0)
-            self.mw.asks_table.insertRow(0)
-            self.mw.new_table.insertRow(0)
-
-        for _ in range(50):
-            self.mw.tradeTable.insertRow(0)
+        # self.mw.update_count = 0
+        # self.mw.no_updates = 0
 
 
     # gui init
     def api_init(self):
         """One-time gui initialization."""
         self.mw.api_manager.api_calls()
+
+        self.initial_last_price()
 
         for coin in val["coins"]:
 
@@ -161,3 +155,12 @@ class InitManager:
         self.mw.timer.setInterval(200)
         self.mw.timer.timeout.connect(self.mw.delayed_stuff)
         self.mw.timer.start()
+
+    def initial_last_price(self):
+        # init last_price
+        arrow = QtGui.QPixmap("images/assets/2arrow.png")
+        formatted_price = '{number:.{digits}f}'.format(number=float(val["tickers"][val["pair"]]["lastPrice"]), digits=val["decimals"])
+        self.mw.price_arrow.setPixmap(arrow)
+        self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + Colors.color_yellow + "'>" + formatted_price + "</span>")
+        usd_price = '{number:.{digits}f}'.format(number=float(val["tickers"][val["pair"]]["lastPrice"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
+        self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")

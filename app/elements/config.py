@@ -211,7 +211,7 @@ class ConfigManager:
 
 
     def set_stats(self):
-        self.mw.total_running.setText(str(val["stats"]["timeRunning"]))
+        # self.mw.total_running.setText(str(val["stats"]["timeRunning"]))
         self.mw.total_trades.setText(str(val["stats"]["execTrades"]))
         self.mw.total_bot_trades.setText(str(val["stats"]["execBotTrades"]))
         self.mw.total_api_calls.setText(str(val["stats"]["apiCalls"]))

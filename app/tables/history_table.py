@@ -57,7 +57,7 @@ class HistoryTable(QtWidgets.QTableWidget):
         price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
         self.setItem(0, 4, QtWidgets.QTableWidgetItem(price))
 
-        qty = '{number:.{digits}f}'.format(number=float(order["executedQty"]), digits=val["assetDecimals"]) + " " + val["coin"]
+        qty = '{number:.{digits}f}'.format(number=float(order["executedQty"]), digits=val["assetDecimals"]) + " " + order["symbol"].replace("BTC", "")
         self.setItem(0, 5, QtWidgets.QTableWidgetItem(qty))
 
 

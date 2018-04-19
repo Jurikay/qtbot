@@ -175,6 +175,8 @@ QTabWidget QPushButton {
      font-size: 14px;
      color: #f3f3f3;
      border-radius: 5px;
+     min-height: 20px;
+     height: 25px;
 }
  QPushButton#limit_sell_button {
      background-color: #ff007a;
@@ -184,6 +186,8 @@ QTabWidget QPushButton {
      font-size: 14px;
      color: #f3f3f3;
      border-radius: 5px;
+     min-height: 20px;
+     height: 25px;
 }
  QPushButton#limit_buy_button:hover {
      background-color: #5e8701;
@@ -326,7 +330,8 @@ QPushButton#limit_sell_button::pressed {
 }
 #percent_frame, #percent_frame QLabel {
     background-color: "#262d33";
-    color: white;
+    color: #D6D6D6;
+    font-family: Arial;
 
 }
 
@@ -700,8 +705,57 @@ QGroupBox::indicator:unchecked:disabled {
     margin: 0px;
     padding: 0px;
     color: white;
+    margin-bottom: 2px;
 }
 
 #cancel_all:hover {
     color: #f3ba2e;
+}
+
+QMenu {
+    background-color: #20262b;
+    margin: 2px; /* some spacing around the menu */
+}
+
+QMenu::item {
+    padding: 3px 15px 3px 15px;
+    border: 1px solid transparent; /* reserve space for selection border */
+}
+
+QMenu::item:selected {
+    border-color: transparent;
+    /* background: rgba(100, 100, 100, 150); */
+    color: #f3ba2e;
+}
+
+QMenu::item:disabled {
+    color: #999;
+}
+
+QMenu::icon:checked { /* appearance of a 'checked' icon */
+    background: gray;
+    border: 1px inset gray;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    bottom: 1px;
+    left: 1px;
+}
+
+QMenu::separator {
+    height: 1px;
+    background: #262d33;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+QMenu::indicator {
+    width: 13px;
+    height: 13px;
+}
+
+#volume_widget QLabel {
+    color: #D6D6D6;
+    font-family: Arial;
+
 }

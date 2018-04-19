@@ -32,10 +32,19 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         print("CLICK")
         print(str(self))
         print(str(self.parent()))
+        
 
+    # def mouseMoveEvent(self, event):
+    #     print("move: " + str(event))
+
+    
 
     def add_to_open_orders(self, order):
+        print("add to open orders: " + order["symbol"] + str(order["price"]))
 
+        # if the table was empty at initialization, set widths when the first row is added.
+        if self.mw.open_orders.rowCount() == 0:
+            self.set_width()
 
         self.mw.open_orders.insertRow(0)
         self.mw.open_orders.setItem(0, 0, QtWidgets.QTableWidgetItem(str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])))
@@ -148,7 +157,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
 
 
     def initialize(self):
-
+        print("open orders init")
         self.cellClicked.connect(self.open_orders_cell_clicked)
 
         worker = Worker(self.mw.api_manager.api_all_orders)
@@ -167,11 +176,17 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         self.mw.gui_manager.change_pair()
 
     def set_width(self):
-        self.setColumnWidth(0, 130)
-        self.setColumnWidth(1, 10)
+        self.setColumnWidth(0, 125)
+        self.setColumnWidth(1, 30)
+        self.setColumnWidth(2, 80)
         self.setColumnWidth(3, 120)
+        self.setColumnWidth(4, 50)
+        self.setColumnWidth(5, 50)
         self.setColumnWidth(7, 120)
+        self.setColumnWidth(8, 75)
         self.setColumnWidth(9, 120)
+        self.setColumnWidth(10, 75)
+        
 
         # orders_header = self.horizontalHeader()
         # orders_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)

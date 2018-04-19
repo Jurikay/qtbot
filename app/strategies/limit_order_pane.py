@@ -79,12 +79,45 @@ class LimitOrderPane(QtWidgets.QWidget):
             pass
 
     def initialize(self):
+
+        for _ in range(20):
+            self.mw.bids_table.insertRow(0)
+            self.mw.asks_table.insertRow(0)
+            self.mw.new_table.insertRow(0)
+
+        for _ in range(50):
+            self.mw.tradeTable.insertRow(0)
+
+        self.mw.asks_table.setColumnWidth(1, 75)
+        self.mw.bids_table.setColumnWidth(1, 75)
+
+        self.mw.tradeTable.setColumnWidth(0, 100)
+        self.mw.tradeTable.setColumnWidth(1, 75)
+
         self.mw.limit_buy_slider.valueChanged.connect(self.buy_slider_move)
         self.mw.limit_sell_slider.valueChanged.connect(self.sell_slider_move)
 
         self.mw.limit_buy_input.valueChanged.connect(self.calc_total_buy)
         self.mw.limit_sell_input.valueChanged.connect(self.calc_total_sell)
 
+        
+
+        self.mw.limit_sell_amount.valueChanged.connect(self.check_sell_amount)
+        self.mw.limit_buy_amount.valueChanged.connect(self.check_buy_amount)
+
+        self.mw.limit_sell_input.valueChanged.connect(self.check_sell_amount)
+        self.mw.limit_buy_input.valueChanged.connect(self.check_buy_amount)
+
+        self.mw.tradeTable.cellClicked.connect(self.cell_was_clicked)
+
+        self.mw.bids_table.cellClicked.connect(self.bids_cell_clicked)
+
+        self.mw.asks_table.cellClicked.connect(self.asks_cell_clicked)
+
+        self.init_buttons()
+
+
+    def init_buttons(self):
         self.mw.limit_button0.clicked.connect(self.limit_percentage)
         self.mw.limit_button1.clicked.connect(self.limit_percentage)
         self.mw.limit_button2.clicked.connect(self.limit_percentage)
@@ -101,18 +134,6 @@ class LimitOrderPane(QtWidgets.QWidget):
         self.mw.limit_undercut.clicked.connect(self.overbid_undercut)
         self.mw.limit_high.clicked.connect(self.overbid_undercut)
         self.mw.limit_low.clicked.connect(self.overbid_undercut)
-
-        self.mw.limit_sell_amount.valueChanged.connect(self.check_sell_amount)
-        self.mw.limit_buy_amount.valueChanged.connect(self.check_buy_amount)
-
-        self.mw.limit_sell_input.valueChanged.connect(self.check_sell_amount)
-        self.mw.limit_buy_input.valueChanged.connect(self.check_buy_amount)
-
-        self.mw.tradeTable.cellClicked.connect(self.cell_was_clicked)
-
-        self.mw.bids_table.cellClicked.connect(self.bids_cell_clicked)
-
-        self.mw.asks_table.cellClicked.connect(self.asks_cell_clicked)
 
         self.mw.limit_buy_button.clicked.connect(self.create_buy_order)
         self.mw.limit_sell_button.clicked.connect(self.create_sell_order)

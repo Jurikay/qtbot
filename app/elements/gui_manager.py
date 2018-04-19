@@ -1,6 +1,6 @@
 # from app.workers import Worker
-# import PyQt5.QtWidgets as QtWidgets
-# import PyQt5.QtGui as QtGui
+import PyQt5.QtWidgets as QtWidgets
+import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
 from app.init import val
 from app.colors import Colors
@@ -17,6 +17,7 @@ class GuiManager:
         self.update_count = 0
         self.no_updates = 0
         self.threadpool = QtCore.QThreadPool()
+        mw.popup_btn.clicked.connect(self.show_notification)
 
 
 
@@ -73,16 +74,12 @@ class GuiManager:
 
     # global ui
     def one_second_update(self):
+
         """Update some values every second."""
-        self.mw.session_running.setText(str(timedelta(seconds=val["timeRunning"])))
+
         val["timeRunning"] += 1
-
-        self.mw.current_time.setText(str(time.strftime('%a, %d %b %Y %H:%M:%S')))
-
-        self.mw.explicit_api_calls_label.setText(str(val["apiCalls"]))
-        self.mw.explicit_api_updates.setText(str(val["apiUpdates"]))
-
         total_btc_value = self.calc_total_btc()
+
         self.mw.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
 
         total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2) + "$"
@@ -105,9 +102,12 @@ class GuiManager:
         self.mw.debug.setText('{number:.{digits}f}'.format(number=float(val["volDirection"]), digits=4) + "BTC")
 
         self.percent_changes()
+        self.volume_values()
+
 
         self.check_websocket()
 
+        self.update_stats()
         # only update the currently active table
         tab_index_botLeft = self.mw.tabsBotLeft.currentIndex()
 
@@ -123,6 +123,19 @@ class GuiManager:
             # self.start_kline_iterator()
         else:
             val["indexTabOpen"] = False
+
+    def update_stats(self):
+        session_time = str(timedelta(seconds=val["timeRunning"]))
+        total_time = str(timedelta(seconds=val["timeRunning"] + int(val["stats"]["timeRunning"])))
+
+        self.mw.session_running.setText(session_time)
+        self.mw.total_running.setText(total_time)
+
+        self.mw.current_time.setText(str(time.strftime('%a, %d %b %Y %H:%M:%S')))
+
+        self.mw.explicit_api_calls_label.setText(str(val["apiCalls"]))
+        self.mw.explicit_api_updates.setText(str(val["apiUpdates"]))
+
 
 
     # global ui / logic
@@ -144,44 +157,59 @@ class GuiManager:
 
     # global ui # todo: refactor
     def percent_changes(self):
+        
         """Calculate and display price change values."""
-        try:
-                # close_t = float(val["klines"]["1m"].get(val["pair"], {})[-5][4])
-                close_5m = float(val["klines"]["1m"][val["pair"]][-5][4])
-                close_15m = float(val["klines"]["1m"][val["pair"]][-15][4])
-                # close_30m = float(val["klines"]["1m"][val["pair"]][-30][4])
-                close_1h = float(val["klines"]["1m"][val["pair"]][-60][4])
-                close_4h = float(val["klines"]["1m"][val["pair"]][-240][4])
 
-                change_5m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_5m)) - 1) * 100
-                change_15m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_15m)) - 1) * 100
-                # change_30m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_30m)) - 1) * 100
-                change_1h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_1h)) - 1) * 100
-                change_4h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_4h)) - 1) * 100
+        # close_t = float(val["klines"]["1m"].get(val["pair"], {})[-5][4])
+        klines_data = val["klines"].get("1m")
+        coin_data = klines_data.get(val["pair"])
 
-                change_1d_value = float(val["tickers"][val["pair"]]["priceChangePercent"])
+        if isinstance(coin_data, list):
+            close_5m = float(val["klines"]["1m"][val["pair"]][-5][4])
+            close_15m = float(val["klines"]["1m"][val["pair"]][-15][4])
+            # close_30m = float(val["klines"]["1m"][val["pair"]][-30][4])
+            close_1h = float(val["klines"]["1m"][val["pair"]][-60][4])
+            close_4h = float(val["klines"]["1m"][val["pair"]][-240][4])
+
+            change_5m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_5m)) - 1) * 100
+            change_15m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_15m)) - 1) * 100
+            # change_30m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_30m)) - 1) * 100
+            change_1h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_1h)) - 1) * 100
+            change_4h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_4h)) - 1) * 100
+
+            change_1d_value = float(val["tickers"][val["pair"]]["priceChangePercent"])
 
 
-                changes = [self.mw.change_5m, self.mw.change_15m, self.mw.change_1h, self.mw.change_4h, self.mw.change_1d]
-                change_values = [change_5m_value, change_15m_value, change_1h_value, change_4h_value, change_1d_value]
+            changes = [self.mw.change_5m, self.mw.change_15m, self.mw.change_1h, self.mw.change_4h, self.mw.change_1d]
+            change_values = [change_5m_value, change_15m_value, change_1h_value, change_4h_value, change_1d_value]
 
-                for i, change in enumerate(changes):
-                    if change_values[i] > 0:
-                        operator = "+"
-                        color = Colors.color_green
-                    elif change_values[i] < 0:
-                        operator = ""
-                        color = Colors.color_pink
-                    else:
-                        operator = ""
-                        color = Colors.color_grey
+            for i, change in enumerate(changes):
+                if change_values[i] > 0:
+                    operator = "+"
+                    color = Colors.color_green
+                elif change_values[i] < 0:
+                    operator = ""
+                    color = Colors.color_pink
+                else:
+                    operator = ""
+                    color = Colors.color_grey
 
-                    # print(str(change))
-                    change.setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
+                # print(str(change))
+                change.setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
 
-        except Exception as e:
-            print(str(e))
 
+    # refactor: rather get this from kline websocket for current coin
+    def volume_values(self):
+        volume_labels = [self.mw.volume_1m, self.mw.volume_5m, self.mw.volume_15m, self.mw.volume_1h]
+
+        volume_values = [self.mw.coin_index.new_volume_1m_value,
+                         self.mw.coin_index.new_volume_5m_value,
+                         self.mw.coin_index.new_volume_15m_value,
+                         self.mw.coin_index.new_volume_1h_value]
+
+        for i, label in enumerate(volume_labels):
+            label_text = "<span style='color: " + "white" + "'>" + "{0:.2f}".format(volume_values[i]) + " BTC</span>"
+            label.setText(label_text)
 
     @staticmethod
     def calc_total_btc():
@@ -218,3 +246,15 @@ class GuiManager:
 
         # start thread
         self.threadpool.start(worker)
+
+    def show_notification(self):
+        print("SHOW NOTIF")
+        icon = QtGui.QIcon("images/assets/icon.png")
+        menu = QtWidgets.QMenu()
+        self.tray = QtWidgets.QSystemTrayIcon()
+        self.tray.setIcon(icon)
+        self.tray.setContextMenu(menu)
+        self.tray.show()
+        self.tray.setToolTip("Beeser Binance Bot")
+        self.tray.showMessage("hoge", "moge")
+        self.tray.showMessage("fuga", "moge")

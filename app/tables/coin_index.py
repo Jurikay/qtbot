@@ -27,6 +27,11 @@ class CoinIndex(QtWidgets.QTableWidget):
         self.setIconSize(QtCore.QSize(25, 25))
         self.name = "CoinIndex"
 
+        self.new_volume_1m_value = 0
+        self.new_volume_5m_value = 0
+        self.new_volume_15m_value = 0
+        self.new_volume_1h_value = 0
+
     def initialize(self):
         # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         # self.horizontalHeader().resizeSections(QtWidgets.QHeaderView.ResizeToContents)
@@ -34,7 +39,16 @@ class CoinIndex(QtWidgets.QTableWidget):
         # self.horizontalHeader().resizeSection(1, 300)
         self.setColumnWidth(0, 30)
         self.setColumnWidth(2, 120)
+        self.setColumnWidth(3, 75)
         self.setColumnWidth(5, 130)
+
+        for i in (number + 6 for number in range(7)):
+            print("set width of col " + str(i))
+            if i < 10:
+                self.setColumnWidth(i, 90)
+            else:
+                self.setColumnWidth(i, 75)
+                
 
         self.start_kline_check()
 
@@ -52,7 +66,7 @@ class CoinIndex(QtWidgets.QTableWidget):
 
     def build_coinindex(self):
         self.setRowCount(0)
-        print("setze delegate")
+
         self.setItemDelegate(CoinDelegate(self))
 
         for pair in val["tickers"]:
@@ -60,9 +74,9 @@ class CoinIndex(QtWidgets.QTableWidget):
                 coin = str(val["tickers"][pair]["symbol"]).replace("BTC", "")
                 # print(str(holding))
 
-                icon = QtGui.QIcon("images/ico/" + coin + ".svg")
-                icon_item = QtWidgets.QTableWidgetItem()
-                icon_item.setIcon(icon)
+                # icon = QtGui.QIcon("images/ico/" + coin + ".svg")
+                # icon_item = QtWidgets.QTableWidgetItem()
+                # icon_item.setIcon(icon)
 
                 last_price = QtWidgets.QTableWidgetItem()
                 last_price.setData(QtCore.Qt.EditRole, QtCore.QVariant(val["tickers"][pair]["lastPrice"]))
@@ -77,7 +91,7 @@ class CoinIndex(QtWidgets.QTableWidget):
                 btn_trade = QtWidgets.QPushButton("Trade " + coin)
                 btn_trade.clicked.connect(self.gotoTradeButtonClicked)
                 self.insertRow(0)
-                self.setItem(0, 0, icon_item)
+                self.setItem(0, 0, self.mw.table_manager.create_icon_item(coin))
                 self.setItem(0, 1, QtWidgets.QTableWidgetItem(coin))
                 self.setItem(0, 2, last_price)
                 self.setItem(0, 3, QtWidgets.QTableWidgetItem(price_change))
@@ -236,6 +250,12 @@ class CoinIndex(QtWidgets.QTableWidget):
 
             if row_to_change is not None:
                 progress_callback.emit(row_to_change)
+
+            if coin == val["coin"]:
+                self.new_volume_1m_value = new_volume_1m_value
+                self.new_volume_5m_value = new_volume_5m_value
+                self.new_volume_15m_value = new_volume_15m_value
+                self.new_volume_1h_value = new_volume_1h_value
 
 
     def draw_kline_changes(self, kline_list):

@@ -27,7 +27,7 @@ import app
 from app.elements.config import ConfigManager
 from app.elements.hotkeys import HotKeys
 # from app.elements.kline_data import KlineManager
-from app.elements.test_class import TestKlasse
+# from app.elements.test_class import TestKlasse
 from app.elements.init_manager import InitManager
 from app.elements.custom_logger import BotLogger
 from app.elements.gui_manager import GuiManager
@@ -116,14 +116,11 @@ class beeserBot(QtWidgets.QMainWindow):
         self.api_manager = ApiCalls(self, self.threadpool)
         self.api_manager.initialize()
 
-        # instantiate fishing bot class
-        # self.fishbot_table = FishingBot(self)
-
         self.hotkey_manager = HotKeys(self)
         self.hotkey_manager.init_hotkeys()
 
-        self.test_klasse = TestKlasse(self)
-        self.test_klasse.create_signal()
+        # self.test_klasse = TestKlasse(self)
+        # self.test_klasse.create_signal()
 
         self.init_manager = InitManager(self)
         self.init_manager.initialize()
@@ -138,7 +135,7 @@ class beeserBot(QtWidgets.QMainWindow):
     def initialize_tables(self):
         self.coin_index.initialize()
         self.open_orders.initialize()
-        self.open_orders.initialize()
+        # self.open_orders.initialize()
         self.holdings_table.initialize()
 
 
@@ -156,11 +153,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         print("delayed")
 
-        self.asks_table.setColumnWidth(1, 75)
-        self.bids_table.setColumnWidth(1, 75)
-
-        self.tradeTable.setColumnWidth(0, 100)
-        self.tradeTable.setColumnWidth(1, 75)
+        
 
 
         # self.open_orders.setColumnWidth(10, 0)
