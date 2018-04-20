@@ -16,6 +16,7 @@ class WebsocketManager:
         self.threadpool = QtCore.QThreadPool()
         self.counter = 0
         self.client = app.client
+        self.api_updates = 0
 
 
     def create_signal(self):
@@ -85,7 +86,7 @@ class WebsocketManager:
         worker.signals.progress.connect(self.mw.live_data.progress_history)
         # worker.signals.finished.connect(self.t_complete)
         self.threadpool.start(worker)
-        val["apiUpdates"] += 1
+        self.api_updates += 1
 
 
     def depth_callback(self, msg):
@@ -105,7 +106,7 @@ class WebsocketManager:
             worker.signals.progress.connect(self.mw.live_data.progress_asks)
             # worker.signals.finished.connect(self.t_complete)
             self.threadpool.tryStart(worker)
-        val["apiUpdates"] += 1
+        self.api_updates += 1
 
 
     def user_callback(self, msg):
@@ -115,7 +116,7 @@ class WebsocketManager:
         # print(str(self))
         # print(msg)
         userMsg = dict()
-        val["apiUpdates"] += 1
+        self.api_updates += 1
         for key, value in msg.items():
             userMsg[key] = value
 
@@ -174,9 +175,8 @@ class WebsocketManager:
             print(msg)
 
 
-    @staticmethod
-    def ticker_callback(msg):
-        val["apiUpdates"] += 1
+    def ticker_callback(self, msg):
+        self.api_updates += 1
         # print("TICKER:" + str(dt.datetime.now()))
         for _, value in enumerate(msg):
             # ticker[key] = value
@@ -200,10 +200,30 @@ class WebsocketManager:
 
 
     def kline_callback(self, msg):
+        kline_msg = dict()
+        for key, value in msg.items():
+            kline_msg[key] = value
         # print("kline msg:")
         # print(msg)
-        pass
+        # pass
+        # print(str(val["klines"]["1m"][val["pair"]]))
+        old_klines = val["klines"]["1m"].get(val["pair"])
+        if isinstance(old_klines, list):
 
+            old_klines.pop()
+            values = kline_msg["k"]
+            new_entry = [values["t"], values["o"], values["h"], values["l"], values["c"], values["v"], values["T"], values["q"], values["n"], values["V"], values["Q"], values["B"]]
+            old_klines.append(new_entry)
+
+            print("update klines")
+            val["klines"]["1m"][val["pair"]] = old_klines
+            # print(str(new_klines))
+            # print(str(values["t"]))
+            # for acronym, kline_value in kline_msg["k"].items():
+            #     # print(str(msg["k"][i]))
+            #     print(str(acronym))
+            #     print(str(kline_value))
+            # klines_list.append()
 
     @staticmethod
     def socket_history(history, progress_callback):

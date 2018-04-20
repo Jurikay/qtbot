@@ -6,7 +6,7 @@ import time
 from functools import partial
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
-import PyQt5.QtGui as QtGui
+# import PyQt5.QtGui as QtGui
 import app
 from app.init import val
 from app.table_items import CoinDelegate
@@ -48,7 +48,7 @@ class CoinIndex(QtWidgets.QTableWidget):
                 self.setColumnWidth(i, 90)
             else:
                 self.setColumnWidth(i, 75)
-                
+
 
         self.start_kline_check()
 

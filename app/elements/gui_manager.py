@@ -59,7 +59,7 @@ class GuiManager:
 
             self.mw.api_manager.api_calls()
 
-            self.mw.filter_manager.init_filter()
+            self.mw.table_manager.init_filter()
 
 
     # refactor
@@ -134,19 +134,19 @@ class GuiManager:
         self.mw.current_time.setText(str(time.strftime('%a, %d %b %Y %H:%M:%S')))
 
         self.mw.explicit_api_calls_label.setText(str(val["apiCalls"]))
-        self.mw.explicit_api_updates.setText(str(val["apiUpdates"]))
+        self.mw.explicit_api_updates.setText(str(self.mw.websocket_manager.api_updates))
 
 
 
     # global ui / logic
     def check_websocket(self):
         """Check if websocket updates stop occuring."""
-        if self.update_count == int(val["apiUpdates"]):
+        if self.update_count == int(self.mw.websocket_manager.api_updates):
             self.no_updates += 1
         else:
             self.no_updates = 0
 
-        self.update_count = int(val["apiUpdates"])
+        self.update_count = int(self.mw.websocket_manager.api_updates)
 
         if self.no_updates >= 2 and self.no_updates < 10:
             self.mw.status_label.setText("<span style='color:" + Colors.color_yellow + "'>waiting</span>")

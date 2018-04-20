@@ -31,7 +31,7 @@ from app.elements.hotkeys import HotKeys
 from app.elements.init_manager import InitManager
 from app.elements.custom_logger import BotLogger
 from app.elements.gui_manager import GuiManager
-from app.elements.table_filters import TableFilters
+from app.tables.table_manager import TableManager
 from app.elements.websocket_manager import WebsocketManager
 
 
@@ -128,8 +128,8 @@ class beeserBot(QtWidgets.QMainWindow):
         self.gui_manager = GuiManager(self)
         self.gui_manager.initialize()
 
-        self.filter_manager = TableFilters(self)
-        self.filter_manager.init_filter()
+        self.table_manager = TableManager(self)
+        self.table_manager.init_filter()
 
 
     def initialize_tables(self):
@@ -153,7 +153,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         print("delayed")
 
-        
+
 
 
         # self.open_orders.setColumnWidth(10, 0)

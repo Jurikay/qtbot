@@ -20,6 +20,7 @@ class KlineManager():
         self.client = app.client
     #     self.threadpool2 = QtCore.QThreadPool()
     #     self.threadpool = app.threadpool
+        self.kline_data = dict()
 
 
     @classmethod
@@ -140,6 +141,21 @@ class KlineManager():
 
         val["klines"][timeframe][str(pair)] = kline_data
 
+
     @staticmethod
     def test():
         print("rec")
+
+    # wip: set and get current kline data
+
+    def get_kline_info(self, pair, time_frame):
+        tf_container = self.kline_data.get(time_frame)
+        kline_data = tf_container.get(pair)
+
+        if isinstance(kline_data, list):
+            return kline_data
+        else:
+            return None
+
+    def update_current_candle(self, candle_data):
+        pass

@@ -67,7 +67,7 @@ val["timeRunning"] = 0
 val["execTrades"] = 0
 val["execBotTrades"] = 0
 val["apiCalls"] = 0
-val["apiUpdates"] = 0
+# val["apiUpdates"] = 0
 
 val["stats"]["timeRunning"] = 0
 val["stats"]["execTrades"] = 0

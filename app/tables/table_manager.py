@@ -1,12 +1,12 @@
 # from app.workers import Worker
-# import PyQt5.QtWidgets as QtWidgets
-# import PyQt5.QtGui as QtGui
+import PyQt5.QtWidgets as QtWidgets
+import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
 # import app
 # from app.init import val
 
 
-class TableFilters:
+class TableManager:
     def __init__(self, mw):
         self.mw = mw
 
@@ -132,6 +132,25 @@ class TableFilters:
                 self.mw.gui_manager.change_pair()
                 return
 
+    ################################
+    # General filter methods
+    ################################
+
+    @staticmethod
+    def create_icon_item(symbol):
+        """Takes a coin as str and returns an icon QTableWidgetItem."""
+
+        icon = QtGui.QIcon("images/ico/" + symbol + ".svg")
+        icon_item = QtWidgets.QTableWidgetItem()
+        icon_item.setIcon(icon)
+        return icon_item
+
+
+    @staticmethod
+    def create_table_item(item_value):
+        table_item = QtWidgets.QTableWidgetItem()
+        table_item.setData(QtCore.Qt.EditRole, QtCore.QVariant(item_value))
+        return table_item
 
 
         # elif tabIndex == 1:

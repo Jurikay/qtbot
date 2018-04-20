@@ -187,12 +187,12 @@ class ConfigManager:
         val["stats"]["apiCalls"] = config["Stats"]["apiCalls"]
         val["stats"]["apiUpdates"] = config["Stats"]["apiUpdates"]
 
-    @staticmethod
-    def write_stats():
+
+    def write_stats(self):
         total_running = int(val["stats"]["timeRunning"]) + int(val["timeRunning"])
         total_trades = int(val["stats"]["execTrades"]) + int(val["execTrades"])
         total_bot_trades = int(val["stats"]["execBotTrades"]) + int(val["execBotTrades"])
-        api_updates = int(val["stats"]["apiUpdates"]) + int(val["apiUpdates"])
+        api_updates = int(val["stats"]["apiUpdates"]) + int(self.mw.websocket_manager.api_updates)
         api_calls = int(val["stats"]["apiCalls"]) + int(val["apiCalls"])
 
         config = configparser.ConfigParser()
