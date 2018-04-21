@@ -17,7 +17,6 @@ class ConfigManager:
         mw.save_config.clicked.connect(self.write_config)
 
 
-
     def read_config(self):
         print("READING CFG")
         config = configparser.ConfigParser()

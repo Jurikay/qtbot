@@ -100,7 +100,6 @@ class LimitOrderPane(QtWidgets.QWidget):
         self.mw.limit_buy_input.valueChanged.connect(self.calc_total_buy)
         self.mw.limit_sell_input.valueChanged.connect(self.calc_total_sell)
 
-        
 
         self.mw.limit_sell_amount.valueChanged.connect(self.check_sell_amount)
         self.mw.limit_buy_amount.valueChanged.connect(self.check_buy_amount)

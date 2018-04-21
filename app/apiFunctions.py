@@ -164,17 +164,17 @@ class ApiCalls:
             print("create order failed")
 
 
-    @classmethod
+
     def api_cancel_order(self, client, order_id, symbol, progress_callback):
         print("cancel order " + str(symbol) + " " + str(order_id))
         try:
-            client.cancel_order(symbol=symbol, orderId=order_id)
+            self.client.cancel_order(symbol=symbol, orderId=order_id)
         except BinanceAPIException:
             print("cancel failed")
 
-    @classmethod
+
     def api_order_history(self, pair, progress_callback):
-        orders = app.client.get_all_orders(symbol=pair)
+        orders = self.client.get_all_orders(symbol=pair)
         progress_callback.emit(orders)
         val["apiCalls"] += 1
 

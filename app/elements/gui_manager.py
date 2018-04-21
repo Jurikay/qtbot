@@ -104,6 +104,7 @@ class GuiManager:
         self.percent_changes()
         self.volume_values()
 
+        print(val["pair"])
 
         self.check_websocket()
 
@@ -157,7 +158,7 @@ class GuiManager:
 
     # global ui # todo: refactor
     def percent_changes(self):
-        
+
         """Calculate and display price change values."""
 
         # close_t = float(val["klines"]["1m"].get(val["pair"], {})[-5][4])

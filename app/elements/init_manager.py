@@ -17,7 +17,7 @@ class InitManager:
 
 
     def initialize(self):
-        """Initial initialization"""
+        """Initial initialization :^)"""
         self.initial_values()
         self.set_modes()
         self.main_init()

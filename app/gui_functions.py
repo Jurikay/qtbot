@@ -32,9 +32,12 @@ def calc_all_wavgs(self):
 
 
 # test
-def calc_wavg(symbol):
-    coin = symbol
-    pair = symbol + "BTC"
+def calc_wavg():
+    symbol = val["pair"]
+    """Takes a pair and returns the weighted average buy price."""
+
+    coin = symbol.replace("BTC", "")
+
     current_free = val["accHoldings"][coin]["free"]
     current_locked = val["accHoldings"][coin]["locked"]
     current_total = float(current_free) + float(current_locked)
@@ -46,7 +49,7 @@ def calc_wavg(symbol):
     print("calculating wavg for " + str(coin))
     print("currently holding " + str(remaining))
     try:
-        for i, order in enumerate(reversed(val["history"][pair])):
+        for i, order in enumerate(reversed(val["history"][symbol])):
             if order["side"] == "BUY":
                 sum_traded += float(order["executedQty"])
                 remaining -= float(order["executedQty"])
@@ -54,25 +57,24 @@ def calc_wavg(symbol):
 
                 wavg = total_cost / sum_traded
 
-                print(str(i))
-                print("sum traded: " + str(sum_traded))
-                print("remainign: " + str(remaining))
-                print("exec qty: " + str(order["executedQty"]))
+                print(str(i) + ". Buy: " + str(total_cost) + " remaining: " + str(remaining) + " wavg; " + str(wavg))
+
                 # print(str(i) + ". buy: " + str(total_cost) + " remaining: " + str(remaining) + " wavg; " + str(wavg))
             elif order["side"] == "SELL":
                 print(str(i))
-                if wavg != 0:
-                    sum_traded -= float(order["executedQty"])
-                    print(str(i) + ". Sell: " + str(total_cost) + " remaining: " + str(remaining) + " wavg; " + str(wavg))
-                    remaining += float(order["executedQty"])
-                    total_cost -= float(order["executedQty"]) * wavg
+
+                sum_traded -= float(order["executedQty"])
+                remaining += float(order["executedQty"])
+                total_cost -= float(order["executedQty"]) * float(order["price"])
+                print(str(i) + ". Sell: " + str(total_cost) + " remaining: " + str(remaining) + " wavg; " + str(wavg))
+
 
             if coin != "BTC":
                 if remaining <= float(val["coins"][coin + "BTC"]["minTrade"]):
 
                     if current_total > 0:
                         # if remaining < 0:
-                        final = ('{number:.{digits}f}'.format(number=total_cost / (current_total - remaining), digits=8))
+                        final = ('{number:.{digits}f}'.format(number=total_cost / (current_total + remaining), digits=8))
 
 
                         print("ENOUGH! " + final)

@@ -679,7 +679,7 @@ QGroupBox::indicator:unchecked:disabled {
     image: url(images/qss_icons/rc/checkbox_unchecked_disabled.png);
 }
 
-#fishingbot QComboBox {
+#fishingbot QComboBox, #fishingbot QDoubleSpinBox, #fishingbot QTableWidget QPushButton {
     min-width: 0px;
     min-height: 0px;
     margin: 0px;
@@ -688,6 +688,10 @@ QGroupBox::indicator:unchecked:disabled {
     padding-left: 3px;
     margin-top: 3px;
     margin-bottom: 3px;
+}
+
+#fishbot QComboBox {
+    margin-bottom: 7px;
 }
 
 #quote_asset_box {

@@ -49,7 +49,6 @@ class CoinIndex(QtWidgets.QTableWidget):
             else:
                 self.setColumnWidth(i, 75)
 
-
         self.start_kline_check()
 
     def filter_coin_index(self, text, state):

@@ -18,8 +18,7 @@ class KlineManager():
     def __init__(self):
         # self.mw = mw
         self.client = app.client
-    #     self.threadpool2 = QtCore.QThreadPool()
-    #     self.threadpool = app.threadpool
+
         self.kline_data = dict()
 
 
@@ -50,6 +49,7 @@ class KlineManager():
         else:
             sleepTime = 0.15
             longSleep = 15
+
 
         # kline api call loop
         while True:

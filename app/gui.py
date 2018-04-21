@@ -83,7 +83,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.coin_selector.activated.connect(self.gui_manager.change_pair)
         self.wavg_button.clicked.connect(calc_wavg)
         self.calc_all_wavg_button.clicked.connect(partial(calc_all_wavgs, self))
-        self.button_wavg.clicked.connect(calc_wavg)
+        # self.button_wavg.clicked.connect(calc_wavg)
 
         # connect buttons to fishing bot methods (refactor)
 
@@ -111,9 +111,10 @@ class beeserBot(QtWidgets.QMainWindow):
         self.cfg_manager = ConfigManager(self)
         self.cfg_manager.read_config()
 
-        self.websocket_manager = WebsocketManager(self)
 
         self.api_manager = ApiCalls(self, self.threadpool)
+        self.websocket_manager = WebsocketManager(self, self.threadpool, self.client)
+
         self.api_manager.initialize()
 
         self.hotkey_manager = HotKeys(self)
@@ -152,7 +153,6 @@ class beeserBot(QtWidgets.QMainWindow):
     def delayed_stuff(self):
 
         print("delayed")
-
 
 
 

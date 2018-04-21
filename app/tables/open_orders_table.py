@@ -32,12 +32,12 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         print("CLICK")
         print(str(self))
         print(str(self.parent()))
-        
+
 
     # def mouseMoveEvent(self, event):
     #     print("move: " + str(event))
 
-    
+
 
     def add_to_open_orders(self, order):
         print("add to open orders: " + order["symbol"] + str(order["price"]))
@@ -186,7 +186,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         self.setColumnWidth(8, 75)
         self.setColumnWidth(9, 120)
         self.setColumnWidth(10, 75)
-        
+
 
         # orders_header = self.horizontalHeader()
         # orders_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
