@@ -13,7 +13,7 @@ import argparse
 
 def init_argparser():
     # parse arguments (debug, verbose)
-    parser = argparse.ArgumentParser(description='Description of your program')
+    parser = argparse.ArgumentParser(description='A custom Binance client written in Python and Qt.')
     parser.add_argument('-d', '--debug', help='Enable debug mode', required=False, action='store_true')
     parser.add_argument('-v', '--verbose', help='Enable verbose mode', required=False, action='store_true')
     args = vars(parser.parse_args())
@@ -47,8 +47,8 @@ else:
     val["verbose"] = False
 
 
-val["globalList"] = list()
-val["tradeHistory"] = list()
+# val["globalList"] = list()
+# val["tradeHistory"] = list()
 val["tickers"] = dict()
 
 val["buyAllowed"] = False

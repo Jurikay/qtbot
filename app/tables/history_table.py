@@ -30,7 +30,7 @@ class HistoryTable(QtWidgets.QTableWidget):
 
     def add_to_history(self, order):
         # print("add to history")
-        # if order["symbol"] == val["pair"]:
+        # if order["symbol"] == self.mw.cfg_manager.pair:
         # print(str(val["histoy"][order["symbol"]]))
 
         if not isinstance(val["history"][order["symbol"]], list):

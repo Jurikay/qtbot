@@ -16,6 +16,16 @@ class ConfigManager:
         self.mw = mw
         mw.save_config.clicked.connect(self.write_config)
 
+        self.pair = ""
+        self.coin = ""
+        self.defaultPair = None
+        self.buttonPercentage = None
+        self.api_key = None
+        self.api_secret = None
+        self.defaultTimeframe = None
+        self.copy_price = None
+        self.copy_qty = None
+
 
     def read_config(self):
         print("READING CFG")
@@ -29,6 +39,7 @@ class ConfigManager:
         else:
             print("no config file present. Generating default config.")
             config['CONFIG'] = {'DefaultPair': 'BNBBTC',
+                                'rememberDefault': False,
                                 'ButtonPercentages': '10, 25, 33, 50, 100',
                                 'DefaultTimeframe': 15,
                                 'CopyPrice': True,
@@ -40,14 +51,23 @@ class ConfigManager:
                 config.write(configfile)
             print("Config file has been written.")
 
-        val["pair"] = config["CONFIG"]["DefaultPair"]
-        val["defaultPair"] = config["CONFIG"]["DefaultPair"]
-        val["buttonPercentage"] = config["CONFIG"]["ButtonPercentages"].split(",")
-        val["api_key"] = config["API"]["Key"]
-        val["api_secret"] = config["API"]["Secret"]
-        val["defaultTimeframe"] = config["CONFIG"]["DefaultTimeframe"]
-        val["copy_price"] = config["CONFIG"]["CopyPrice"]
-        val["copy_qty"] = config["CONFIG"]["CopyQuantity"]
+        self.pair = config["CONFIG"]["DefaultPair"]
+        self.coin = self.pair[:-3]
+        self.defaultPair = config["CONFIG"]["DefaultPair"]
+        self.buttonPercentage = config["CONFIG"]["ButtonPercentages"].split(",")
+        self.api_key = config["API"]["Key"]
+        self.api_secret = config["API"]["Secret"]
+        self.defaultTimeframe = config["CONFIG"]["DefaultTimeframe"]
+        self.copy_price = config["CONFIG"]["CopyPrice"]
+        self.copy_qty = config["CONFIG"]["CopyQuantity"]
+
+
+
+        # refactor
+        self.mw.cfg_manager.pair = str(self.pair)
+
+        print()
+        print(self.mw.cfg_manager.pair)
 
         self.set_config_values()
         self.read_stats()
@@ -73,7 +93,7 @@ class ConfigManager:
         print("checkbox state:" + str(copy_price) + " " + str(copy_qty))
 
         percent_texts = [self.mw.percent_1, self.mw.percent_2, self.mw.percent_3, self.mw.percent_4, self.mw.percent_5]
-        percent = val["buttonPercentage"]
+        percent = self.buttonPercentage
 
         for i, _ in enumerate(percent):
 
@@ -111,25 +131,23 @@ class ConfigManager:
 
     def set_config_values(self):
         try:
-            self.mw.default_pair.setText(val["defaultPair"])
+            self.mw.default_pair.setText(self.defaultPair)
 
-            self.mw.api_key.setText(val["api_key"])
-            self.mw.api_secret.setText(val["api_secret"])
+            self.mw.api_key.setText(self.api_key)
+            self.mw.api_secret.setText(self.api_secret)
 
-            self.mw.percent_1.setText(str(int(val["buttonPercentage"][0])))
-            self.mw.percent_2.setText(str(int(val["buttonPercentage"][1])))
-            self.mw.percent_3.setText(str(int(val["buttonPercentage"][2])))
-            self.mw.percent_4.setText(str(int(val["buttonPercentage"][3])))
-            self.mw.percent_5.setText(str(int(val["buttonPercentage"][4])))
+            self.mw.percent_1.setText(str(int(self.buttonPercentage[0])))
+            self.mw.percent_2.setText(str(int(self.buttonPercentage[1])))
+            self.mw.percent_3.setText(str(int(self.buttonPercentage[2])))
+            self.mw.percent_4.setText(str(int(self.buttonPercentage[3])))
+            self.mw.percent_5.setText(str(int(self.buttonPercentage[4])))
             self.set_button_text()
-
-            # self.mw.default_timeframe.setText(str(val["defaultTimeframe"]))
 
             raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440]
 
             # dtf = self.dtf_selector.currentText()
             for i, tf in enumerate(raw_timeframes):
-                if val["defaultTimeframe"] == str(tf):
+                if self.defaultTimeframe == str(tf):
                     self.mw.dtf_selector.setCurrentIndex(i)
 
         except (TypeError, KeyError):
@@ -137,17 +155,17 @@ class ConfigManager:
 
 
     def set_button_text(self):
-        self.mw.limit_button0.setText(str(val["buttonPercentage"][0]) + "%")
-        self.mw.limit_button1.setText(str(val["buttonPercentage"][1]) + "%")
-        self.mw.limit_button2.setText(str(val["buttonPercentage"][2]) + "%")
-        self.mw.limit_button3.setText(str(val["buttonPercentage"][3]) + "%")
-        self.mw.limit_button4.setText(str(val["buttonPercentage"][4]) + "%")
+        self.mw.limit_button0.setText(str(self.buttonPercentage[0]) + "%")
+        self.mw.limit_button1.setText(str(self.buttonPercentage[1]) + "%")
+        self.mw.limit_button2.setText(str(self.buttonPercentage[2]) + "%")
+        self.mw.limit_button3.setText(str(self.buttonPercentage[3]) + "%")
+        self.mw.limit_button4.setText(str(self.buttonPercentage[4]) + "%")
 
-        self.mw.limit_sbutton0.setText(str(val["buttonPercentage"][0]) + "%")
-        self.mw.limit_sbutton1.setText(str(val["buttonPercentage"][1]) + "%")
-        self.mw.limit_sbutton2.setText(str(val["buttonPercentage"][2]) + "%")
-        self.mw.limit_sbutton3.setText(str(val["buttonPercentage"][3]) + "%")
-        self.mw.limit_sbutton4.setText(str(val["buttonPercentage"][4]) + "%")
+        self.mw.limit_sbutton0.setText(str(self.buttonPercentage[0]) + "%")
+        self.mw.limit_sbutton1.setText(str(self.buttonPercentage[1]) + "%")
+        self.mw.limit_sbutton2.setText(str(self.buttonPercentage[2]) + "%")
+        self.mw.limit_sbutton3.setText(str(self.buttonPercentage[3]) + "%")
+        self.mw.limit_sbutton4.setText(str(self.buttonPercentage[4]) + "%")
 
 
     ##########################

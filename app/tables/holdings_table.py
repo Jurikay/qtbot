@@ -25,7 +25,7 @@ class HoldingsTable(QtWidgets.QTableWidget):
         """Callback function to draw updated holdings."""
         print("holding updated")
         self.mw.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
-        self.mw.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
+        self.mw.limit_total_coin.setText(str(val["accHoldings"][self.mw.cfg_manager.coin]["free"]) + " " + self.mw.cfg_manager.coin)
 
         bold_font = QtGui.QFont()
         bold_font.setBold(True)
@@ -193,7 +193,7 @@ class HoldingsTable(QtWidgets.QTableWidget):
 
     def filter_holdings(self, text, state):
         for i in range(self.rowCount()):
-            if state == 2 and not self.item(i, 1).text().startswith(val["coin"]):
+            if state == 2 and not self.item(i, 1).text().startswith(self.mw.cfg_manager.coin):
                 self.setRowHidden(i, True)
             elif not self.item(i, 1).text().startswith(text.upper()):
                 self.setRowHidden(i, True)

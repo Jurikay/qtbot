@@ -18,9 +18,11 @@ class ApiCalls:
     def __init__(self, mw, tp):
         self.mw = mw
 
-        self.client = Client(val["api_key"], val["api_secret"], {"verify": True, "timeout": 61})
+
+        self.client = Client(mw.cfg_manager.api_key, mw.cfg_manager.api_secret, {"verify": True, "timeout": 10})
 
         app.client = self.client
+
         self.threadpool = tp
 
     def initialize(self):
@@ -52,16 +54,16 @@ class ApiCalls:
     # def get_tether(client):
     #     tether_info = client.get_ticker(symbol="BTCUSDT")
     #     return tether_info
-    @staticmethod
-    def set_pair_values():
-        """Set various values based on the chosen pair."""
-        val["coin"] = val["pair"][:-3]
-        val["decimals"] = len(str(val["coins"][val["pair"]]["tickSize"])) - 2
 
-        if int(val["coins"][val["pair"]]["minTrade"]) == 1:
+    def set_pair_values(self):
+        """Set various values based on the chosen pair."""
+        pair = self.mw.cfg_manager.pair
+        val["decimals"] = len(str(val["coins"][pair]["tickSize"])) - 2
+
+        if int(val["coins"][pair]["minTrade"]) == 1:
             val["assetDecimals"] = 0
         else:
-            val["assetDecimals"] = len(str(val["coins"][val["pair"]]["minTrade"])) - 2
+            val["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
 
 
     @classmethod
@@ -180,13 +182,13 @@ class ApiCalls:
 
 
     def api_history(self, progress_callback):
-        val["globalList"] = self.getTradehistory(self.client, val["pair"])
-        progress_callback.emit({"history": reversed(val["globalList"])})
+        trade_history = self.getTradehistory(self.client, self.mw.cfg_manager.pair)
+        progress_callback.emit({"history": reversed(trade_history)})
         val["apiCalls"] += 1
 
 
     def api_depth(self, progress_callback):
-        depth = self.getDepth(self.client, val["pair"])
+        depth = self.getDepth(self.client, self.mw.cfg_manager.pair)
         val["asks"] = depth["asks"]
         progress_callback.emit({"asks": val["asks"]})
         val["bids"] = depth["bids"]
@@ -215,7 +217,7 @@ class ApiCalls:
         worker.signals.finished.connect(self.mw.limit_pane.t_complete)
         self.mw.threadpool.start(worker)
 
-        self.get_trade_history(val["pair"])
+        self.get_trade_history(self.mw.cfg_manager.pair)
 
 
     def get_trade_history(self, pair):

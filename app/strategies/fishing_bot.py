@@ -36,11 +36,11 @@ class FishingBot(QtWidgets.QTableWidget):
 
         price_selector = QtWidgets.QDoubleSpinBox()
         price_selector.setDecimals(val["decimals"])
-        price_selector.setSingleStep(float(val["coins"][val["pair"]]["tickSize"]))
+        price_selector.setSingleStep(float(val["coins"][self.mw.cfg_manager.pair]["tickSize"]))
 
         amount_selector = QtWidgets.QDoubleSpinBox()
         amount_selector.setDecimals(val["assetDecimals"])
-        amount_selector.setSingleStep(float(val["coins"][val["pair"]]["minTrade"]))
+        amount_selector.setSingleStep(float(val["coins"][self.mw.cfg_manager.pair]["minTrade"]))
 
 
         row_count = self.rowCount()
@@ -67,7 +67,7 @@ class FishingBot(QtWidgets.QTableWidget):
             icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
             coin_combo_box.addItem(icon, coin[:-3])
 
-        coinIndex = coin_combo_box.findText(val["coin"])
+        coinIndex = coin_combo_box.findText(self.mw.cfg_manager.coin)
         coin_combo_box.setCurrentIndex(coinIndex)
         coin_combo_box.setEditable(True)
         coin_combo_box.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
@@ -165,3 +165,4 @@ class FishingBot(QtWidgets.QTableWidget):
         self.mw.fish_clear_all.clicked.connect(self.clear_all_orders)
 
         self.mw.go_fishing.clicked.connect(self.go_fishing)
+

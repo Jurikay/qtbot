@@ -42,8 +42,8 @@ class GuiManager:
         """Change the active pair and call symbol specific functions."""
         newcoin = self.mw.coin_selector.currentText()
 
-        if any(newcoin + "BTC" in s for s in val["coins"]) and newcoin != val["coin"]:
-            val["pair"] = newcoin + "BTC"
+        if any(newcoin + "BTC" in s for s in val["coins"]) and newcoin != self.mw.cfg_manager.coin:
+            self.mw.cfg_manager.pair = newcoin + "BTC"
             val["bm"].stop_socket(val["aggtradeWebsocket"])
             val["bm"].stop_socket(val["depthWebsocket"])
             val["bm"].stop_socket(val["klineWebsocket"])
@@ -104,7 +104,7 @@ class GuiManager:
         self.percent_changes()
         self.volume_values()
 
-        print(val["pair"])
+        print(self.mw.cfg_manager.pair)
 
         self.check_websocket()
 
@@ -161,24 +161,24 @@ class GuiManager:
 
         """Calculate and display price change values."""
 
-        # close_t = float(val["klines"]["1m"].get(val["pair"], {})[-5][4])
+        # close_t = float(val["klines"]["1m"].get(self.mw.cfg_manager.pair, {})[-5][4])
         klines_data = val["klines"].get("1m")
-        coin_data = klines_data.get(val["pair"])
+        coin_data = klines_data.get(self.mw.cfg_manager.pair)
 
         if isinstance(coin_data, list):
-            close_5m = float(val["klines"]["1m"][val["pair"]][-5][4])
-            close_15m = float(val["klines"]["1m"][val["pair"]][-15][4])
-            # close_30m = float(val["klines"]["1m"][val["pair"]][-30][4])
-            close_1h = float(val["klines"]["1m"][val["pair"]][-60][4])
-            close_4h = float(val["klines"]["1m"][val["pair"]][-240][4])
+            close_5m = float(val["klines"]["1m"][self.mw.cfg_manager.pair][-5][4])
+            close_15m = float(val["klines"]["1m"][self.mw.cfg_manager.pair][-15][4])
+            # close_30m = float(val["klines"]["1m"][self.mw.cfg_manager.pair][-30][4])
+            close_1h = float(val["klines"]["1m"][self.mw.cfg_manager.pair][-60][4])
+            close_4h = float(val["klines"]["1m"][self.mw.cfg_manager.pair][-240][4])
 
-            change_5m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_5m)) - 1) * 100
-            change_15m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_15m)) - 1) * 100
-            # change_30m_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_30m)) - 1) * 100
-            change_1h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_1h)) - 1) * 100
-            change_4h_value = ((float(val["tickers"][val["pair"]]["lastPrice"]) / float(close_4h)) - 1) * 100
+            change_5m_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_5m)) - 1) * 100
+            change_15m_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_15m)) - 1) * 100
+            # change_30m_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_30m)) - 1) * 100
+            change_1h_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_1h)) - 1) * 100
+            change_4h_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_4h)) - 1) * 100
 
-            change_1d_value = float(val["tickers"][val["pair"]]["priceChangePercent"])
+            change_1d_value = float(val["tickers"][self.mw.cfg_manager.pair]["priceChangePercent"])
 
 
             changes = [self.mw.change_5m, self.mw.change_15m, self.mw.change_1h, self.mw.change_4h, self.mw.change_1d]

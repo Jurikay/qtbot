@@ -177,15 +177,15 @@ class TableManager:
     #                 # return the first nonhidden row (might be inefficient)
     #                 coin = self.mw.coin_index.item(i, 1).text()
     #                 # switch to that coin
-    #                 # print(str(coin) + "   " + str(val["pair"]))
+    #                 # print(str(coin) + "   " + str(self.mw.cfg_manager.pair))
 
-    #                 if coin != val["pair"].replace("BTC", ""):
+    #                 if coin != self.mw.cfg_manager.pair.replace("BTC", ""):
     #                     coinIndex = self.mw.coin_selector.findText(coin)
     #                     self.mw.coin_selector.setCurrentIndex(coinIndex)
     #                     self.mw.gui_manager.change_pair()
     #                     # self.coin_index.setSortingEnabled(True)
     #                     return
 
-    #                 elif coin == val["pair"].replace("BTC", ""):
+    #                 elif coin == self.mw.cfg_manager.pair.replace("BTC", ""):
     #                     # self.coin_index.setSortingEnabled(True)
     #                     return

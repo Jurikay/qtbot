@@ -20,7 +20,7 @@ print(type(val["tickers"]["BNBBTC"]))
 # #
 # # print(val["coins"]["BNBBTC"])
 #
-# print(int(val["buttonPercentage"][0]))
+# print(int(self.mw.cfg_manager.buttonPercentage[0]))
 #
 # print(val["coins"])
 #
