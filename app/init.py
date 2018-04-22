@@ -47,8 +47,8 @@ else:
     val["verbose"] = False
 
 
-val["globalList"] = list()
-val["tradeHistory"] = list()
+# val["globalList"] = list()
+# val["tradeHistory"] = list()
 val["tickers"] = dict()
 
 val["buyAllowed"] = False

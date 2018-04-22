@@ -18,8 +18,6 @@ class ApiCalls:
     def __init__(self, mw, tp):
         self.mw = mw
 
-        
-        
 
         self.client = Client(mw.cfg_manager.api_key, mw.cfg_manager.api_secret, {"verify": True, "timeout": 10})
 
@@ -184,8 +182,8 @@ class ApiCalls:
 
 
     def api_history(self, progress_callback):
-        val["globalList"] = self.getTradehistory(self.client, self.mw.cfg_manager.pair)
-        progress_callback.emit({"history": reversed(val["globalList"])})
+        trade_history = self.getTradehistory(self.client, self.mw.cfg_manager.pair)
+        progress_callback.emit({"history": reversed(trade_history)})
         val["apiCalls"] += 1
 
 

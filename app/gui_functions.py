@@ -32,7 +32,7 @@ def calc_all_wavgs(self):
 
 
 # test
-def calc_wavg():
+def calc_wavg(self):
     symbol = self.mw.cfg_manager.pair
     """Takes a pair and returns the weighted average buy price."""
 

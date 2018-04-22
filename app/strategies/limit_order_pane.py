@@ -44,10 +44,10 @@ class LimitOrderPane(QtWidgets.QWidget):
         button_number = int(self.mw.sender().objectName()[-1:])
 
 
-        print("acch: " + str(val["accHoldings"]["BTC"]["free"]))
-        print( "buy input: " + str(self.mw.limit_buy_input.value()))
-        print("btn nmber: " + str(self.mw.cfg_manager.buttonPercentage[button_number]))
-        print("asset dec" + str(val["assetDecimals"]))
+        # print("acch: " + str(val["accHoldings"]["BTC"]["free"]))
+        # print("buy input: " + str(self.mw.limit_buy_input.value()))
+        # print("btn nmber: " + str(self.mw.cfg_manager.buttonPercentage[button_number]))
+        # print("asset dec" + str(val["assetDecimals"]))
         value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.cfg_manager.buttonPercentage[button_number]), val["assetDecimals"])
 
         self.mw.limit_buy_amount.setValue(float(value))
@@ -217,10 +217,10 @@ class LimitOrderPane(QtWidgets.QWidget):
 
     def cell_was_clicked(self, row, column):
         try:
-            reversed_list = val["tradeHistory"]
 
-            self.mw.limit_buy_input.setValue(float(reversed_list[row]["price"]))
-            self.mw.limit_sell_input.setValue(float(reversed_list[row]["price"]))
+
+            self.mw.limit_buy_input.setValue(float(self.mw.trade_history[row]["price"]))
+            self.mw.limit_sell_input.setValue(float(self.mw.trade_history[row]["price"]))
 
         except IndexError as e:
             print(str(e))

@@ -7,7 +7,7 @@
 
 
 import logging
-from functools import partial
+# from functools import partial
 import PyQt5.QtCore as QtCore
 # import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
@@ -20,7 +20,7 @@ from app.apiFunctions import ApiCalls
 from app.charts import Webpages as Webpages
 from app.gui_functions import (calc_wavg, calc_all_wavgs)
 # filter_coin_index, global_filter, filter_confirmed,
-from app.init import val
+# from app.init import val
 # from app.strategies.fishing_bot import FishingBot
 # from app.strategies.limit_order import LimitOrder
 import app
@@ -49,6 +49,8 @@ class beeserBot(QtWidgets.QMainWindow):
         self.threadpool = QtCore.QThreadPool()
         app.threadpool = self.threadpool
         app.mw = self
+
+        self.trade_history = list()
 
         # load QtDesigner UI file
         loadUi("ui/MainWindow.ui", self)
@@ -82,7 +84,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.debug2_button.clicked.connect(self.limit_pane.test_func)
         self.coin_selector.activated.connect(self.gui_manager.change_pair)
         self.wavg_button.clicked.connect(calc_wavg)
-        self.calc_all_wavg_button.clicked.connect(partial(calc_all_wavgs, self))
+        self.calc_all_wavg_button.clicked.connect(calc_all_wavgs)
         # self.button_wavg.clicked.connect(calc_wavg)
 
         # connect buttons to fishing bot methods (refactor)

@@ -61,12 +61,12 @@ class LiveData(QtWidgets.QWidget):
                 arrow = QtGui.QPixmap("images/assets/2arrow_down.png")
                 color = Colors.color_pink
 
-            formatted_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]), digits=val["decimals"])
+            formatted_price = '{number:.{digits}f}'.format(number=float(self.mw.trade_history[0]["price"]), digits=val["decimals"])
             self.mw.price_arrow.setPixmap(arrow)
 
             self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
 
-            usd_price = '{number:.{digits}f}'.format(number=float(val["globalList"][0]["price"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
+            usd_price = '{number:.{digits}f}'.format(number=float(self.mw.trade_history[0]["price"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
 
             self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 

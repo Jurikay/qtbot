@@ -165,3 +165,4 @@ class FishingBot(QtWidgets.QTableWidget):
         self.mw.fish_clear_all.clicked.connect(self.clear_all_orders)
 
         self.mw.go_fishing.clicked.connect(self.go_fishing)
+

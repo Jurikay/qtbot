@@ -54,13 +54,14 @@ class WebsocketManager:
 
 
     def trade_callback(self, msg):
-        val["globalList"].insert(0, {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]})
+        
+        self.mw.trade_history.insert(0, {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]})
 
-        if len(val["globalList"]) > 50:
-            val["globalList"].pop()
+        if len(self.mw.trade_history) > 50:
+            self.mw.trade_history.pop()
 
         # make a copy to track changes later
-        val["tradeHistory"] = val["globalList"][:]
+        # val["tradeHistory"] = self.mw.trade_history[:]
 
 
         history = {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]}
