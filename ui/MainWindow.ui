@@ -4947,17 +4947,17 @@
               </column>
               <column>
                <property name="text">
+                <string>Remove</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
                 <string>Price difference</string>
                </property>
               </column>
               <column>
                <property name="text">
                 <string>% until execution</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Remove</string>
                </property>
               </column>
              </widget>

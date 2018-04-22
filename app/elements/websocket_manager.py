@@ -43,10 +43,10 @@ class WebsocketManager:
 
     def websockets_symbol(self):
         """Symbol specific websockets. This gets called on pair change."""
-        val["aggtradeWebsocket"] = val["bm"].start_aggtrade_socket(val["pair"], self.trade_callback)
-        val["depthWebsocket"] = val["bm"].start_depth_socket(val["pair"], self.depth_callback, depth=20)
-        val["klineWebsocket"] = val["bm"].start_kline_socket(val["pair"], self.kline_callback)
-        # logging.info('Starting websockets for %s' % str(val["pair"]))
+        val["aggtradeWebsocket"] = val["bm"].start_aggtrade_socket(self.mw.cfg_manager.pair, self.trade_callback)
+        val["depthWebsocket"] = val["bm"].start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
+        val["klineWebsocket"] = val["bm"].start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback)
+        # logging.info('Starting websockets for %s' % str(self.mw.cfg_manager.pair))
 
     ###########################
     # CALLBACKS
@@ -188,8 +188,8 @@ class WebsocketManager:
         # print("kline msg:")
         # print(msg)
         # pass
-        # print(str(val["klines"]["1m"][val["pair"]]))
-        old_klines = val["klines"]["1m"].get(val["pair"])
+        # print(str(val["klines"]["1m"][self.mw.cfg_manager.pair]))
+        old_klines = val["klines"]["1m"].get(self.mw.cfg_manager.pair)
         if isinstance(old_klines, list):
 
             old_klines.pop()
@@ -198,7 +198,7 @@ class WebsocketManager:
             old_klines.append(new_entry)
 
             print("update klines")
-            val["klines"]["1m"][val["pair"]] = old_klines
+            val["klines"]["1m"][self.mw.cfg_manager.pair] = old_klines
             # print(str(new_klines))
             # print(str(values["t"]))
             # for acronym, kline_value in kline_msg["k"].items():

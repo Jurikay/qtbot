@@ -43,21 +43,26 @@ class LimitOrderPane(QtWidgets.QWidget):
     def limit_percentage(self):
         button_number = int(self.mw.sender().objectName()[-1:])
 
-        value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(val["buttonPercentage"][button_number]), val["assetDecimals"])
+
+        print("acch: " + str(val["accHoldings"]["BTC"]["free"]))
+        print( "buy input: " + str(self.mw.limit_buy_input.value()))
+        print("btn nmber: " + str(self.mw.cfg_manager.buttonPercentage[button_number]))
+        print("asset dec" + str(val["assetDecimals"]))
+        value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.cfg_manager.buttonPercentage[button_number]), val["assetDecimals"])
 
         self.mw.limit_buy_amount.setValue(float(value))
 
-        self.mw.limit_buy_slider.setValue(int(val["buttonPercentage"][button_number]))
+        self.mw.limit_buy_slider.setValue(int(self.mw.cfg_manager.buttonPercentage[button_number]))
 
 
     def limit_percentage_sell(self):
         button_number = int(self.mw.sender().objectName()[-1:])
-        # value = float(val["accHoldings"][val["coin"]]["free"]) * (float(val["buttonPercentage"][button_number]) / 100)
+        # value = float(val["accHoldings"][val["coin"]]["free"]) * (float(self.mw.cfg_manager.buttonPercentage[button_number]) / 100)
 
         # print(val["accHoldings"][val["coin"]]["free"])
         # self.limit_sell_amount.setValue(value)
 
-        self.mw.limit_sell_slider.setValue(int(val["buttonPercentage"][button_number]))
+        self.mw.limit_sell_slider.setValue(int(self.mw.cfg_manager.buttonPercentage[button_number]))
 
 
     def calc_total_buy(self):
@@ -138,10 +143,10 @@ class LimitOrderPane(QtWidgets.QWidget):
         self.mw.limit_sell_button.clicked.connect(self.create_sell_order)
 
 
-    @staticmethod
-    def round_sell_amount(percent_val):
-        holding = float(val["accHoldings"][val["coin"]]["free"]) * (float(percent_val) / 100)
-        if val["coins"][val["pair"]]["minTrade"] == 1:
+
+    def round_sell_amount(self, percent_val):
+        holding = float(val["accHoldings"][self.mw.cfg_manager.coin]["free"]) * (float(percent_val) / 100)
+        if val["coins"][self.mw.cfg_manager.pair]["minTrade"] == 1:
             sizeRounded = int(holding)
         else:
             sizeRounded = int(holding * 10**val["assetDecimals"]) / 10.0**val["assetDecimals"]
@@ -151,13 +156,13 @@ class LimitOrderPane(QtWidgets.QWidget):
     def overbid_undercut(self):
         try:
             if self.mw.sender().text() == "outbid":
-                self.mw.limit_buy_input.setValue(float(val["bids"][0][0]) + float(val["coins"][val["pair"]]["tickSize"]))
+                self.mw.limit_buy_input.setValue(float(val["bids"][0][0]) + float(val["coins"][self.mw.cfg_manager.pair]["tickSize"]))
             elif self.mw.sender().text() == "undercut":
-                self.mw.limit_sell_input.setValue(float(val["asks"][0][0]) - float(val["coins"][val["pair"]]["tickSize"]))
+                self.mw.limit_sell_input.setValue(float(val["asks"][0][0]) - float(val["coins"][self.mw.cfg_manager.pair]["tickSize"]))
             elif self.mw.sender().text() == "daily low":
-                self.mw.limit_buy_input.setValue(float(val["coins"][val["pair"]]["low"]))
+                self.mw.limit_buy_input.setValue(float(val["coins"][self.mw.cfg_manager.pair]["low"]))
             elif self.mw.sender().text() == "daily high":
-                self.mw.limit_sell_input.setValue(float(val["coins"][val["pair"]]["high"]))
+                self.mw.limit_sell_input.setValue(float(val["coins"][self.mw.cfg_manager.pair]["high"]))
         except KeyError:
             pass
 ####################################
@@ -169,7 +174,7 @@ class LimitOrderPane(QtWidgets.QWidget):
 
         try:
             sell_amount = float(self.mw.limit_sell_amount.text())
-            free_amount = float(val["accHoldings"][val["coin"]]["free"])
+            free_amount = float(val["accHoldings"][self.mw.cfg_manager.coin]["free"])
             sell_price = float(self.mw.limit_sell_input.text())
 
             if sell_amount > free_amount or sell_amount * sell_price < 0.001:
@@ -233,7 +238,7 @@ class LimitOrderPane(QtWidgets.QWidget):
 
     def create_buy_order(self):
         if val["buyAllowed"] is True:
-            pair = val["pair"]
+            pair = self.mw.cfg_manager.pair
             price = '{number:.{digits}f}'.format(number=self.mw.limit_buy_input.value(), digits=val["decimals"])
 
             amount = '{number:.{digits}f}'.format(number=self.mw.limit_buy_amount.value(), digits=val["assetDecimals"])
@@ -247,7 +252,7 @@ class LimitOrderPane(QtWidgets.QWidget):
 
     def create_sell_order(self):
         if val["sellAllowed"] is True:
-            pair = val["pair"]
+            pair = self.mw.cfg_manager.pair
             price = '{number:.{digits}f}'.format(number=self.mw.limit_sell_input.value(), digits=val["decimals"])
 
             amount = '{number:.{digits}f}'.format(number=self.mw.limit_sell_amount.value(), digits=val["assetDecimals"])

@@ -93,15 +93,15 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # check if coin is an empty dict. If yes, api calls have not been answered.
         # TODO: refactor move into init manager
-        current_coin = val.get("coin", None)
-        if current_coin is not None:
-            print("authenticated!")
+        # current_coin = val.get("coin", None)
+        # if current_coin is not None:
+        #     print("authenticated!")
 
-            self.init_manager.api_init()
+        self.init_manager.api_init()
 
         # api credentials not valid; display welcome page
-        else:
-            self.show_error_page()
+        # else:
+        #     self.show_error_page()
 
 
     def instantiate_managers(self):
@@ -113,9 +113,10 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.api_manager = ApiCalls(self, self.threadpool)
+        self.api_manager.initialize()
+
         self.websocket_manager = WebsocketManager(self, self.threadpool, self.client)
 
-        self.api_manager.initialize()
 
         self.hotkey_manager = HotKeys(self)
         self.hotkey_manager.init_hotkeys()

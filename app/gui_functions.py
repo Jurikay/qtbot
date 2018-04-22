@@ -27,13 +27,13 @@ def calc_all_wavgs(self):
 
         coin = self.holdings_table.item(i, 1).text()
         if coin != "BTC":
-            wavg = calc_wavg(coin)
+            wavg = calc_wavg()
             self.holdings_table.item(i, 8).setText(wavg)
 
 
 # test
 def calc_wavg():
-    symbol = val["pair"]
+    symbol = self.mw.cfg_manager.pair
     """Takes a pair and returns the weighted average buy price."""
 
     coin = symbol.replace("BTC", "")

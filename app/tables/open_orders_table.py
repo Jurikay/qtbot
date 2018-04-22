@@ -93,7 +93,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
 
 
     def remove_from_open_orders(self, order):
-        # if order["symbol"] == val["pair"]:
+        # if order["symbol"] == self.mw.cfg_manager.pair:
         items = self.mw.open_orders.findItems(str(order["orderId"]), QtCore.Qt.MatchExactly)
 
         # findItems returns a list hence we iterate through it. We only expect one result though.
@@ -133,7 +133,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
 
     def filter_open_orders(self, text, state):
         for i in range(self.mw.open_orders.rowCount()):
-            if state == 2 and not self.mw.open_orders.item(i, 2).text().startswith(val["coin"]):
+            if state == 2 and not self.mw.open_orders.item(i, 2).text().startswith(self.mw.cfg_manager.coin):
                 self.mw.open_orders.setRowHidden(i, True)
             elif not self.mw.open_orders.item(i, 2).text().startswith(text.upper()):
                 self.mw.open_orders.setRowHidden(i, True)

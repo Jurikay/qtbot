@@ -26,36 +26,40 @@ class InitManager:
     def initial_values(self):
         """Set various values needed for further tasks. Gets called when the pair
         is changed."""
+
+        coin = self.mw.cfg_manager.coin
+        pair = self.mw.cfg_manager.pair
+
         self.mw.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
-        self.mw.limit_total_coin.setText(str(val["accHoldings"][val["coin"]]["free"]) + " " + val["coin"])
+        self.mw.limit_total_coin.setText(str(val["accHoldings"][coin]["free"]) + " " + coin)
 
-        self.mw.limit_buy_label.setText("<span style='font-weight: bold; font-size: 12px;'>Buy " + val["coin"] + "</span>")
-        self.mw.limit_sell_label.setText("<span style='font-weight: bold; font-size: 12px;'>Sell " + val["coin"] + "</span>")
+        self.mw.limit_buy_label.setText("<span style='font-weight: bold; font-size: 12px;'>Buy " + coin + "</span>")
+        self.mw.limit_sell_label.setText("<span style='font-weight: bold; font-size: 12px;'>Sell " + coin + "</span>")
 
-        # self.mw.limit_coin_label_buy.setText("<span style='font-weight: bold; color: white;'>" + val["coin"] + "</span>")
-        # self.mw.limit_coin_label_sell.setText("<span style='font-weight: bold; color: white;'>" + val["coin"] + "</span>")
+        # self.mw.limit_coin_label_buy.setText("<span style='font-weight: bold; color: white;'>" + coin + "</span>")
+        # self.mw.limit_coin_label_sell.setText("<span style='font-weight: bold; color: white;'>" + coin + "</span>")
 
         # self.mw.limit_buy_input.setText("kernoschmaus")
         self.mw.limit_buy_input.setDecimals(val["decimals"])
-        self.mw.limit_buy_input.setSingleStep(float(val["coins"][val["pair"]]["tickSize"]))
+        self.mw.limit_buy_input.setSingleStep(float(val["coins"][pair]["tickSize"]))
 
         self.mw.limit_sell_input.setDecimals(val["decimals"])
-        self.mw.limit_sell_input.setSingleStep(float(val["coins"][val["pair"]]["tickSize"]))
+        self.mw.limit_sell_input.setSingleStep(float(val["coins"][pair]["tickSize"]))
 
         self.mw.limit_buy_amount.setDecimals(val["assetDecimals"])
-        self.mw.limit_buy_amount.setSingleStep(float(val["coins"][val["pair"]]["minTrade"]))
+        self.mw.limit_buy_amount.setSingleStep(float(val["coins"][pair]["minTrade"]))
 
         self.mw.limit_sell_amount.setDecimals(val["assetDecimals"])
-        self.mw.limit_sell_amount.setSingleStep(float(val["coins"][val["pair"]]["minTrade"]))
+        self.mw.limit_sell_amount.setSingleStep(float(val["coins"][pair]["minTrade"]))
 
-        self.mw.buy_asset.setText(val["coin"])
-        self.mw.sell_asset.setText(val["coin"])
+        self.mw.buy_asset.setText(coin)
+        self.mw.sell_asset.setText(coin)
 
-        self.mw.chart.setHtml(Webpages.build_chart2(val["pair"], val["defaultTimeframe"]))
+        self.mw.chart.setHtml(Webpages.build_chart2(self.mw.cfg_manager.pair, self.mw.cfg_manager.defaultTimeframe))
         # self.mw.chart.backgroundColor(QtGui.QColor("#000000"))
         self.mw.chart.show()
 
-        url = Webpages.build_cmc()
+        url = Webpages.build_cmc(self)
         self.mw.cmc_chart.load(QtCore.QUrl(url))
 
         bids_header = self.mw.bids_table.horizontalHeader()
@@ -128,7 +132,7 @@ class InitManager:
         self.mw.coin_selector.model().sort(0)
         self.mw.coin_selector.setIconSize(QtCore.QSize(25, 25))
 
-        coinIndex = self.mw.coin_selector.findText(val["coin"])
+        coinIndex = self.mw.coin_selector.findText(coin)
         self.mw.coin_selector.setCurrentIndex(coinIndex)
 
         icon = QtGui.QIcon("images/ico/" + "BTC" + ".svg")
@@ -146,7 +150,7 @@ class InitManager:
 
 
         # self.sound_1 = QSound('sounds/Tink.wav')
-        self.mw.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", val["defaultTimeframe"], "COINBASE"))
+        self.mw.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", self.mw.cfg_manager.defaultTimeframe, "COINBASE"))
         self.mw.btc_chart.show()
 
         self.mw.ChartTabs.setCornerWidget(self.mw.volume_widget)
@@ -159,8 +163,8 @@ class InitManager:
     def initial_last_price(self):
         # init last_price
         arrow = QtGui.QPixmap("images/assets/2arrow.png")
-        formatted_price = '{number:.{digits}f}'.format(number=float(val["tickers"][val["pair"]]["lastPrice"]), digits=val["decimals"])
+        formatted_price = '{number:.{digits}f}'.format(number=float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]), digits=val["decimals"])
         self.mw.price_arrow.setPixmap(arrow)
         self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + Colors.color_yellow + "'>" + formatted_price + "</span>")
-        usd_price = '{number:.{digits}f}'.format(number=float(val["tickers"][val["pair"]]["lastPrice"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
+        usd_price = '{number:.{digits}f}'.format(number=float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
         self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")

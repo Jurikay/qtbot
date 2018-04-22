@@ -465,10 +465,10 @@ class Webpages():
     """
         return welcome_page
 
-    @staticmethod
-    def build_cmc():
+
+    def build_cmc(self):
         """Make coin names coinmarketcap conform."""
-        coin_name = val["coins"][val["pair"]]["baseAssetName"]
+        coin_name = val["coins"][self.mw.cfg_manager.pair]["baseAssetName"]
         if coin_name == "Wancoin":
             coin_name = "Wanchain"
         elif coin_name == "MIOTA":
@@ -499,6 +499,6 @@ class Webpages():
 
     @staticmethod
     def build_binance_info():
-        coin_name = val["coins"][val["pair"]]["baseAssetName"]
+        coin_name = val["coins"][self.mw.cfg_manager.pair]["baseAssetName"]
         url = "https://info.binance.com/currencies/" + coin_name.replace(" ", "-").replace(".", "") + "/"
         return url
