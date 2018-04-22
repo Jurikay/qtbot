@@ -19,12 +19,15 @@ class LiveData(QtWidgets.QWidget):
         super(LiveData, self).__init__(parent)
         self.mw = app.mw
         self.history_progressed = False
+        self.ob_progressed = False
 
 
     # live data
     def progress_history(self, trade):
+        """Callback function to add trades to the trade history table."""
         self.mw.tradeTable.insertRow(0)
         price_item = QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["price"]), digits=val["decimals"]))
+
         # price_item.setTextAlignment(QtCore.Qt.AlignHCenter)
 
         self.mw.tradeTable.setItem(0, 0, price_item)
@@ -48,34 +51,45 @@ class LiveData(QtWidgets.QWidget):
         self.mw.tradeTable.item(0, 2).setForeground(QtGui.QColor(Colors.color_lightgrey))
 
 
-        # # set last price, color and arrow
-        #
-        if self.history_progressed is True:
-            if float(self.mw.tradeTable.item(0, 0).text()) > float(self.mw.tradeTable.item(1, 0).text()):
-                arrow = QtGui.QPixmap("images/assets/2arrow_up.png")
-                color = Colors.color_green
-            elif float(self.mw.tradeTable.item(0, 0).text()) == float(self.mw.tradeTable.item(1, 0).text()):
-                arrow = QtGui.QPixmap("images/assets/2arrow.png")
-                color = Colors.color_yellow
-            else:
-                arrow = QtGui.QPixmap("images/assets/2arrow_down.png")
-                color = Colors.color_pink
+        if self.history_progressed is True and self.ob_progressed is True:
+            # self.mw.tradeTable.update()
+            self.set_last_price()
+            self.set_spread()
 
-            try:
-                formatted_price = '{number:.{digits}f}'.format(number=float(self.mw.trade_history[0]["price"]), digits=val["decimals"])
-                self.mw.price_arrow.setPixmap(arrow)
 
-                self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
 
-                usd_price = '{number:.{digits}f}'.format(number=float(self.mw.trade_history[0]["price"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
+    def set_last_price(self):
 
-                self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
-            except IndexError:
-                print("form price index error")
+        history = self.mw.trade_history[:]
+
+        # set color and arrow based on the last two trades
+        if float(history[0]["price"]) > float(history[1]["price"]):
+            arrow = QtGui.QPixmap("images/assets/2arrow_up.png")
+            color = Colors.color_green
+        elif float(history[0]["price"]) == float(history[1]["price"]):
+            arrow = QtGui.QPixmap("images/assets/2arrow.png")
+            color = Colors.color_yellow
+        else:
+            arrow = QtGui.QPixmap("images/assets/2arrow_down.png")
+            color = Colors.color_pink
+
+
+        formatted_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]), digits=val["decimals"])
+        self.mw.price_arrow.setPixmap(arrow)
+
+        self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
+
+        usd_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
+
+        self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
+
+        print("set last price: " + str(formatted_price))
+
+
+
 
         if self.mw.tradeTable.rowCount() >= 50:
             self.mw.tradeTable.removeRow(50)
-
 
     def progress_asks(self, asks):
         for i, _ in enumerate(asks):
@@ -90,7 +104,7 @@ class LiveData(QtWidgets.QWidget):
 
             self.mw.asks_table.setItem(19 - i, 3, QtWidgets.QTableWidgetItem(total_btc_asks + " BTC"))
             self.mw.asks_table.item(19 - i, 1).setForeground(QtGui.QColor(Colors.color_pink))
-            self.set_spread()
+            # self.set_spread()
 
             # self.mw.asks_table.scrollToBottom()
 
@@ -107,34 +121,47 @@ class LiveData(QtWidgets.QWidget):
 
             self.mw.bids_table.setItem(i, 3, QtWidgets.QTableWidgetItem(total_btc_bids + " BTC"))
             self.mw.bids_table.item(i, 1).setForeground(QtGui.QColor(Colors.color_green))
-            self.set_spread()
+            # self.set_spread()
 
     # live data
     def set_spread(self):
-        spread = ((float(val["asks"][0][0]) / float(val["bids"][0][0])) - 1) * 100
-        spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
+        print("set spread")
+        if len(val["bids"]) > 1 and len(val["asks"]) > 1:
+            spread = ((float(val["asks"][0][0]) / float(val["bids"][0][0])) - 1) * 100
+            spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
 
-        self.mw.spread_label.setText("<span style='font-size: 18px; font-family: Arial Black; color:" + Colors.color_lightgrey + "'>" + spread_formatted + "</span>")
+            self.mw.spread_label.setText("<span style='font-size: 18px; font-family: Arial Black; color:" + Colors.color_lightgrey + "'>" + spread_formatted + "</span>")
 
 
     # Draw UI changes (bids, asks, history)
     def batch_orderbook(self, payload):
         # logging.info("progress FN")
-            asks = payload.get("asks", "")
-            bids = payload.get("bids", "")
+        self.ob_progressed = False
+        asks = payload.get("asks", "")
+        bids = payload.get("bids", "")
 
-            if len(asks) == 20:
-                for _ in enumerate(asks):
-                    self.progress_asks(asks)
+        if len(asks) == 20:
+            for _ in enumerate(asks):
+                self.progress_asks(asks)
 
-            if len(bids) == 20:
-                for _ in enumerate(bids):
-                    self.progress_bids(bids)
+        if len(bids) == 20:
+            for _ in enumerate(bids):
+                self.progress_bids(bids)
+
+        self.ob_progressed = True
+        # self.set_spread()
 
 
     def batch_history(self, payload):
+        print("batch history")
+        self.mw.trade_history = []
+        self.history_progressed = False
         history = payload.get("history", "")
         # if len(list(history)) > 10:
         for trade in enumerate(history):
             self.progress_history(trade[1])
+            self.mw.trade_history.append(trade[1])
+
         self.history_progressed = True
+        self.mw.tradeTable.update()
+        self.set_last_price()

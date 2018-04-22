@@ -34,8 +34,6 @@ class ApiCalls:
 
             val["accHoldings"] = self.getHoldings(self.client)
 
-            # val["tether"] = get_tether(self.client)
-
             val["tickers"] = self.getTickers(self.client)
 
             val["apiCalls"] += 3
@@ -43,12 +41,14 @@ class ApiCalls:
             # accHoldings = dict()
 
             self.set_pair_values()
+            self.mw.is_connected = True
         except (BinanceAPIException, NameError) as e:
             print("API ERROR")
             print(str(e))
             if "code=-1003" in str(e):
                 print("ja ein api error :)")
-
+            elif "code=-2014":
+                print("API KEY INVALID")
 
 
     # def get_tether(client):

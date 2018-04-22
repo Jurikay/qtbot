@@ -9,6 +9,7 @@ import logging
 
 # import app
 from app.init import val
+from app.charts import Webpages
 
 
 class ConfigManager:
@@ -16,8 +17,13 @@ class ConfigManager:
         self.mw = mw
 
         mw.save_config.clicked.connect(self.write_config)
+        mw.ui_updates_box.valueChanged.connect(self.ui_value_text)
+        mw.default_timeframe_selector.currentIndexChanged.connect(self.update_chart)
+        mw.btc_timeframe_selector.currentIndexChanged.connect(self.update_btc_chart)
+        mw.btc_exchange_selector.currentIndexChanged.connect(self.update_btc_chart)
 
-        self.pair = "BNBBTC"
+
+        self.pair = ""
         self.coin = ""
         self.defaultPair = None
         self.rememberDefault = False
@@ -25,8 +31,11 @@ class ConfigManager:
         self.api_key = None
         self.api_secret = None
         self.defaultTimeframe = None
+        self.btcTimeframe = None
+        self.btcExchange = None
         self.copy_price = None
         self.copy_qty = None
+        self.ui_updates = 1
 
 
     def initialize(self):
@@ -41,10 +50,13 @@ class ConfigManager:
                                 'rememberDefault': False,
                                 'ButtonPercentages': '10, 25, 33, 50, 100',
                                 'DefaultTimeframe': 15,
+                                'BtcTimeframe': 60,
+                                'BtcExchange': "COINBASE",
                                 'CopyPrice': True,
                                 'CopyQuantity': False,
+                                'UiUpdates': 1,
                                 }
-            config["API"] = {"Key": "PLEASE ENTER YOUR API KEY HERE", "Secret": "PLEASE ENTER YOUR API SECRET HERE"}
+            config["API"] = {"Key": "", "Secret": ""}
 
             with open('config.ini', 'w') as configfile:
                 config.write(configfile)
@@ -73,15 +85,18 @@ class ConfigManager:
             self.api_key = config["API"]["Key"]
             self.api_secret = config["API"]["Secret"]
             self.defaultTimeframe = config["CONFIG"]["DefaultTimeframe"]
+            self.btcTimeframe = config["CONFIG"]["BtcTimeframe"]
+            self.btcExchange = config["CONFIG"]["BtcExchange"]
             self.copy_price = config["CONFIG"]["CopyPrice"]
             self.copy_qty = config["CONFIG"]["CopyQuantity"]
+            self.ui_updates = config["CONFIG"]["UiUpdates"]
         except KeyError:
             print("CONFIG FILE BROKEN!")
 
 
 
         # refactor
-        self.mw.cfg_manager.pair = str(self.pair)
+        # self.mw.cfg_manager.pair = str(self.pair)
 
         print()
         print(self.mw.cfg_manager.pair)
@@ -97,6 +112,9 @@ class ConfigManager:
 
 
         rememberDefault = self.mw.cfg_remember.isChecked()
+        ui_updates = self.mw.ui_updates_box.value()
+        btc_exchange = self.mw.btc_exchange_selector.currentText()
+
 
         if rememberDefault is True:
             print("REMEBER IS TRUE!!")
@@ -110,11 +128,15 @@ class ConfigManager:
 
         raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, "1w"]
 
-        dtf = self.mw.dtf_selector.currentText()
-        for i, tf in enumerate(val["validTimeframes"]):
-            if str(dtf) == str(tf):
-                # self.mw.dtf_selector.setCurrentIndex(i)
+        default_timeframe = self.mw.default_timeframe_selector.currentText()
+        btc_timeframe = self.mw.btc_timeframe_selector.currentText()
+
+        for i, valid_tf in enumerate(val["validTimeframes"]):
+            if str(valid_tf) == str(default_timeframe):
                 tf_index = i
+
+            if str(valid_tf) == str(btc_timeframe):
+                btc_tf_index = i
 
         copy_price = self.mw.copy_price_box.isChecked()
         copy_qty = self.mw.copy_qty_box.isChecked()
@@ -145,8 +167,11 @@ class ConfigManager:
                             'rememberDefault': rememberDefault,
                             'ButtonPercentages': percent[0] + ", " + percent[1] + ", " + percent[2] + ", " + percent[3] + ", " + percent[4],
                             'DefaultTimeframe': raw_timeframes[tf_index],
+                            'BtcTimeframe': raw_timeframes[btc_tf_index],
+                            'BtcExchange': btc_exchange,
                             'CopyPrice': copy_price,
                             'CopyQuantity': copy_qty,
+                            'UiUpdates': ui_updates,
                             }
         config["API"] = {"Key": key, "Secret": secret}
 
@@ -179,7 +204,14 @@ class ConfigManager:
             # dtf = self.dtf_selector.currentText()
             for i, tf in enumerate(raw_timeframes):
                 if self.defaultTimeframe == str(tf):
-                    self.mw.dtf_selector.setCurrentIndex(i)
+                    self.mw.default_timeframe_selector.setCurrentIndex(i)
+                if self.btcTimeframe == str(tf):
+                    self.mw.btc_timeframe_selector.setCurrentIndex(i)
+
+            btc_exchanges = ["COINBASE", "GEMINI", "BITSTAMP", "BITFINEX", "OKCOIN", "BINANCE"]
+            for i, exchange in enumerate(btc_exchanges):
+                if self.btcExchange == exchange:
+                    self.mw.btc_exchange_selector.setCurrentIndex(i)
 
         except (TypeError, KeyError) as error:
             print("error on saving config")
@@ -265,3 +297,17 @@ class ConfigManager:
         self.mw.total_bot_trades.setText(str(val["stats"]["execBotTrades"]))
         self.mw.total_api_calls.setText(str(val["stats"]["apiCalls"]))
         self.mw.total_api_updates.setText(str(val["stats"]["apiUpdates"]))
+
+
+    def ui_value_text(self):
+        if self.mw.ui_updates_box.value() > 1:
+            self.mw.ui_updates_label.setText("seconds")
+        else:
+            self.mw.ui_updates_label.setText("second")
+
+
+    def update_btc_chart(self):
+        self.mw.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", self.mw.cfg_manager.btcTimeframe, self.mw.cfg_manager.btcExchange))
+
+    def update_chart(self):
+        self.mw.chart.setHtml(Webpages.build_chart2(self.pair, self.defaultTimeframe))

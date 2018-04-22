@@ -33,19 +33,11 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
 
         if self.parent.name == "CoinIndex":
             self.style_coin_index(option, index)
+            self.filter_highlight(option, index)
         # set default values:
-        if self.mw.coinindex_filter.text() != "":
-            for row in range(self.parent.rowCount()):
-                if self.parent.isRowHidden(row):
-                    continue
-                else:
-                    marked_row = row
-                    break
-            
-            if index.row() == marked_row and index.column() == 1:
-                option.text = "<span style='border-bottom: 3px solid #f3ba2e; color:" + Colors.color_yellow + ";'>" + str(index.data()) + " / BTC</span>"
 
-            
+
+
 
     # def displayText(self, text, locale):
     #     """
@@ -57,6 +49,20 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
     #     """
     #     data = text  # .toString() # Python 2: need to convert to "normal" string
     #     return "{0:>{1}}".format(data, 4)
+    def filter_highlight(self, option, index):
+        if self.mw.coinindex_filter.text() != "":
+            for row in range(self.parent.rowCount()):
+                if self.parent.isRowHidden(row):
+                    continue
+                else:
+                    marked_row = row
+                    break
+
+            if index.row() == marked_row and index.column() == 1:
+                print("coloring marked row: " + str(marked_row))
+                option.text = "<span style='border-bottom: 3px solid #f3ba2e; color:" + Colors.color_yellow + ";'>" + str(index.data()) + " / BTC</span>"
+
+
     def style_coin_index(self, option, index):
         color = "#cdcdcd"
 

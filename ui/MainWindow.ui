@@ -559,7 +559,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>5</number>
+            <number>6</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -1402,6 +1402,13 @@
                  </rect>
                 </property>
                </widget>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QPushButton" name="btn_reload_api">
+               <property name="text">
+                <string>reload api</string>
+               </property>
               </widget>
              </item>
             </layout>
@@ -5224,7 +5231,7 @@
              </layout>
             </item>
             <item row="5" column="3">
-             <widget class="QComboBox" name="dtf_selector">
+             <widget class="QComboBox" name="default_timeframe_selector">
               <item>
                <property name="text">
                 <string>1m</string>
@@ -5313,7 +5320,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spinBox">
+               <widget class="QSpinBox" name="ui_updates_box">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -5335,7 +5342,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_54">
+               <widget class="QLabel" name="ui_updates_label">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -5386,7 +5393,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="comboBox_3">
+               <widget class="QComboBox" name="btc_timeframe_selector">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -5400,22 +5407,62 @@
                 </item>
                 <item>
                  <property name="text">
-                  <string>3</string>
+                  <string>3m</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>5</string>
+                  <string>5m</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>15</string>
+                  <string>15m</string>
                  </property>
                 </item>
                 <item>
                  <property name="text">
-                  <string>30</string>
+                  <string>30m</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>45m</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1h</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>2h</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>3h</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>4h</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1d</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1w</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>1m</string>
                  </property>
                 </item>
                </widget>
@@ -5437,7 +5484,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="comboBox">
+               <widget class="QComboBox" name="btc_exchange_selector">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -6013,8 +6060,8 @@
   <tabstop>cfg_remember</tabstop>
   <tabstop>default_pair_label</tabstop>
   <tabstop>copy_price_box</tabstop>
-  <tabstop>dtf_selector</tabstop>
-  <tabstop>spinBox</tabstop>
+  <tabstop>default_timeframe_selector</tabstop>
+  <tabstop>ui_updates_box</tabstop>
   <tabstop>save_config</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>session_running</tabstop>
@@ -6035,8 +6082,8 @@
   <tabstop>pushButton_6</tabstop>
   <tabstop>coinindex_filter</tabstop>
   <tabstop>hide_pairs</tabstop>
-  <tabstop>comboBox</tabstop>
-  <tabstop>comboBox_3</tabstop>
+  <tabstop>btc_exchange_selector</tabstop>
+  <tabstop>btc_timeframe_selector</tabstop>
   <tabstop>comboBox_10</tabstop>
   <tabstop>comboBox_11</tabstop>
   <tabstop>wavg_button</tabstop>

@@ -8,6 +8,7 @@ from datetime import timedelta
 import time
 from app.gui import logging
 from app.workers import Worker
+from app.charts import Webpages
 
 
 class GuiManager:
@@ -22,7 +23,108 @@ class GuiManager:
 
 
     def initialize(self):
-        pass
+        self.initial_last_price()
+        self.initial_values()
+        self.api_init()
+        self.mw.limit_pane.init_tables()
+
+        for coin in val["coins"]:
+
+            icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
+            self.mw.coin_selector.addItem(icon, coin[:-3])
+
+        print("set coin selector coin " + str(self.mw.cfg_manager.coin))
+        self.mw.coin_selector.model().sort(0)
+        self.mw.coin_selector.setIconSize(QtCore.QSize(25, 25))
+
+        coinIndex = self.mw.coin_selector.findText(str(self.mw.cfg_manager.coin))
+        print("coin index: " + str(coinIndex))
+
+        self.mw.coin_selector.setCurrentIndex(coinIndex)
+
+
+
+    def initial_last_price(self):
+        # init last_price
+        arrow = QtGui.QPixmap("images/assets/2arrow.png")
+        formatted_price = '{number:.{digits}f}'.format(number=float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]), digits=val["decimals"])
+        self.mw.price_arrow.setPixmap(arrow)
+        self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + Colors.color_yellow + "'>" + formatted_price + "</span>")
+        usd_price = '{number:.{digits}f}'.format(number=float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
+        self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
+
+
+    def initial_values(self):
+        """Set various values needed for further tasks. Gets called when the pair
+        is changed."""
+
+        coin = self.mw.cfg_manager.coin
+        pair = self.mw.cfg_manager.pair
+
+        print("INITITAL VALUES: " + str(coin) + " pair: " + str(pair))
+
+        self.mw.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + "BTC")
+        self.mw.limit_total_coin.setText(str(val["accHoldings"][coin]["free"]) + " " + coin)
+
+        self.mw.limit_buy_label.setText("<span style='font-weight: bold; font-size: 12px;'>Buy " + coin + "</span>")
+        self.mw.limit_sell_label.setText("<span style='font-weight: bold; font-size: 12px;'>Sell " + coin + "</span>")
+
+        # self.mw.limit_coin_label_buy.setText("<span style='font-weight: bold; color: white;'>" + coin + "</span>")
+        # self.mw.limit_coin_label_sell.setText("<span style='font-weight: bold; color: white;'>" + coin + "</span>")
+
+        # self.mw.limit_buy_input.setText("kernoschmaus")
+        self.mw.limit_buy_input.setDecimals(val["decimals"])
+        self.mw.limit_buy_input.setSingleStep(float(val["coins"][pair]["tickSize"]))
+
+        self.mw.limit_sell_input.setDecimals(val["decimals"])
+        self.mw.limit_sell_input.setSingleStep(float(val["coins"][pair]["tickSize"]))
+
+        self.mw.limit_buy_amount.setDecimals(val["assetDecimals"])
+        self.mw.limit_buy_amount.setSingleStep(float(val["coins"][pair]["minTrade"]))
+
+        self.mw.limit_sell_amount.setDecimals(val["assetDecimals"])
+        self.mw.limit_sell_amount.setSingleStep(float(val["coins"][pair]["minTrade"]))
+
+
+
+    # gui init
+    def api_init(self):
+        """One-time gui initialization."""
+        self.mw.api_manager.api_calls()
+
+
+
+
+        self.mw.websocket_manager.schedule_websockets()
+        self.mw.gui_manager.schedule_work()
+
+        self.mw.holdings_table.initialize()
+
+        self.mw.coin_index.build_coinindex()
+
+        self.mw.ChartTabs.setCornerWidget(self.mw.volume_widget)
+
+        self.set_charts(self.mw.cfg_manager.pair)
+        self.mw.chart.show()
+
+
+        icon = QtGui.QIcon("images/ico/" + "BTC" + ".svg")
+        self.mw.quote_asset_box.addItem(icon, "BTC")
+        self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
+        self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
+
+        self.mw.timer = QtCore.QTimer()
+        self.mw.timer.setInterval(200)
+        self.mw.timer.timeout.connect(self.mw.delayed_stuff)
+        self.mw.timer.start()
+
+
+    def set_charts(self, pair):
+        self.mw.chart.setHtml(Webpages.build_chart2(pair, self.mw.cfg_manager.defaultTimeframe))
+
+        url = Webpages.build_cmc(self)
+        self.mw.cmc_chart.load(QtCore.QUrl(url))
+
 
     # global ui
     def check_for_update(self, progress_callback):
@@ -45,7 +147,9 @@ class GuiManager:
         if any(newcoin + "BTC" in s for s in val["coins"]) and newcoin != self.mw.cfg_manager.coin:
             self.mw.cfg_manager.coin = newcoin
             self.mw.cfg_manager.pair = newcoin + "BTC"
-            print("cfg manager pair: " + str(self.mw.cfg_manager.pair))
+
+            self.set_charts(self.mw.cfg_manager.pair)
+
             val["bm"].stop_socket(val["aggtradeWebsocket"])
             val["bm"].stop_socket(val["depthWebsocket"])
             val["bm"].stop_socket(val["klineWebsocket"])
@@ -53,7 +157,7 @@ class GuiManager:
 
             self.mw.api_manager.set_pair_values()
 
-            self.mw.init_manager.initial_values()
+            self.initial_values()
 
             self.mw.websocket_manager.websockets_symbol()
 
@@ -62,6 +166,7 @@ class GuiManager:
             self.mw.api_manager.api_calls()
 
             self.mw.table_manager.init_filter()
+
 
 
     # refactor

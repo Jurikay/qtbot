@@ -763,3 +763,27 @@ QMenu::indicator {
     font-family: Arial;
 
 }
+
+QPushButton#green_btn {
+    background-color: #70a800;
+    border-radius: 5px;
+    border: 2px solid transparent;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 14px;
+    color: #f3f3f3;
+    }
+
+QPushButton#pink_btn {
+    background-color: #ff007a;
+    border-radius: 5px;
+    border: 2px solid transparent;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 14px;
+    color: #f3f3f3;
+    }
+
+QPushButton#disabled_btn {
+    background-color: #333;
+}

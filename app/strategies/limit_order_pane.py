@@ -83,21 +83,9 @@ class LimitOrderPane(QtWidgets.QWidget):
         except ValueError:
             pass
 
+
     def initialize(self):
 
-        for _ in range(20):
-            self.mw.bids_table.insertRow(0)
-            self.mw.asks_table.insertRow(0)
-            self.mw.new_table.insertRow(0)
-
-        for _ in range(50):
-            self.mw.tradeTable.insertRow(0)
-
-        self.mw.asks_table.setColumnWidth(1, 75)
-        self.mw.bids_table.setColumnWidth(1, 75)
-
-        self.mw.tradeTable.setColumnWidth(0, 100)
-        self.mw.tradeTable.setColumnWidth(1, 75)
 
         self.mw.limit_buy_slider.valueChanged.connect(self.buy_slider_move)
         self.mw.limit_sell_slider.valueChanged.connect(self.sell_slider_move)
@@ -297,3 +285,18 @@ class LimitOrderPane(QtWidgets.QWidget):
 
         maxSizeRounded = int(maxSize * 10**decimals) / 10.0**decimals
         return maxSizeRounded
+
+    def init_tables(self):
+        for _ in range(20):
+            self.mw.bids_table.insertRow(0)
+            self.mw.asks_table.insertRow(0)
+            self.mw.new_table.insertRow(0)
+
+        for _ in range(50):
+            self.mw.tradeTable.insertRow(0)
+
+        self.mw.asks_table.setColumnWidth(1, 75)
+        self.mw.bids_table.setColumnWidth(1, 75)
+
+        self.mw.tradeTable.setColumnWidth(0, 100)
+        self.mw.tradeTable.setColumnWidth(1, 75)

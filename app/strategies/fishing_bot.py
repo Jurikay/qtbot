@@ -141,13 +141,13 @@ class FishingBot(QtWidgets.QTableWidget):
                     self.cellWidget(i, j).setStyleSheet("color: #cdcdcd")
 
             if true_false is False:
-                self.mw.fish_add_trade.setStyleSheet("color: #999;")
-                self.mw.fish_clear_all.setStyleSheet("color: #999;")
+                self.mw.fish_add_trade.setStyleSheet("color: #999; background-color: #333;")
+                self.mw.fish_clear_all.setStyleSheet("color: #999; background-color: #333;")
                 self.mw.fish_status.setText("<span style='color: #94c940'>running</span>")
 
             else:
-                self.mw.fish_add_trade.setStyleSheet("color: #cdcdcd;")
-                self.mw.fish_clear_all.setStyleSheet("color: #cdcdcd;")
+                self.mw.fish_add_trade.setStyleSheet("color: #f3f3f3;")
+                self.mw.fish_clear_all.setStyleSheet("color: #f3f3f3;")
                 self.mw.fish_status.setText("<span style='color: #f3ba2e'>paused</span>")
 
 
@@ -162,7 +162,13 @@ class FishingBot(QtWidgets.QTableWidget):
         self.setColumnWidth(4, 100)
         self.setColumnWidth(5, 120)
         self.mw.fish_add_trade.clicked.connect(self.add_order)
+        self.mw.fish_add_trade.setObjectName("green_btn")
+        self.mw.fish_add_trade.setStyleSheet("color: #f3f3f3;")
+
+
+
         self.mw.fish_clear_all.clicked.connect(self.clear_all_orders)
+        self.mw.fish_clear_all.setObjectName("pink_btn")
+        self.mw.fish_clear_all.setStyleSheet("color: #f3f3f3;")
 
         self.mw.go_fishing.clicked.connect(self.go_fishing)
-

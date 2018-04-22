@@ -17,7 +17,7 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView  # QWebEnginePage
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 
 from app.apiFunctions import ApiCalls
-from app.charts import Webpages as Webpages
+# from app.charts import Webpages as Webpages
 from app.gui_functions import (calc_wavg, calc_all_wavgs)
 # filter_coin_index, global_filter, filter_confirmed,
 # from app.init import val
@@ -51,7 +51,7 @@ class beeserBot(QtWidgets.QMainWindow):
         app.mw = self
 
         self.trade_history = list()
-
+        self.is_connected = False
 
         # load QtDesigner UI file
         loadUi("ui/MainWindow.ui", self)
@@ -63,11 +63,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         # instantiate various helper classes
-        self.instantiate_managers()
+        self.init_basics()
 
         self.centerOnScreen()
 
-        self.initialize_tables()
+
 
         # initialize limit order signals and slots
         self.limit_pane.initialize()
@@ -83,9 +83,10 @@ class beeserBot(QtWidgets.QMainWindow):
         # connect elements to functions
         self.chart.inject_script()
         self.debug2_button.clicked.connect(self.limit_pane.test_func)
-        self.coin_selector.activated.connect(self.gui_manager.change_pair)
+
         self.wavg_button.clicked.connect(calc_wavg)
         self.calc_all_wavg_button.clicked.connect(calc_all_wavgs)
+        self.btn_reload_api.clicked.connect(self.init_basics)
         # self.button_wavg.clicked.connect(calc_wavg)
 
         # connect buttons to fishing bot methods (refactor)
@@ -100,41 +101,55 @@ class beeserBot(QtWidgets.QMainWindow):
         # if current_coin is not None:
         #     print("authenticated!")
 
-        self.init_manager.api_init()
+
 
         # api credentials not valid; display welcome page
         # else:
         #     self.show_error_page()
 
 
-    def instantiate_managers(self):
+    def init_basics(self):
         self.log_manager = BotLogger(self)
         self.log_manager.init_logging()
 
         self.cfg_manager = ConfigManager(self)
         self.cfg_manager.initialize()
 
+        self.hotkey_manager = HotKeys(self)
+        self.hotkey_manager.init_hotkeys()
+
+        self.init_api_classes()
+
+    def init_api_classes(self):
 
         self.api_manager = ApiCalls(self, self.threadpool)
         self.api_manager.initialize()
 
-        self.websocket_manager = WebsocketManager(self, self.threadpool, self.client)
-
-
-        self.hotkey_manager = HotKeys(self)
-        self.hotkey_manager.init_hotkeys()
-
-        # self.test_klasse = TestKlasse(self)
-        # self.test_klasse.create_signal()
-
         self.init_manager = InitManager(self)
         self.init_manager.initialize()
+
+        self.check_connection()
+
+
+    def check_connection(self):
+        if self.is_connected is True:
+            self.instantiate_api_managers()
+            self.coin_selector.activated.connect(self.gui_manager.change_pair)
+            self.initialize_tables()
+        else:
+            self.init_manager.show_error_page()
+
+
+
+    def instantiate_api_managers(self):
+        self.websocket_manager = WebsocketManager(self, self.threadpool, self.client)
+
+        self.table_manager = TableManager(self)
+        self.table_manager.init_filter()
 
         self.gui_manager = GuiManager(self)
         self.gui_manager.initialize()
 
-        self.table_manager = TableManager(self)
-        self.table_manager.init_filter()
 
 
     def initialize_tables(self):
@@ -145,13 +160,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
     # refactor: move; global ui
-    def show_error_page(self):
-        self.chart.setHtml(Webpages.welcome_page())
-        self.chart.show()
-        self.bot_tabs.setCurrentIndex(4)
 
-        self.api_key.setStyleSheet("border: 2px solid #f3ba2e;")
-        self.api_secret.setStyleSheet("border: 2px solid #f3ba2e;")
 
     # refactor into tables, config etc
     def delayed_stuff(self):
