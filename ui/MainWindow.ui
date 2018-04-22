@@ -3138,7 +3138,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>4</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -5052,7 +5052,7 @@
                <number>15</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="checkBox">
+               <widget class="QCheckBox" name="cfg_remember">
                 <property name="text">
                  <string>Remember last</string>
                 </property>
@@ -6010,7 +6010,7 @@
   <tabstop>fish_add_trade</tabstop>
   <tabstop>fish_clear_all</tabstop>
   <tabstop>go_fishing</tabstop>
-  <tabstop>checkBox</tabstop>
+  <tabstop>cfg_remember</tabstop>
   <tabstop>default_pair</tabstop>
   <tabstop>copy_price_box</tabstop>
   <tabstop>dtf_selector</tabstop>
