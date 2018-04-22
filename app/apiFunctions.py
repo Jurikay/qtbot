@@ -231,8 +231,8 @@ class ApiCalls:
 
         try:  # try since this is used heavily
             klines = self.client.get_klines(symbol=pair, interval=interval)
-        except ConnectionError:
-            pass
+        except (ConnectionError, BinanceAPIException) as e:
+            print(str(e))
 
         progress_callback.emit([klines, pair, interval])
 

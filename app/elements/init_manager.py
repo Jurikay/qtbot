@@ -30,7 +30,9 @@ class InitManager:
         coin = self.mw.cfg_manager.coin
         pair = self.mw.cfg_manager.pair
 
-        self.mw.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
+        print("INITITAL VALUES: " + str(coin) + " pair: " + str(pair))
+
+        self.mw.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + "BTC")
         self.mw.limit_total_coin.setText(str(val["accHoldings"][coin]["free"]) + " " + coin)
 
         self.mw.limit_buy_label.setText("<span style='font-weight: bold; font-size: 12px;'>Buy " + coin + "</span>")
@@ -132,7 +134,7 @@ class InitManager:
         self.mw.coin_selector.model().sort(0)
         self.mw.coin_selector.setIconSize(QtCore.QSize(25, 25))
 
-        coinIndex = self.mw.coin_selector.findText(coin)
+        coinIndex = self.mw.coin_selector.findText(self.mw.cfg_manager.coin)
         self.mw.coin_selector.setCurrentIndex(coinIndex)
 
         icon = QtGui.QIcon("images/ico/" + "BTC" + ".svg")

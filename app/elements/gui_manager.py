@@ -43,7 +43,9 @@ class GuiManager:
         newcoin = self.mw.coin_selector.currentText()
 
         if any(newcoin + "BTC" in s for s in val["coins"]) and newcoin != self.mw.cfg_manager.coin:
+            self.mw.cfg_manager.coin = newcoin
             self.mw.cfg_manager.pair = newcoin + "BTC"
+            print("cfg manager pair: " + str(self.mw.cfg_manager.pair))
             val["bm"].stop_socket(val["aggtradeWebsocket"])
             val["bm"].stop_socket(val["depthWebsocket"])
             val["bm"].stop_socket(val["klineWebsocket"])
@@ -103,8 +105,6 @@ class GuiManager:
 
         self.percent_changes()
         self.volume_values()
-
-        print(self.mw.cfg_manager.pair)
 
         self.check_websocket()
 

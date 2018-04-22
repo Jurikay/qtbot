@@ -14,11 +14,13 @@ from app.init import val
 class ConfigManager:
     def __init__(self, mw):
         self.mw = mw
+
         mw.save_config.clicked.connect(self.write_config)
 
-        self.pair = ""
+        self.pair = "BNBBTC"
         self.coin = ""
         self.defaultPair = None
+        self.rememberDefault = False
         self.buttonPercentage = None
         self.api_key = None
         self.api_secret = None
@@ -27,15 +29,12 @@ class ConfigManager:
         self.copy_qty = None
 
 
-    def read_config(self):
-        print("READING CFG")
+    def initialize(self):
+        """Read config.ini or create a default file if it doesn't exist."""
         config = configparser.ConfigParser()
-
         if os.path.isfile("config.ini"):
             config.read('config.ini')
-
             print("Config found!")
-
         else:
             print("no config file present. Generating default config.")
             config['CONFIG'] = {'DefaultPair': 'BNBBTC',
@@ -52,14 +51,32 @@ class ConfigManager:
             print("Config file has been written.")
 
         self.pair = config["CONFIG"]["DefaultPair"]
+
         self.coin = self.pair[:-3]
-        self.defaultPair = config["CONFIG"]["DefaultPair"]
-        self.buttonPercentage = config["CONFIG"]["ButtonPercentages"].split(",")
-        self.api_key = config["API"]["Key"]
-        self.api_secret = config["API"]["Secret"]
-        self.defaultTimeframe = config["CONFIG"]["DefaultTimeframe"]
-        self.copy_price = config["CONFIG"]["CopyPrice"]
-        self.copy_qty = config["CONFIG"]["CopyQuantity"]
+
+        self.mw.default_pair_label.setText(self.pair)
+
+        self.read_config(config)
+
+
+    def read_config(self, config):
+        print("READING CFG")
+        try:
+            # self.pair = config["CONFIG"]["DefaultPair"]
+            self.defaultPair = config["CONFIG"]["DefaultPair"]
+            if config["CONFIG"]["rememberDefault"] == "True":
+                self.rememberDefault = True
+            else:
+                self.rememberDefault = False
+
+            self.buttonPercentage = config["CONFIG"]["ButtonPercentages"].split(", ")
+            self.api_key = config["API"]["Key"]
+            self.api_secret = config["API"]["Secret"]
+            self.defaultTimeframe = config["CONFIG"]["DefaultTimeframe"]
+            self.copy_price = config["CONFIG"]["CopyPrice"]
+            self.copy_qty = config["CONFIG"]["CopyQuantity"]
+        except KeyError:
+            print("CONFIG FILE BROKEN!")
 
 
 
@@ -75,9 +92,20 @@ class ConfigManager:
 
     def write_config(self):
         print("write cfg")
-        key = self.mw.api_key.text()
-        secret = self.mw.api_secret.text()
-        defaultPair = self.mw.default_pair.text()
+        key = self.mw.api_key_label.text()
+        secret = self.mw.api_secret_label.text()
+
+
+        rememberDefault = self.mw.cfg_remember.isChecked()
+
+        if rememberDefault is True:
+            print("REMEBER IS TRUE!!")
+            defaultPair = self.pair
+        else:
+            defaultPair = self.mw.default_pair_label.text()
+
+        print("REMEMBER = " + str(rememberDefault))
+        print(type(rememberDefault))
         # defaultTimeframe = self.mw.default_timeframe.text()
 
         raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, "1w"]
@@ -114,6 +142,7 @@ class ConfigManager:
         print("saving config...")
 
         config['CONFIG'] = {'DefaultPair': defaultPair,
+                            'rememberDefault': rememberDefault,
                             'ButtonPercentages': percent[0] + ", " + percent[1] + ", " + percent[2] + ", " + percent[3] + ", " + percent[4],
                             'DefaultTimeframe': raw_timeframes[tf_index],
                             'CopyPrice': copy_price,
@@ -124,23 +153,25 @@ class ConfigManager:
         with open('config.ini', 'w') as configfile:
             config.write(configfile)
 
-        self.read_config()
+        self.read_config(config)
         self.set_button_text()
         logging.info("Saving config.")
 
 
     def set_config_values(self):
         try:
-            self.mw.default_pair.setText(self.defaultPair)
 
-            self.mw.api_key.setText(self.api_key)
-            self.mw.api_secret.setText(self.api_secret)
+            self.mw.api_key_label.setText(self.api_key)
+            self.mw.api_secret_label.setText(self.api_secret)
+            print("set checked:" + str(self.rememberDefault))
+            print(type(self.rememberDefault))
+            self.mw.cfg_remember.setChecked(self.rememberDefault)
 
-            self.mw.percent_1.setText(str(int(self.buttonPercentage[0])))
-            self.mw.percent_2.setText(str(int(self.buttonPercentage[1])))
-            self.mw.percent_3.setText(str(int(self.buttonPercentage[2])))
-            self.mw.percent_4.setText(str(int(self.buttonPercentage[3])))
-            self.mw.percent_5.setText(str(int(self.buttonPercentage[4])))
+            pbuttons = [self.mw.percent_1, self.mw.percent_2, self.mw.percent_3, self.mw.percent_4, self.mw.percent_5]
+
+            for i, p_btn in enumerate(pbuttons):
+                p_btn.setText(str(int(self.buttonPercentage[i])))
+
             self.set_button_text()
 
             raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440]
@@ -150,8 +181,9 @@ class ConfigManager:
                 if self.defaultTimeframe == str(tf):
                     self.mw.dtf_selector.setCurrentIndex(i)
 
-        except (TypeError, KeyError):
-            pass
+        except (TypeError, KeyError) as error:
+            print("error on saving config")
+            print("ERROR: " + str(error))
 
 
     def set_button_text(self):

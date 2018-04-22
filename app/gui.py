@@ -52,6 +52,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.trade_history = list()
 
+
         # load QtDesigner UI file
         loadUi("ui/MainWindow.ui", self)
 
@@ -111,7 +112,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.log_manager.init_logging()
 
         self.cfg_manager = ConfigManager(self)
-        self.cfg_manager.read_config()
+        self.cfg_manager.initialize()
 
 
         self.api_manager = ApiCalls(self, self.threadpool)
@@ -182,3 +183,4 @@ class beeserBot(QtWidgets.QMainWindow):
 
     def shutdown_bot(self):
         self.cfg_manager.write_stats()
+        self.cfg_manager.write_config()
