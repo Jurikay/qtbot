@@ -57,10 +57,11 @@ class LimitOrderPane(QtWidgets.QWidget):
 
     def limit_percentage_sell(self):
         button_number = int(self.mw.sender().objectName()[-1:])
-        # value = float(val["accHoldings"][val["coin"]]["free"]) * (float(self.mw.cfg_manager.buttonPercentage[button_number]) / 100)
+        coin = self.mw.cfg_manager.coin
+        value = float(val["accHoldings"][coin]["free"]) * (float(self.mw.cfg_manager.buttonPercentage[button_number]) / 100)
 
         # print(val["accHoldings"][val["coin"]]["free"])
-        # self.limit_sell_amount.setValue(value)
+        self.mw.limit_sell_amount.setValue(float(value))
 
         self.mw.limit_sell_slider.setValue(int(self.mw.cfg_manager.buttonPercentage[button_number]))
 

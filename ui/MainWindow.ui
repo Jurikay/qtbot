@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1536</width>
-    <height>988</height>
+    <height>1000</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -599,7 +599,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>5</number>
+            <number>8</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -704,7 +704,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>819</width>
-                  <height>408</height>
+                  <height>414</height>
                  </rect>
                 </property>
                </widget>
@@ -1392,59 +1392,59 @@
              <string>DEBUG</string>
             </attribute>
             <layout class="QGridLayout" name="gridLayout_6">
-             <item row="1" column="1">
-              <widget class="QPushButton" name="chart_button">
-               <property name="text">
-                <string>chart</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QPushButton" name="debug2_button">
-               <property name="text">
-                <string>2nd debug</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QPushButton" name="wavg_button">
-               <property name="text">
-                <string>calc wAvg</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QPushButton" name="calc_all_wavg_button">
-               <property name="text">
-                <string>calc all</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
+             <item row="2" column="0">
               <widget class="QPushButton" name="popup_btn">
                <property name="text">
                 <string>popup</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="0" colspan="2">
-              <widget class="QScrollArea" name="wavg_log">
-               <property name="widgetResizable">
-                <bool>true</bool>
+             <item row="1" column="0" colspan="2">
+              <layout class="QVBoxLayout" name="verticalLayout_30">
+               <item>
+                <widget class="QDoubleSpinBox" name="test_slider_value"/>
+               </item>
+               <item>
+                <widget class="QSlider" name="test_slider">
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="4" column="1">
+              <widget class="QPushButton" name="calc_all_wavg_button">
+               <property name="text">
+                <string>calc all</string>
                </property>
-               <widget class="QWidget" name="scrollAreaWidgetContents_2">
-                <property name="geometry">
-                 <rect>
-                  <x>0</x>
-                  <y>0</y>
-                  <width>819</width>
-                  <height>272</height>
-                 </rect>
-                </property>
-               </widget>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="5" column="1">
+              <widget class="QPushButton" name="debug2_button">
+               <property name="text">
+                <string>2nd debug</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QPushButton" name="wavg_button">
+               <property name="text">
+                <string>calc wAvg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QPushButton" name="chart_button">
+               <property name="text">
+                <string>chart</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
               <widget class="QPushButton" name="btn_reload_api">
                <property name="text">
                 <string>reload api</string>
@@ -3194,7 +3194,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>4</number>
+           <number>0</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -3271,6 +3271,9 @@
               </property>
               <item row="10" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_42">
+                <property name="spacing">
+                 <number>3</number>
+                </property>
                 <item>
                  <widget class="QLabel" name="label_10">
                   <property name="sizePolicy">
@@ -3283,7 +3286,7 @@
                    <string notr="true"/>
                   </property>
                   <property name="text">
-                   <string>Total:</string>
+                   <string>Total: </string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
@@ -3302,10 +3305,27 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;0.00000000 BTC&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;0.00000000 BTC &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_56">
+                  <property name="text">
+                   <string> </string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_54">
+                  <property name="text">
+                   <string>300 $</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
                   </property>
                  </widget>
                 </item>
@@ -6140,7 +6160,6 @@
   <tabstop>comboBox_10</tabstop>
   <tabstop>comboBox_11</tabstop>
   <tabstop>wavg_button</tabstop>
-  <tabstop>wavg_log</tabstop>
   <tabstop>calc_all_wavg_button</tabstop>
   <tabstop>debug2_button</tabstop>
  </tabstops>

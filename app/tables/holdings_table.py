@@ -73,6 +73,7 @@ class HoldingsTable(QtWidgets.QTableWidget):
 
 
     def build_holdings(self, *args):
+        print("build holdings table")
         self.setRowCount(0)
         for holding in val["accHoldings"]:
 
