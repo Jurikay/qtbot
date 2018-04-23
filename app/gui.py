@@ -155,7 +155,7 @@ class beeserBot(QtWidgets.QMainWindow):
     def initialize_tables(self):
         self.coin_index.initialize()
         self.open_orders.initialize()
-        # self.open_orders.initialize()
+        self.history_table.initialize()
         self.holdings_table.initialize()
 
 
@@ -166,14 +166,6 @@ class beeserBot(QtWidgets.QMainWindow):
     def delayed_stuff(self):
 
         print("delayed")
-
-
-
-        # self.open_orders.setColumnWidth(10, 0)
-
-
-        history_header = self.history_table.horizontalHeader()
-        history_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
 
 
         self.asks_table.scrollToBottom()

@@ -9,6 +9,7 @@ from app.init import val
 # from functools import partial
 import app
 # import time
+import logging
 
 
 class FishingBot(QtWidgets.QTableWidget):
@@ -19,7 +20,7 @@ class FishingBot(QtWidgets.QTableWidget):
         super(FishingBot, self).__init__(parent)
 
         self.mw = app.mw
-        self.running = False
+        self.isRunning = False
 
 
 
@@ -37,11 +38,13 @@ class FishingBot(QtWidgets.QTableWidget):
         price_selector = QtWidgets.QDoubleSpinBox()
         price_selector.setDecimals(val["decimals"])
         price_selector.setSingleStep(float(val["coins"][self.mw.cfg_manager.pair]["tickSize"]))
+        price_selector.setValue(float(val["tickers"][self.mw.cfg_manager.pair]["lowPrice"]))
+
 
         amount_selector = QtWidgets.QDoubleSpinBox()
         amount_selector.setDecimals(val["assetDecimals"])
         amount_selector.setSingleStep(float(val["coins"][self.mw.cfg_manager.pair]["minTrade"]))
-
+        amount_selector.setMaximum(999999)
 
         row_count = self.rowCount()
 
@@ -116,15 +119,15 @@ class FishingBot(QtWidgets.QTableWidget):
 
 
     def go_fishing(self):
-        if self.running is False:
+        if self.isRunning is False:
             self.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
             self.mw.go_fishing.setText("Stop Fishing")
-            self.running = True
+            self.isRunning = True
             self.widgets_editable(False)
         else:
             self.setEditTriggers(QtWidgets.QAbstractItemView.SelectedClicked)
             self.mw.go_fishing.setText("Go Fishing")
-            self.running = False
+            self.isRunning = False
             self.widgets_editable(True)
 
 
@@ -143,7 +146,7 @@ class FishingBot(QtWidgets.QTableWidget):
             if true_false is False:
                 self.mw.fish_add_trade.setStyleSheet("color: #999; background-color: #333;")
                 self.mw.fish_clear_all.setStyleSheet("color: #999; background-color: #333;")
-                self.mw.fish_status.setText("<span style='color: #94c940'>running</span>")
+                self.mw.fish_status.setText("<span style='color: #94c940'>running 🎣</span>")
 
             else:
                 self.mw.fish_add_trade.setStyleSheet("color: #f3f3f3;")
@@ -157,10 +160,11 @@ class FishingBot(QtWidgets.QTableWidget):
 
     def initialize(self):
         self.setColumnWidth(0, 100)
-        self.setColumnWidth(1, 50)
-        self.setColumnWidth(2, 75)
-        self.setColumnWidth(4, 100)
-        self.setColumnWidth(5, 120)
+        self.setColumnWidth(1, 55)
+        self.setColumnWidth(2, 100)
+        self.setColumnWidth(3, 70)
+        self.setColumnWidth(4, 70)
+        self.setColumnWidth(5, 90)
         self.mw.fish_add_trade.clicked.connect(self.add_order)
         self.mw.fish_add_trade.setObjectName("green_btn")
         self.mw.fish_add_trade.setStyleSheet("color: #f3f3f3;")
@@ -172,3 +176,32 @@ class FishingBot(QtWidgets.QTableWidget):
         self.mw.fish_clear_all.setStyleSheet("color: #f3f3f3;")
 
         self.mw.go_fishing.clicked.connect(self.go_fishing)
+
+
+    def check_fish_bot(self):
+        if self.isRunning is True:
+            self.fish_logic()
+            print("fishbot running")
+
+    def fish_logic(self):
+        """Run this in a fixed interval."""
+        trades_to_check = list()
+
+        percent_difference = 1
+        print(str(self.rowCount()))
+        for i in range(self.rowCount()):
+            # trades_to_check.append([self.item(i, 0).currentText()])
+            coin = self.cellWidget(i, 0).currentText()
+            pair = coin + "BTC"
+
+            current_price = float(val["tickers"][pair]["lastPrice"])
+
+            side = self.cellWidget(i, 1).currentText()
+            price_target = self.cellWidget(i, 2).value()
+            qty = self.cellWidget(i, 3).value()
+
+            print("FISHBOT: I want to " + str(side) + " " + str(qty) + " " + str(coin) + " for " + str(price_target) + " each.")
+
+
+    def check_pair(self):
+        pass

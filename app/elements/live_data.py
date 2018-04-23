@@ -4,7 +4,7 @@
 # made by Jirrik
 
 import PyQt5.QtWidgets as QtWidgets
-# import PyQt5.QtCore as QtCore
+import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
 import app
 from datetime import datetime
@@ -26,18 +26,17 @@ class LiveData(QtWidgets.QWidget):
     def progress_history(self, trade):
         """Callback function to add trades to the trade history table."""
         self.mw.tradeTable.insertRow(0)
+        
         price_item = QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["price"]), digits=val["decimals"]))
+        qty_item = QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["quantity"]), digits=val["assetDecimals"]))
+        time_item = QtWidgets.QTableWidgetItem(str(datetime.fromtimestamp(int(str(trade["time"])[:-3])).strftime('%H:%M:%S.%f')[:-7]))
 
-        # price_item.setTextAlignment(QtCore.Qt.AlignHCenter)
+        price_item.setTextAlignment(QtCore.Qt.AlignRight)
+        qty_item.setTextAlignment(QtCore.Qt.AlignRight)
+        time_item.setTextAlignment(QtCore.Qt.AlignHCenter)
 
         self.mw.tradeTable.setItem(0, 0, price_item)
-
-        qty_item = QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["quantity"]), digits=val["assetDecimals"]))
-        # qty_item.setTextAlignment(QtCore.Qt.AlignHCenter)
         self.mw.tradeTable.setItem(0, 1, qty_item)
-
-        time_item = QtWidgets.QTableWidgetItem(str(datetime.fromtimestamp(int(str(trade["time"])[:-3])).strftime('%H:%M:%S.%f')[:-7]))
-        # time_item.setTextAlignment(QtCore.Qt.AlignHCenter)
         self.mw.tradeTable.setItem(0, 2, time_item)
 
         if trade["maker"] is True:
@@ -83,49 +82,49 @@ class LiveData(QtWidgets.QWidget):
 
         self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
-        print("set last price: " + str(formatted_price))
-
-
-
-
         if self.mw.tradeTable.rowCount() >= 50:
             self.mw.tradeTable.removeRow(50)
 
-    def progress_asks(self, asks):
-        for i, _ in enumerate(asks):
-            ask_price = '{number:.{digits}f}'.format(number=float(asks[i][0]), digits=val["decimals"])
-            ask_quantity = '{number:.{digits}f}'.format(number=float(asks[i][1]), digits=val["assetDecimals"])
+
+
+    def progress_orderbook(self, order_data):
+        order = order_data[0]
+        order_type = order_data[1]
+
+        for i, _ in enumerate(order):
+            if order_type == "asks":
+                start_index = 19
+                text_color = QtGui.QColor(Colors.color_pink)
+                table = self.mw.asks_table
+                
+            elif order_type == "bids":
+                start_index = i * 2
+                text_color = QtGui.QColor(Colors.color_green)
+                table = self.mw.bids_table
+
+            ask_price = '{number:.{digits}f}'.format(number=float(order[i][0]), digits=val["decimals"])
+            ask_quantity = '{number:.{digits}f}'.format(number=float(order[i][1]), digits=val["assetDecimals"])
             total_btc_asks = '{number:.{digits}f}'.format(number=float(ask_price) * float(ask_quantity), digits=3)
+            
+            count_item = QtWidgets.QTableWidgetItem(str(i + 1).zfill(2))
+            price_item = QtWidgets.QTableWidgetItem(ask_price)
+            qty_item = QtWidgets.QTableWidgetItem(ask_quantity)
+            total_item = QtWidgets.QTableWidgetItem(total_btc_asks + " BTC ")
 
-            self.mw.asks_table.setItem(19 - i, 0, QtWidgets.QTableWidgetItem(str(i + 1).zfill(2)))
+            count_item.setTextAlignment(QtCore.Qt.AlignRight)
+            price_item.setTextAlignment(QtCore.Qt.AlignRight)
+            qty_item.setTextAlignment(QtCore.Qt.AlignRight)
+            total_item.setTextAlignment(QtCore.Qt.AlignRight)
 
-            self.mw.asks_table.setItem(19 - i, 1, QtWidgets.QTableWidgetItem(ask_price))
-            self.mw.asks_table.setItem(19 - i, 2, QtWidgets.QTableWidgetItem(ask_quantity))
+            table.setItem(start_index - i, 0, count_item)
+            table.setItem(start_index - i, 1, price_item)
+            table.setItem(start_index - i, 2, qty_item)
+            table.setItem(start_index - i, 3, total_item)
+            table.item(start_index - i, 1).setForeground(text_color)
 
-            self.mw.asks_table.setItem(19 - i, 3, QtWidgets.QTableWidgetItem(total_btc_asks + " BTC"))
-            self.mw.asks_table.item(19 - i, 1).setForeground(QtGui.QColor(Colors.color_pink))
-            # self.set_spread()
-
-            # self.mw.asks_table.scrollToBottom()
-
-    def progress_bids(self, bids):
-        for i, _ in enumerate(bids):
-            bid_price = '{number:.{digits}f}'.format(number=float(bids[i][0]), digits=val["decimals"])
-            bid_quantity = '{number:.{digits}f}'.format(number=float(bids[i][1]), digits=val["assetDecimals"])
-            total_btc_bids = '{number:.{digits}f}'.format(number=float(bid_price) * float(bid_quantity), digits=3)
-
-            self.mw.bids_table.setItem(i, 0, QtWidgets.QTableWidgetItem(str(i + 1).zfill(2)))
-
-            self.mw.bids_table.setItem(i, 1, QtWidgets.QTableWidgetItem(bid_price))
-            self.mw.bids_table.setItem(i, 2, QtWidgets.QTableWidgetItem(bid_quantity))
-
-            self.mw.bids_table.setItem(i, 3, QtWidgets.QTableWidgetItem(total_btc_bids + " BTC"))
-            self.mw.bids_table.item(i, 1).setForeground(QtGui.QColor(Colors.color_green))
-            # self.set_spread()
 
     # live data
     def set_spread(self):
-        print("set spread")
         if len(val["bids"]) > 1 and len(val["asks"]) > 1:
             spread = ((float(val["asks"][0][0]) / float(val["bids"][0][0])) - 1) * 100
             spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
@@ -142,18 +141,17 @@ class LiveData(QtWidgets.QWidget):
 
         if len(asks) == 20:
             for _ in enumerate(asks):
-                self.progress_asks(asks)
+                self.progress_orderbook([asks, "asks"])
 
         if len(bids) == 20:
             for _ in enumerate(bids):
-                self.progress_bids(bids)
+                self.progress_orderbook([bids, "bids"])
 
         self.ob_progressed = True
         # self.set_spread()
 
 
     def batch_history(self, payload):
-        print("batch history")
         self.mw.trade_history = []
         self.history_progressed = False
         history = payload.get("history", "")

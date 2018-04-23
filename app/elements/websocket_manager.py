@@ -79,16 +79,16 @@ class WebsocketManager:
         val["bids"] = msg["bids"]
         val["asks"] = msg["asks"]
 
-        if old_bids != val["bids"]:
-            worker = Worker(partial(self.socket_orderbook, msg["bids"]))
-            worker.signals.progress.connect(self.mw.live_data.progress_bids)
-            # worker.signals.finished.connect(self.t_complete)
-            self.threadpool.tryStart(worker)
-        if old_asks != val["asks"]:
-            worker = Worker(partial(self.socket_orderbook, msg["asks"]))
-            worker.signals.progress.connect(self.mw.live_data.progress_asks)
-            # worker.signals.finished.connect(self.t_complete)
-            self.threadpool.tryStart(worker)
+        # if old_bids != val["bids"]:
+        worker = Worker(partial(self.socket_orderbook, msg))
+        worker.signals.progress.connect(self.mw.live_data.progress_orderbook)
+        # worker.signals.finished.connect(self.t_complete)
+        self.threadpool.tryStart(worker)
+        # if old_asks != val["asks"]:
+        #     worker = Worker(partial(self.socket_orderbook, msg["asks"]))
+        #     # worker.signals.progress.connect(self.mw.live_data.progress_orderbook)
+        #     # worker.signals.finished.connect(self.t_complete)
+        #     self.threadpool.tryStart(worker)
         self.api_updates += 1
 
 
@@ -214,7 +214,11 @@ class WebsocketManager:
 
     @staticmethod
     def socket_orderbook(depth, progress_callback):
-        progress_callback.emit(depth)
+        if depth.get("asks"):
+            progress_callback.emit([depth["asks"], "asks"])
+        if depth.get("bids"):
+            progress_callback.emit([depth["bids"], "bids"])
+
 
     @staticmethod
     def socket_order(order, progress_callback):

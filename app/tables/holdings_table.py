@@ -40,15 +40,17 @@ class HoldingsTable(QtWidgets.QTableWidget):
                 if coin != "BTC":
                     price = val["coins"][coin + "BTC"]["close"]
                     # print("wavg: " + str(wAvg))
+                    self.setItem(i, 4, QtWidgets.QTableWidgetItem("{0:n}".format(float(free))))
+                    self.setItem(i, 5, QtWidgets.QTableWidgetItem("{0:n}".format(float(locked))))
                 elif coin == "BTC":
                     price = 1
+                    self.setItem(i, 4, QtWidgets.QTableWidgetItem("{0:.8f}".format(float(free))))
+                    self.setItem(i, 5, QtWidgets.QTableWidgetItem("{0:.8f}".format(float(locked))))
 
                 total_btc = float(total) * float(price)
                 total_btc_formatted = '{number:.{digits}f}'.format(number=total_btc, digits=8)
 
                 self.setItem(i, 3, QtWidgets.QTableWidgetItem("{0:.8f}".format(float(total))))
-                self.setItem(i, 4, QtWidgets.QTableWidgetItem("{0:g}".format(float(free))))
-                self.setItem(i, 5, QtWidgets.QTableWidgetItem("{0:g}".format(float(locked))))
                 self.setItem(i, 6, QtWidgets.QTableWidgetItem(total_btc_formatted))
                 self.item(i, 6).setFont(bold_font)
                 self.item(i, 6).setForeground(QtGui.QColor(Colors.color_lightgrey))
@@ -102,8 +104,8 @@ class HoldingsTable(QtWidgets.QTableWidget):
                     self.setItem(0, 1, QtWidgets.QTableWidgetItem(holding))
                     self.setItem(0, 2, QtWidgets.QTableWidgetItem(name))
                     self.setItem(0, 3, QtWidgets.QTableWidgetItem("{0:.8f}".format(float(total))))
-                    self.setItem(0, 4, QtWidgets.QTableWidgetItem("{0:g}".format(float(free))))
-                    self.setItem(0, 5, QtWidgets.QTableWidgetItem("{0:g}".format(float(locked))))
+                    self.setItem(0, 4, QtWidgets.QTableWidgetItem("{0:.8f}".format(float(free))))
+                    self.setItem(0, 5, QtWidgets.QTableWidgetItem("{0:.8f}".format(float(locked))))
                     self.setItem(0, 6, QtWidgets.QTableWidgetItem(total_formatted))
 
                     self.item(0, 6).setFont(bold_font)
@@ -147,8 +149,8 @@ class HoldingsTable(QtWidgets.QTableWidget):
 
                         self.setItem(1, 8, QtWidgets.QTableWidgetItem("0"))
 
-            except KeyError:
-                pass
+            except KeyError as e:
+                print("Build holdings error: " + str(e))
 
             header = self.horizontalHeader()
             header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)

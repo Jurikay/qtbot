@@ -61,7 +61,8 @@ class GuiManager:
         coin = self.mw.cfg_manager.coin
         pair = self.mw.cfg_manager.pair
 
-        print("INITITAL VALUES: " + str(coin) + " pair: " + str(pair))
+        self.mw.buy_asset.setText(coin)
+        self.mw.sell_asset.setText(coin)
 
         self.mw.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + "BTC")
         self.mw.limit_total_coin.setText(str(val["accHoldings"][coin]["free"]) + " " + coin)
@@ -137,6 +138,8 @@ class GuiManager:
 
             current_height = self.mw.frameGeometry().height()
             progress_callback.emit(1)
+
+            self.mw.fishbot_table.check_fish_bot()
             time.sleep(1)
 
     # main gui

@@ -179,6 +179,7 @@ class LimitOrderPane(QtWidgets.QWidget):
             # pass
         self.calc_total_sell()
 
+
     def check_buy_amount(self):
         total = int(((float(self.mw.limit_buy_amount.value()) * float(self.mw.limit_buy_input.value())) / float(val["accHoldings"]["BTC"]["free"])) * 100)
         # print("check buy")
@@ -290,13 +291,21 @@ class LimitOrderPane(QtWidgets.QWidget):
         for _ in range(20):
             self.mw.bids_table.insertRow(0)
             self.mw.asks_table.insertRow(0)
-            self.mw.new_table.insertRow(0)
+            # self.mw.new_table.insertRow(0)
 
-        for _ in range(50):
-            self.mw.tradeTable.insertRow(0)
+        # for _ in range(50):
+        #     self.mw.tradeTable.insertRow(0)
 
-        self.mw.asks_table.setColumnWidth(1, 75)
-        self.mw.bids_table.setColumnWidth(1, 75)
+        self.mw.asks_table.setColumnWidth(0, 22)
+        self.mw.bids_table.setColumnWidth(0, 22)
+        self.mw.asks_table.setColumnWidth(1, 80)
+        self.mw.bids_table.setColumnWidth(1, 80)
+        self.mw.asks_table.setColumnWidth(2, 40)
+        self.mw.bids_table.setColumnWidth(2, 40)
+        self.mw.asks_table.setColumnWidth(3, 80)
+        self.mw.bids_table.setColumnWidth(3, 80)
 
-        self.mw.tradeTable.setColumnWidth(0, 100)
-        self.mw.tradeTable.setColumnWidth(1, 75)
+        # self.mw.asks_table.setColumnWidth(4, 1)
+
+        self.mw.tradeTable.setColumnWidth(0, 80)
+        self.mw.tradeTable.setColumnWidth(1, 80)

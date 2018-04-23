@@ -38,6 +38,7 @@ class CoinIndex(QtWidgets.QTableWidget):
         # self.horizontalHeader().resizeSection(0, 30)
         # self.horizontalHeader().resizeSection(1, 300)
         self.setColumnWidth(0, 30)
+        self.setColumnWidth(1, 90)
         self.setColumnWidth(2, 120)
         self.setColumnWidth(3, 75)
         self.setColumnWidth(5, 130)

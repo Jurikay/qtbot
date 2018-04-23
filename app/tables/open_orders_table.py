@@ -178,7 +178,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
     def set_width(self):
         self.setColumnWidth(0, 125)
         self.setColumnWidth(1, 30)
-        self.setColumnWidth(2, 80)
+        self.setColumnWidth(2, 70)
         self.setColumnWidth(3, 120)
         self.setColumnWidth(4, 50)
         self.setColumnWidth(5, 50)

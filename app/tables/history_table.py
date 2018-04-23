@@ -23,10 +23,18 @@ class HistoryTable(QtWidgets.QTableWidget):
         self.mw = app.mw
         self.setIconSize(QtCore.QSize(25, 25))
 
+
+
+
+    def initialize(self):
+        history_header = self.horizontalHeader()
+        history_header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
         self.setColumnWidth(0, 130)
-        self.setColumnWidth(2, 75)
-        self.setColumnWidth(3, 75)
+        self.setColumnWidth(2, 70)
+        self.setColumnWidth(3, 70)
         self.setColumnWidth(6, 120)
+        self.setColumnWidth(7, 80)
+
 
     def add_to_history(self, order):
         # print("add to history")

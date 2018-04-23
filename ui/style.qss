@@ -290,7 +290,8 @@ QPushButton#limit_sell_button::pressed {
      border: 1px solid black;
 }
  QGroupBox, QVBoxLayout {
-     background: #262d33;
+     /* background: #262d33; */
+     color: white;
 }
  /* QComboBox {
      height: 25px;
@@ -318,12 +319,8 @@ QPushButton#limit_sell_button::pressed {
      background-color: red;
      background: blue;
 } */
- QTreeView::item:hover{
-    background-color:#FFFF00;
-}
- /* QTableWidget::item:hover{
-    background-color:#FFFF00;
-} */
+
+
  QComboBox::drop-down {
      font-size: 16px;
 
@@ -463,6 +460,7 @@ QPushButton:checked {
 
 /* QComboBox:hover, */
 QPushButton:hover,
+QComboBox:hover,
 QAbstractSpinBox:hover,
 QLineEdit:hover,
 QTextEdit:hover,
@@ -786,4 +784,9 @@ QPushButton#pink_btn {
 
 QPushButton#disabled_btn {
     background-color: #333;
+}
+
+QTableWidget::item:hover{
+    /* background-color:#FFFF00; */
+    color: #f3f3f3;
 }
