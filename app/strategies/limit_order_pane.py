@@ -189,7 +189,10 @@ class LimitOrderPane(QtWidgets.QWidget):
 
 
     def check_buy_amount(self):
-        total = int(((float(self.mw.limit_buy_amount.value()) * float(self.mw.limit_buy_input.value())) / float(val["accHoldings"]["BTC"]["free"])) * 100)
+        if float(val["accHoldings"]["BTC"]["free"]) != 0:
+            total = int(((float(self.mw.limit_buy_amount.value()) * float(self.mw.limit_buy_input.value())) / float(val["accHoldings"]["BTC"]["free"])) * 100)
+        else:
+            total = 0
         # print("check buy")
         self.calc_total_buy()
 
