@@ -3,8 +3,6 @@
 
 # made by Jirrik
 
-"""Main gui class."""
-
 
 import logging
 # from functools import partial
@@ -13,7 +11,6 @@ import PyQt5.QtCore as QtCore
 import PyQt5.QtWidgets as QtWidgets
 from PyQt5.uic import loadUi
 from PyQt5.QtWebEngineWidgets import QWebEngineView  # QWebEnginePage
-
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 
 from app.apiFunctions import ApiCalls
@@ -67,45 +64,22 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.centerOnScreen()
 
-
-
         # initialize limit order signals and slots
         self.limit_pane.initialize()
 
         self.fishbot_table.initialize()
 
 
-        # self.chart_button.clicked.connect(self.chart.inject_script)
-
-        # belongs into filters class
-        # filter
-
         # connect elements to functions
         self.chart.inject_script()
-        self.debug2_button.clicked.connect(self.limit_pane.test_func)
 
+        self.debug2_button.clicked.connect(self.limit_pane.test_func)
         self.wavg_button.clicked.connect(calc_wavg)
         self.calc_all_wavg_button.clicked.connect(calc_all_wavgs)
         self.btn_reload_api.clicked.connect(self.init_basics)
-        # self.button_wavg.clicked.connect(calc_wavg)
-
-        # connect buttons to fishing bot methods (refactor)
 
         # Fix a linter error...
         self.linterfix = QWebEngineView()
-
-
-        # check if coin is an empty dict. If yes, api calls have not been answered.
-        # TODO: refactor move into init manager
-        # current_coin = val.get("coin", None)
-        # if current_coin is not None:
-        #     print("authenticated!")
-
-
-
-        # api credentials not valid; display welcome page
-        # else:
-        #     self.show_error_page()
 
 
     def init_basics(self):

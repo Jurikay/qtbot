@@ -65,7 +65,7 @@ class GuiManager:
         self.mw.buy_asset.setText(coin)
         self.mw.sell_asset.setText(coin)
 
-        self.mw.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + "BTC")
+        self.mw.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
         self.mw.limit_total_coin.setText(str(val["accHoldings"][coin]["free"]) + " " + coin)
 
         self.mw.limit_buy_label.setText("<span style='font-weight: bold; font-size: 12px;'>Buy " + coin + "</span>")

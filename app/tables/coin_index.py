@@ -245,11 +245,6 @@ class CoinIndex(QtWidgets.QTableWidget):
             change_dict[11] = new_change_15m_value
             change_dict[12] = new_change_1h_value
 
-            # progress_callback.emit({coin: change_dict})
-            row_to_change = self.draw_kline_changes({coin: change_dict})
-
-            if row_to_change is not None:
-                progress_callback.emit(row_to_change)
 
             if coin == self.mw.cfg_manager.coin:
                 print("setze volume values")
@@ -257,6 +252,16 @@ class CoinIndex(QtWidgets.QTableWidget):
                 self.new_volume_5m_value = new_volume_5m_value
                 self.new_volume_15m_value = new_volume_15m_value
                 self.new_volume_1h_value = new_volume_1h_value
+
+
+            # draw changes only if coin index tab is open.
+            tabIndex = self.mw.tabsBotLeft.currentIndex()
+            if tabIndex == 0:
+                # progress_callback.emit({coin: change_dict})
+                row_to_change = self.draw_kline_changes({coin: change_dict})
+
+                if row_to_change is not None:
+                    progress_callback.emit(row_to_change)
 
 
     def draw_kline_changes(self, kline_list):
@@ -282,13 +287,8 @@ class CoinIndex(QtWidgets.QTableWidget):
                 # read old data from table
                 old_data = self.item(row, colIndex).text()
 
-
-                # spawn in thread?
                 # if data differs from old data, create an item, set new data and update.
                 if float(old_data) != float(new_data):
-                    # newItem = QtWidgets.QTableWidgetItem()
-                    # newItem.setData(QtCore.Qt.EditRole, QtCore.QVariant(new_data))
-                    # self.setItem(row, colIndex, newItem)
                     kline_list.append([coin, colIndex, new_data])
         return kline_list
 

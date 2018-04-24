@@ -60,18 +60,18 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
 
             if index.row() == marked_row and index.column() == 1:
                 print("coloring marked row: " + str(marked_row))
-                option.text = "<span style='border-bottom: 3px solid #f3ba2e; color:" + Colors.color_yellow + ";'>" + str(index.data()) + " / BTC</span>"
+                option.text = "<span style=' font-size: 13px; border-bottom: 3px solid #f3ba2e; color:" + Colors.color_yellow + ";'>" + str(index.data()) + " / BTC</span>"
 
 
     def style_coin_index(self, option, index):
         color = "#cdcdcd"
 
         if index.column() == 1:
-            option.text = "<span style='color:" + color + ";'>" + str(index.data()) + " / BTC</span>"
+            option.text = "<span style=' font-size: 13px; color:" + color + ";'>" + str(index.data()) + " / BTC</span>"
 
         elif index.column() == 2:
             # orig = str(index.data())
-            option.text = "<span style='color:" + color + ";'>" + str(index.data()) + " BTC</span>"
+            option.text = "<span style=' font-size: 13px; color:" + color + ";'>" + str(index.data()) + " BTC</span>"
 
         elif index.column() == 3 or index.column() == 10 or index.column() == 11 or index.column() == 12:
             value = index.data()
@@ -92,7 +92,7 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
                 operator = ""
                 color = "#ff007a"
 
-            option.text = "<span style='color:" + color + ";'>" + operator + "{0:.2f}".format(percent_value) + "%"
+            option.text = "<span style=' font-size: 13px; color:" + color + ";'>" + operator + "{0:.2f}".format(percent_value) + "%"
             option.textAlignmentRole = Qt.Qt.AlignRight
 
 
@@ -120,7 +120,7 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
                 color = "#cdcdcd"
                 weight = "normal"
 
-            option.text = "<span style='font-weight: " + weight + "; color:" + color + ";'>" + "{0:,.2f}".format(percent_value) + " BTC</span>"
+            option.text = "<span style=' font-size: 13px; font-weight: " + weight + "; color:" + color + ";'>" + "{0:,.2f}".format(percent_value) + " BTC</span>"
 
         else:
             # continue with the original `initStyleOption()`
