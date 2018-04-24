@@ -30,12 +30,13 @@ class InitManager:
         if val["debug"] is False:
             # self.tabsBotLeft.setTabEnabled(0, False)
             self.mw.tabsBotLeft.removeTab(0)
+            self.mw.ChartTabs.removeTab(8)
             self.mw.ChartTabs.removeTab(5)
             self.mw.ChartTabs.removeTab(4)
             self.mw.ChartTabs.removeTab(3)
             self.mw.ChartTabs.setTabEnabled(1, False)
 
-            self.mw.tabsBotLeft.setCurrentIndex(0)
+            self.mw.tabsBotLeft.setCurrentIndex(1)
             self.mw.ChartTabs.setCurrentIndex(0)
             self.mw.bot_tabs.setCurrentIndex(0)
         else:

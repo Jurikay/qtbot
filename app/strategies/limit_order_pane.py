@@ -21,11 +21,13 @@ class LimitOrderPane(QtWidgets.QWidget):
     def buy_slider_move(self):
         buy_percent_val = str(self.mw.limit_buy_slider.value())
         self.mw.buy_slider_label.setText(buy_percent_val + "%")
-
+        
         buy_value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(buy_percent_val), val["assetDecimals"])
         self.mw.limit_buy_amount.setValue(float(buy_value))
         order_cost = float(buy_value) * float(self.mw.limit_buy_input.value())
-        self.mw.limit_buy_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC")
+        self.mw.limit_buy_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC ")
+        btc_usd = float(val["tickers"]["BTCUSDT"]["lastPrice"])
+        self.mw.limit_buy_total_usd.setText('{number:,.{digits}f}'.format(number=order_cost * btc_usd, digits=0) + " $")
 
     def sell_slider_move(self):
         # Text to value
@@ -39,6 +41,8 @@ class LimitOrderPane(QtWidgets.QWidget):
 
 
         self.mw.sell_slider_label.setText(sell_percent + "%")
+
+
 
     def limit_percentage(self):
         button_number = int(self.mw.sender().objectName()[-1:])
@@ -80,9 +84,12 @@ class LimitOrderPane(QtWidgets.QWidget):
         try:
             total = float(self.mw.limit_sell_input.value()) * float(self.mw.limit_sell_amount.text())
             total_formatted = '{number:.{digits}f}'.format(number=total, digits=8)
-            self.mw.limit_sell_total.setText(str(total_formatted) + " BTC")
+            self.mw.limit_sell_total.setText(str(total_formatted) + " BTC ")
+            btc_usd = float(val["tickers"]["BTCUSDT"]["lastPrice"])
+            self.mw.limit_sell_total_usd.setText(' {number:,.{digits}f}'.format(number=total * btc_usd, digits=0) + " $")
+
         except ValueError:
-            pass
+            print("calc total sell ERROR")
 
 
     def initialize(self):

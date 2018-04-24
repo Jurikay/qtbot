@@ -20,6 +20,7 @@ class GuiManager:
         self.threadpool = QtCore.QThreadPool()
         mw.popup_btn.clicked.connect(self.show_notification)
 
+        self.last_btc_price = 0
 
 
     def initialize(self):
@@ -196,16 +197,43 @@ class GuiManager:
 
         self.mw.total_usd_label.setText("<span style='font-size: 14px; color: white; font-family: Arial Black;'>" + total_usd_value + "</span>")
 
-        self.mw.btc_price_label.setText('{number:,.{digits}f}'.format(number=float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2) + "$")
+        last_btc_price = float(val["tickers"]["BTCUSDT"]["lastPrice"])
+        last_btc_price_formatted = '{number:,.{digits}f}'.format(number=last_btc_price, digits=2) + "$"
+        
+
+        if last_btc_price > self.last_btc_price:
+            last_color = Colors.color_green
+        elif last_btc_price == self.last_btc_price:
+            last_color = Colors.color_lightgrey
+        else:
+            last_color = Colors.color_pink
+
+        self.mw.btc_price_label.setText("<span style='color: " + last_color + "'>" + last_btc_price_formatted + "</span>")
+        self.last_btc_price = last_btc_price
 
         operator = ""
         percent_change = float(val["tickers"]["BTCUSDT"]["priceChangePercent"])
         if percent_change > 0:
             operator = "+"
+            percent_color = Colors.color_green
+        else:
+            percent_color = Colors.color_pink
 
         btc_percent = operator + '{number:,.{digits}f}'.format(number=percent_change, digits=2) + "%"
+        self.mw.btc_percent_label.setText("<span style='color: " + percent_color + "'>" + btc_percent + "</span>")
 
-        self.mw.btc_percent_label.setText(btc_percent)
+        high = float(val["tickers"]["BTCUSDT"]["highPrice"])
+        low = float(val["tickers"]["BTCUSDT"]["lowPrice"])
+        vol = float(val["tickers"]["BTCUSDT"]["volume"])
+
+        high_formatted = '{number:,.{digits}f}'.format(number=high, digits=2) + "$"
+        low_formatted = '{number:,.{digits}f}'.format(number=low, digits=2) + "$"
+        vol_formatted = '{number:,.{digits}f}'.format(number=vol, digits=2) + " BTC"
+
+        self.mw.btc_high_label.setText("<span style='color: " + Colors.color_green + "'>" + high_formatted + "</span>")
+        self.mw.btc_low_label.setText("<span style='color: " + Colors.color_pink + "'>" + low_formatted + "</span>")
+        self.mw.btc_vol_label.setText("<span style='color: " + Colors.color_lightgrey + "'>" + vol_formatted + "</span>")
+
 
         self.mw.debug.setText(str(val["volDirection"]))
 
@@ -227,11 +255,11 @@ class GuiManager:
             self.mw.coin_index.update_coin_index_prices()
 
             # decouple eventually
-            self.mw.coin_index.start_kline_iterator()
             val["indexTabOpen"] = True
             # self.start_kline_iterator()
         else:
             val["indexTabOpen"] = False
+        self.mw.coin_index.start_kline_iterator()
 
     def update_stats(self):
         session_time = str(timedelta(seconds=val["timeRunning"]))

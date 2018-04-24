@@ -790,3 +790,11 @@ QTableWidget::item:hover{
     /* background-color:#FFFF00; */
     color: #f3f3f3;
 }
+
+#volumes, #volumes QLabel {
+
+    font-family: Arial Black;
+    color: #D6D6D6;
+    background-color: transparent;
+}
+

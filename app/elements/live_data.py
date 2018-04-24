@@ -49,12 +49,12 @@ class LiveData(QtWidgets.QWidget):
 
         self.mw.tradeTable.item(0, 2).setForeground(QtGui.QColor(Colors.color_lightgrey))
 
+        self.mw.tradeTable.removeRow(50)
 
         if self.history_progressed is True and self.ob_progressed is True:
             # self.mw.tradeTable.update()
             self.set_last_price()
             self.set_spread()
-
 
 
     def set_last_price(self):
@@ -75,11 +75,8 @@ class LiveData(QtWidgets.QWidget):
 
         formatted_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]), digits=val["decimals"])
         self.mw.price_arrow.setPixmap(arrow)
-
         self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
-
         usd_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
-
         self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
         if self.mw.tradeTable.rowCount() >= 50:

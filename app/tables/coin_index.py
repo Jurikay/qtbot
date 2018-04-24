@@ -251,7 +251,8 @@ class CoinIndex(QtWidgets.QTableWidget):
             if row_to_change is not None:
                 progress_callback.emit(row_to_change)
 
-            if coin == val["coin"]:
+            if coin == self.mw.cfg_manager.coin:
+                print("setze volume values")
                 self.new_volume_1m_value = new_volume_1m_value
                 self.new_volume_5m_value = new_volume_5m_value
                 self.new_volume_15m_value = new_volume_15m_value
