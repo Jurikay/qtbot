@@ -298,15 +298,15 @@ class GuiManager:
         """Calculate and display price change values."""
 
         # close_t = float(val["klines"]["1m"].get(self.mw.cfg_manager.pair, {})[-5][4])
-        klines_data = val["klines"].get("1m")
+        klines_data = self.mw.klines.get("1m")
         coin_data = klines_data.get(self.mw.cfg_manager.pair)
 
         if isinstance(coin_data, list):
-            close_5m = float(val["klines"]["1m"][self.mw.cfg_manager.pair][-5][4])
-            close_15m = float(val["klines"]["1m"][self.mw.cfg_manager.pair][-15][4])
-            # close_30m = float(val["klines"]["1m"][self.mw.cfg_manager.pair][-30][4])
-            close_1h = float(val["klines"]["1m"][self.mw.cfg_manager.pair][-60][4])
-            close_4h = float(val["klines"]["1m"][self.mw.cfg_manager.pair][-240][4])
+            close_5m = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-5][4])
+            close_15m = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-15][4])
+            # close_30m = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-30][4])
+            close_1h = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-60][4])
+            close_4h = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-240][4])
 
             change_5m_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_5m)) - 1) * 100
             change_15m_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_15m)) - 1) * 100

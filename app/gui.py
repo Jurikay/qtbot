@@ -48,6 +48,8 @@ class beeserBot(QtWidgets.QMainWindow):
         app.mw = self
 
         self.trade_history = list()
+        self.klines = dict()
+        self.klines["1m"] = dict()
         self.is_connected = False
 
         # load QtDesigner UI file

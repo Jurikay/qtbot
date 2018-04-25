@@ -161,9 +161,10 @@ class ApiCalls:
                     symbol=pair,
                     quantity=str(amount),
                     price=str(price))
+            print("order status: " + str(order))
             return order
-        except BinanceAPIException:
-            print("create order failed")
+        except BinanceAPIException as e:
+            print("create order failed: " + str(e))
 
 
 

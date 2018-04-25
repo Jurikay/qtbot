@@ -199,7 +199,7 @@ class CoinIndex(QtWidgets.QTableWidget):
         pair = klines_pair[1]
         timeframe = klines_pair[2]
 
-        val["klines"][timeframe][str(pair)] = kline_data
+        self.mw.klines[timeframe][str(pair)] = kline_data
         self.kline_data = kline_data
 
 
@@ -211,7 +211,7 @@ class CoinIndex(QtWidgets.QTableWidget):
 
     def iterate_through_klines(self, progress_callback):
         """Iterate through the global klines dict and calculate values based on historical data."""
-        for _, kline in enumerate(dict(val["klines"]["1m"])):
+        for _, kline in enumerate(dict(self.mw.klines["1m"])):
             coin = kline.replace("BTC", "")
             # items = self.findItems(coin, QtCore.Qt.MatchExactly)
             change_dict = dict()
@@ -221,21 +221,21 @@ class CoinIndex(QtWidgets.QTableWidget):
             new_volume_15m_value = 0
             new_volume_1h_value = 0
 
-            new_volume_1m_value = float(val["klines"]["1m"][kline][-1][7])
+            new_volume_1m_value = float(self.mw.klines["1m"][kline][-1][7])
 
             # sum up 1m volume up to 1 hour.
             for minute in range(60):
                 if minute < 6:
-                    new_volume_5m_value += float(val["klines"]["1m"][kline][-(1 + minute)][7])
+                    new_volume_5m_value += float(self.mw.klines["1m"][kline][-(1 + minute)][7])
                 if minute < 16:
-                    new_volume_15m_value += float(val["klines"]["1m"][kline][-(1 + minute)][7])
+                    new_volume_15m_value += float(self.mw.klines["1m"][kline][-(1 + minute)][7])
 
                 # sum 60 minutes to get 1 hour volume
-                new_volume_1h_value += float(val["klines"]["1m"][kline][-(1 + minute)][7])
+                new_volume_1h_value += float(self.mw.klines["1m"][kline][-(1 + minute)][7])
 
-            new_change_5m_value = ((float(val["tickers"][kline]["lastPrice"]) / float(val["klines"]["1m"][kline][-5][4])) - 1) * 100
-            new_change_15m_value = ((float(val["tickers"][kline]["lastPrice"]) / float(val["klines"]["1m"][kline][-15][4])) - 1) * 100
-            new_change_1h_value = ((float(val["tickers"][kline]["lastPrice"]) / float(val["klines"]["1m"][kline][-60][4])) - 1) * 100
+            new_change_5m_value = ((float(val["tickers"][kline]["lastPrice"]) / float(self.mw.klines["1m"][kline][-5][4])) - 1) * 100
+            new_change_15m_value = ((float(val["tickers"][kline]["lastPrice"]) / float(self.mw.klines["1m"][kline][-15][4])) - 1) * 100
+            new_change_1h_value = ((float(val["tickers"][kline]["lastPrice"]) / float(self.mw.klines["1m"][kline][-60][4])) - 1) * 100
 
             change_dict[6] = new_volume_1m_value
             change_dict[7] = new_volume_5m_value
@@ -247,7 +247,6 @@ class CoinIndex(QtWidgets.QTableWidget):
 
 
             if coin == self.mw.cfg_manager.coin:
-                print("setze volume values")
                 self.new_volume_1m_value = new_volume_1m_value
                 self.new_volume_5m_value = new_volume_5m_value
                 self.new_volume_15m_value = new_volume_15m_value
@@ -291,6 +290,7 @@ class CoinIndex(QtWidgets.QTableWidget):
                 if float(old_data) != float(new_data):
                     kline_list.append([coin, colIndex, new_data])
         return kline_list
+
 
     def final_draw(self, change):
         for i, _ in enumerate(change):

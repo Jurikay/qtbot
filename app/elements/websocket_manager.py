@@ -190,7 +190,7 @@ class WebsocketManager:
         # print(msg)
         # pass
         # print(str(val["klines"]["1m"][self.mw.cfg_manager.pair]))
-        old_klines = val["klines"]["1m"].get(self.mw.cfg_manager.pair)
+        old_klines = self.mw.klines["1m"].get(self.mw.cfg_manager.pair)
         if isinstance(old_klines, list):
 
             old_klines.pop()
@@ -198,8 +198,8 @@ class WebsocketManager:
             new_entry = [values["t"], values["o"], values["h"], values["l"], values["c"], values["v"], values["T"], values["q"], values["n"], values["V"], values["Q"], values["B"]]
             old_klines.append(new_entry)
 
-            print("update klines")
-            val["klines"]["1m"][self.mw.cfg_manager.pair] = old_klines
+
+            self.mw.klines["1m"][self.mw.cfg_manager.pair] = old_klines
             # print(str(new_klines))
             # print(str(values["t"]))
             # for acronym, kline_value in kline_msg["k"].items():
