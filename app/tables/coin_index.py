@@ -183,7 +183,7 @@ class CoinIndex(QtWidgets.QTableWidget):
 
         # kline api call loop
         while True:
-            print("Spawning api call workers")
+            # print("Spawning api call workers")
             for coin in val["coins"]:
                 time.sleep(sleepTime)
                 worker = Worker(partial(self.mw.api_manager.get_kline, coin))

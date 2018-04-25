@@ -30,11 +30,11 @@ class ApiCalls:
         # print("setting client: " + str(self.client))
 
         try:
-            val["coins"] = self.availablePairs(self.client)
+            val["coins"] = self.availablePairs()
 
-            val["accHoldings"] = self.getHoldings(self.client)
+            val["accHoldings"] = self.getHoldings()
 
-            val["tickers"] = self.getTickers(self.client)
+            val["tickers"] = self.getTickers()
 
             val["apiCalls"] += 3
             # userMsg = dict()
@@ -66,8 +66,7 @@ class ApiCalls:
             val["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
 
 
-    @classmethod
-    def availablePairs(self, client):
+    def availablePairs(self):
         """
         Create a dictonary containing all BTC tradepairs excluding USDT.
 
@@ -78,7 +77,7 @@ class ApiCalls:
         coins = dict()
 
         # API Call
-        products = client.get_products()
+        products = self.client.get_products()
 
         # For every entry in API answer:
         for i, pair in enumerate(products["data"]):
@@ -97,21 +96,19 @@ class ApiCalls:
         return coins
 
 
-    @classmethod
-    def getHoldings(self, client):
+    def getHoldings(self):
         """Make an inital API call to get BTC and coin holdings."""
         # API Call:
-        order = client.get_account()
+        order = self.client.get_account()
         accHoldings = dict()
         for i in range(len(order["balances"])):
             accHoldings[order["balances"][i]["asset"]] = {"free": order["balances"][i]["free"], "locked": order["balances"][i]["locked"]}
 
         return accHoldings
 
-    @classmethod
-    def getTickers(self, client):
+    def getTickers(self):
         """Make an initial API call to get ticker data."""
-        ticker = client.get_ticker()
+        ticker = self.client.get_ticker()
         # print(str(ticker))
         all_tickers = dict()
         for _, ticker_data in enumerate(ticker):
@@ -122,45 +119,44 @@ class ApiCalls:
         return all_tickers
 
 
-    @classmethod
-    def getTradehistory(self, client, pair):
+    def getTradehistory(self, pair):
         """Make an initial API call to get the trade history of a given pair. This is used until updated by websocket data."""
         # API call
         globalList = list()
-        trades = client.get_aggregate_trades(symbol=pair, limit=50)
+        trades = self.client.get_aggregate_trades(symbol=pair, limit=50)
         for _, trade in enumerate(reversed(trades)):
             globalList.insert(0, {"price": str(trade["p"]), "quantity": str(trade["q"]), "maker": bool(trade["m"]), "time": str(trade["T"])})
 
         return list(reversed(globalList))
 
 
-    @classmethod
-    def getDepth(self, client, symbol):
+    def getDepth(self, symbol):
         """Make an initial API call to get market depth (bids and asks)."""
         # API Call
-        depth = client.get_order_book(symbol=symbol, limit=20)
+        depth = self.client.get_order_book(symbol=symbol, limit=20)
 
         asks = depth["asks"]
         bids = depth["bids"]
         return {"bids": bids, "asks": asks}
 
 
-    @classmethod
-    def api_create_order(self, client, side, pair, price, amount, progress_callback):
+
+    def api_create_order(self, side, pair, price, amount, progress_callback):
         print("create order: " + str(price) + " " + str(amount))
         try:
             if side == "Buy":
-                order = client.order_limit_buy(
+                order = self.client.order_limit_buy(
                     symbol=pair,
                     quantity=str(amount),
                     price=str(price))
 
 
             elif side == "Sell":
-                order = client.order_limit_sell(
+                order = self.client.order_limit_sell(
                     symbol=pair,
                     quantity=str(amount),
                     price=str(price))
+    
             print("order status: " + str(order))
             return order
         except BinanceAPIException as e:
@@ -183,13 +179,13 @@ class ApiCalls:
 
 
     def api_history(self, progress_callback):
-        trade_history = self.getTradehistory(self.client, self.mw.cfg_manager.pair)
+        trade_history = self.getTradehistory(self.mw.cfg_manager.pair)
         progress_callback.emit({"history": reversed(trade_history)})
         val["apiCalls"] += 1
 
 
     def api_depth(self, progress_callback):
-        depth = self.getDepth(self.client, self.mw.cfg_manager.pair)
+        depth = self.getDepth(self.mw.cfg_manager.pair)
         val["asks"] = depth["asks"]
         progress_callback.emit({"asks": val["asks"]})
         val["bids"] = depth["bids"]

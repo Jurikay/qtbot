@@ -244,7 +244,7 @@ class LimitOrderPane(QtWidgets.QWidget):
             amount = '{number:.{digits}f}'.format(number=self.mw.limit_buy_amount.value(), digits=val["assetDecimals"])
             side = "Buy"
 
-            worker = Worker(partial(self.mw.api_manager.api_create_order, app.client, side, pair, price, amount))
+            worker = Worker(partial(self.mw.api_manager.api_create_order, side, pair, price, amount))
             # worker.signals.progress.connect(self.create_order_callback)
             self.mw.threadpool.start(worker)
             logging.info('[ + ] BUY ORDER CREATED! %s' % str(pair) + " " + str(amount) + " at " + str(price))
@@ -259,7 +259,7 @@ class LimitOrderPane(QtWidgets.QWidget):
 
             side = "Sell"
 
-            worker = Worker(partial(self.mw.api_manager.api_create_order, app.client, side, pair, price, amount))
+            worker = Worker(partial(self.mw.api_manager.api_create_order, side, pair, price, amount))
             # worker.signals.progress.connect(self.create_order_callback)
             self.mw.threadpool.start(worker)
             logging.info('[ - ] SELL ORDER CREATED! %s' % str(pair) + " " + str(amount) + " at " + str(price))
