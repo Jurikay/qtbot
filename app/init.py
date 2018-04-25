@@ -16,6 +16,8 @@ def init_argparser():
     parser = argparse.ArgumentParser(description='A custom Binance client written in Python and Qt.')
     parser.add_argument('-d', '--debug', help='Enable debug mode', required=False, action='store_true')
     parser.add_argument('-v', '--verbose', help='Enable verbose mode', required=False, action='store_true')
+    parser.add_argument('-j', '--jirrik', help='Enable jirrik test mode', required=False, action='store_true')
+    
     args = vars(parser.parse_args())
     return args
 
@@ -42,9 +44,17 @@ else:
 if args['verbose'] is True:
     print("verbose mode enabled")
     # code here
-    val["verbose"] = False
+    val["verbose"] = True
 else:
     val["verbose"] = False
+
+
+if args['jirrik'] is True:
+    print("jirrik mode enabled")
+    # code here
+    val["jirrik"] = True
+else:
+    val["jirrik"] = False
 
 
 # val["globalList"] = list()

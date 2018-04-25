@@ -84,6 +84,11 @@ class beeserBot(QtWidgets.QMainWindow):
         self.linterfix = QWebEngineView()
 
 
+        self.table_view_btn.clicked.connect(self.test_table_view.setup)
+        self.add_btn.clicked.connect(self.test_table_view.append_row)
+
+
+
     def init_basics(self):
         self.log_manager = BotLogger(self)
         self.log_manager.init_logging()

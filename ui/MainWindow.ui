@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1536</width>
-    <height>1000</height>
+    <width>1686</width>
+    <height>1114</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
-    <height>0</height>
+    <width>1600</width>
+    <height>900</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -477,7 +477,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="acc_label">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -485,7 +485,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Arial Black'; font-size:14pt; font-weight:600; color:#cdcdcd;&quot;&gt;Account:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Account: </string>
             </property>
            </widget>
           </item>
@@ -607,7 +607,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>5</number>
+            <number>9</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -711,8 +711,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>819</width>
-                  <height>402</height>
+                  <width>969</width>
+                  <height>460</height>
                  </rect>
                 </property>
                </widget>
@@ -1458,6 +1458,56 @@
                 <string>reload api</string>
                </property>
               </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="tab_15">
+            <attribute name="title">
+             <string>Jirrik</string>
+            </attribute>
+            <layout class="QHBoxLayout" name="horizontalLayout_47">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_31">
+               <item>
+                <widget class="TestTableView" name="test_table_view">
+                 <property name="sizeAdjustPolicy">
+                  <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+                 </property>
+                 <property name="editTriggers">
+                  <set>QAbstractItemView::AllEditTriggers</set>
+                 </property>
+                 <property name="alternatingRowColors">
+                  <bool>false</bool>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::NoSelection</enum>
+                 </property>
+                 <property name="selectionBehavior">
+                  <enum>QAbstractItemView::SelectRows</enum>
+                 </property>
+                 <property name="sortingEnabled">
+                  <bool>true</bool>
+                 </property>
+                 <attribute name="verticalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="add_btn">
+                 <property name="text">
+                  <string>add</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="table_view_btn">
+                 <property name="text">
+                  <string>INIT table</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
@@ -3283,7 +3333,7 @@
                  <number>1</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="label_10">
+                 <widget class="QLabel" name="limit_buy_label_total">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -3294,7 +3344,7 @@
                    <string notr="true"/>
                   </property>
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Total: &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>Total: </string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
@@ -4299,7 +4349,7 @@
                  <number>1</number>
                 </property>
                 <item>
-                 <widget class="QLabel" name="label_13">
+                 <widget class="QLabel" name="limit_sell_label_total">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                     <horstretch>0</horstretch>
@@ -4307,7 +4357,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Total: &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>Total: </string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
@@ -5824,7 +5874,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>614</width>
-                 <height>468</height>
+                 <height>479</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -6173,7 +6223,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1536</width>
+     <width>1686</width>
      <height>22</height>
     </rect>
    </property>
@@ -6232,6 +6282,11 @@
    <class>FishingBot</class>
    <extends>QTableWidget</extends>
    <header>app/strategies/fishing_bot.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TestTableView</class>
+   <extends>QTableView</extends>
+   <header>app/tables/test_tableview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

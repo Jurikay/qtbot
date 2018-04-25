@@ -42,6 +42,9 @@ class CoinIndex(QtWidgets.QTableWidget):
         self.setColumnWidth(2, 120)
         self.setColumnWidth(3, 75)
         self.setColumnWidth(5, 130)
+        self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        self.verticalHeader().setDefaultSectionSize(30)
+
 
         for i in (number + 6 for number in range(7)):
             print("set width of col " + str(i))

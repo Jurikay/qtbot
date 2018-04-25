@@ -23,10 +23,13 @@ class InitManager:
         self.set_modes()
         self.main_init()
         self.table_setup()
-
+        self.ui_setup()
 
     # gui init
     def set_modes(self):
+        if val["jirrik"] is False:
+            self.mw.ChartTabs.removeTab(9)
+
         if val["debug"] is False:
             # self.tabsBotLeft.setTabEnabled(0, False)
             self.mw.tabsBotLeft.removeTab(0)
@@ -41,6 +44,7 @@ class InitManager:
             self.mw.bot_tabs.setCurrentIndex(0)
         else:
             logging.info("DEBUG mode enabled")
+
 
 
     def main_init(self):
@@ -98,3 +102,9 @@ class InitManager:
 
         self.mw.api_key_label.setStyleSheet("border: 2px solid #f3ba2e;")
         self.mw.api_secret_label.setStyleSheet("border: 2px solid #f3ba2e;")
+
+    def ui_setup(self):
+        print("setting up gui")
+        self.mw.acc_label.setText("<span style='margin-bottom: 2px; font-size: 18px; color: #CDCDCD; font-family: Arial Black;'>Account: </span>")
+        self.mw.limit_buy_label_total.setText("<span style='font-size: 14px; color: #CDCDCD; font-family: Arial;'>Total: </span>")
+        self.mw.limit_sell_label_total.setText("<span style='font-size: 14px; color: #CDCDCD; font-family: Arial;'>Total: </span>")
