@@ -69,14 +69,10 @@ class InitManager:
     # maybe move this into limit_pane
     def table_setup(self):
 
-        coin = self.mw.cfg_manager.coin
-
-        
-
 
         bids_header = self.mw.bids_table.horizontalHeader()
         asks_header = self.mw.asks_table.horizontalHeader()
-        
+
         bids_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
         bids_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
         bids_header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)

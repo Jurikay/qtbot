@@ -109,3 +109,4 @@ ENV/
 .mypy_cache/
 
 Pipfile.lock
+ui/MainWindow.ui.autosave
