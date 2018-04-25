@@ -48,7 +48,7 @@ class TestTableView(QtWidgets.QTableView):
 
         #         all_coins[coin] = [coin, last_price, pric_per, vol]
 
-        df = pd.DataFrame(val["tickers"]).transpose()
+        df = pd.DataFrame(val["tickers"]).transpose()[["symbol", "lastPrice"]]
         return df
 
     def coin_update(self):
