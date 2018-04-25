@@ -5,6 +5,8 @@
 
 """Main application entry point."""
 
+import PyQt5.QtCore as QtCore
+
 from PyQt5.QtWidgets import QApplication, QStyleFactory
 from app.gui import beeserBot
 import sys
@@ -17,6 +19,10 @@ if __name__ == "__main__":
     #
 
     app.setStyle(QStyleFactory.create('Fusion'))
+    app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+
+    if hasattr(QStyleFactory, 'AA_UseHighDpiPixmaps'):
+        app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
 
     widget = beeserBot()
     widget.show()
