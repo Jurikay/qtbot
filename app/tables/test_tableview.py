@@ -6,7 +6,7 @@
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
-import pandas as pd
+# import pandas as pd
 
 
 class TestTableView(QtWidgets.QTableView):
@@ -143,8 +143,8 @@ class MyTableModel(QtCore.QAbstractTableModel):
         # Sorting
         if len(self._sortBy) != 0:
             dfDisplay.sort_values(by=self._sortBy,
-                                    ascending=self._sortDirection,
-                                    inplace=True)
+                                  ascending=self._sortDirection,
+                                  inplace=True)
 
         # Updating
         self.datatable = dfDisplay

@@ -163,7 +163,8 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         worker = Worker(self.mw.api_manager.api_all_orders)
         worker.signals.progress.connect(self.build_open_orders)
         self.mw.threadpool.start(worker)
-
+        self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        self.verticalHeader().setDefaultSectionSize(30)
         self.set_width()
 
     def gotoTradeButtonClicked(self):

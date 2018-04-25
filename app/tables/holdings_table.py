@@ -259,6 +259,8 @@ class HoldingsTable(QtWidgets.QTableWidget):
         self.setColumnWidth(1, 75)
         self.setColumnWidth(7, 120)
         self.setIconSize(QtCore.QSize(25, 25))
+        self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        self.verticalHeader().setDefaultSectionSize(30)
 
 
     def gotoTradeButtonClicked(self):
