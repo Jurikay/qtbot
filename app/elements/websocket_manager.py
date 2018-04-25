@@ -114,7 +114,7 @@ class WebsocketManager:
             worker = Worker(self.socket_update_holdings)
 
             # update values in holdings table
-            worker.signals.progress.connect(self.mw.holdings_table.holding_updated)
+            worker.signals.finished.connect(self.mw.holdings_table.holding_updated)
             self.threadpool.start(worker)
 
 

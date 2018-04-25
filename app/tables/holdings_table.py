@@ -30,6 +30,20 @@ class HoldingsTable(QtWidgets.QTableWidget):
         bold_font = QtGui.QFont()
         bold_font.setBold(True)
 
+        # debug:
+        self.header = self.horizontalHeader()
+
+        sort_order = self.header.sortIndicatorOrder()
+        sort_section = self.header.sortIndicatorSection()
+
+        # self.header.setSortIndicator(0, 10)
+        self.setSortingEnabled(False)
+
+
+        rows_to_remove = list()
+
+        print("Sort order: " + str(sort_order) + " Sort section: " + str(sort_section))
+
         for i in range(self.rowCount()):
             try:
                 coin = self.item(i, 1).text()
@@ -57,11 +71,19 @@ class HoldingsTable(QtWidgets.QTableWidget):
 
 
                 if float(total) * float(price) < 0.001 and coin != "BTC":
-                    self.removeRow(i)
-
+                    rows_to_remove.append(i)
+                    
             except AttributeError as e:
                 print("attr error: " + str(i))
                 print(str(e))
+                # self.build_holdings()
+
+        # remove marked rows after loop since we would break iteration,
+        # if we remove a row while iterating.
+        for row in rows_to_remove:
+            print("remove row " + str(row))
+            print(str(self.item(row, 1).text()))
+            self.removeRow(row)
 
         self.mw.limit_pane.check_buy_amount()
         self.mw.limit_pane.check_sell_amount()
@@ -70,10 +92,15 @@ class HoldingsTable(QtWidgets.QTableWidget):
         state = self.mw.hide_pairs.checkState()
         text = self.mw.coinindex_filter.text()
         self.filter_holdings(text, state)
+        
+        self.setSortingEnabled(True)
+        # self.header.setSortIndicator(0, sort_section)
 
 
-    def build_holdings(self, *args):
+    def build_holdings(self):
         print("build holdings table")
+        self.setSortingEnabled(False)
+
         self.setRowCount(0)
         for holding in val["accHoldings"]:
 
@@ -84,7 +111,9 @@ class HoldingsTable(QtWidgets.QTableWidget):
                 elif holding == "BTC":
                     name = "Bitcoin"
             except KeyError:
+                # catch BTCBTC
                 name = "Bitcoin"
+
             free = val["accHoldings"][holding]["free"]
             locked = val["accHoldings"][holding]["locked"]
             total = float(free) + float(locked)
@@ -144,9 +173,9 @@ class HoldingsTable(QtWidgets.QTableWidget):
                         self.item(1, 6).setFont(bold_font)
                         self.item(1, 6).setForeground(QtGui.QColor(Colors.color_lightgrey))
 
-                        self.btn_sell = QtWidgets.QPushButton('Trade ' + str(holding))
-                        self.btn_sell.clicked.connect(self.gotoTradeButtonClicked)
-                        self.setCellWidget(1, 7, self.btn_sell)
+                        btn_sell = QtWidgets.QPushButton('Trade ' + str(holding))
+                        btn_sell.clicked.connect(self.gotoTradeButtonClicked)
+                        self.setCellWidget(1, 7, btn_sell)
 
                         self.setItem(1, 8, QtWidgets.QTableWidgetItem("0"))
 
@@ -156,6 +185,7 @@ class HoldingsTable(QtWidgets.QTableWidget):
             header = self.horizontalHeader()
             header.setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeToContents)
             # header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+            self.setSortingEnabled(True)
 
 
 
@@ -172,8 +202,55 @@ class HoldingsTable(QtWidgets.QTableWidget):
         # check if the symbol of the order is in the holdings table
         if not any(symbol in s for s in holdings):
             # if not, rebuild holdings table
-            print("rebuilde holdigns table!!")
-            self.build_holdings()
+            print("adding " + str(symbol) + " to holdings table.")
+            # self.build_holdings()
+            # self.insertRow(1)
+            # self.setItem(1, 1, QtWidgets.QTableWidgetItem(symbol))
+            self.add_holding(order)
+            self.update_holding_prices()
+
+    def add_holding(self, order):
+        self.setSortingEnabled(False)
+        pair = order["symbol"]
+        symbol = pair.replace("BTC", "")
+
+        name = val["coins"][symbol + "BTC"]["baseAssetName"]
+        free = val["accHoldings"][symbol]["free"]
+        locked = val["accHoldings"][symbol]["locked"]
+        total = float(free) + float(locked)
+        # total_formatted = '{number:.{digits}f}'.format(number=total, digits=8)
+
+        bold_font = QtGui.QFont()
+        bold_font.setBold(True)
+
+        if float(total) * float(val["coins"][symbol + "BTC"]["close"]) >= 0.001:
+            icon = QtGui.QIcon("images/ico/" + str(symbol) + ".svg")
+
+            icon_item = QtWidgets.QTableWidgetItem()
+            icon_item.setIcon(icon)
+
+            total_btc = total * float(val["coins"][symbol + "BTC"]["close"])
+            total_btc_formatted = '{number:.{digits}f}'.format(number=total_btc, digits=8)
+
+            self.insertRow(0)
+            self.setItem(0, 0, icon_item)
+
+            self.setItem(0, 1, QtWidgets.QTableWidgetItem(symbol))
+            self.setItem(0, 2, QtWidgets.QTableWidgetItem(name))
+            self.setItem(0, 3, QtWidgets.QTableWidgetItem("{0:.8f}".format(float(total))))
+            self.setItem(0, 4, QtWidgets.QTableWidgetItem("{0:g}".format(float(free))))
+            self.setItem(0, 5, QtWidgets.QTableWidgetItem("{0:g}".format(float(locked))))
+            self.setItem(0, 6, QtWidgets.QTableWidgetItem(total_btc_formatted))
+
+            self.item(0, 6).setFont(bold_font)
+            self.item(0, 6).setForeground(QtGui.QColor(Colors.color_lightgrey))
+
+            btn_sell = QtWidgets.QPushButton('Trade ' + str(symbol))
+            btn_sell.clicked.connect(self.gotoTradeButtonClicked)
+            self.setCellWidget(0, 7, btn_sell)
+
+            self.setItem(0, 8, QtWidgets.QTableWidgetItem("0"))
+        self.setSortingEnabled(True)
 
 
     def initialize(self):
@@ -208,25 +285,37 @@ class HoldingsTable(QtWidgets.QTableWidget):
 
         """Update the total value of every coin in the holdings table."""
 
+        self.setSortingEnabled(False)
+
         bold_font = QtGui.QFont()
         bold_font.setBold(True)
 
-        for i in range(self.rowCount()):
+        row_count = self.rowCount()
 
-            current_total = self.item(i, 6).text()
+        for i in range(row_count):
 
-            coin = self.item(i, 1).text()
-            total = float(self.item(i, 3).text())
+            try:
+                current_total = self.item(i, 6).text()
 
-            if coin != "BTC":
-                current_price = float(val["tickers"][coin + "BTC"]["lastPrice"])
-            elif coin == "BTC":
-                current_price = 1
+                coin = self.item(i, 1).text()
+                total = float(self.item(i, 3).text())
 
-            total_value = total * current_price
-            total_formatted = '{number:.{digits}f}'.format(number=float(total_value), digits=8)
+                if coin != "BTC":
+                    current_price = float(val["tickers"][coin + "BTC"]["lastPrice"])
+                elif coin == "BTC":
+                    current_price = 1
 
-            if current_total != total_formatted:
-                self.item(i, 6).setText(total_formatted)
-                self.item(i, 6).setFont(bold_font)
-                self.item(i, 6).setForeground(QtGui.QColor(Colors.color_lightgrey))
+                total_value = total * current_price
+                total_formatted = '{number:.{digits}f}'.format(number=float(total_value), digits=8)
+
+                if current_total != total_formatted:
+                    self.item(i, 6).setText(total_formatted)
+                    self.item(i, 6).setFont(bold_font)
+                    self.item(i, 6).setForeground(QtGui.QColor(Colors.color_lightgrey))
+            except AttributeError as e:
+                # coin has been removed
+                # self.build_holdings()
+                print("update holdings error: " + str(e))
+
+
+            self.setSortingEnabled(True)
