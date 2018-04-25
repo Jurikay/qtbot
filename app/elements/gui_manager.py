@@ -189,6 +189,11 @@ class GuiManager:
         """Update some values every second."""
 
         val["timeRunning"] += 1
+
+        if self.mw.new_coin_table is True:
+            self.mw.test_table_view.coin_update()
+
+
         total_btc_value = self.calc_total_btc()
 
         self.mw.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")

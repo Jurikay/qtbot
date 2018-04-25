@@ -51,6 +51,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.klines = dict()
         self.klines["1m"] = dict()
         self.is_connected = False
+        self.new_coin_table = False
 
         # load QtDesigner UI file
         loadUi("ui/MainWindow.ui", self)
@@ -85,7 +86,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.table_view_btn.clicked.connect(self.test_table_view.setup)
-        self.add_btn.clicked.connect(self.test_table_view.append_row)
+        self.add_btn.clicked.connect(self.test_table_view.coin_update)
 
 
 

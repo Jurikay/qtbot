@@ -6,8 +6,10 @@
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
-# import pandas as pd
+import pandas as pd
 
+from app.init import val
+import app
 
 class TestTableView(QtWidgets.QTableView):
     """
@@ -16,22 +18,53 @@ class TestTableView(QtWidgets.QTableView):
     def __init__(self, *args, **kwargs):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
         self.my_model = MyTableModel(self)
+        self.mw = app.mw
+
 
     def setup(self):
 
-        dataFrame = self.get_data_frame()
+
+        dataFrame = self.get_coin_frame()
 
         self.my_model.update(dataFrame)
 
 
-        self.my_model.setHeaderData(0, QtCore.Qt.Horizontal, "Hallo test")
-        self.my_model.setHeaderData(1, QtCore.Qt.Horizontal, "Nummer 2")
+        # self.my_model.setHeaderData(0, QtCore.Qt.Horizontal, "Hallo test")
+        # self.my_model.setHeaderData(1, QtCore.Qt.Horizontal, "Nummer 2")
         # self.my_model.headerDataChanged()
         self.setModel(self.my_model)
         self.setSortingEnabled(True)
+        self.mw.new_coin_table = True
 
+    def get_coin_frame(self):
+        all_coins = dict()
+        # for pair in val["tickers"]:
+        #     if "USDT" not in pair:
+        #         coin = str(val["tickers"][pair]["symbol"]).replace("BTC", "")
+        #         last_price = val["tickers"][pair]["lastPrice"]
+        #         pric_per = float(val["tickers"][pair]["priceChangePercent"])
+        #         vol = (val["tickers"][pair]["quoteVolume"])
+
+
+        #         all_coins[coin] = [coin, last_price, pric_per, vol]
+
+        df = pd.DataFrame(val["tickers"]).transpose()
+        return df
+
+    def coin_update(self):
+        # self.my_model.layoutAboutToBeChanged.emit()
+
+        dataFrame = self.get_coin_frame()
+
+        self.my_model.datatable = dataFrame
+
+        # self.my_model.layoutChanged.emit()
+
+        self.my_model.sort(self.my_model.order_col, self.my_model.order_dir)
+        self.my_model.dataChanged.emit(QtCore.QModelIndex(), QtCore.QModelIndex())
 
     def get_data_frame(self):
+
         df = pd.DataFrame({'Name': ['a', 'b', 'c', 'd'],
                            'First': [2.3, 5.4, 3.1, 7.7],
                            'Last': [23.4, 11.2, 65.3, 88.8],
@@ -41,14 +74,14 @@ class TestTableView(QtWidgets.QTableView):
 
 
     def append_row(self):
-        self.beginInsertRows()
-        self.beginInsertColumns()
+        # self.beginInsertRows()
+        # self.beginInsertColumns()
 
         self.my_model.datatable.append([1, 2, 3, 4])
 
-        self.endInsertRows()
-        self.endInsertColumns()
-        # self.my_model.dataChanged()
+        # self.endInsertRows()
+        # self.endInsertColumns()
+        self.my_model.layoutChanged.emit()
 
 
 class MyTableModel(QtCore.QAbstractTableModel):
@@ -62,6 +95,8 @@ class MyTableModel(QtCore.QAbstractTableModel):
         self._sortDirection = []
         self._filters = {}
 
+        self.order_col = 0
+        self.order_dir = 0
 
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
         try:
@@ -101,7 +136,9 @@ class MyTableModel(QtCore.QAbstractTableModel):
 
 
     def sort(self, col, order=QtCore.Qt.AscendingOrder):
-
+        self.order_col = col
+        self.order_dir = order
+        print("sort: " + str(order))
         # Storing persistent indexes
         self.layoutAboutToBeChanged.emit()
         oldIndexList = self.persistentIndexList()
@@ -148,3 +185,27 @@ class MyTableModel(QtCore.QAbstractTableModel):
 
         # Updating
         self.datatable = dfDisplay
+
+    def appendR(self):
+        print("add")
+        self.layoutAboutToBeChanged.emit()
+        newdf = pd.DataFrame({'Name': ['a', 'b', 'c', 'd'],
+                           'First': [2.3, 5.4, 0.1, 1117.7],
+                           'Last': [23.4, 0.12, 0.00003, 88.8],
+                           'Class': [1, 5, 2, 1],
+                           'Valid': [False, True, True, False]})
+        # self.updateDisplay()
+        self.update(newdf)
+
+        self.layoutChanged.emit()
+        self.dataChanged.emit(QtCore.QModelIndex(), QtCore.QModelIndex())
+
+    def real_append(self):
+        self.layoutAboutToBeChanged.emit()
+        df = self.datatable
+        new_df = pd.DataFrame({'Lul': [False, True, True, False]})
+        df.concat(new_df)
+        self.update(new_df)
+
+        self.layoutChanged.emit()
+        self.dataChanged.emit(QtCore.QModelIndex(), QtCore.QModelIndex())
