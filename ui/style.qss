@@ -701,17 +701,27 @@ QGroupBox::indicator:unchecked:disabled {
     /* max-height: 5px;
     height: 5px; */
 }
-
+#hide_pairs {
+    margin-top: 5px;
+}
 #cancel_all {
-    border: 0px solid transparent;
-    margin: 0px;
-    padding: 0px;
+    border: 1px solid #ff007a;
+    border-radius: 3px;
+    margin-left: 3px;
+    margin-right: 0px;
+    margin-top: 2px;
+    /* margin-bottom: 5px; */
+    /* padding: 0px; */
+    padding-left: 5px;
+    padding-right: 3px;
+    padding-top: 0px;
+    padding-bottom: 0px;
     color: white;
-    margin-bottom: 2px;
+    /* margin-bottom: 2px; */
 }
 
 #cancel_all:hover {
-    color: #f3ba2e;
+    color: #ff007a;
 }
 
 QMenu {
@@ -786,7 +796,7 @@ QPushButton#disabled_btn {
     background-color: #333;
 }
 
-QTableWidget::item:hover{
+#live_data QTableWidget::item:hover{
     /* background-color:#FFFF00; */
     color: #f3f3f3;
 }
