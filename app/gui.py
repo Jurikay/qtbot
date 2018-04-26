@@ -86,7 +86,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.table_view_btn.clicked.connect(self.test_table_view.setup)
-        self.add_btn.clicked.connect(self.test_table_view.coin_update)
+        self.add_btn.clicked.connect(self.test_table_view.my_model.new_append)
 
 
 
