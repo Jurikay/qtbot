@@ -35,6 +35,11 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
             self.style_coin_index(option, index)
             self.filter_highlight(option, index)
         # set default values:
+        elif self.parent.name == "TestTableView":
+            self.test_style(option, index)
+
+        else:
+            super(CoinDelegate, self).initStyleOption(option, index)
 
 
 
@@ -49,6 +54,22 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
     #     """
     #     data = text  # .toString() # Python 2: need to convert to "normal" string
     #     return "{0:>{1}}".format(data, 4)
+
+    def test_style(self, option, index):
+        color = "#cdcdcd"
+
+        if index.column() == 0:
+            option.text = "<span style=' font-size: 13px; color:" + color + ";'>" + str(index.data()) + " / BTC</span>"
+
+        elif index.column() == 1:
+            formatted_price = '{number:.{digits}f}'.format(number=float(index.data()), digits=8)
+            option.text = "<span style=' font-size: 13px; border-bottom: 3px solid #f3ba2e; color:" + Colors.color_yellow + ";'>" + str(formatted_price) + "</span>"
+
+       
+
+        else:
+            super(CoinDelegate, self).initStyleOption(option, index)
+
     def filter_highlight(self, option, index):
         if self.mw.coinindex_filter.text() != "":
             for row in range(self.parent.rowCount()):

@@ -191,6 +191,9 @@ class GuiManager:
         val["timeRunning"] += 1
 
         if self.mw.new_coin_table is True:
+            # worker = Worker(self.mw.test_table_view.coin_update)
+            # self.threadpool.start(worker)
+
             self.mw.test_table_view.coin_update()
 
 
