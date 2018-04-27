@@ -41,6 +41,13 @@ class TestTableView(QtWidgets.QTableView):
 
         self.proxy_model = QtCore.QSortFilterProxyModel()
         self.proxy_model.setSourceModel(self.my_model)
+        self.proxy_model.setDynamicSortFilter(False)
+        self.proxy_model.setFilterCaseSensitivity(False)
+        self.proxy_model.setSortLocaleAware(True)
+        self.proxy_model.setRecursiveFilteringEnabled(False)
+
+
+
 
         self.setModel(self.my_model)
         self.setSortingEnabled(True)
@@ -58,12 +65,12 @@ class TestTableView(QtWidgets.QTableView):
                 coin = str(val["tickers"][pair]["symbol"]).replace("BTC", "")
                 last_price = val["tickers"][pair]["lastPrice"]
                 pric_per = float(val["tickers"][pair]["priceChangePercent"])
-                vol = (val["tickers"][pair]["quoteVolume"])
+                vol = float(val["tickers"][pair]["quoteVolume"])
 
                 # btn = QtWidgets.QPushButton("Trade " + str(coin))
-                btn = "BTN"
+                # btn = "BTN"
 
-                all_coins[coin] = [coin, last_price, pric_per, vol, btn]
+                all_coins[coin] = [coin, coin, last_price, pric_per, vol]
 
 
         df = pd.DataFrame(all_coins).transpose()
@@ -77,19 +84,17 @@ class TestTableView(QtWidgets.QTableView):
 
         # dataFrame = self.get_coin_frame()
 
-        self.my_model.layoutAboutToBeChanged.emit()
+        # self.my_model.layoutAboutToBeChanged.emit()
 
         self.my_model.datatable = (dataFrame)
 
 
-        if self.my_model.order_col != 0 or self.my_model.order_dir != 0:
-            # print(str(self.my_model.order_col))
-            # print(str(self.my_model.order_dir))
-            self.my_model.sort(self.my_model.order_col, self.my_model.order_dir)
+        # if self.my_model.order_col != 0 or self.my_model.order_dir != 0:
+        self.my_model.sort(self.my_model.order_col, self.my_model.order_dir)
 
-        
+        # self.my_model.layoutChanged.emit()
         # self.my_model.dataChanged.emit(QtCore.QModelIndex(), QtCore.QModelIndex())
-        self.my_model.layoutChanged.emit()
+        
 
 
 
@@ -163,21 +168,13 @@ class MyTableModel(QtCore.QAbstractTableModel):
     def columnCount(self, parent=QtCore.QModelIndex()):
         return len(self.datatable.columns.values)
 
-    def data(self, index, role=QtCore.Qt.DisplayRole):
+    def data(self, index, role):
         # print 'Data Call'
-        # print index.column(), index.row()
-        i = index.row()
-        j = index.column()
         if role == QtCore.Qt.DisplayRole:
-            
-            if j > 0:
-                return QtCore.QVariant(self.datatable.iloc[i, j])
-            else:
-                return QtCore.QVariant(str(self.datatable.iloc[i, j]))
-            # return '{0}'.format(self.datatable.iloc[i, j])
-        elif role == QtCore.Qt.InitialSortOrderRole:
-            # print("SORT ORDER CHECK")
-            return QtCore.QVariant(QtCore.Qt.AscendingOrder)
+            print(index.column(), index.row())
+            i = index.row()
+            j = index.column()
+            return QtCore.QVariant(str(self.datatable.iloc[i, j]))
 
         else:
             return QtCore.QVariant()
@@ -189,17 +186,17 @@ class MyTableModel(QtCore.QAbstractTableModel):
     def sort(self, Ncol, order):
         """Sort table by given column number.
         """
-        try:
-            # print("sort: " + str(Ncol) + " " + str(order))
-            self.layoutAboutToBeChanged.emit()
-            self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
-            self.layoutChanged.emit()
+        # try:
+        # print("sort: " + str(Ncol) + " " + str(order))
+        self.layoutAboutToBeChanged.emit()
+        self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
+        self.layoutChanged.emit()
 
-            # jirrik: save order dir, order col
-            self.order_col = Ncol
-            self.order_dir = order
-        except Exception as e:
-            print(e)
+        # jirrik: save order dir, order col
+        self.order_col = Ncol
+        self.order_dir = order
+        # except Exception as e:
+        #     print(e)
 
     # def updateDisplay(self):
 

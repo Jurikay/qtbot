@@ -1,6 +1,7 @@
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
+
 # from app.colors import colors
 from PyQt5 import Qt
 from app.colors import Colors
@@ -58,17 +59,18 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
     def test_style(self, option, index):
         color = "#cdcdcd"
 
-        if index.column() == 0:
+        if index.column() < 4:
             # option.text = "<span style=' font-size: 13px; color:" + color + ";'>" + str(index.data()) + " / BTC</span>"
             option.text = index.data()
 
-        elif index.column() == 1:
+        if index.column() == 2:
             formatted_price = '{number:.{digits}f}'.format(number=float(index.data()), digits=8)
-            option.text = "<span style=' font-size: 13px; border-bottom: 3px solid #f3ba2e; color:" + Colors.color_yellow + ";'>" + str(formatted_price) + "</span>"
-
+            # option.text = "<span style=' font-size: 13px; border-bottom: 3px solid #f3ba2e; color:" + Colors.color_yellow + ";'>" + str(formatted_price) + "</span>"
+            option.text = formatted_price
+            
        
 
-        else:
+        elif index.column() >= 4:
             super(CoinDelegate, self).initStyleOption(option, index)
 
     def filter_highlight(self, option, index):
@@ -150,39 +152,68 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
 
     def paint(self, painter, option, index):
         """Reimplement paint method to allow html rendering within tableWidgets."""
+        painter.save()
         # print("PAINT METHOD: OPTION:" + str(dir(option)) + " INDEX:" + str(dir(index)))
         options = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
-        style = QtWidgets.QApplication.style() if options.widget is None else options.widget.style()
-
         if index.column() == 0:
             icon = QtGui.QIcon("images/ico/" + options.text + ".svg")
-            iconRect  = QtCore.QRect(option.rect.right() - option.rect.height(),
+            iconRect = QtCore.QRect(option.rect.right() - option.rect.height(),
                                      option.rect.top(),
                                      option.rect.height(),
                                      option.rect.height())
             icon.paint(painter, iconRect, QtCore.Qt.AlignLeft)
-
+        # else:
+            # ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
+            # ctx.palette.setColor(QtGui.QPalette(QtGui.QColor("#fff")))
+        #     doc = QtGui.QTextDocument()
+        #     doc.documentLayout().draw(painter, ctx)
+        # else:
+        # print(str(option.state))
+        # print("paint")
         else:
-            doc = QtGui.QTextDocument()
-            doc.setHtml(options.text)
+            # painter.setPen(QtGui.QColor(Colors.color_green))
+            # super(CoinDelegate, self).paint(painter, option, index)
+            # var = index.model()
+            # color = var.data(index, QtCore.Qt.BackgroundRole)
+            # text = var.data(index, QtCore.Qt.DisplayRole)
+            # painter.fillRect(option.rect, color)
+            option.palette.setColor(QtGui.QPalette(QtGui.QPalette.Normal, QtGui.QPalette.Foreground, QtCore.Qt.yellow))
+            painter.drawText(option.rect, QtCore.Qt.AlignCenter, options.text)
 
-            options.text = ""
-            style.drawControl(QtWidgets.QStyle.CE_ItemViewItem, options, painter)
+        #     style = QtWidgets.QApplication.style() if options.widget is None else options.widget.style()
 
-            ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
-            if option.state & QtWidgets.QStyle.State_Selected:
-                ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
-            else:
-                ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
+        #     doc = QtGui.QTextDocument()
+        #     doc.setHtml(options.text)
+
+        #     options.text = ""
+        #     style.drawControl(QtWidgets.QStyle.CE_ItemViewItem, options, painter)
+
+        #     ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
+        #     if option.state & QtWidgets.QStyle.State_Selected:
+        #         ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
+        #     else:
+        #         ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
 
 
-            textRect = style.subElementRect(QtWidgets.QStyle.SE_ItemViewItemText, options)
-            painter.save()
-            painter.translate(textRect.topLeft())
-            painter.setClipRect(textRect.translated(-textRect.topLeft()))
-            doc.documentLayout().draw(painter, ctx)
-            painter.restore()
+        #     textRect = style.subElementRect(QtWidgets.QStyle.SE_ItemViewItemText, options)
+        #     
+        #     painter.translate(textRect.topLeft())
+        #     painter.setClipRect(textRect.translated(-textRect.topLeft()))
+        #     doc.documentLayout().draw(painter, ctx)
+        painter.restore()
+
+
+
+    def _create_item(self, text):
+        layout = QtWidgets.QHBoxLayout()
+        layout.addWidget(QtWidgets.QLabel(text))
+        layout.addStretch(2)
+
+
+        item = QtWidgets.QLabel(text)
+        # item.setLayout(layout)
+        return item
 
     def sizeHint(self, option, index):
         """sizeHint has to be reimplemented as well."""
