@@ -137,12 +137,12 @@ class LiveData(QtWidgets.QWidget):
         bids = payload.get("bids", "")
 
         if len(asks) == 20:
-            for _ in enumerate(asks):
-                self.progress_orderbook([asks, "asks"])
+            # for _ in enumerate(asks):
+            self.progress_orderbook([asks, "asks"])
 
         if len(bids) == 20:
-            for _ in enumerate(bids):
-                self.progress_orderbook([bids, "bids"])
+            # for _ in enumerate(bids):
+            self.progress_orderbook([bids, "bids"])
 
         self.ob_progressed = True
         # self.set_spread()
