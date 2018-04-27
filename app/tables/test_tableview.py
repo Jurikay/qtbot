@@ -29,6 +29,12 @@ class TestTableView(QtWidgets.QTableView):
 
     def setup(self):
 
+        # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        self.horizontalHeader().setDefaultSectionSize(50)
+        self.horizontalHeader().resizeSection(0, 35)
+        self.horizontalHeader().resizeSection(1, 135)
+        self.horizontalHeader().resizeSection(2, 35)
+
         dataFrame = self.get_coin_frame()
 
         self.my_model.update(dataFrame)
@@ -40,9 +46,9 @@ class TestTableView(QtWidgets.QTableView):
         self.setSortingEnabled(True)
         # self.my_model.sort(0, 0)
         self.mw.new_coin_table = True
-        btn = QtWidgets.QPushButton("TEST")
+        # btn = QtWidgets.QPushButton("TEST")
 
-        self.setIndexWidget(self.my_model.index(0, 4), btn)
+        # self.setIndexWidget(self.my_model.index(0, 4), btn)
         # self.my_model.sort(0, 1)
 
     def get_coin_frame(self):

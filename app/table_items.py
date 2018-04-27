@@ -59,7 +59,8 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
         color = "#cdcdcd"
 
         if index.column() == 0:
-            option.text = "<span style=' font-size: 13px; color:" + color + ";'>" + str(index.data()) + " / BTC</span>"
+            # option.text = "<span style=' font-size: 13px; color:" + color + ";'>" + str(index.data()) + " / BTC</span>"
+            option.text = index.data()
 
         elif index.column() == 1:
             formatted_price = '{number:.{digits}f}'.format(number=float(index.data()), digits=8)
@@ -149,31 +150,39 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
 
     def paint(self, painter, option, index):
         """Reimplement paint method to allow html rendering within tableWidgets."""
+        # print("PAINT METHOD: OPTION:" + str(dir(option)) + " INDEX:" + str(dir(index)))
         options = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
-
         style = QtWidgets.QApplication.style() if options.widget is None else options.widget.style()
 
-        doc = QtGui.QTextDocument()
-        doc.setHtml(options.text)
+        if index.column() == 0:
+            icon = QtGui.QIcon("images/ico/" + options.text + ".svg")
+            iconRect  = QtCore.QRect(option.rect.right() - option.rect.height(),
+                                     option.rect.top(),
+                                     option.rect.height(),
+                                     option.rect.height())
+            icon.paint(painter, iconRect, QtCore.Qt.AlignLeft)
 
-        options.text = ""
-        style.drawControl(QtWidgets.QStyle.CE_ItemViewItem, options, painter)
-
-        ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
-        if option.state & QtWidgets.QStyle.State_Selected:
-            ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
         else:
-            ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
+            doc = QtGui.QTextDocument()
+            doc.setHtml(options.text)
+
+            options.text = ""
+            style.drawControl(QtWidgets.QStyle.CE_ItemViewItem, options, painter)
+
+            ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
+            if option.state & QtWidgets.QStyle.State_Selected:
+                ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
+            else:
+                ctx.palette.setColor(QtGui.QPalette.Text, option.palette.color(QtGui.QPalette.Active, QtGui.QPalette.HighlightedText))
 
 
-        textRect = style.subElementRect(QtWidgets.QStyle.SE_ItemViewItemText, options)
-        painter.save()
-        painter.translate(textRect.topLeft())
-        painter.setClipRect(textRect.translated(-textRect.topLeft()))
-        doc.documentLayout().draw(painter, ctx)
-
-        painter.restore()
+            textRect = style.subElementRect(QtWidgets.QStyle.SE_ItemViewItemText, options)
+            painter.save()
+            painter.translate(textRect.topLeft())
+            painter.setClipRect(textRect.translated(-textRect.topLeft()))
+            doc.documentLayout().draw(painter, ctx)
+            painter.restore()
 
     def sizeHint(self, option, index):
         """sizeHint has to be reimplemented as well."""
