@@ -18,6 +18,8 @@ class WebsocketManager:
         self.client = client
         self.api_updates = 0
 
+        self.tickers = dict()
+
 
     # websockets
     def schedule_websockets(self):
@@ -167,7 +169,7 @@ class WebsocketManager:
             # print("value: " + str(value))
             # print("ticker: " + str(ticker))
             if "BTC" in value["s"]:
-                ticker_data = {'symbol': value["s"], 'priceChange': value["p"], 'priceChangePercent': value["P"], 'weightedAvgPrice': value["w"], 'prevClosePrice': value["x"], 'lastPrice': float(value["c"]), 'lastQty': value["Q"], 'bidPrice': value["b"], 'bidQty': value["B"], 'askPrice': value["a"], 'askQty': value["A"], 'openPrice': value["o"], 'highPrice': value["h"], 'lowPrice': value["l"], 'volume': value["v"], 'quoteVolume': value["q"], 'openTime': value["O"], 'closeTime': value["C"], 'firstId': value["F"], 'lastId': value["L"], 'count': value["n"]}
+                ticker_data = {'symbol': value["s"], 'priceChange': value["p"], 'priceChangePercent': float(value["P"]), 'weightedAvgPrice': value["w"], 'prevClosePrice': value["x"], 'lastPrice': float(value["c"]), 'lastQty': value["Q"], 'bidPrice': value["b"], 'bidQty': value["B"], 'askPrice': value["a"], 'askQty': value["A"], 'openPrice': value["o"], 'highPrice': value["h"], 'lowPrice': value["l"], 'volume': value["v"], 'quoteVolume': value["q"], 'openTime': value["O"], 'closeTime': value["C"], 'firstId': value["F"], 'lastId': value["L"], 'count': value["n"]}
                 # print(str(ticker_data))
 
                 val["tickers"][value["s"]] = ticker_data
