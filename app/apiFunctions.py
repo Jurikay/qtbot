@@ -168,8 +168,11 @@ class ApiCalls:
         print("cancel order " + str(symbol) + " " + str(order_id))
         try:
             self.client.cancel_order(symbol=symbol, orderId=order_id)
-        except BinanceAPIException:
-            print("cancel failed")
+        except BinanceAPIException as e:
+            print("cancel failed " + str(e))
+            print(str(self.client))
+            print(str(symbol))
+            print(str(order_id))
 
 
     def api_order_history(self, pair, progress_callback):
