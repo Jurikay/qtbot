@@ -61,7 +61,7 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
 
         if index.column() < 4:
             # option.text = "<span style=' font-size: 13px; color:" + color + ";'>" + str(index.data()) + " / BTC</span>"
-            option.text = index.data()
+            option.text = str(index.data())
 
         if index.column() == 2:
             formatted_price = '{number:.{digits}f}'.format(number=float(index.data()), digits=8)
@@ -156,6 +156,16 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
         # print("PAINT METHOD: OPTION:" + str(dir(option)) + " INDEX:" + str(dir(index)))
         options = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
+
+
+        if index.column() == 1:
+            if option.state & QtWidgets.QStyle.State_MouseOver:
+                painter.setPen(QtGui.QColor(Colors.color_grey))
+                QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.PointingHandCursor)
+        else:
+            QtWidgets.QApplication.restoreOverrideCursor() 
+
+        # render an icon in column 0
         if index.column() == 0:
             icon = QtGui.QIcon("images/ico/" + options.text + ".svg")
             iconRect = QtCore.QRect(option.rect.right() - option.rect.height(),
@@ -163,6 +173,16 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
                                      option.rect.height(),
                                      option.rect.height())
             icon.paint(painter, iconRect, QtCore.Qt.AlignLeft)
+
+        
+        elif index.column() == 5:
+            text = index.data(QtCore.Qt.UserRole)
+            item = QtWidgets.QPushButton(text)
+            item.setFixedSize(option.rect.size())
+            # painter.save()
+            painter.translate(option.rect.x(), option.rect.y())
+            item.render(painter)
+        
         # else:
             # ctx = QtGui.QAbstractTextDocumentLayout.PaintContext()
             # ctx.palette.setColor(QtGui.QPalette(QtGui.QColor("#fff")))
@@ -172,16 +192,20 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
         # print(str(option.state))
         # print("paint")
         else:
-            # painter.setPen(QtGui.QColor(Colors.color_green))
-            # super(CoinDelegate, self).paint(painter, option, index)
-            # var = index.model()
-            # color = var.data(index, QtCore.Qt.BackgroundRole)
-            # text = var.data(index, QtCore.Qt.DisplayRole)
-            # painter.fillRect(option.rect, color)
-            option.palette.setColor(QtGui.QPalette(QtGui.QPalette.Normal, QtGui.QPalette.Foreground, QtCore.Qt.yellow))
-            painter.drawText(option.rect, QtCore.Qt.AlignCenter, options.text)
+            if index.column() == 3 and index.data() > 0:
+                painter.setPen(QtGui.QColor(Colors.color_green))
+            elif index.column() == 3 and index.data() < 0:
+                painter.setPen(QtGui.QColor(Colors.color_pink))
+            else:
+                painter.setPen(QtGui.QColor(Colors.color_lightgrey))
 
+            painter.drawText(option.rect, QtCore.Qt.AlignCenter, options.text)
+            
+
+
+        
         #     style = QtWidgets.QApplication.style() if options.widget is None else options.widget.style()
+        
 
         #     doc = QtGui.QTextDocument()
         #     doc.setHtml(options.text)
@@ -207,8 +231,13 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
 
     def _create_item(self, text):
         layout = QtWidgets.QHBoxLayout()
-        layout.addWidget(QtWidgets.QLabel(text))
-        layout.addStretch(2)
+        layout.addWidget(QtWidgets.QPushButton(text))
+        layout.addStretch(1)
+
+        item = QtWidgets.QWidget()
+        item.setLayout(layout)
+        item2 = QtWidgets.QPushButton("Hi")
+        return item2
 
 
         item = QtWidgets.QLabel(text)
@@ -224,3 +253,9 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
         doc.setHtml(options.text)
         doc.setTextWidth(options.rect.width())
         return QtCore.QSize(doc.idealWidth(), doc.size().height())
+
+
+# info
+# def paint()
+# painter.setPen(QtGui.QColor(Colors.color_green))
+# painter.drawText(option.rect, QtCore.Qt.AlignCenter, options.text)

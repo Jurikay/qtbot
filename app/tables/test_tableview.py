@@ -25,6 +25,7 @@ class TestTableView(QtWidgets.QTableView):
 
         self.name = "TestTableView"
         self.setItemDelegate(CoinDelegate(self))
+        self.setMouseTracking(True)
 
 
     def setup(self):
@@ -70,7 +71,7 @@ class TestTableView(QtWidgets.QTableView):
                 # btn = QtWidgets.QPushButton("Trade " + str(coin))
                 # btn = "BTN"
 
-                all_coins[coin] = [coin, coin, last_price, pric_per, vol]
+                all_coins[coin] = [coin, coin, last_price, float(pric_per), vol, coin]
 
 
         df = pd.DataFrame(all_coins).transpose()
@@ -140,8 +141,8 @@ class MyTableModel(QtCore.QAbstractTableModel):
         # print("headerData")
         try:
             if role == QtCore.Qt.DisplayRole and orientation == QtCore.Qt.Horizontal:
-                # return self.header_labels[section]
-                return self.datatable.columns.values[section]
+                return self.header_labels[section]
+                # return self.datatable.columns.values[section]
 
 
             elif role == QtCore.Qt.InitialSortOrderRole:
@@ -171,11 +172,14 @@ class MyTableModel(QtCore.QAbstractTableModel):
     def data(self, index, role):
         # print 'Data Call'
         if role == QtCore.Qt.DisplayRole:
-            print(index.column(), index.row())
+            
             i = index.row()
             j = index.column()
-            return QtCore.QVariant(str(self.datatable.iloc[i, j]))
-
+            if j < 2 or j > 4:
+                return QtCore.QVariant(str(self.datatable.iloc[i, j]))
+            else:
+                return QtCore.QVariant(float(self.datatable.iloc[i, j]))
+                
         else:
             return QtCore.QVariant()
 
