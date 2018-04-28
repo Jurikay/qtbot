@@ -10,22 +10,24 @@ import PyQt5.QtCore as QtCore
 from PyQt5.QtWidgets import QApplication, QStyleFactory
 from app.gui import beeserBot
 import sys
-
+import app
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    main_app = QApplication(sys.argv)
 
-    # QFontDatabase.addApplicationFont('static/Roboto-Bold.ttf')
+    # QFontDatabase.addmain_applicationFont('static/Roboto-Bold.ttf')
     #
 
-    app.setStyle(QStyleFactory.create('Fusion'))
-    app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+    main_app.setStyle(QStyleFactory.create('Fusion'))
+    main_app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
     if hasattr(QStyleFactory, 'AA_UseHighDpiPixmaps'):
-        app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
+        main_app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
 
     widget = beeserBot()
     widget.show()
-    app.aboutToQuit.connect(widget.shutdown_bot)
+    main_app.aboutToQuit.connect(widget.shutdown_bot)
 
-    sys.exit(app.exec_())
+    app.main_app = main_app
+
+    sys.exit(main_app.exec_())

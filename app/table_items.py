@@ -57,7 +57,7 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
     #     return "{0:>{1}}".format(data, 4)
 
     def test_style(self, option, index):
-        color = "#cdcdcd"
+        # color = "#cdcdcd"
 
         if index.column() < 4:
             # option.text = "<span style=' font-size: 13px; color:" + color + ";'>" + str(index.data()) + " / BTC</span>"
@@ -158,12 +158,28 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
         self.initStyleOption(options, index)
 
 
-        if index.column() == 1:
-            if option.state & QtWidgets.QStyle.State_MouseOver:
-                painter.setPen(QtGui.QColor(Colors.color_grey))
-                QtWidgets.QApplication.setOverrideCursor(QtCore.Qt.PointingHandCursor)
-        else:
-            QtWidgets.QApplication.restoreOverrideCursor() 
+
+        if option.state & QtWidgets.QStyle.State_MouseOver:
+            if index.column() == 1:
+                painter.setPen(QtGui.QColor(Colors.color_yellow))
+                font = QtGui.QFont()
+                font.setUnderline(True)
+                font.setBold(True)
+                painter.setFont(font)
+
+
+                if app.main_app.overrideCursor() != QtCore.Qt.PointingHandCursor:
+                    app.main_app.setOverrideCursor(QtCore.Qt.PointingHandCursor)
+
+
+                painter.drawText(option.rect, QtCore.Qt.AlignCenter, options.text)
+                painter.restore()
+                return
+
+            else:
+                print("restore cursor")
+                app.main_app.restoreOverrideCursor()
+
 
         # render an icon in column 0
         if index.column() == 0:

@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 "pyqt5" = "*"
 python-binance = "*"
+pandas = "*"
 
 [dev-packages]
 "flake8" = "*"

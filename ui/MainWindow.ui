@@ -1469,37 +1469,51 @@
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_31">
                <item>
-                <widget class="TestTableView" name="test_table_view">
-                 <property name="frameShape">
-                  <enum>QFrame::NoFrame</enum>
+                <layout class="QHBoxLayout" name="horizontalLayout_48">
+                 <item>
+                  <widget class="TestTableView" name="test_table_view">
+                   <property name="frameShape">
+                    <enum>QFrame::NoFrame</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Plain</enum>
+                   </property>
+                   <property name="sizeAdjustPolicy">
+                    <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+                   </property>
+                   <property name="autoScroll">
+                    <bool>true</bool>
+                   </property>
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::AllEditTriggers</set>
+                   </property>
+                   <property name="alternatingRowColors">
+                    <bool>false</bool>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::SingleSelection</enum>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <property name="sortingEnabled">
+                    <bool>true</bool>
+                   </property>
+                   <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QTableView" name="new_hist"/>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="jirrik_search">
+                 <property name="placeholderText">
+                  <string>Search</string>
                  </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Plain</enum>
-                 </property>
-                 <property name="sizeAdjustPolicy">
-                  <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-                 </property>
-                 <property name="autoScroll">
-                  <bool>true</bool>
-                 </property>
-                 <property name="editTriggers">
-                  <set>QAbstractItemView::AllEditTriggers</set>
-                 </property>
-                 <property name="alternatingRowColors">
-                  <bool>false</bool>
-                 </property>
-                 <property name="selectionMode">
-                  <enum>QAbstractItemView::SingleSelection</enum>
-                 </property>
-                 <property name="selectionBehavior">
-                  <enum>QAbstractItemView::SelectRows</enum>
-                 </property>
-                 <property name="sortingEnabled">
-                  <bool>true</bool>
-                 </property>
-                 <attribute name="verticalHeaderVisible">
-                  <bool>false</bool>
-                 </attribute>
                 </widget>
                </item>
                <item>
@@ -3383,13 +3397,6 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_56">
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <widget class="QLabel" name="limit_buy_total_usd">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -3460,6 +3467,9 @@
               </item>
               <item row="7" column="0" colspan="2">
                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
                 <item>
                  <widget class="QSlider" name="limit_buy_slider">
                   <property name="sizePolicy">
@@ -4364,6 +4374,9 @@
               </item>
               <item row="7" column="0" colspan="2">
                <layout class="QHBoxLayout" name="horizontalLayout_14">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
                 <item>
                  <widget class="QSlider" name="limit_sell_slider">
                   <property name="cursor">

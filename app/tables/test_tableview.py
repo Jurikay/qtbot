@@ -5,13 +5,15 @@
 
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
-import PyQt5.QtGui as QtGui
+# import PyQt5.QtGui as QtGui
 import pandas as pd
+import re
 
 from app.table_items import CoinDelegate
-from app.workers import Worker
+# from app.workers import Worker
 from app.init import val
 import app
+
 
 class TestTableView(QtWidgets.QTableView):
     """
@@ -21,7 +23,7 @@ class TestTableView(QtWidgets.QTableView):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
         self.my_model = MyTableModel(self)
         self.mw = app.mw
-        self.threadpool = app.threadpool
+        # self.threadpool = app.threadpool
 
         self.name = "TestTableView"
         self.setItemDelegate(CoinDelegate(self))
@@ -32,9 +34,10 @@ class TestTableView(QtWidgets.QTableView):
 
         # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self.horizontalHeader().setDefaultSectionSize(50)
-        self.horizontalHeader().resizeSection(0, 35)
-        self.horizontalHeader().resizeSection(1, 135)
-        self.horizontalHeader().resizeSection(2, 35)
+        # self.horizontalHeader().resizeSection(0, 35)
+        # self.horizontalHeader().resizeSection(1, 135)
+        # self.horizontalHeader().resizeSection(2, 35)
+        
 
         dataFrame = self.get_coin_frame()
 
@@ -48,8 +51,6 @@ class TestTableView(QtWidgets.QTableView):
         self.proxy_model.setRecursiveFilteringEnabled(False)
 
 
-
-
         self.setModel(self.my_model)
         self.setSortingEnabled(True)
         # self.my_model.sort(0, 0)
@@ -58,6 +59,12 @@ class TestTableView(QtWidgets.QTableView):
 
         # self.setIndexWidget(self.my_model.index(0, 4), btn)
         # self.my_model.sort(0, 1)
+        self.setColumnWidth(0, 30)
+        self.setColumnWidth(1, 100)
+        self.setColumnWidth(2, 100)
+
+    def leaveEvent(self, event):
+        app.main_app.restoreOverrideCursor()
 
     def get_coin_frame(self):
         all_coins = dict()
@@ -87,7 +94,7 @@ class TestTableView(QtWidgets.QTableView):
 
         # self.my_model.layoutAboutToBeChanged.emit()
 
-        self.my_model.datatable = (dataFrame)
+        self.my_model.datatable = dataFrame
 
 
         # if self.my_model.order_col != 0 or self.my_model.order_dir != 0:
@@ -120,22 +127,28 @@ class TestTableView(QtWidgets.QTableView):
         # self.endInsertColumns()
         self.my_model.layoutChanged.emit()
 
+    def search_edited(self, searchText=None):
+        self.my_model.setFilter(searchText=searchText)
+
 
 class MyTableModel(QtCore.QAbstractTableModel):
-    header_labels = ['Column 1', 'Column 2', 'Column 3', 'Column 4', "Col 5"]
+    header_labels = ['Column 1', 'Column 2', 'Column 3', 'Column 4', "Col 5", "button"]
 
     def __init__(self, parent=None, *args):
         super(MyTableModel, self).__init__()
+        self.mw = app.mw
         self.datatable = None
         self.setHeaderData
         self._sortBy = []
         self._sortDirection = []
         self._filters = {}
+        # self.totRows = len(self.datatable)
 
         self.order_col = 0
         self.order_dir = 0
 
         self.initially_sorted = False
+        self.searchText = None
 
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
         # print("headerData")
@@ -154,7 +167,7 @@ class MyTableModel(QtCore.QAbstractTableModel):
 
             return QtCore.QAbstractTableModel.headerData(self, section, orientation, role)
         except Exception as e:
-            print(str(e))
+            print("HEADER DATA: " + str(e))
 
 
     def update(self, dataIn):
@@ -172,7 +185,7 @@ class MyTableModel(QtCore.QAbstractTableModel):
     def data(self, index, role):
         # print 'Data Call'
         if role == QtCore.Qt.DisplayRole:
-            
+
             i = index.row()
             j = index.column()
             if j < 2 or j > 4:
@@ -183,8 +196,45 @@ class MyTableModel(QtCore.QAbstractTableModel):
         else:
             return QtCore.QVariant()
 
+    def insertRows(self, row, item, column=1, index=QtCore.QModelIndex()):
+        self.beginInsertRows(QtCore.QModelIndex(), row, row + 1)
+        self.datatable.append(item)
+        self.endInsertRows()
+
+
     def flags(self, index):
         return QtCore.Qt.ItemIsEnabled
+
+
+
+
+        # self.current_items = [item for item in self.datatable.index if searchText in item]
+
+        # self.datatable = self.current_items
+
+        
+
+        self.layoutChanged.emit()
+
+
+    def setFilter(self, searchText=None):
+        print("Set filter")
+        if searchText:
+            for row in range(self.rowCount()):
+                print("filter" + str(row))
+                self.mw.test_table_view.setRowHidden(row, False)
+                if str(searchText.upper()) in str(self.datatable.iloc[row, 0]):
+                    self.mw.test_table_view.setRowHidden(row, False)
+                else:
+                    self.mw.test_table_view.setRowHidden(row, True)
+                    print("hide: " + str(searchText) + " and " + str(self.datatable.iloc[row, 0]))
+            
+        else:
+            for row in range(self.rowCount()):
+                self.mw.test_table_view.setRowHidden(row, False)
+
+        self.searchText = searchText
+
 
 
     def sort(self, Ncol, order):
@@ -192,15 +242,35 @@ class MyTableModel(QtCore.QAbstractTableModel):
         """
         # try:
         # print("sort: " + str(Ncol) + " " + str(order))
-        self.layoutAboutToBeChanged.emit()
-        self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
-        self.layoutChanged.emit()
+        if Ncol > 0:
+            # self.setFilter(searchText="")
 
-        # jirrik: save order dir, order col
-        self.order_col = Ncol
-        self.order_dir = order
+            self.layoutAboutToBeChanged.emit()
+            try:
+                self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
+            except TypeError as e:
+                print("Sort error: " + str(e) + " " + str(Ncol))        
+
+            # jirrik: save order dir, order col
+            self.order_col = Ncol
+            self.order_dir = order
+
+
+            self.setFilter(searchText=self.searchText)
+
+            self.layoutChanged.emit()
         # except Exception as e:
         #     print(e)
+
+    def getRows(self, regexp):
+        out = []
+        col = self.datatable.columns.get_loc(0)
+        for row in range(self.rowCount()):
+            check = self.data(self.index(row, col))
+            match = re.match(regexp, check)
+            if match:
+                out.append(row)
+        return out
 
     # def updateDisplay(self):
 
