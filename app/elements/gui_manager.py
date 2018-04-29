@@ -96,8 +96,12 @@ class GuiManager:
 
 
 
-
+        print("schedule")
         self.mw.websocket_manager.schedule_websockets()
+        # self.mw.websocket_manager.start_sockets()
+
+
+
         self.mw.gui_manager.schedule_work()
 
         self.mw.holdings_table.initialize()

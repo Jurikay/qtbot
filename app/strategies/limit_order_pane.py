@@ -108,7 +108,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         self.mw.limit_sell_input.valueChanged.connect(self.check_sell_amount)
         self.mw.limit_buy_input.valueChanged.connect(self.check_buy_amount)
 
-        self.mw.tradeTable.cellClicked.connect(self.cell_was_clicked)
+        # self.mw.tradeTable.cellClicked.connect(self.cell_was_clicked)
 
         self.mw.bids_table.cellClicked.connect(self.bids_cell_clicked)
 
@@ -318,5 +318,5 @@ class LimitOrderPane(QtWidgets.QWidget):
 
         # self.mw.asks_table.setColumnWidth(4, 1)
 
-        self.mw.tradeTable.setColumnWidth(0, 80)
-        self.mw.tradeTable.setColumnWidth(1, 80)
+        # self.mw.tradeTable.setColumnWidth(0, 80)
+        # self.mw.tradeTable.setColumnWidth(1, 80)

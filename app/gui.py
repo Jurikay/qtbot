@@ -48,6 +48,8 @@ class beeserBot(QtWidgets.QMainWindow):
         app.mw = self
 
         self.new_history = list()
+
+        # kann weg:
         self.trade_history = list()
         self.klines = dict()
         self.klines["1m"] = dict()

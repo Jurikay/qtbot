@@ -43,7 +43,7 @@ class NewHist(QtWidgets.QTableView):
     #     print("CLICK! " + str(index))
 
     def emitChange(self):
-        print("emit change")
+
 
         # self.my_model.modelAboutToBeReset.emit()
         self.my_model.modelReset.emit()

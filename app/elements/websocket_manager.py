@@ -23,19 +23,19 @@ class WebsocketManager:
 
     # websockets
     def schedule_websockets(self):
+        print("SCHEDULE SOCKETS!!!!")
         # Pass the function to execute
         worker = Worker(self.start_sockets)
 
-        # worker.signals.progress.connect(self.mw.live_data.progress_fn)
 
         # Execute
         self.threadpool.start(worker)
 
 
 
-
     # sockets
     def start_sockets(self, progress_callback):
+        print("START SOCKETS!!!")
         val["bm"] = BinanceSocketManager(app.client)
         self.websockets_symbol()
         # start user and ticker websocket separately since it does not need to be restarted
@@ -69,12 +69,18 @@ class WebsocketManager:
 
 
         history = {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]}
-        worker = Worker(partial(self.socket_history, history))
-        worker.signals.progress.connect(self.mw.live_data.progress_history)
+        # worker = Worker(partial(self.socket_history, history))
+        # worker.signals.progress.connect(self.mw.live_data.progress_history)
         # worker.signals.finished.connect(self.t_complete)
-        self.threadpool.start(worker)
+        
+        # worker.signals.progress.connect(self.mw.new_hist.emitChange)
+        # self.threadpool.start(worker)
         self.api_updates += 1
         self.mw.new_hist.emitChange()
+
+        worker = Worker(self.socket_history)
+        worker.signals.progress.connect(self.mw.live_data.set_orderbook_values)
+
 
     def depth_callback(self, msg):
         old_bids = val["bids"]
@@ -213,8 +219,8 @@ class WebsocketManager:
             # klines_list.append()
 
     @staticmethod
-    def socket_history(history, progress_callback):
-        progress_callback.emit(history)
+    def socket_history(progress_callback):
+        progress_callback.emit("hi")
 
     @staticmethod
     def socket_orderbook(depth, progress_callback):

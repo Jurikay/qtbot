@@ -88,9 +88,9 @@ class InitManager:
         asks_header.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
         # asks_header.setSectionResizeMode(4, QtWidgets.QHeaderView.Fixed)
 
-        trades_header = self.mw.tradeTable.horizontalHeader()
-        trades_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
-        trades_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        # trades_header = self.mw.tradeTable.horizontalHeader()
+        # trades_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
+        # trades_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
 
         # self.mw.bids_table.setCellW
 
