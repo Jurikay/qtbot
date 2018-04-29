@@ -171,6 +171,8 @@ class GuiManager:
 
             self.mw.table_manager.init_filter()
 
+            
+
 
 
     # refactor

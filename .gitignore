@@ -110,3 +110,4 @@ ENV/
 
 Pipfile.lock
 ui/MainWindow.ui.autosave
+profile.cprof

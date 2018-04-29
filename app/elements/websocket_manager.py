@@ -56,12 +56,14 @@ class WebsocketManager:
 
 
     def trade_callback(self, msg):
-        
         self.mw.trade_history.insert(0, {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]})
 
+        self.mw.new_history.insert(0, [msg["p"], msg["q"], bool(msg["m"]), msg["T"]])
         if len(self.mw.trade_history) > 50:
             self.mw.trade_history.pop()
-
+        
+        if len(self.mw.new_history) > 50:
+            self.mw.new_history.pop()
         # make a copy to track changes later
         # val["tradeHistory"] = self.mw.trade_history[:]
 
@@ -72,7 +74,7 @@ class WebsocketManager:
         # worker.signals.finished.connect(self.t_complete)
         self.threadpool.start(worker)
         self.api_updates += 1
-
+        self.mw.new_hist.emitChange()
 
     def depth_callback(self, msg):
         old_bids = val["bids"]

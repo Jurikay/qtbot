@@ -137,11 +137,11 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
                 self.mw.open_orders.setRowHidden(i, True)
             elif not self.mw.open_orders.item(i, 2).text().startswith(text.upper()):
                 self.mw.open_orders.setRowHidden(i, True)
-            else:
-                self.mw.open_orders.setRowHidden(i, False)
+            # else:
+            #     self.mw.open_orders.setRowHidden(i, False)
 
-            if text != "" and str(self.mw.open_orders.item(i, 10).text()).startswith(str(text)):
-                self.mw.open_orders.setRowHidden(i, False)
+            # if text != "" and str(self.mw.open_orders.item(i, 10).text()).startswith(str(text)):
+                # self.mw.open_orders.setRowHidden(i, False)
 
 
     def open_orders_cell_clicked(self, row, column):

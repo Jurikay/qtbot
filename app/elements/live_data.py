@@ -150,13 +150,18 @@ class LiveData(QtWidgets.QWidget):
 
     def batch_history(self, payload):
         self.mw.trade_history = []
+        self.mw.new_history = []
         self.history_progressed = False
         history = payload.get("history", "")
         # if len(list(history)) > 10:
         for trade in enumerate(history):
             self.progress_history(trade[1])
             self.mw.trade_history.append(trade[1])
+            print(str(trade[1]))
+
+            self.mw.new_history.append([trade[1]["price"], trade[1]["quantity"], bool(trade[1]["maker"]), trade[1]["time"]])
 
         self.history_progressed = True
         self.mw.tradeTable.update()
         self.set_last_price()
+        self.mw.new_hist.setup()

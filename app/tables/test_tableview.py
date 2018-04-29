@@ -7,7 +7,7 @@ import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 # import PyQt5.QtGui as QtGui
 import pandas as pd
-import re
+# import re
 
 from app.table_items import CoinDelegate
 # from app.workers import Worker
@@ -262,15 +262,15 @@ class MyTableModel(QtCore.QAbstractTableModel):
         # except Exception as e:
         #     print(e)
 
-    def getRows(self, regexp):
-        out = []
-        col = self.datatable.columns.get_loc(0)
-        for row in range(self.rowCount()):
-            check = self.data(self.index(row, col))
-            match = re.match(regexp, check)
-            if match:
-                out.append(row)
-        return out
+    # def getRows(self, regexp):
+    #     out = []
+    #     col = self.datatable.columns.get_loc(0)
+    #     for row in range(self.rowCount()):
+    #         check = self.data(self.index(row, col))
+    #         match = re.match(regexp, check)
+    #         if match:
+    #             out.append(row)
+    #     return out
 
     # def updateDisplay(self):
 
