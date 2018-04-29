@@ -76,11 +76,11 @@ class WebsocketManager:
         # worker.signals.progress.connect(self.mw.new_hist.emitChange)
         # self.threadpool.start(worker)
         self.api_updates += 1
-        self.mw.new_hist.emitChange()
+        
         
         worker = Worker(self.socket_history)
         worker.signals.progress.connect(self.mw.live_data.set_orderbook_values)
-        
+        self.threadpool.start(worker)
 
     def depth_callback(self, msg):
         old_bids = val["bids"]

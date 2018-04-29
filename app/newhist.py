@@ -76,7 +76,7 @@ class HistoryModel(QtCore.QAbstractTableModel):
         self.headers = ["Price", "Quantity", "Time"]
         self.mw = app.mw
         self.model_data = None
-        self.blockSignals(True)
+        # self.blockSignals(True)
         
 
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):

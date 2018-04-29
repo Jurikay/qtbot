@@ -59,6 +59,7 @@ class LiveData(QtWidgets.QWidget):
     def set_orderbook_values(self):
         self.set_last_price()
         self.set_spread()
+        self.mw.new_hist.emitChange()
 
     def set_last_price(self):
 
