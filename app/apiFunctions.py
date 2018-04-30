@@ -11,6 +11,7 @@ import app
 from app.workers import Worker
 # from app.initApi import set_pair_values
 from binance.client import Client
+from requests.exceptions import ReadTimeout
 
 
 class ApiCalls:
@@ -19,11 +20,18 @@ class ApiCalls:
         self.mw = mw
 
 
-        self.client = Client(mw.cfg_manager.api_key, mw.cfg_manager.api_secret, {"verify": True, "timeout": 10})
+        self.client = self.init_client()
 
         app.client = self.client
 
         self.threadpool = tp
+
+    def init_client(self):
+        api_key = self.mw.cfg_manager.api_key
+        api_secret = self.mw.cfg_manager.api_secret
+        return Client(api_key, api_secret, {"verify": True, "timeout": 10})
+
+
 
     def initialize(self):
 
@@ -42,6 +50,7 @@ class ApiCalls:
 
             self.set_pair_values()
             self.mw.is_connected = True
+
         except (BinanceAPIException, NameError) as e:
             print("API ERROR")
             print(str(e))
@@ -111,7 +120,7 @@ class ApiCalls:
         ticker = self.client.get_ticker()
         # print(str(ticker))
         all_tickers = dict()
-        for _, ticker_data in enumerate(ticker):
+        for ticker_data in ticker:
             if "BTC" in ticker_data["symbol"]:
                 # print(str(ticker_data))
                 all_tickers[ticker_data["symbol"]] = ticker_data
@@ -124,7 +133,7 @@ class ApiCalls:
         # API call
         globalList = list()
         trades = self.client.get_aggregate_trades(symbol=pair, limit=50)
-        for _, trade in enumerate(reversed(trades)):
+        for trade in (reversed(trades)):
             globalList.insert(0, {"price": str(trade["p"]), "quantity": str(trade["q"]), "maker": bool(trade["m"]), "time": str(trade["T"])})
 
         return globalList
@@ -156,7 +165,7 @@ class ApiCalls:
                     symbol=pair,
                     quantity=str(amount),
                     price=str(price))
-    
+
             print("order status: " + str(order))
             return order
         except BinanceAPIException as e:
@@ -196,15 +205,11 @@ class ApiCalls:
 
 
     def api_all_orders(self, progress_callback):
-        print("CLEINT;" + str(self.client))
         orders = self.client.get_open_orders()
         progress_callback.emit(orders)
-        numberPairs = sum(val["pairs"].values())
-        print("number pairs: " + str(numberPairs))
-
 
     def api_calls(self):
-        """Inital and coin specific api calls"""
+        """Initial and coin specific api calls"""
         worker = Worker(self.api_history)
         worker.signals.progress.connect(self.mw.live_data.batch_history)
         self.mw.threadpool.start(worker)
@@ -225,15 +230,13 @@ class ApiCalls:
     def get_kline(self, pair, progress_callback):
         """Make an API call to get historical data of a coin pair."""
         interval = "1m"
-
+        val["apiCalls"] += 1
         try:  # try since this is used heavily
             klines = self.client.get_klines(symbol=pair, interval=interval)
-        except (ConnectionError, BinanceAPIException) as e:
-            print(str(e))
+            progress_callback.emit([klines, pair, interval])
 
-        progress_callback.emit([klines, pair, interval])
-
-        val["apiCalls"] += 1
+        except (ConnectionError, ReadTimeout) as e:
+            print("KLINE ERROR: " + str(e))
 
     def cancel_order_byId(self, order_id, symbol):
         """Cancel an order by id from within a separate thread."""

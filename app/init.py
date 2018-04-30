@@ -17,15 +17,13 @@ def init_argparser():
     parser.add_argument('-d', '--debug', help='Enable debug mode', required=False, action='store_true')
     parser.add_argument('-v', '--verbose', help='Enable verbose mode', required=False, action='store_true')
     parser.add_argument('-j', '--jirrik', help='Enable jirrik test mode', required=False, action='store_true')
-    
+
     args = vars(parser.parse_args())
     return args
 
 
 # questionable if needed. Same as PyQt QLocale
 locale.setlocale(locale.LC_ALL, 'C')
-
-# locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 # store many values in this giant dictionary:
 val = defaultdict(dict)

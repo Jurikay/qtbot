@@ -158,9 +158,8 @@ class GuiManager:
 
             self.set_charts(self.mw.cfg_manager.pair)
 
-            val["bm"].stop_socket(val["aggtradeWebsocket"])
-            val["bm"].stop_socket(val["depthWebsocket"])
-            val["bm"].stop_socket(val["klineWebsocket"])
+            self.mw.websocket_manager.stop_sockets()
+
             logging.info('Switching to %s' % newcoin + " / BTC")
 
             self.mw.api_manager.set_pair_values()
@@ -174,8 +173,6 @@ class GuiManager:
             self.mw.api_manager.api_calls()
 
             self.mw.table_manager.init_filter()
-
-            
 
 
 
@@ -213,7 +210,7 @@ class GuiManager:
 
         last_btc_price = float(val["tickers"]["BTCUSDT"]["lastPrice"])
         last_btc_price_formatted = '{number:,.{digits}f}'.format(number=last_btc_price, digits=2) + "$"
-        
+
 
         if last_btc_price > self.last_btc_price:
             last_color = Colors.color_green

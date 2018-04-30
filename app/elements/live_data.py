@@ -7,7 +7,6 @@ import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
 import app
-from datetime import datetime
 from app.init import val
 # from app.table_items import CoinDelegate
 from app.colors import Colors
@@ -22,40 +21,6 @@ class LiveData(QtWidgets.QWidget):
         self.ob_progressed = False
 
 
-    # live data
-    # def progress_history(self, trade):
-    #     """Callback function to add trades to the trade history table."""
-    #     self.mw.tradeTable.insertRow(0)
-        
-    #     price_item = QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["price"]), digits=val["decimals"]))
-    #     qty_item = QtWidgets.QTableWidgetItem('{number:.{digits}f}'.format(number=float(trade["quantity"]), digits=val["assetDecimals"]))
-    #     time_item = QtWidgets.QTableWidgetItem(str(datetime.fromtimestamp(int(str(trade["time"])[:-3])).strftime('%H:%M:%S.%f')[:-7]))
-
-    #     price_item.setTextAlignment(QtCore.Qt.AlignRight)
-    #     qty_item.setTextAlignment(QtCore.Qt.AlignRight)
-    #     time_item.setTextAlignment(QtCore.Qt.AlignHCenter)
-
-    #     self.mw.tradeTable.setItem(0, 0, price_item)
-    #     self.mw.tradeTable.setItem(0, 1, qty_item)
-    #     self.mw.tradeTable.setItem(0, 2, time_item)
-
-    #     if trade["maker"] is True:
-    #         self.mw.tradeTable.item(0, 0).setForeground(QtGui.QColor(Colors.color_pink))
-
-    #         val["volDirection"] -= float(trade["price"]) * float(trade["quantity"])
-    #     else:
-    #         self.mw.tradeTable.item(0, 0).setForeground(QtGui.QColor(Colors.color_green))
-    #         val["volDirection"] += float(trade["price"]) * float(trade["quantity"])
-
-    #     self.mw.tradeTable.item(0, 2).setForeground(QtGui.QColor(Colors.color_lightgrey))
-
-    #     self.mw.tradeTable.removeRow(50)
-
-    #     if self.history_progressed is True and self.ob_progressed is True:
-    #         # self.mw.tradeTable.update()
-    #         self.set_last_price()
-    #         self.set_spread()
-
     def set_orderbook_values(self):
         self.set_last_price()
         self.set_spread()
@@ -63,7 +28,7 @@ class LiveData(QtWidgets.QWidget):
 
     def set_last_price(self):
 
-        history = self.mw.new_history
+        history = self.mw.trade_history
 
         if history:
             # set color and arrow based on the last two trades
@@ -84,10 +49,6 @@ class LiveData(QtWidgets.QWidget):
             usd_price = '{number:.{digits}f}'.format(number=float(history[0][0]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
             self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
-        
-
-
-
     def progress_orderbook(self, order_data):
         order = order_data[0]
         order_type = order_data[1]
@@ -97,7 +58,7 @@ class LiveData(QtWidgets.QWidget):
                 start_index = 19
                 text_color = QtGui.QColor(Colors.color_pink)
                 table = self.mw.asks_table
-                
+
             elif order_type == "bids":
                 start_index = i * 2
                 text_color = QtGui.QColor(Colors.color_green)
@@ -106,7 +67,7 @@ class LiveData(QtWidgets.QWidget):
             ask_price = '{number:.{digits}f}'.format(number=float(order[i][0]), digits=val["decimals"])
             ask_quantity = '{number:.{digits}f}'.format(number=float(order[i][1]), digits=val["assetDecimals"])
             total_btc_asks = '{number:.{digits}f}'.format(number=float(ask_price) * float(ask_quantity), digits=3)
-            
+
             count_item = QtWidgets.QTableWidgetItem(str(i + 1).zfill(2))
             price_item = QtWidgets.QTableWidgetItem(ask_price)
             qty_item = QtWidgets.QTableWidgetItem(ask_quantity)
@@ -154,18 +115,11 @@ class LiveData(QtWidgets.QWidget):
 
     def batch_history(self, payload):
         self.mw.trade_history = []
-        self.mw.new_history = []
         self.history_progressed = False
         history = payload.get("history", "")
-        # if len(list(history)) > 10:
         for trade in enumerate(history):
-            # self.progress_history(trade[1])
-            self.mw.trade_history.append(trade[1])
-            print(str(trade[1]))
-
-            self.mw.new_history.append([trade[1]["price"], trade[1]["quantity"], bool(trade[1]["maker"]), trade[1]["time"]])
+            self.mw.trade_history.append([trade[1]["price"], trade[1]["quantity"], bool(trade[1]["maker"]), trade[1]["time"]])
 
         self.history_progressed = True
-        # self.mw.tradeTable.update()
         self.set_last_price()
         self.mw.new_hist.setup()

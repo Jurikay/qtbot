@@ -125,7 +125,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
 
     def build_open_orders(self, orders):
         """Callback function to draw list of open orders."""
-        for _, order in enumerate(orders):
+        for order in orders:
             if order["status"] == "NEW" or order["status"] == "PARTIALLY_FILLED":
 
                 self.add_to_open_orders(order)

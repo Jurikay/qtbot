@@ -18,7 +18,10 @@ class WebsocketManager:
         self.client = client
         self.api_updates = 0
 
+        self.socket_mgr = None
+
         self.tickers = dict()
+
 
 
     # websockets
@@ -36,18 +39,26 @@ class WebsocketManager:
     # sockets
     def start_sockets(self, progress_callback):
         print("START SOCKETS!!!")
-        val["bm"] = BinanceSocketManager(app.client)
+        self.socket_mgr = BinanceSocketManager(app.client)
         self.websockets_symbol()
         # start user and ticker websocket separately since it does not need to be restarted
-        val["userWebsocket"] = val["bm"].start_user_socket(self.user_callback)
-        val["tickerWebsocket"] = val["bm"].start_ticker_socket(self.ticker_callback)
-        val["bm"].start()
+        val["userWebsocket"] = self.socket_mgr.start_user_socket(self.user_callback)
+        val["tickerWebsocket"] = self.socket_mgr.start_ticker_socket(self.ticker_callback)
+        self.socket_mgr.start()
+
+    def stop_sockets(self):
+        self.socket_mgr.stop_socket(val["aggtradeWebsocket"])
+        self.socket_mgr.stop_socket(val["depthWebsocket"])
+        self.socket_mgr.stop_socket(val["klineWebsocket"])
+        self.socket_mgr.stop_socket(val["klineWebsocket5"])
+
 
     def websockets_symbol(self):
         """Symbol specific websockets. This gets called on pair change."""
-        val["aggtradeWebsocket"] = val["bm"].start_aggtrade_socket(self.mw.cfg_manager.pair, self.trade_callback)
-        val["depthWebsocket"] = val["bm"].start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
-        val["klineWebsocket"] = val["bm"].start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback)
+        val["aggtradeWebsocket"] = self.socket_mgr.start_aggtrade_socket(self.mw.cfg_manager.pair, self.trade_callback)
+        val["depthWebsocket"] = self.socket_mgr.start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
+        val["klineWebsocket"] = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="1m")
+        val["klineWebsocket5"] = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="5m")
         # logging.info('Starting websockets for %s' % str(self.mw.cfg_manager.pair))
 
     ###########################
@@ -56,58 +67,31 @@ class WebsocketManager:
 
 
     def trade_callback(self, msg):
-        self.mw.trade_history.insert(0, {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]})
+        self.mw.trade_history.insert(0, [msg["p"], msg["q"], bool(msg["m"]), msg["T"]])
 
-        self.mw.new_history.insert(0, [msg["p"], msg["q"], bool(msg["m"]), msg["T"]])
         if len(self.mw.trade_history) > 50:
             self.mw.trade_history.pop()
-        
-        if len(self.mw.new_history) > 50:
-            self.mw.new_history.pop()
-        # make a copy to track changes later
-        # val["tradeHistory"] = self.mw.trade_history[:]
 
-
-        history = {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]}
-        # worker = Worker(partial(self.socket_history, history))
-        # worker.signals.progress.connect(self.mw.live_data.progress_history)
-        # worker.signals.finished.connect(self.t_complete)
-        
-        # worker.signals.progress.connect(self.mw.new_hist.emitChange)
-        # self.threadpool.start(worker)
         self.api_updates += 1
-        
-        
+
         worker = Worker(self.socket_history)
         worker.signals.progress.connect(self.mw.live_data.set_orderbook_values)
         self.threadpool.start(worker)
 
+
     def depth_callback(self, msg):
-        old_bids = val["bids"]
-        old_asks = val["asks"]
 
         val["bids"] = msg["bids"]
         val["asks"] = msg["asks"]
 
-        # if old_bids != val["bids"]:
         worker = Worker(partial(self.socket_orderbook, msg))
         worker.signals.progress.connect(self.mw.live_data.progress_orderbook)
-        # worker.signals.finished.connect(self.t_complete)
         self.threadpool.tryStart(worker)
-        # if old_asks != val["asks"]:
-        #     worker = Worker(partial(self.socket_orderbook, msg["asks"]))
-        #     # worker.signals.progress.connect(self.mw.live_data.progress_orderbook)
-        #     # worker.signals.finished.connect(self.t_complete)
-        #     self.threadpool.tryStart(worker)
         self.api_updates += 1
 
 
     def user_callback(self, msg):
 
-        # print("user callback")
-        # print("####################")
-        # print(str(self))
-        # print(msg)
         userMsg = dict()
         self.api_updates += 1
         for key, value in msg.items():
@@ -137,11 +121,14 @@ class WebsocketManager:
             # propagate order
             worker = Worker(partial(self.socket_order, order))
 
+            # this will be refactored
+
             if userMsg["X"] == "NEW":
+                # add a new order to open orders table
                 worker.signals.progress.connect(self.mw.open_orders.add_to_open_orders)
-                # worker.signals.progress.connect(self.play_sound_effect)
 
             elif userMsg["X"] == "CANCELED":
+                # remove a cancelled order from open orders table
                 worker.signals.progress.connect(self.mw.open_orders.remove_from_open_orders)
 
                 # if order was canceled but partially filled, add to history
@@ -150,18 +137,23 @@ class WebsocketManager:
 
 
             elif userMsg["X"] == "PARTIALLY_FILLED":
+                # update a partially filled open order and check if it has to be newly added.
                 worker.signals.progress.connect(self.mw.open_orders.update_open_order)
                 worker.signals.progress.connect(self.mw.holdings_table.check_add_to_holdings)
 
 
             elif userMsg["X"] == "FILLED":
+                # remove a filled order from open orders, add trade to history and check if it
+                # has to be newly added.
                 worker.signals.progress.connect(self.mw.open_orders.remove_from_open_orders)
                 worker.signals.progress.connect(self.mw.history_table.add_to_history)
                 worker.signals.progress.connect(self.mw.holdings_table.check_add_to_holdings)
 
 
             else:
+                # catch and print any other trade callback messages.
                 print(msg)
+
             self.threadpool.start(worker)
 
         else:
@@ -170,8 +162,7 @@ class WebsocketManager:
 
     def ticker_callback(self, msg):
         self.api_updates += 1
-        # print("TICKER:" + str(dt.datetime.now()))
-        for _, value in enumerate(msg):
+        for value in msg:
             # ticker[key] = value
             # print("key: " + str(key))
             # print("value: " + str(value))
@@ -196,31 +187,26 @@ class WebsocketManager:
         kline_msg = dict()
         for key, value in msg.items():
             kline_msg[key] = value
-        # print("kline msg:")
-        # print(msg)
-        # pass
-        # print(str(val["klines"]["1m"][self.mw.cfg_manager.pair]))
-        old_klines = self.mw.klines["1m"].get(self.mw.cfg_manager.pair)
-        if isinstance(old_klines, list):
+        print("kline msg:")
+        print(msg)
 
-            old_klines.pop()
-            values = kline_msg["k"]
-            new_entry = [values["t"], values["o"], values["h"], values["l"], values["c"], values["v"], values["T"], values["q"], values["n"], values["V"], values["Q"], values["B"]]
-            old_klines.append(new_entry)
+        if msg["k"]["i"] == "1m":
+            old_klines = self.mw.klines["1m"].get(self.mw.cfg_manager.pair)
+            if isinstance(old_klines, list):
+
+                old_klines.pop()
+                values = kline_msg["k"]
+                new_entry = [values["t"], values["o"], values["h"], values["l"], values["c"], values["v"], values["T"], values["q"], values["n"], values["V"], values["Q"], values["B"]]
+                old_klines.append(new_entry)
 
 
-            self.mw.klines["1m"][self.mw.cfg_manager.pair] = old_klines
-            # print(str(new_klines))
-            # print(str(values["t"]))
-            # for acronym, kline_value in kline_msg["k"].items():
-            #     # print(str(msg["k"][i]))
-            #     print(str(acronym))
-            #     print(str(kline_value))
-            # klines_list.append()
+                self.mw.klines["1m"][self.mw.cfg_manager.pair] = old_klines
+        elif msg["k"]["i"] == "5m":
+            print("5m kline update")
 
     @staticmethod
     def socket_history(progress_callback):
-        progress_callback.emit("hi")
+        progress_callback.emit(1)
 
     @staticmethod
     def socket_orderbook(depth, progress_callback):

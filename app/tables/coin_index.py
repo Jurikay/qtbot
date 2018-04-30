@@ -214,7 +214,7 @@ class CoinIndex(QtWidgets.QTableWidget):
 
     def iterate_through_klines(self, progress_callback):
         """Iterate through the global klines dict and calculate values based on historical data."""
-        for _, kline in enumerate(dict(self.mw.klines["1m"])):
+        for kline in self.mw.klines["1m"]:
             coin = kline.replace("BTC", "")
             # items = self.findItems(coin, QtCore.Qt.MatchExactly)
             change_dict = dict()

@@ -33,7 +33,6 @@ from app.elements.websocket_manager import WebsocketManager
 
 
 class beeserBot(QtWidgets.QMainWindow):
-
     """Main ui class."""
 
     def __init__(self):
@@ -47,10 +46,10 @@ class beeserBot(QtWidgets.QMainWindow):
         app.threadpool = self.threadpool
         app.mw = self
 
-        self.new_history = list()
+        self.trade_history = list()
 
         # kann weg:
-        self.trade_history = list()
+        # self.trade_history = list()
         self.klines = dict()
         self.klines["1m"] = dict()
         self.is_connected = False
@@ -170,3 +169,32 @@ class beeserBot(QtWidgets.QMainWindow):
     def shutdown_bot(self):
         self.cfg_manager.write_stats()
         self.cfg_manager.write_config()
+
+
+class DataManager:
+    """Class to hold and manage api and websocket data."""
+
+    def __init__(self, mw):
+        """Initialize storage variables."""
+
+        self.mw = mw
+
+        self.coins = dict()
+
+        self.trade_history = list()
+        self.tickers = dict()
+        self.klines = dict()
+        self.bids = list()
+        self.asks = list()
+
+        self.my_trades = list()
+        self.open_orders = list()
+
+        self.account_holdings = dict()
+
+        self.decimals = 0
+        self.assetDecimals = 0
+
+
+    def get_specific(self, kind, coin):
+        pass
