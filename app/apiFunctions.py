@@ -186,6 +186,9 @@ class ApiCalls:
         progress_callback.emit(orders)
         val["apiCalls"] += 1
 
+    def api_my_trades(self, pair, progress_callback=None):
+        my_trades = self.client.get_my_trades(symbol=pair)
+        progress_callback.emit([my_trades, pair])
 
     def api_history(self, progress_callback):
         trade_history = self.getTradehistory(self.mw.cfg_manager.pair)
@@ -223,7 +226,7 @@ class ApiCalls:
 
 
     def get_trade_history(self, pair):
-        worker = Worker(partial(self.api_order_history, pair))
+        worker = Worker(partial(self.api_my_trades, pair))
         worker.signals.progress.connect(self.mw.history_table.orders_received)
         self.mw.threadpool.start(worker)
 

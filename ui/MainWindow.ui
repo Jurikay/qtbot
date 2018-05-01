@@ -1429,6 +1429,13 @@
                  </property>
                 </widget>
                </item>
+               <item>
+                <widget class="QPushButton" name="btn_my_trades">
+                 <property name="text">
+                  <string>my trades</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </item>
              <item row="4" column="1">

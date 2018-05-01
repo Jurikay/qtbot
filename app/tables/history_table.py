@@ -82,12 +82,16 @@ class HistoryTable(QtWidgets.QTableWidget):
 
 
     def orders_received(self, orders):
-        """Callback function to draw order history."""
-        for order in orders:
-
-            # if add order to history if it was completely filled or canceled but partially filled.
-            if order["status"] == "FILLED" or order["status"] == "CANCELED" or order["status"] == "PARTIALLY_FILLED":
-                if float(order["executedQty"]) > 0:
-                    self.add_to_history(order)
+        """Callback function to draw order history. Make order format conform."""
+        for i, order in enumerate(orders[0]):
+            order["symbol"] = orders[1]
+            if order["isBuyer"] is True:
+                order["side"] = "BUY"
             else:
-                print(str(order))
+                order["side"] = "SELL"
+
+            order["executedQty"] = order["qty"]
+
+            self.add_to_history(order)
+            # else:
+                # print("ORDER NOT ADDED: " + str(order))

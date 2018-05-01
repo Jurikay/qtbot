@@ -5,7 +5,10 @@
 
 
 import logging
-# from functools import partial
+from functools import partial
+from app.init import val
+
+
 import PyQt5.QtCore as QtCore
 # import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
@@ -17,7 +20,6 @@ from app.apiFunctions import ApiCalls
 # from app.charts import Webpages as Webpages
 from app.gui_functions import (calc_wavg, calc_all_wavgs)
 # filter_coin_index, global_filter, filter_confirmed,
-# from app.init import val
 # from app.strategies.fishing_bot import FishingBot
 # from app.strategies.limit_order import LimitOrder
 import app
@@ -88,6 +90,8 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.test_slider.valueChanged.connect(self.spinbox_value)
         self.test_slider_value.valueChanged.connect(self.slider_value)
+        self.btn_my_trades.clicked.connect(partial(self.api_manager.api_my_trades, self.cfg_manager.pair))
+
 
         self.table_view_btn.clicked.connect(self.test_table_view.setup)
         self.add_btn.clicked.connect(self.test_table_view.my_model.new_append)
