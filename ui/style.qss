@@ -26,7 +26,7 @@ QWidget {
 }
 
 
-QTableWidget#tradeTable, #bids_table, #asks_table {
+#tradeTable, #bids_table, #asks_table {
   background-color: #20262b;
   color: #f3f3f3;
   border: 0px solid transparent;

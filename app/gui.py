@@ -86,11 +86,13 @@ class beeserBot(QtWidgets.QMainWindow):
         # Fix a linter error...
         self.linterfix = QWebEngineView()
 
+        self.test_slider.valueChanged.connect(self.spinbox_value)
+        self.test_slider_value.valueChanged.connect(self.slider_value)
 
         self.table_view_btn.clicked.connect(self.test_table_view.setup)
         self.add_btn.clicked.connect(self.test_table_view.my_model.new_append)
         self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
-        self.btn_init_new.clicked.connect(self.new_hist.setup)
+        self.btn_init_new.clicked.connect(self.tradeTable.setup)
 
     def init_basics(self):
         self.log_manager = BotLogger(self)
@@ -171,6 +173,19 @@ class beeserBot(QtWidgets.QMainWindow):
         self.cfg_manager.write_config()
 
 
+        
+    
+    def slider_value(self):
+        # self.setProperty("value", value)
+        value = self.test_slider_value.value()
+        self.test_slider.setSliderPosition(value)
+        self.test_slider_label.setText(str(int(value)))
+
+    def spinbox_value(self, value):
+        self.test_slider_value.setValue(float(value))
+
+
+
 class DataManager:
     """Class to hold and manage api and websocket data."""
 
@@ -198,3 +213,5 @@ class DataManager:
 
     def get_specific(self, kind, coin):
         pass
+
+

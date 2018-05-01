@@ -42,7 +42,7 @@ class HistoryTable(QtWidgets.QTableWidget):
         # print("add to history")
         # if order["symbol"] == self.mw.cfg_manager.pair:
         # print(str(val["histoy"][order["symbol"]]))
-
+        print(str(order))
         if not isinstance(val["history"][order["symbol"]], list):
             val["history"][order["symbol"]] = list()
 

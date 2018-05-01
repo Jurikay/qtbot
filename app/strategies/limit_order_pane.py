@@ -76,8 +76,8 @@ class LimitOrderPane(QtWidgets.QWidget):
             total_formatted = '{number:.{digits}f}'.format(number=total, digits=8)
 
             self.mw.limit_buy_total.setText(str(total_formatted) + " BTC")
-        except ValueError:
-            pass
+        except ValueError as e:
+            print("calc total buy value error: " + str(e))
 
 
     def calc_total_sell(self):

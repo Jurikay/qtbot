@@ -24,7 +24,7 @@ class LiveData(QtWidgets.QWidget):
     def set_orderbook_values(self):
         self.set_last_price()
         self.set_spread()
-        self.mw.new_hist.emitChange()
+        self.mw.tradeTable.emitChange()
 
     def set_last_price(self):
 
@@ -122,4 +122,4 @@ class LiveData(QtWidgets.QWidget):
 
         self.history_progressed = True
         self.set_last_price()
-        self.mw.new_hist.setup()
+        self.mw.tradeTable.setup()

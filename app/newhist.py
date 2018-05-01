@@ -148,18 +148,20 @@ class HistoryDelegate(QtWidgets.QStyledItemDelegate):
                     font.setBold(True)
                 else:
                     painter.setPen(QtGui.QColor(Colors.color_green))
-
-
             painter.setFont(font)
+            painter.drawText(option.rect, QtCore.Qt.AlignRight, options.text)
+
+            
 
         elif index.column() == 1:
             if option.state & QtWidgets.QStyle.State_MouseOver:
                 painter.setPen(QtGui.QColor(QtCore.Qt.white))
             else:
                 painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+            painter.drawText(option.rect, QtCore.Qt.AlignRight, options.text)
 
         elif index.column() == 2:
             painter.setPen(QtGui.QColor(Colors.color_grey))
-
-        painter.drawText(option.rect, QtCore.Qt.AlignRight, options.text)
+            painter.drawText(option.rect, QtCore.Qt.AlignHCenter, options.text)
+        
         painter.restore()
