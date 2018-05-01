@@ -83,7 +83,7 @@ class HistoryTable(QtWidgets.QTableWidget):
 
     def orders_received(self, orders):
         """Callback function to draw order history. Make order format conform."""
-        for i, order in enumerate(orders[0]):
+        for order in orders[0]:
             order["symbol"] = orders[1]
             if order["isBuyer"] is True:
                 order["side"] = "BUY"
