@@ -177,8 +177,9 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
                 return
 
             else:
-                print("restore cursor")
-                app.main_app.restoreOverrideCursor()
+                if app.main_app.overrideCursor() == QtCore.Qt.PointingHandCursor:
+                    print("restore cursor")
+                    app.main_app.restoreOverrideCursor()
 
 
         # render an icon in column 0

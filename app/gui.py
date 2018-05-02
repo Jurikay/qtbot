@@ -6,7 +6,7 @@
 
 import logging
 from functools import partial
-from app.init import val
+# from app.init import val
 
 
 import PyQt5.QtCore as QtCore
@@ -177,8 +177,8 @@ class beeserBot(QtWidgets.QMainWindow):
         self.cfg_manager.write_config()
 
 
-        
-    
+
+
     def slider_value(self):
         # self.setProperty("value", value)
         value = self.test_slider_value.value()
@@ -217,5 +217,3 @@ class DataManager:
 
     def get_specific(self, kind, coin):
         pass
-
-

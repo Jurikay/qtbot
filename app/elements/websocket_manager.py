@@ -6,6 +6,7 @@ from app.init import val
 import app
 from functools import partial
 from binance.websockets import BinanceSocketManager
+from binance.depthcache import DepthCacheManager
 
 
 
@@ -21,6 +22,15 @@ class WebsocketManager:
         self.socket_mgr = None
 
         self.tickers = dict()
+
+
+        self.userWebsocket = None
+        self.tickerWebsocket = None
+
+        self.aggTradeSocket = None
+        self.depthSocket = None
+        self.klineSocket1 = None
+        self.klineSocket5 = None
 
 
 
@@ -42,23 +52,23 @@ class WebsocketManager:
         self.socket_mgr = BinanceSocketManager(app.client)
         self.websockets_symbol()
         # start user and ticker websocket separately since it does not need to be restarted
-        val["userWebsocket"] = self.socket_mgr.start_user_socket(self.user_callback)
-        val["tickerWebsocket"] = self.socket_mgr.start_ticker_socket(self.ticker_callback)
+        self.userWebsocket = self.socket_mgr.start_user_socket(self.user_callback)
+        self.tickerWebsocket = self.socket_mgr.start_ticker_socket(self.ticker_callback)
         self.socket_mgr.start()
 
     def stop_sockets(self):
-        self.socket_mgr.stop_socket(val["aggtradeWebsocket"])
-        self.socket_mgr.stop_socket(val["depthWebsocket"])
-        self.socket_mgr.stop_socket(val["klineWebsocket"])
-        self.socket_mgr.stop_socket(val["klineWebsocket5"])
+        self.socket_mgr.stop_socket(self.aggTradeSocket)
+        self.socket_mgr.stop_socket(self.depthSocket)
+        self.socket_mgr.stop_socket(self.klineSocket1)
+        self.socket_mgr.stop_socket(self.klineSocket5)
 
 
     def websockets_symbol(self):
         """Symbol specific websockets. This gets called on pair change."""
-        val["aggtradeWebsocket"] = self.socket_mgr.start_aggtrade_socket(self.mw.cfg_manager.pair, self.trade_callback)
-        val["depthWebsocket"] = self.socket_mgr.start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
-        val["klineWebsocket"] = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="1m")
-        val["klineWebsocket5"] = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="5m")
+        self.aggTradeSocket = self.socket_mgr.start_aggtrade_socket(self.mw.cfg_manager.pair, self.trade_callback)
+        self.depthSocket = self.socket_mgr.start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
+        self.klineSocket1 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="1m")
+        self.klineSocket5 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="5m")
         # logging.info('Starting websockets for %s' % str(self.mw.cfg_manager.pair))
 
     ###########################
@@ -116,7 +126,7 @@ class WebsocketManager:
             print(str(userMsg))
             # prepare order dictionary
             order = dict()
-            order = {"symbol": userMsg["s"], "price": userMsg["Ls"], "origQty": userMsg["q"], "side": userMsg["S"], "orderId": userMsg["i"], "status": userMsg["X"], "time": userMsg["E"], "type": userMsg["o"], "executedQty": userMsg["z"]}
+            order = {"symbol": userMsg["s"], "price": userMsg["L"], "origQty": userMsg["q"], "side": userMsg["S"], "orderId": userMsg["i"], "status": userMsg["X"], "time": userMsg["E"], "type": userMsg["o"], "executedQty": userMsg["z"]}
 
             # propagate order
             worker = Worker(partial(self.socket_order, order))

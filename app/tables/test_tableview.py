@@ -132,7 +132,7 @@ class TestTableView(QtWidgets.QTableView):
 
 
 class MyTableModel(QtCore.QAbstractTableModel):
-    header_labels = ['Column 1', 'Column 2', 'Column 3', 'Column 4', "Col 5", "button"]
+    header_labels = ['Icon', 'Pair', 'Price', '24h Change', "24h volume", "1m volume", "5m volume", "15m volume", "1h volume", "5m change", "15m change", "1h change"]
 
     def __init__(self, parent=None, *args):
         super(MyTableModel, self).__init__()
@@ -241,11 +241,13 @@ class MyTableModel(QtCore.QAbstractTableModel):
         """Sort table by given column number.
         """
         # try:
-        # print("sort: " + str(Ncol) + " " + str(order))
+        print("sort: " + str(Ncol) + " " + str(order))
+        self.modelAboutToBeReset.emit()
         if Ncol > 0:
             # self.setFilter(searchText="")
 
-            self.layoutAboutToBeChanged.emit()
+            # self.layoutAboutToBeChanged.emit()
+            
             try:
                 self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
             except TypeError as e:
@@ -258,7 +260,8 @@ class MyTableModel(QtCore.QAbstractTableModel):
 
             self.setFilter(searchText=self.searchText)
 
-            self.layoutChanged.emit()
+            # self.layoutChanged.emit()
+        self.modelReset.emit()
         # except Exception as e:
         #     print(e)
 
