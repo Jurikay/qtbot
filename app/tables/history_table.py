@@ -42,7 +42,7 @@ class HistoryTable(QtWidgets.QTableWidget):
         # print("add to history")
         # if order["symbol"] == self.mw.cfg_manager.pair:
         # print(str(val["histoy"][order["symbol"]]))
-        print(str(order))
+        # print(str(order))
         if not isinstance(val["history"][order["symbol"]], list):
             val["history"][order["symbol"]] = list()
 
@@ -63,8 +63,10 @@ class HistoryTable(QtWidgets.QTableWidget):
 
         self.setItem(0, 3, QtWidgets.QTableWidgetItem(order["side"]))
 
-
-        price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
+        if order.get("orderPrice"):
+            price = '{number:.{digits}f}'.format(number=float(order["orderPrice"]), digits=val["decimals"])
+        else:
+            price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
         self.setItem(0, 4, QtWidgets.QTableWidgetItem(price))
 
         qty = '{number:.{digits}f}'.format(number=float(order["executedQty"]), digits=val["assetDecimals"]) + " " + order["symbol"].replace("BTC", "")

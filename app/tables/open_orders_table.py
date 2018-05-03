@@ -40,7 +40,7 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
 
 
     def add_to_open_orders(self, order):
-        print("add to open orders: " + order["symbol"] + str(order["price"]))
+        # print("add to open orders: " + order["symbol"] + str(order["orderPrice"]))
 
         # if the table was empty at initialization, set widths when the first row is added.
         if self.mw.open_orders.rowCount() == 0:
@@ -105,10 +105,10 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
 
         # Log order
         if order["status"] == "FILLED":
-            logging.info('[ ✓ ] ORDER FILLED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
+            logging.info('[ ✓ ] ORDER FILLED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["orderPrice"]))
 
         elif order["status"] == "CANCELED":
-            logging.info('[ ✘ ] ORDER CANCELED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["price"]))
+            logging.info('[ ✘ ] ORDER CANCELED! %s' % str(order["symbol"]) + " " + str(order["side"]) + " " + str(float(order["executedQty"])) + "/" + str(float(order["origQty"])) + " filled at " + str(order["orderPrice"]))
 
 
     def update_open_order(self, order):
