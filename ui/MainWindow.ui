@@ -607,7 +607,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>8</number>
+            <number>9</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -712,7 +712,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>969</width>
-                  <height>474</height>
+                  <height>521</height>
                  </rect>
                 </property>
                </widget>
@@ -1517,6 +1517,9 @@
                     <bool>false</bool>
                    </attribute>
                   </widget>
+                 </item>
+                 <item>
+                  <widget class="IndexView" name="newer_index"/>
                  </item>
                 </layout>
                </item>
@@ -6278,6 +6281,11 @@
    <class>NewHist</class>
    <extends>QTableView</extends>
    <header>app/newhist.h</header>
+  </customwidget>
+  <customwidget>
+   <class>IndexView</class>
+   <extends>QTableView</extends>
+   <header>app/data/index_table_np.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

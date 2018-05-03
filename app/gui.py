@@ -96,7 +96,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.table_view_btn.clicked.connect(self.test_table_view.setup)
         self.add_btn.clicked.connect(self.test_table_view.my_model.new_append)
         self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
-        self.btn_init_new.clicked.connect(self.tradeTable.setup)
+        self.btn_init_new.clicked.connect(self.newer_index.setup)
 
     def init_basics(self):
         self.log_manager = BotLogger(self)

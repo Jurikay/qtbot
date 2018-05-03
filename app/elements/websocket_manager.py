@@ -123,10 +123,10 @@ class WebsocketManager:
 
 
         elif userMsg["e"] == "executionReport":
-            print(str(userMsg))
+            # print(str(userMsg))
             # prepare order dictionary
             order = dict()
-            order = {"symbol": userMsg["s"], "price": userMsg["L"], "origQty": userMsg["q"], "side": userMsg["S"], "orderId": userMsg["i"], "status": userMsg["X"], "time": userMsg["E"], "type": userMsg["o"], "executedQty": userMsg["z"]}
+            order = {"symbol": userMsg["s"], "price": userMsg["L"], "orderPrice": userMsg["p"], "origQty": userMsg["q"], "side": userMsg["S"], "orderId": userMsg["i"], "status": userMsg["X"], "time": userMsg["E"], "type": userMsg["o"], "executedQty": userMsg["z"]}
 
             # propagate order
             worker = Worker(partial(self.socket_order, order))
@@ -212,7 +212,8 @@ class WebsocketManager:
 
                 self.mw.klines["1m"][self.mw.cfg_manager.pair] = old_klines
         elif msg["k"]["i"] == "5m":
-            print("5m kline update")
+            # print("5m kline update")
+            pass
 
     @staticmethod
     def socket_history(progress_callback):
