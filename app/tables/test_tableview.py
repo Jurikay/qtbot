@@ -31,37 +31,23 @@ class TestTableView(QtWidgets.QTableView):
 
 
     def setup(self):
-
-        # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self.horizontalHeader().setDefaultSectionSize(50)
-        # self.horizontalHeader().resizeSection(0, 35)
-        # self.horizontalHeader().resizeSection(1, 135)
-        # self.horizontalHeader().resizeSection(2, 35)
         
 
         dataFrame = self.get_coin_frame()
 
         self.my_model.update(dataFrame)
 
-        self.proxy_model = QtCore.QSortFilterProxyModel()
-        self.proxy_model.setSourceModel(self.my_model)
-        self.proxy_model.setDynamicSortFilter(False)
-        self.proxy_model.setFilterCaseSensitivity(False)
-        self.proxy_model.setSortLocaleAware(True)
-        self.proxy_model.setRecursiveFilteringEnabled(False)
-
-
         self.setModel(self.my_model)
         self.setSortingEnabled(True)
-        # self.my_model.sort(0, 0)
-        self.mw.new_coin_table = True
-        # btn = QtWidgets.QPushButton("TEST")
 
-        # self.setIndexWidget(self.my_model.index(0, 4), btn)
-        # self.my_model.sort(0, 1)
+        self.mw.new_coin_table = True
+
         self.setColumnWidth(0, 30)
         self.setColumnWidth(1, 100)
         self.setColumnWidth(2, 100)
+        self.setColumnWidth(3, 100)
+        self.setColumnWidth(4, 100)
 
     def leaveEvent(self, event):
         app.main_app.restoreOverrideCursor()
@@ -145,7 +131,7 @@ class MyTableModel(QtCore.QAbstractTableModel):
         # self.totRows = len(self.datatable)
 
         self.order_col = 0
-        self.order_dir = 0
+        self.order_dir = True
 
         self.initially_sorted = False
         self.searchText = None
@@ -192,29 +178,12 @@ class MyTableModel(QtCore.QAbstractTableModel):
                 return QtCore.QVariant(str(self.datatable.iloc[i, j]))
             else:
                 return QtCore.QVariant(float(self.datatable.iloc[i, j]))
-                
-        else:
-            return QtCore.QVariant()
+
 
     def insertRows(self, row, item, column=1, index=QtCore.QModelIndex()):
         self.beginInsertRows(QtCore.QModelIndex(), row, row + 1)
         self.datatable.append(item)
         self.endInsertRows()
-
-
-    def flags(self, index):
-        return QtCore.Qt.ItemIsEnabled
-
-
-
-
-        # self.current_items = [item for item in self.datatable.index if searchText in item]
-
-        # self.datatable = self.current_items
-
-        
-
-        self.layoutChanged.emit()
 
 
     def setFilter(self, searchText=None):
@@ -242,12 +211,9 @@ class MyTableModel(QtCore.QAbstractTableModel):
         """
         # try:
         print("sort: " + str(Ncol) + " " + str(order))
-        
-        if Ncol > 0:
-            self.modelAboutToBeReset.emit()
-            # self.setFilter(searchText="")
+        self.modelAboutToBeReset.emit()
 
-            # self.layoutAboutToBeChanged.emit()
+        if Ncol > 0:
             
             try:
                 self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
@@ -262,68 +228,6 @@ class MyTableModel(QtCore.QAbstractTableModel):
             self.setFilter(searchText=self.searchText)
 
             # self.layoutChanged.emit()
-            self.modelReset.emit()
+        self.modelReset.emit()
         # except Exception as e:
         #     print(e)
-
-    # def getRows(self, regexp):
-    #     out = []
-    #     col = self.datatable.columns.get_loc(0)
-    #     for row in range(self.rowCount()):
-    #         check = self.data(self.index(row, col))
-    #         match = re.match(regexp, check)
-    #         if match:
-    #             out.append(row)
-    #     return out
-
-    # def updateDisplay(self):
-
-    #     dfDisplay = self.datatable
-
-    #     # Filtering
-    #     cond = pd.Series(True, index=dfDisplay.index)
-    #     for column, value in self._filters.items():
-    #         cond = cond & \
-    #             (dfDisplay[column].str.lower().str.find(str(value).lower()) >= 0)
-    #     dfDisplay = dfDisplay[cond]
-
-    #     # Sorting
-    #     if len(self._sortBy) != 0:
-    #         dfDisplay.sort_values(by=self._sortBy,
-    #                               ascending=self._sortDirection,
-    #                               inplace=True)
-
-    #     # Updating
-    #     self.datatable = dfDisplay
-
-    # def appendR(self):
-    #     print("add")
-    #     self.layoutAboutToBeChanged.emit()
-    #     newdf = pd.DataFrame({'Name': ['a', 'b', 'c', 'd'],
-    #                        'First': [2.3, 5.4, 0.1, 1117.7],
-    #                        'Last': [23.4, 0.12, 0.00003, 88.8],
-    #                        'Class': [1, 5, 2, 1],
-    #                        'Valid': [False, True, True, False]})
-    #     # self.updateDisplay()
-    #     self.update(newdf)
-
-    #     self.layoutChanged.emit()
-    #     self.dataChanged.emit(QtCore.QModelIndex(), QtCore.QModelIndex())
-
-    # def real_append(self):
-    #     self.layoutAboutToBeChanged.emit()
-    #     df = self.datatable
-    #     new_df = pd.DataFrame({'Lul': [False, True, True, False]})
-    #     df.concat(new_df)
-    #     self.update(new_df)
-
-    #     self.layoutChanged.emit()
-    #     self.dataChanged.emit(QtCore.QModelIndex(), QtCore.QModelIndex())
-
-    def new_append(self):
-        self.layoutAboutToBeChanged.emit()
-
-        self.insertRow(0)
-        # self.item(0, 0).setText("new insert")
-
-        self.layoutChanged.emit()

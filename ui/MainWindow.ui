@@ -712,7 +712,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>969</width>
-                  <height>674</height>
+                  <height>735</height>
                  </rect>
                 </property>
                </widget>
@@ -1505,7 +1505,7 @@
                     <bool>false</bool>
                    </property>
                    <property name="selectionMode">
-                    <enum>QAbstractItemView::SingleSelection</enum>
+                    <enum>QAbstractItemView::NoSelection</enum>
                    </property>
                    <property name="selectionBehavior">
                     <enum>QAbstractItemView::SelectRows</enum>
@@ -1518,16 +1518,7 @@
                    </attribute>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="IndexView" name="newer_index"/>
-                 </item>
                 </layout>
-               </item>
-               <item>
-                <widget class="IndexDictView" name="dict_index"/>
-               </item>
-               <item>
-                <widget class="IndexPdView" name="pd_table"/>
                </item>
                <item>
                 <widget class="QLineEdit" name="jirrik_search">
@@ -1574,6 +1565,41 @@
               </layout>
              </item>
             </layout>
+           </widget>
+           <widget class="QWidget" name="tab_16">
+            <attribute name="title">
+             <string>Page</string>
+            </attribute>
+            <widget class="IndexDictView" name="dict_index">
+             <property name="geometry">
+              <rect>
+               <x>-69</x>
+               <y>302</y>
+               <width>959</width>
+               <height>171</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="IndexPdView" name="pd_table">
+             <property name="geometry">
+              <rect>
+               <x>-69</x>
+               <y>483</y>
+               <width>959</width>
+               <height>170</height>
+              </rect>
+             </property>
+            </widget>
+            <widget class="IndexView" name="newer_index">
+             <property name="geometry">
+              <rect>
+               <x>410</x>
+               <y>120</y>
+               <width>473</width>
+               <height>170</height>
+              </rect>
+             </property>
+            </widget>
            </widget>
           </widget>
           <widget class="QTabWidget" name="tabsBotLeft">

@@ -20,3 +20,11 @@ class HistoryModel(QtCore.QAbstractTableModel):
                     return QtCore.Qt.AlignRight
                 else:
                     return QtCore.Qt.AlignHCenter
+
+
+        self.proxy_model = QtCore.QSortFilterProxyModel()
+        self.proxy_model.setSourceModel(self.my_model)
+        self.proxy_model.setDynamicSortFilter(False)
+        self.proxy_model.setFilterCaseSensitivity(False)
+        self.proxy_model.setSortLocaleAware(True)
+        self.proxy_model.setRecursiveFilteringEnabled(False)

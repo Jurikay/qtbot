@@ -197,7 +197,7 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
             item = QtWidgets.QPushButton(text)
             item.setFixedSize(option.rect.size())
             # painter.save()
-            painter.translate(option.rect.x(), option.rect.y())
+            painter.translate(option.rect.x()-1, option.rect.y()-1)
             item.render(painter)
         
         # else:
