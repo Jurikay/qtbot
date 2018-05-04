@@ -712,7 +712,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>969</width>
-                  <height>521</height>
+                  <height>674</height>
                  </rect>
                 </property>
                </widget>
@@ -1524,6 +1524,12 @@
                 </layout>
                </item>
                <item>
+                <widget class="IndexDictView" name="dict_index"/>
+               </item>
+               <item>
+                <widget class="IndexPdView" name="pd_table"/>
+               </item>
+               <item>
                 <widget class="QLineEdit" name="jirrik_search">
                  <property name="placeholderText">
                   <string>Search</string>
@@ -1531,9 +1537,16 @@
                 </widget>
                </item>
                <item>
+                <widget class="QPushButton" name="test_ud_btn">
+                 <property name="text">
+                  <string>update</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QPushButton" name="add_btn">
                  <property name="text">
-                  <string>add</string>
+                  <string>init dict table</string>
                  </property>
                 </widget>
                </item>
@@ -1548,6 +1561,13 @@
                 <widget class="QPushButton" name="btn_init_new">
                  <property name="text">
                   <string>init new</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btn_init_pd">
+                 <property name="text">
+                  <string>init pd</string>
                  </property>
                 </widget>
                </item>
@@ -2437,7 +2457,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>0</string>
+                   <string>0.00%</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -2485,7 +2505,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>0</string>
+                   <string>0.00%</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -2533,7 +2553,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>0</string>
+                   <string>0.00%</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -2581,7 +2601,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>0</string>
+                   <string>0.00%</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -2620,7 +2640,7 @@
                 <item>
                  <widget class="QLabel" name="change_1d">
                   <property name="text">
-                   <string>0</string>
+                   <string>0.00%</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -6286,6 +6306,16 @@
    <class>IndexView</class>
    <extends>QTableView</extends>
    <header>app/data/index_table_np.h</header>
+  </customwidget>
+  <customwidget>
+   <class>IndexDictView</class>
+   <extends>QTableView</extends>
+   <header>app/data/index_table_dict.h</header>
+  </customwidget>
+  <customwidget>
+   <class>IndexPdView</class>
+   <extends>QTableView</extends>
+   <header>app/data/index_table_pd.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -75,8 +75,8 @@ class TestTableView(QtWidgets.QTableView):
                 pric_per = float(val["tickers"][pair]["priceChangePercent"])
                 vol = float(val["tickers"][pair]["quoteVolume"])
 
-                # btn = QtWidgets.QPushButton("Trade " + str(coin))
-                # btn = "BTN"
+                # vol_1m = self.mw.gui_manager.volume_values[0]
+                
 
                 all_coins[coin] = [coin, coin, last_price, float(pric_per), vol, coin]
 
@@ -242,8 +242,9 @@ class MyTableModel(QtCore.QAbstractTableModel):
         """
         # try:
         print("sort: " + str(Ncol) + " " + str(order))
-        self.modelAboutToBeReset.emit()
+        
         if Ncol > 0:
+            self.modelAboutToBeReset.emit()
             # self.setFilter(searchText="")
 
             # self.layoutAboutToBeChanged.emit()
@@ -261,7 +262,7 @@ class MyTableModel(QtCore.QAbstractTableModel):
             self.setFilter(searchText=self.searchText)
 
             # self.layoutChanged.emit()
-        self.modelReset.emit()
+            self.modelReset.emit()
         # except Exception as e:
         #     print(e)
 

@@ -193,11 +193,20 @@ class GuiManager:
 
         val["timeRunning"] += 1
 
+
+        if self.mw.pd_update is True:
+            self.mw.pd_table.update_model_data()
+
+        if self.mw.dict_update is True:
+            self.mw.dict_index.update_model_data()
+
         if self.mw.new_coin_table is True:
+            self.mw.test_table_view.coin_update()
+
+        # if self.mw.new_coin_table is True:
             # worker = Worker(self.mw.test_table_view.coin_update)
             # self.threadpool.start(worker)
 
-            self.mw.test_table_view.coin_update()
 
 
         total_btc_value = self.calc_total_btc()

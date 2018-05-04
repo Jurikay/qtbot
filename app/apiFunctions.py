@@ -27,10 +27,12 @@ class ApiCalls:
         self.threadpool = tp
 
     def init_client(self):
-        api_key = self.mw.cfg_manager.api_key
-        api_secret = self.mw.cfg_manager.api_secret
-        return Client(api_key, api_secret, {"verify": True, "timeout": 10})
-
+        try:
+            api_key = self.mw.cfg_manager.api_key
+            api_secret = self.mw.cfg_manager.api_secret
+            return Client(api_key, api_secret, {"verify": True, "timeout": 10})
+        except BinanceAPIException as e:
+            print(str(e))
 
 
     def initialize(self):
@@ -51,14 +53,17 @@ class ApiCalls:
             self.set_pair_values()
             self.mw.is_connected = True
 
-        except (BinanceAPIException, NameError) as e:
+        except (BinanceAPIException, NameError, AttributeError) as e:
             print("API ERROR")
             print(str(e))
             if "code=-1003" in str(e):
                 print("ja ein api error :)")
-            elif "code=-2014":
+            elif "code=-2014" in str(e):
                 print("API KEY INVALID")
-
+            elif "code=0" in str(e):
+                print("BINANCE API DOWN!!!")
+            elif "get_products" in str(e):
+                print("PUBLIC API DOWN")
 
     # def get_tether(client):
     #     tether_info = client.get_ticker(symbol="BTCUSDT")

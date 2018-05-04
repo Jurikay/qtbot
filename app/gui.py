@@ -57,6 +57,10 @@ class beeserBot(QtWidgets.QMainWindow):
         self.is_connected = False
         self.new_coin_table = False
 
+        self.dict_update = False
+        self.np_update = False
+        self.pd_update = False
+
         # load QtDesigner UI file
         loadUi("ui/MainWindow.ui", self)
 
@@ -94,9 +98,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.table_view_btn.clicked.connect(self.test_table_view.setup)
-        self.add_btn.clicked.connect(self.test_table_view.my_model.new_append)
+        self.add_btn.clicked.connect(self.dict_index.setup)
         self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
         self.btn_init_new.clicked.connect(self.newer_index.setup)
+        self.test_ud_btn.clicked.connect(self.dict_index.update_model_data)
+        self.btn_init_pd.clicked.connect(self.pd_table.setup)
 
     def init_basics(self):
         self.log_manager = BotLogger(self)

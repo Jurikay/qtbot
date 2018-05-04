@@ -12,60 +12,85 @@ from app.colors import Colors
 from app.init import val
 
 import numpy as np
-
+import pandas as pd
 
 class HistoricArray():
+    """Class that holds a 2d-array containing ticker data."""
     def __init__(self):
 
-        dtypes = [("coin", "U10")]
+        self.mw = app.mw
+        dtypes = [("second", "U10")]
 
-        for i in range(20):
+
+        dtypes.append(("coin", "U10"))
+        for i in range(19):
+            
             dtypes.append(("col " + str(i + 1), "f8"))
 
-        historic_array = np.empty((124), dtype=(dtypes))
-        historic_array[0][0] = "BNB"
-        print(historic_array["coin"][0])
+        historic_array = np.empty((124), dtype=dtypes)
+        # print(historic_array["coin"][0])
         
-        self.mw = app.mw
-        tickers = self.getTickers()
+        # Build a numpy array from the tickers dict
+        # tickers = self.getTickers()
+        ticker_data = self.getTickers()
 
-        ticker_data = tickers[1]
 
-        for i, tick in enumerate(list(ticker_data.items())):
+        for i, tick in enumerate(ticker_data):
+            print("i", i)
+            print("tick", tick)
+            # print("#####")
+            # print(historic_array[i]["title"])
+            for j in enumerate(tick):
+                print("J", j[0])
+                try:
+                    historic_array[i][j] = j[1][1]
+                except Exception as e:
+                    print(e)
 
-            for j in enumerate(list(tick[1].items())):
-              
-                historic_array[i][j[0]] = j[1][1]
-           
-        print(historic_array)
-        print(historic_array["coin"][0])
 
-        print("SHAPE")
-        # print(len(historic_array))
-        print(historic_array.shape)
-        print(np.shape(historic_array))
-
-        print(len(historic_array[0]))
         self.array = historic_array
+        print(self.array)
+        print("ARRAY:!!")
+        # print(self.array["coin"])
+        # print(historic_array)
+        # print(historic_array["coin"][0])
 
+        # print("SHAPE")
+        # print(len(historic_array))
+        # print(historic_array.shape)
+        # print(np.shape(historic_array))
+
+        # print(len(historic_array[0]))
+
+
+    def get_values(self):
+        list_data = list()
+        for coin in val["tickers"].items():
+            row = list()
+            for value in coin[1].items():
+                row.append(value[1])
+            list_data.append(row)
+        return list_data
 
     def getTickers(self):
         """Make an initial API call to get ticker data."""
-        self.client = self.mw.api_manager.client
-        ticker = self.client.get_ticker()
-        print(str(len(ticker)))
+        # self.client = self.mw.api_manager.client
+        # print(val["tickers"])
+        ticker = self.get_values()
         # print(str(ticker))
-        all_tickers = dict()
+        all_tickers = list()
         btc_pairs = 0
         for ticker_data in ticker:
-            if "BTC" in ticker_data["symbol"]:
+            if "BTC" in ticker_data[0]:
                 btc_pairs += 1
+            #     # print(str(ticker_data))
+                all_tickers.append(ticker_data)
                 # print(str(ticker_data))
-                all_tickers[ticker_data["symbol"]] = ticker_data
-                # print(str(ticker_data))
-        
-        print(str(btc_pairs) + " btc pairs")
-        return [btc_pairs, all_tickers]
+
+        return all_tickers
+
+
+
 
 
 
@@ -78,19 +103,13 @@ class IndexView(QtWidgets.QTableView):
         self.my_model = IndexModel(self)
         self.mw = app.mw
 
-        
 
-
-        
         self.setMouseTracking(True)
         self.setSortingEnabled(True)
-        # self.setItemDelegate(HistoryDelegate(self))
+        self.setItemDelegate(HistoricDelegate(self))
         # self.setup()
         # self.clicked.connect(self.cell_clicked)
 
-        
-
-        
 
 
     def setup(self):
@@ -105,6 +124,7 @@ class IndexView(QtWidgets.QTableView):
 
         self.setModel(self.proxy_model)
 
+        self.mw.np_update = True
         # self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         # self.verticalHeader().setDefaultSectionSize(15)
 
@@ -117,6 +137,9 @@ class IndexView(QtWidgets.QTableView):
         # there might be a less expensive way
         self.my_model.modelReset.emit()
 
+
+    def update_model_data(self):
+        self.my_model.update(self.array_data)     
 
 
 class IndexModel(QtCore.QAbstractTableModel):
@@ -168,11 +191,11 @@ class IndexModel(QtCore.QAbstractTableModel):
             return QtCore.QVariant()
 
 
-class HistoryDelegate(QtWidgets.QStyledItemDelegate):
+class HistoricDelegate(QtWidgets.QStyledItemDelegate):
     """Class to define a custom item style."""
 
     def __init__(self, parent):
-        super(HistoryDelegate, self).__init__(parent)
+        super(HistoricDelegate, self).__init__(parent)
         self.parent = parent
         self.mw = app.mw
 
@@ -180,16 +203,16 @@ class HistoryDelegate(QtWidgets.QStyledItemDelegate):
         """Set style options based on index column."""
 
         if index.column() == 0:
-            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=val["decimals"])
+            option.text = index.data().replace("BTC", "") + " / BTC"
 
-        elif index.column() == 1:
-            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=val["assetDecimals"])
+        # elif index.column() == 1:
+        #     option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=val["assetDecimals"])
 
-        elif index.column() == 2:
-            option.text = str(datetime.fromtimestamp(int(str(self.parent.my_model.model_data[index.row()][3])[:-3])).strftime('%H:%M:%S.%f')[:-7])
+        # elif index.column() == 2:
+        #     option.text = str(datetime.fromtimestamp(int(str(self.parent.my_model.model_data[index.row()][3])[:-3])).strftime('%H:%M:%S.%f')[:-7])
 
         else:
-            super(HistoryDelegate, self).initStyleOption(option, index)
+            super(HistoricDelegate, self).initStyleOption(option, index)
 
 
     def paint(self, painter, option, index):
@@ -197,38 +220,44 @@ class HistoryDelegate(QtWidgets.QStyledItemDelegate):
         painter.save()
         options = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
-        font = QtGui.QFont()
+        # font = QtGui.QFont()
+        
+        painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+        painter.drawText(option.rect, QtCore.Qt.AlignRight, options.text)
 
 
-        if index.column() == 0:
-            if self.parent.my_model.model_data[index.row()][2] is True:
+       
 
-                if option.state & QtWidgets.QStyle.State_MouseOver:
-                    painter.setPen(QtGui.QColor("#ff58a8"))
-                    font.setBold(True)
-                else:
-                    painter.setPen(QtGui.QColor(Colors.color_pink))
-            else:
 
-                if option.state & QtWidgets.QStyle.State_MouseOver:
-                    painter.setPen(QtGui.QColor("#aaff00"))
-                    font.setBold(True)
-                else:
-                    painter.setPen(QtGui.QColor(Colors.color_green))
-            painter.setFont(font)
-            painter.drawText(option.rect, QtCore.Qt.AlignRight, options.text)
+        # if index.column() == 0:
+        #     if self.parent.my_model.model_data[index.row()][2] is True:
 
-        elif index.column() == 1:
-            if option.state & QtWidgets.QStyle.State_MouseOver:
-                painter.setPen(QtGui.QColor(QtCore.Qt.white))
-                font.setBold(True)
-            else:
-                painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-            painter.setFont(font)
-            painter.drawText(option.rect, QtCore.Qt.AlignRight, options.text)
+        #         if option.state & QtWidgets.QStyle.State_MouseOver:
+        #             painter.setPen(QtGui.QColor("#ff58a8"))
+        #             font.setBold(True)
+        #         else:
+        #             painter.setPen(QtGui.QColor(Colors.color_pink))
+        #     else:
 
-        elif index.column() == 2:
-            painter.setPen(QtGui.QColor(Colors.color_grey))
-            painter.drawText(option.rect, QtCore.Qt.AlignHCenter, options.text)
+        #         if option.state & QtWidgets.QStyle.State_MouseOver:
+        #             painter.setPen(QtGui.QColor("#aaff00"))
+        #             font.setBold(True)
+        #         else:
+        #             painter.setPen(QtGui.QColor(Colors.color_green))
+        #     painter.setFont(font)
+        #     painter.drawText(option.rect, QtCore.Qt.AlignRight, options.text)
+
+        # elif index.column() == 1:
+        #     if option.state & QtWidgets.QStyle.State_MouseOver:
+        #         painter.setPen(QtGui.QColor(QtCore.Qt.white))
+        #         font.setBold(True)
+        #     else:
+        #         painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+        #     painter.setFont(font)
+        #     painter.drawText(option.rect, QtCore.Qt.AlignRight, options.text)
+
+        # elif index.column() == 2:
+        #     painter.setPen(QtGui.QColor(Colors.color_grey))
+        #     painter.drawText(option.rect, QtCore.Qt.AlignHCenter, options.text)
 
         painter.restore()

@@ -66,7 +66,13 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
 
         self.mw.open_orders.setItem(0, 4, QtWidgets.QTableWidgetItem(order["type"]))
         self.mw.open_orders.setItem(0, 5, QtWidgets.QTableWidgetItem(order["side"]))
-        price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
+
+        # fix websocket and api discrepancies
+        if order.get("orderPrice"):
+            price = '{number:.{digits}f}'.format(number=float(order["orderPrice"]), digits=val["decimals"])
+        else:
+            price = '{number:.{digits}f}'.format(number=float(order["price"]), digits=val["decimals"])
+
         self.mw.open_orders.setItem(0, 6, QtWidgets.QTableWidgetItem(price))
         qty = '{number:.{digits}f}'.format(number=float(order["origQty"]), digits=val["assetDecimals"]) + " " + coin
         self.mw.open_orders.setItem(0, 7, QtWidgets.QTableWidgetItem(qty))
