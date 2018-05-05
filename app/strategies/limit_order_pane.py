@@ -27,7 +27,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         order_cost = float(buy_value) * float(self.mw.limit_buy_input.value())
         self.mw.limit_buy_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC ")
         btc_usd = float(val["tickers"]["BTCUSDT"]["lastPrice"])
-        self.mw.limit_buy_total_usd.setText('{number:,.{digits}f}'.format(number=order_cost * btc_usd, digits=0) + " $")
+        self.mw.limit_buy_total_usd.setText(' {number:,.{digits}f}'.format(number=order_cost * btc_usd, digits=0) + " $")
 
     def sell_slider_move(self):
         # Text to value
@@ -75,7 +75,10 @@ class LimitOrderPane(QtWidgets.QWidget):
             total = float(self.mw.limit_buy_input.value()) * float(self.mw.limit_buy_amount.text())
             total_formatted = '{number:.{digits}f}'.format(number=total, digits=8)
 
-            self.mw.limit_buy_total.setText(str(total_formatted) + " BTC")
+            self.mw.limit_buy_total.setText(str(total_formatted) + " BTC ")
+            btc_usd = float(val["tickers"]["BTCUSDT"]["lastPrice"])
+            self.mw.limit_buy_total_usd.setText(' {number:,.{digits}f}'.format(number=total * btc_usd, digits=0) + " $")
+
         except ValueError as e:
             print("calc total buy value error: " + str(e))
 
