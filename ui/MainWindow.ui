@@ -712,7 +712,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>969</width>
-                  <height>735</height>
+                  <height>531</height>
                  </rect>
                 </property>
                </widget>
@@ -1486,6 +1486,9 @@
                 <layout class="QHBoxLayout" name="horizontalLayout_48">
                  <item>
                   <widget class="TestTableView" name="test_table_view">
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
                    <property name="frameShape">
                     <enum>QFrame::NoFrame</enum>
                    </property>
@@ -1509,6 +1512,12 @@
                    </property>
                    <property name="selectionBehavior">
                     <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>25</width>
+                     <height>25</height>
+                    </size>
                    </property>
                    <property name="sortingEnabled">
                     <bool>true</bool>
@@ -1616,7 +1625,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>2</number>
            </property>
            <property name="movable">
             <bool>false</bool>

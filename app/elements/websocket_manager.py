@@ -8,11 +8,13 @@ from functools import partial
 from binance.websockets import BinanceSocketManager
 from binance.depthcache import DepthCacheManager
 
-
+import pandas as pd
+import time
 
 class WebsocketManager:
 
     def __init__(self, mw, tp, client):
+        print("INIT WEBSOCKET MANAGER")
         self.mw = mw
         self.threadpool = tp
         # self.counter = 0
@@ -32,7 +34,8 @@ class WebsocketManager:
         self.klineSocket1 = None
         self.klineSocket5 = None
 
-
+        # self.index_data = dict()
+        self.index_df = None
 
     # websockets
     def schedule_websockets(self):
@@ -172,25 +175,78 @@ class WebsocketManager:
 
     def ticker_callback(self, msg):
         self.api_updates += 1
+        df_data = dict()
         for value in msg:
             # ticker[key] = value
             # print("key: " + str(key))
             # print("value: " + str(value))
             # print("ticker: " + str(ticker))
+            
             if "BTC" in value["s"]:
-                ticker_data = {'symbol': value["s"], 'priceChange': value["p"], 'priceChangePercent': float(value["P"]), 'weightedAvgPrice': value["w"], 'prevClosePrice': value["x"], 'lastPrice': float(value["c"]), 'lastQty': value["Q"], 'bidPrice': value["b"], 'bidQty': value["B"], 'askPrice': value["a"], 'askQty': value["A"], 'openPrice': value["o"], 'highPrice': value["h"], 'lowPrice': value["l"], 'volume': value["v"], 'quoteVolume': value["q"], 'openTime': value["O"], 'closeTime': value["C"], 'firstId': value["F"], 'lastId': value["L"], 'count': value["n"]}
-                # print(str(ticker_data))
+                ticker_data = {'symbol': value["s"],
+                               'priceChange': value["p"],
+                               'priceChangePercent': float(value["P"]),
+                               'weightedAvgPrice': value["w"],
+                               'prevClosePrice': value["x"],
+                               'lastPrice': float(value["c"]),
+                               'lastQty': value["Q"],
+                               'bidPrice': value["b"],
+                               'bidQty': value["B"],
+                               'askPrice': value["a"],
+                               'askQty': value["A"],
+                               'openPrice': value["o"],
+                               'highPrice': value["h"],
+                               'lowPrice': value["l"],
+                               'volume': value["v"],
+                               'quoteVolume': value["q"],
+                               'openTime': value["O"],
+                               'closeTime': value["C"],
+                               'firstId': value["F"],
+                               'lastId': value["L"],
+                               'count': value["n"]}
 
                 val["tickers"][value["s"]] = ticker_data
-                # print(ticker_data["symbol"])
-            #
-            # if "BTC" in coin["s"]:
-            #     if coin["s"] == "BNBBTC":
-            #         print(coin)
-        # print("###########")
-        # print(msg)
-        # with open("tickerMsg.txt", "w") as f:
-        #     f.write(str(msg))
+                df_data[value["s"]] = ticker_data
+
+        # self.mw.index_data.websocket_update(df_data)
+
+        worker = Worker(partial(self.socket_tickers, df_data))
+        worker.signals.progress.connect(self.mw.index_data.merge_df)
+        self.threadpool.tryStart(worker)
+        # self.build_from_val()
+
+
+
+    def build_from_val(self):
+        start_time = time.time()
+
+        all_coins = dict()
+        for pair in val["tickers"]:
+            if "USDT" not in pair:
+                coin = str(val["tickers"][pair]["symbol"]).replace("BTC", "")
+                last_price = val["tickers"][pair]["lastPrice"]
+                pric_per = float(val["tickers"][pair]["priceChangePercent"])
+                vol = float(val["tickers"][pair]["quoteVolume"])
+
+                # all_coins[coin] = [coin, coin, last_price, float(pric_per), vol, coin]
+                all_coins[coin] = {"symbol": coin, "coin": coin, "lastPrice": last_price, "priceChangePercent": pric_per, "volume": vol}
+        # df = pd.DataFrame([all_coins]).transpose()
+        df = pd.DataFrame.from_dict(all_coins, orient='index')
+        self.index_df = df
+        # print("INDEX FROM VAL took", time.time() - start_time)
+        # print(self.index_df["BNBBTC"][3])
+        # print(self.index_df)
+        # print(self.index_df.loc["VEN"]["lastPrice"])
+
+
+    def build_index_data(self, ticker_data):
+        start_time = time.time()
+        # print("INDEX DATA:", ticker_data)
+
+        # self.index_data[ticker_data["symbol"]] = [ticker_data["symbol"], ticker_data["lastPrice"], ticker_data["priceChangePercent"], ticker_data["quoteVolume"], ticker_data["quoteVolume"]]
+        self.index_df = pd.DataFrame(ticker_data).transpose()
+        print("DATAFRAME:", self.index_df)
+        print("WS build index took", time.time() - start_time)
 
 
     def kline_callback(self, msg):
@@ -234,3 +290,7 @@ class WebsocketManager:
     @staticmethod
     def socket_update_holdings(progress_callback):
         progress_callback.emit("update")
+
+    @staticmethod
+    def socket_tickers(tickers, progress_callback):
+        progress_callback.emit(tickers)

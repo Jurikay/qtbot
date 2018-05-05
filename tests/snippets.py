@@ -28,3 +28,18 @@ class HistoryModel(QtCore.QAbstractTableModel):
         self.proxy_model.setFilterCaseSensitivity(False)
         self.proxy_model.setSortLocaleAware(True)
         self.proxy_model.setRecursiveFilteringEnabled(False)
+
+
+
+    def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
+        if role == QtCore.Qt.DisplayRole and orientation == QtCore.Qt.Horizontal:
+            return self.header_labels[section]
+
+        elif role == QtCore.Qt.InitialSortOrderRole:
+            # set initial sort order of specific columns (sections)
+            if section > 0:
+                return QtCore.QVariant(QtCore.Qt.DescendingOrder)
+            else:
+                return QtCore.QVariant(QtCore.Qt.AscendingOrder)
+
+        return QtCore.QAbstractTableModel.headerData(self, section, orientation, role)

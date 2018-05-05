@@ -321,3 +321,6 @@ class HoldingsTable(QtWidgets.QTableWidget):
 
 
             self.setSortingEnabled(True)
+
+    def test_update(self):
+        print("HEIR GEHT ES")

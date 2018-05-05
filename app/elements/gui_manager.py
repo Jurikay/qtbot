@@ -175,6 +175,12 @@ class GuiManager:
             self.mw.table_manager.init_filter()
 
 
+    def change_to(self, coin):
+        coinIndex = self.mw.coin_selector.findText(coin)
+        self.mw.coin_selector.setCurrentIndex(coinIndex)
+
+        self.change_pair()
+
 
     # refactor
     def tick(self, payload):
@@ -194,13 +200,18 @@ class GuiManager:
         val["timeRunning"] += 1
 
 
-        if self.mw.pd_update is True:
-            self.mw.pd_table.update_model_data()
+        charts_index = self.mw.ChartTabs.currentIndex()
 
-        if self.mw.dict_update is True:
-            self.mw.dict_index.update_model_data()
+        # if self.mw.pd_update is True:
+        #     self.mw.pd_table.update_model_data()
 
-        if self.mw.new_coin_table is True:
+        # if self.mw.dict_update is True:
+        #     self.mw.dict_index.update_model_data()
+
+
+
+
+        if self.mw.new_coin_table is True and charts_index == 5:
             self.mw.test_table_view.coin_update()
 
         # if self.mw.new_coin_table is True:

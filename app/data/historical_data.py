@@ -6,16 +6,17 @@
 
 import numpy as np
 from binance.client import Client
+import PyQt5.QtCore as QtCore
+from app.workers import Worker
+from functools import partial
+import time
 
-
-
-
-class HistoricalData:
+class HistoricalData(QtCore.QObject):
     """Fetch and store historical price data.
-    Takes an optional list of pairs. Instantiate like this:
+    Takes an optional list of pairs; Instantiate like this:
     historical = HistoricalData(["ADABTC", "TRXBTC"])
 
-    And access numpy arrays like this:
+    Access numpy arrays like this:
     historical.data["BNBBTC"].tf["1m"][999]["time"]
 
     accepted keywords are:
@@ -23,17 +24,23 @@ class HistoricalData:
     "quote volume", "number trades", "asset volume" and "quote asset volume"
     """
 
-    pairs = ["BNBBTC", "NEOBTC"]
+    # pairs = ["BNBBTC"]
 
-    def __init__(self, client, pairs=pairs):
-        """Initialize client and pairs; Mostly debug stuff."""
+    def __init__(self, mw, client, tp, parent=None):
+        super(HistoricalData, self).__init__(parent)
 
-        self.client = self.init_client()
+        self.mw = mw
+        self.threadpool = tp
+        self.client = client
 
-        self.pairs = pairs
+        self.pairs = ["BNBBTC"]
+
         self.data = dict()
-        self.process_pairs()
+        # self.process_pairs()
+        self.process_in_thread(self.mw.cfg_manager.pair)
 
+        worker = Worker(self.test_all)
+        self.mw.threadpool.start(worker)
 
     def init_client(self):
         """Create a binance Client object."""
@@ -56,9 +63,31 @@ class HistoricalData:
             self.data[pair] = HistoricalPair(pair, self)
 
 
-    def process_this(self, pair):
+    def process_this(self, pair, progress_callback=None):
         # implement check if is valid
         self.data[pair] = HistoricalPair(pair, self)
+        progress_callback.emit(pair)
+
+    def test_all(self, progress_callback=None):
+        while True:
+            current_coin = self.mw.cfg_manager.pair
+            ticker_data = self.mw.api_manager.getTickers()
+            pairs = list(ticker_data)
+            pair_count = 0
+
+            for pair in pairs:
+                if "BTC" in pair:
+                    print(pair)
+                    pair_count += 1
+                    if not pair == current_coin:
+                        self.process_in_thread(pair)
+                time.sleep(0.15)
+            time.sleep(20)
+
+    def process_in_thread(self, pair):
+        worker = Worker(partial(self.process_this, pair))
+        worker.signals.progress.connect(self.mw.index_data.callback_calc)
+        self.mw.threadpool.start(worker)
 
 
 """ WORK IN PROGRESS:
@@ -86,7 +115,7 @@ class HistoricalPair:
     def __init__(self, pair, parent):
         self.pair = pair
         self.parent = parent
-        timeframes = ["1m", "5m", "15m"]
+        timeframes = ["1m"]
         self.tf = dict()
 
         for timeframe in timeframes:
@@ -115,4 +144,4 @@ def debug(self):
 
     historical.process_this("LTCBTC")
 
-    print(historical.data["LTCBTC"].tf["1m"][999]["close"])
+    # print(historical.data["LTCBTC"].tf["1m"][999]["close"])

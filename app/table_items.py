@@ -160,7 +160,7 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
 
 
         if option.state & QtWidgets.QStyle.State_MouseOver:
-            if index.column() == 1:
+            if index.column() == 0:
                 painter.setPen(QtGui.QColor(Colors.color_yellow))
                 font = QtGui.QFont()
                 font.setUnderline(True)
@@ -184,7 +184,7 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
 
         # render an icon in column 0
         if index.column() == 0:
-            icon = QtGui.QIcon("images/ico/" + options.text + ".svg")
+            icon = QtGui.QIcon("images/ico/" + options.text.replace("BTC", "") + ".svg")
             iconRect = QtCore.QRect(option.rect.right() - option.rect.height(),
                                      option.rect.top(),
                                      option.rect.height(),
@@ -209,9 +209,9 @@ class CoinDelegate(QtWidgets.QStyledItemDelegate):
         # print(str(option.state))
         # print("paint")
         else:
-            if index.column() == 3 and index.data() > 0:
+            if index.column() == 2 and index.data() > 0:
                 painter.setPen(QtGui.QColor(Colors.color_green))
-            elif index.column() == 3 and index.data() < 0:
+            elif index.column() == 2 and index.data() < 0:
                 painter.setPen(QtGui.QColor(Colors.color_pink))
             else:
                 painter.setPen(QtGui.QColor(Colors.color_lightgrey))

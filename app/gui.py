@@ -33,6 +33,9 @@ from app.elements.gui_manager import GuiManager
 from app.tables.table_manager import TableManager
 from app.elements.websocket_manager import WebsocketManager
 
+from app.data.index_data import IndexData
+from app.data.historical_data import HistoricalData
+
 
 class beeserBot(QtWidgets.QMainWindow):
     """Main ui class."""
@@ -47,6 +50,8 @@ class beeserBot(QtWidgets.QMainWindow):
         self.threadpool = QtCore.QThreadPool()
         app.threadpool = self.threadpool
         app.mw = self
+
+        self.index_data = None
 
         self.trade_history = list()
 
@@ -98,10 +103,10 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.table_view_btn.clicked.connect(self.test_table_view.setup)
-        self.add_btn.clicked.connect(self.dict_index.setup)
+        self.add_btn.clicked.connect(self.historical.test_all)
         self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
         self.btn_init_new.clicked.connect(self.newer_index.setup)
-        self.test_ud_btn.clicked.connect(self.dict_index.update_model_data)
+        # self.test_ud_btn.clicked.connect(self.dict_index.update_model_data)
         self.btn_init_pd.clicked.connect(self.pd_table.setup)
 
     def init_basics(self):
@@ -129,9 +134,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
     def check_connection(self):
         if self.is_connected is True:
+            self.initialize_data()
             self.instantiate_api_managers()
             self.coin_selector.activated.connect(self.gui_manager.change_pair)
             self.initialize_tables()
+            
         else:
             self.init_manager.show_error_page()
 
@@ -154,6 +161,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.history_table.initialize()
         self.holdings_table.initialize()
 
+    def initialize_data(self):
+        self.index_data = IndexData(self)
+        self.historical = HistoricalData(self, app.client, self.threadpool)
 
     # refactor: move; global ui
 

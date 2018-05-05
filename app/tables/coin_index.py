@@ -165,9 +165,9 @@ class CoinIndex(QtWidgets.QTableWidget):
     # kline data coin index
     def start_kline_check(self):
         print("start kline check")
-        worker = Worker(self.schedule_kline_check)
+        # worker = Worker(self.schedule_kline_check)
         # worker.signals.progress.connect(self.rec_func)
-        self.threadpool.start(worker)
+        # self.threadpool.start(worker)
 
     def schedule_kline_check(self, progress_callback):
         print("schedule kline check")
