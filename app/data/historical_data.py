@@ -53,7 +53,7 @@ class HistoricalData(QtCore.QObject):
     def get_kline(self, symbol, interval):
         """Make an API call to get historical candlestick data in list form."""
 
-        print("gettting", symbol, interval)
+        # print("gettting", symbol, interval)
         klines = self.client.get_klines(symbol=symbol, interval=interval)
         return klines
 
@@ -77,17 +77,16 @@ class HistoricalData(QtCore.QObject):
 
             for pair in pairs:
                 if "BTC" in pair:
-                    print(pair)
                     pair_count += 1
                     if not pair == current_coin:
                         self.process_in_thread(pair)
-                time.sleep(0.15)
-            time.sleep(20)
+                time.sleep(0.1)
+            time.sleep(15)
 
     def process_in_thread(self, pair):
         worker = Worker(partial(self.process_this, pair))
         worker.signals.progress.connect(self.mw.index_data.callback_calc)
-        self.mw.threadpool.start(worker)
+        self.mw.threadpool.tryStart(worker)
 
 
 """ WORK IN PROGRESS:

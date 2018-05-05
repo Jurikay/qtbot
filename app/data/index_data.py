@@ -5,7 +5,7 @@
 
 
 import pandas as pd
-import app
+# import app
 from PyQt5.QtCore import QObject as QObject
 import numpy as np
 
@@ -58,10 +58,11 @@ class IndexData(QObject):
                     vol_5m = self.volumes.get(coin)
                 else:
                     vol_5m = 0
+
                 filtered[coin] = {"Pair": str(values["symbol"]),
-                            "Price Change": float(values["priceChangePercent"]),
-                            "Price": float(values["lastPrice"]),
-                            "Volume": float(values["quoteVolume"]), "5m volume": vol_5m}
+                                  "Price Change": float(values["priceChangePercent"]),
+                                  "Price": float(values["lastPrice"]),
+                                  "Volume": float(values["quoteVolume"]), "5m volume": vol_5m}
 
         return filtered
 
@@ -88,6 +89,6 @@ class IndexData(QObject):
             # print(suml)
             return suml
         except (AttributeError, KeyError) as e:
-            print(e)
+            print("SUM ERROR", e)
             return None
         
