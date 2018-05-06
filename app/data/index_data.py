@@ -8,6 +8,7 @@ import pandas as pd
 # import app
 from PyQt5.QtCore import QObject as QObject
 import numpy as np
+import time
 
 
 class IndexData(QObject):
@@ -15,6 +16,8 @@ class IndexData(QObject):
     price data from various sources:
     Initial API call, websocket callbacks and calculated
     kline data."""
+
+    volumes = [5, 15, 60, 240, 720]
 
     def __init__(self, mw, parent=None):
         super(IndexData, self).__init__(parent)
@@ -28,9 +31,10 @@ class IndexData(QObject):
         self.filtered = None
 
         self.volumes = dict()
+        self.differences = dict()
 
         self.initialize()
-        self.mw.test_ud_btn.clicked.connect(self.calculate_historical)
+        # self.mw.test_ud_btn.clicked.connect(self.calculate_historical)
         
 
     def initialize(self):
@@ -53,43 +57,67 @@ class IndexData(QObject):
         """Expects an dictionary containing dictionaries.
         Returns a dictonary with selected keys."""
         filtered = dict()
+        timen = time.time()
+        print("FILTER TICKERS")
         for coin, values in data.items():
             if "USDT" not in coin:
                 if self.volumes.get(coin):
-                    vol_5m = self.volumes.get(coin)
+                    volumes = self.volumes.get(coin)
+                    differences = self.differences.get(coin)
                 else:
-                    vol_5m = 0
+                    volumes = [0, 0, 0, 0, 0]
+                    differences = [0, 0, 0, 0, 0]
 
                 filtered[coin] = {"Pair": str(values["symbol"]),
                                   "Price Change": float(values["priceChangePercent"]),
                                   "Price": float(values["lastPrice"]),
-                                  "Volume": float(values["quoteVolume"]), "5m volume": vol_5m}
-
+                                  "Volume": float(values["quoteVolume"]),
+                                  "5m volume": float(volumes[0]),
+                                  "15m volume": float(volumes[1]),
+                                  "1h volume": float(volumes[2]),
+                                  "4h volume": float(volumes[3]),
+                                  "12h volume": float(volumes[4]),
+                                  "5m difference": float(differences[0]),
+                                  "15m difference": float(differences[1]),
+                                  "1h difference": float(differences[2]),
+                                  "4h difference": float(differences[3]),
+                                  "12h difference": float(differences[4])}
+        print("filter took", timen - time.time())
         return filtered
 
 
-    def callback_calc(self, pair):
-        vol_5 = self.get_sum(pair, 10)
-        self.volumes[pair] = vol_5
+    def callback_calc(self, pair, volumes=volumes):
+        """Callback from historical data."""
+        volume_sums = list()
+        differences = list()
+        for volume in volumes:
+            volume_sum = self.get_sum(pair, volume)
+            volume_sums.append(volume_sum)
+            difference = self.get_difference(pair, volume)
+            differences.append(difference)
+        # vol_5 = self.get_sum(pair, 10)
+        self.volumes[pair] = volume_sums
+        self.differences[pair] = differences
 
-    def calculate_historical(self):
-        if self.ticker_data:
-            for symbol in self.ticker_data:
-                vol_5 = self.get_sum(symbol, 5)
-
-                if vol_5:
-                    print("set vol")
-                    self.volumes[symbol] = vol_5
 
 
-    def get_sum(self, symbol, lastx):
+    def get_sum(self, symbol, time):
+        print("get sum")
         try:
-            aslice = self.mw.historical.data[symbol].tf["1m"][-lastx:]["quote volume"]
-            suml = np.sum(aslice)
-            # print(aslice)
-            # print(suml)
-            return suml
+            volume_slice = self.mw.historical.data[symbol].tf["1m"][-time:]["quote volume"]
+            volume_sum = np.sum(volume_slice)
+
+            return volume_sum
         except (AttributeError, KeyError) as e:
             print("SUM ERROR", e)
             return None
-        
+
+    def get_difference(self, symbol, time):
+        print("get difference")
+        historical_price = self.mw.historical.data[symbol].tf["1m"][-time]["close"]
+        last_price = self.ticker_data[symbol]["lastPrice"]
+        if historical_price != 0:
+            difference = (float(last_price) / float(historical_price) - 1) * 100
+            return difference
+        else:
+            return 0

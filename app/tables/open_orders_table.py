@@ -166,9 +166,9 @@ class OpenOrdersTable(QtWidgets.QTableWidget):
         print("open orders init")
         self.cellClicked.connect(self.open_orders_cell_clicked)
 
-        worker = Worker(self.mw.api_manager.api_all_orders)
-        worker.signals.progress.connect(self.build_open_orders)
-        self.mw.threadpool.start(worker)
+        # worker = Worker(self.mw.api_manager.api_all_orders)
+        # worker.signals.progress.connect(self.build_open_orders)
+        # self.mw.threadpool.start(worker)
         self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self.verticalHeader().setDefaultSectionSize(30)
         self.set_width()

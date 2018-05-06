@@ -34,11 +34,12 @@ class TestTableView(QtWidgets.QTableView):
 
         self.mw.new_coin_table = True
 
-        self.setColumnWidth(0, 150)
-        self.setColumnWidth(1, 100)
-        self.setColumnWidth(2, 100)
-        self.setColumnWidth(3, 100)
-        self.setColumnWidth(4, 100)
+        self.setColumnWidth(0, 130)
+        self.setColumnWidth(1, 85)
+        self.setColumnWidth(2, 120)
+        for i in range(3, 9):
+            self.setColumnWidth(i, 75)
+
         self.clicked.connect(self.cell_clicked)
 
 
@@ -135,15 +136,11 @@ class MyTableModel(QtCore.QAbstractTableModel):
     def sort(self, Ncol, order):
         """Sort table by given column number.
         """
-        print("sort")
         if Ncol >= 0:
             self.modelAboutToBeReset.emit()
-            try:
-                self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
-            except TypeError as e:
-                print("Sort error: " + str(e) + " " + str(Ncol))        
+            self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
 
-            # save order dir, order col
+            # save order dir and order col
             self.order_col = Ncol
             self.order_dir = order
 
@@ -175,7 +172,12 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8) + " BTC"
 
         else:
-            super(IndexDelegate, self).initStyleOption(option, index)
+            for i in range(3, 14):
+                if index.column() == i:
+                    option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=2)
+
+
+        # super(IndexDelegate, self).initStyleOption(option, index)
 
 
     def paint(self, painter, option, index):
@@ -195,9 +197,9 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
 
             icon = QtGui.QIcon("images/ico/" + index.data().replace("BTC", "") + ".svg")
             iconRect = QtCore.QRect(35 - option.rect.height(),
-                                     option.rect.top(),
-                                     option.rect.height(),
-                                     option.rect.height())
+                                    option.rect.top(),
+                                    option.rect.height(),
+                                    option.rect.height())
 
         
             icon.paint(painter, iconRect, QtCore.Qt.AlignLeft)
@@ -226,36 +228,5 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
 
         else:
             painter.drawText(option.rect, alignment, options.text)
-
-        # if index.column() == 0:
-        #     if self.parent.my_model.model_data[index.row()][2] is True:
-
-        #         if option.state & QtWidgets.QStyle.State_MouseOver:
-        #             painter.setPen(QtGui.QColor("#ff58a8"))
-        #             font.setBold(True)
-        #         else:
-        #             painter.setPen(QtGui.QColor(Colors.color_pink))
-        #     else:
-
-        #         if option.state & QtWidgets.QStyle.State_MouseOver:
-        #             painter.setPen(QtGui.QColor("#aaff00"))
-        #             font.setBold(True)
-        #         else:
-        #             painter.setPen(QtGui.QColor(Colors.color_green))
-        #     painter.setFont(font)
-        #     painter.drawText(option.rect, QtCore.Qt.AlignRight, options.text)
-
-        # elif index.column() == 1:
-        #     if option.state & QtWidgets.QStyle.State_MouseOver:
-        #         painter.setPen(QtGui.QColor(QtCore.Qt.white))
-        #         font.setBold(True)
-        #     else:
-        #         painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-        #     painter.setFont(font)
-        #     painter.drawText(option.rect, QtCore.Qt.AlignRight, options.text)
-
-        # elif index.column() == 2:
-        #     painter.setPen(QtGui.QColor(Colors.color_grey))
-        #     painter.drawText(option.rect, QtCore.Qt.AlignHCenter, options.text)
 
         painter.restore()
