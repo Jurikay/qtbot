@@ -7,3 +7,4 @@ mw = None
 client = None
 threadpool = None
 main_app = None
+mutex = None

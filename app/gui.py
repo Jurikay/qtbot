@@ -35,6 +35,7 @@ from app.elements.websocket_manager import WebsocketManager
 
 from app.data.index_data import IndexData
 from app.data.historical_data import HistoricalData
+from app.data.user_data import UserData
 
 
 class beeserBot(QtWidgets.QMainWindow):
@@ -48,12 +49,16 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.client = app.client
         self.threadpool = QtCore.QThreadPool()
+        self.mutex = QtCore.QMutex()
         app.threadpool = self.threadpool
         app.mw = self
+        app.mutex = self.mutex
 
         self.index_data = None
 
         self.trade_history = list()
+
+        
 
         # kann weg:
         # self.trade_history = list()
@@ -107,7 +112,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
         self.btn_init_new.clicked.connect(self.newer_index.setup)
         # self.test_ud_btn.clicked.connect(self.dict_index.update_model_data)
-        self.btn_init_pd.clicked.connect(self.pd_table.setup)
+        self.btn_init_pd.clicked.connect(self.user_data.initial_history)
 
     def init_basics(self):
         self.log_manager = BotLogger(self)
@@ -161,10 +166,14 @@ class beeserBot(QtWidgets.QMainWindow):
         self.history_table.initialize()
         self.holdings_table.initialize()
 
+        # new:
+        self.test_table_view.setup()
+        self.data_open_orders_table.setup()
+
     def initialize_data(self):
         self.index_data = IndexData(self)
         self.historical = HistoricalData(self, app.client, self.threadpool)
-
+        self.user_data = UserData(self, self.mutex)
     # refactor: move; global ui
 
 

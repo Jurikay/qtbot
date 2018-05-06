@@ -144,6 +144,11 @@ class ApiCalls:
         return globalList
 
 
+    def getTrades(self, pair):
+        """Return trade history unmodified."""
+        trades = self.client.get_aggregate_trades(symbol=pair, limit=50)
+        return trades
+
     def getDepth(self, symbol):
         """Make an initial API call to get market depth (bids and asks)."""
         # API Call
@@ -193,7 +198,11 @@ class ApiCalls:
 
     def api_my_trades(self, pair, progress_callback=None):
         my_trades = self.client.get_my_trades(symbol=pair)
-        progress_callback.emit([my_trades, pair])
+        
+        if progress_callback:
+            progress_callback.emit([my_trades, pair])
+        else:
+            return my_trades
 
     def api_history(self, progress_callback):
         trade_history = self.getTradehistory(self.mw.cfg_manager.pair)
@@ -212,9 +221,14 @@ class ApiCalls:
 
 
 
-    def api_all_orders(self, progress_callback):
+    def api_all_orders(self, progress_callback=None):
         orders = self.client.get_open_orders()
-        progress_callback.emit(orders)
+
+        if progress_callback:
+            progress_callback.emit(orders)
+        else:
+            return orders
+        
 
     def api_calls(self):
         """Initial and coin specific api calls"""

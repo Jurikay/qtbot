@@ -9,6 +9,7 @@ import pandas as pd
 from PyQt5.QtCore import QObject as QObject
 import numpy as np
 
+
 class IndexData(QObject):
     """Create and update a pandas DataFrame with latest
     price data from various sources:

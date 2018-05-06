@@ -28,13 +28,13 @@ QWidget {
 
 #tradeTable, #bids_table, #asks_table {
   background-color: #20262b;
-  color: #f3f3f3;
+  color: #eff0f1;
   border: 0px solid transparent;
   margin: 0;
   padding: 0;
 }
 
-QTableWidget{
+QTableWidget, QTableView{
   alternate-background-color: #2e363d;
   color: #999;
 }

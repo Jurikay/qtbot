@@ -172,7 +172,7 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
             option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
 
         elif index.column() == 2:
-            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8) + "BTC"
+            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8) + " BTC"
 
         else:
             super(IndexDelegate, self).initStyleOption(option, index)

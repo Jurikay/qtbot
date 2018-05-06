@@ -115,9 +115,12 @@ class WebsocketManager:
 
                 # put account info in accHoldings dictionary. Access
                 # free and locked holdings like so: accHoldings["BTC"]["free"]
+                self.mw.mutex.lock()
                 val["accHoldings"][userMsg["B"][i]["a"]] = {"free": userMsg["B"][i]["f"], "locked": userMsg["B"][i]["l"]}
+                self.mw.mutex.unlock()
 
-            # update holdings table in a separate thread
+            self.mw.user_data.update_accholdings(userMsg["B"])
+
             worker = Worker(self.socket_update_holdings)
 
             # update values in holdings table
@@ -139,10 +142,15 @@ class WebsocketManager:
             if userMsg["X"] == "NEW":
                 # add a new order to open orders table
                 worker.signals.progress.connect(self.mw.open_orders.add_to_open_orders)
+                self.mw.user_data.add_to_open_orders(order)
+                self.mw.data_open_orders_table.update()
+
 
             elif userMsg["X"] == "CANCELED":
                 # remove a cancelled order from open orders table
                 worker.signals.progress.connect(self.mw.open_orders.remove_from_open_orders)
+                self.mw.user_data.remove_from_open_orders(order)
+
 
                 # if order was canceled but partially filled, add to history
                 if float(order["executedQty"]) > 0:
