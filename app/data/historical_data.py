@@ -10,6 +10,8 @@ import PyQt5.QtCore as QtCore
 from app.workers import Worker
 from functools import partial
 import time
+from binance.exceptions import BinanceAPIException
+
 
 class HistoricalData(QtCore.QObject):
     """Fetch and store historical price data.
@@ -42,6 +44,7 @@ class HistoricalData(QtCore.QObject):
         worker = Worker(self.test_all)
         self.mw.threadpool.start(worker)
 
+
     def init_client(self):
         """Create a binance Client object."""
 
@@ -57,6 +60,10 @@ class HistoricalData(QtCore.QObject):
         klines = self.client.get_klines(symbol=symbol, interval=interval)
         return klines
 
+        
+
+
+
 
     def process_pairs(self):
         for pair in self.pairs:
@@ -70,18 +77,21 @@ class HistoricalData(QtCore.QObject):
 
     def test_all(self, progress_callback=None):
         while True:
-            current_coin = self.mw.cfg_manager.pair
-            ticker_data = self.mw.api_manager.getTickers()
-            pairs = list(ticker_data)
-            pair_count = 0
+            print("GETTING ALL PAIRS")
+            try:
+                # current_coin = self.mw.cfg_manager.pair
+                ticker_data = self.mw.api_manager.getTickers()
+                pairs = list(ticker_data)
+                pair_count = 0
 
-            for pair in pairs:
-                if "BTC" in pair:
-                    pair_count += 1
-                    if not pair == current_coin:
+                for pair in pairs:
+                    if "BTC" in pair:
+                        pair_count += 1
                         self.process_in_thread(pair)
-                time.sleep(0.1)
-            time.sleep(15)
+                    time.sleep(0.1)
+                time.sleep(15)
+            except BinanceAPIException as e:
+                print("TEST ALL ERROR:", e)
 
     def process_in_thread(self, pair):
         worker = Worker(partial(self.process_this, pair))
@@ -112,27 +122,38 @@ class HistoricalPair:
     """
 
     def __init__(self, pair, parent):
-        self.pair = pair
+
         self.parent = parent
         timeframes = ["1m"]
         self.tf = dict()
 
+        
+
+
+        self.get_klines(timeframes, pair)
+
+
+    def get_klines(self, timeframes, pair):
         for timeframe in timeframes:
-            klines = self.parent.get_kline(pair, timeframe)
-            value_array = np.array([tuple(x) for x in klines], dtype=[
-                ("time", "i8"),
-                ("open", "f8"),
-                ("high", "f8"),
-                ("low", "f8"),
-                ("close", "f8"),
-                ("volume", "f8"),
-                ("close time", "f8"),
-                ("quote volume", "f8"),
-                ("number trades", "f8"),
-                ("asset volume", "f8"),
-                ("quote asset volume", "f8"),
-                ("ignore", "f8")])
-            self.tf[timeframe] = value_array
+            try:
+                klines = self.parent.get_kline(pair, timeframe)
+                value_array = np.array([tuple(x) for x in klines], dtype=[
+                    ("time", "i8"),
+                    ("open", "f8"),
+                    ("high", "f8"),
+                    ("low", "f8"),
+                    ("close", "f8"),
+                    ("volume", "f8"),
+                    ("close time", "f8"),
+                    ("quote volume", "f8"),
+                    ("number trades", "f8"),
+                    ("asset volume", "f8"),
+                    ("quote asset volume", "f8"),
+                    ("ignore", "f8")])
+                self.tf[timeframe] = value_array
+            except BinanceAPIException:
+                print("BINANCE API EXCEPTION!!!")
+
 
 
 def debug(self):

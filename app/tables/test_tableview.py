@@ -25,6 +25,8 @@ class TestTableView(QtWidgets.QTableView):
 
     def setup(self):
         self.horizontalHeader().setDefaultSectionSize(50)
+        # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+
 
         self.df = self.mw.index_data.coin_index
         self.my_model.update(self.df)
@@ -35,12 +37,16 @@ class TestTableView(QtWidgets.QTableView):
         self.mw.new_coin_table = True
 
         self.setColumnWidth(0, 130)
-        self.setColumnWidth(1, 85)
-        self.setColumnWidth(2, 120)
-        for i in range(3, 9):
-            self.setColumnWidth(i, 75)
+        self.setColumnWidth(1, 130)
+        self.setColumnWidth(2, 75)
+        self.setColumnWidth(3, 90)
+        for i in range(4, 10):
+            # self.setColumnWidth(i, 85)
+            self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
 
         self.clicked.connect(self.cell_clicked)
+
+        self.sortByColumn(3, QtCore.Qt.DescendingOrder)
 
 
     def leaveEvent(self, event):
@@ -88,6 +94,9 @@ class MyTableModel(QtCore.QAbstractTableModel):
                 # return self.headers[section]
                 return self.datatable.columns[section]
 
+        elif role == QtCore.Qt.InitialSortOrderRole:
+            return QtCore.Qt.DescendingOrder
+
 
     def update(self, dataIn):
         self.datatable = dataIn
@@ -104,10 +113,7 @@ class MyTableModel(QtCore.QAbstractTableModel):
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:
             if index.isValid():
-                if index.column() > 0:
-                    return float(self.datatable.iloc[index.row(), index.column()])
-                else:
-                    return str(self.datatable.iloc[index.row(), index.column()])
+                return self.datatable.iloc[index.row(), index.column()]
 
 
     def insertRows(self, row, item, column=1, index=QtCore.QModelIndex()):
@@ -123,7 +129,7 @@ class MyTableModel(QtCore.QAbstractTableModel):
             for row in range(self.rowCount()):
                 self.mw.test_table_view.setRowHidden(row, False)
 
-                if str(searchText.upper()) in str(self.datatable.iloc[row, 0]):
+                if str(searchText.upper()) in str(self.datatable.iloc[row, 0]).replace("BTC", ""):
                     self.mw.test_table_view.setRowHidden(row, False)
                 else:
                     self.mw.test_table_view.setRowHidden(row, True)
@@ -158,21 +164,30 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
         super(IndexDelegate, self).__init__(parent)
         self.parent = parent
         self.mw = app.mw
+        
 
     def initStyleOption(self, option, index):
         """Set style options based on index column."""
 
         if index.column() == 0:
             option.text = index.data().replace("BTC", "") + " / BTC"
+            option.icon = QtGui.QIcon("images/ico/" + index.data().replace("BTC", "") + ".svg")
+
+
+
+        elif index.column() == 2 or index.column() >= 7:
+            operator = ""
+            if index.data() == 0.00:
+                operator = " "
+            elif index.data() > 0:
+                operator = "+"
+            option.text = operator + '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
 
         elif index.column() == 1:
-            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
-
-        elif index.column() == 2:
             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8) + " BTC"
 
         else:
-            for i in range(3, 14):
+            for i in range(3, 7):
                 if index.column() == i:
                     option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=2)
 
@@ -187,7 +202,7 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
         self.initStyleOption(options, index)
         # font = QtGui.QFont()
         
-        painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+        # painter.setPen(QtGui.QColor(Colors.color_lightgrey))
 
         alignment = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
@@ -196,7 +211,7 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
             
 
             icon = QtGui.QIcon("images/ico/" + index.data().replace("BTC", "") + ".svg")
-            iconRect = QtCore.QRect(35 - option.rect.height(),
+            iconRect = QtCore.QRect(option.rect.left() + 35 - option.rect.height(),
                                     option.rect.top(),
                                     option.rect.height(),
                                     option.rect.height())
@@ -208,25 +223,46 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
                 painter.setPen(QtGui.QColor(Colors.color_yellow))
                 font.setBold(True)
                 painter.setFont(font)
-                painter.drawText(option.rect, alignment, options.text)
             else:
                 painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-                painter.drawText(option.rect, alignment, options.text)
+            
+            painter.drawText(option.rect, alignment, options.text)
+
+            # super(IndexDelegate, self).paint(painter, option, index)
 
         elif index.column() == 1:
-            operator = ""
+            painter.drawText(option.rect, alignment, options.text)
+
+        elif index.column() == 2 or index.column() >= 7:
+
             if index.data() < 0:
                 painter.setPen(QtGui.QColor(Colors.color_pink))
-            elif index.data() == 0:
-                painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-                operator = " "
+            elif index.data() == 0.00:
+                painter.setPen(QtGui.QColor(Colors.color_grey))
             else:
                 painter.setPen(QtGui.QColor(Colors.color_green))
-                operator = "+"
 
-            painter.drawText(option.rect, alignment, operator + options.text)
+            painter.drawText(option.rect, alignment, options.text)
 
         else:
+            # set volume colors
+            for i in range(3, 7):
+                if index.column() == i:
+                    if index.data() == 0.00:
+                        painter.setPen(QtGui.QColor(Colors.color_grey))
+                    else:
+                        painter.setPen(QtGui.QColor("#eff0f1"))
+
+            # set price change colors
+            # for i in range(9, 14):
+            #     if index.column() == i:
+            #         if index.data() < 0:
+            #             painter.setPen(QtGui.QColor(Colors.color_pink))
+            #         elif index.data() == 0:
+            #             painter.setPen(QtGui.QColor(Colors.light_grey))
+            #         else:
+            #             painter.setPen(QtGui.QColor(Colors.color_green))
+
             painter.drawText(option.rect, alignment, options.text)
 
         painter.restore()

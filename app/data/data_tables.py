@@ -20,7 +20,12 @@ class DataOpenOrders(QtWidgets.QTableView):
     def setup(self):
         print("DATA OPEN ORDER SETUP")
 
-        self.update()
+        try:
+            self.update()
+        except (AttributeError, KeyError) as e:
+            print("UPDATE ERROR!", e)
+            return
+
         self.setSortingEnabled(True)
         self.proxy_model = QtCore.QSortFilterProxyModel()
         self.proxy_model.setSourceModel(self.my_model)
@@ -31,9 +36,12 @@ class DataOpenOrders(QtWidgets.QTableView):
         self.my_model.modelAboutToBeReset.emit()
         self.data_dict = self.mw.user_data.open_orders
         df = pd.DataFrame.from_dict(self.data_dict, orient='index')
+
         self.df = df[["time", "symbol", "type", "side", "price", "origQty", "executedQty"]]
         self.my_model.update(self.df)
         self.my_model.modelReset.emit()
+
+
 
 class OpenOrdersModel(QtCore.QAbstractTableModel):
     def __init__(self, parent=None, *args):

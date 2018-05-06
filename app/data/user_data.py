@@ -9,7 +9,7 @@ import pandas as pd
 import PyQt5.QtCore as QtCore
 import numpy as np
 from datetime import datetime
-
+from binance.exceptions import BinanceAPIException
 
 class UserData(QtCore.QObject):
     """Object that holds various user data like
@@ -84,7 +84,7 @@ class UserData(QtCore.QObject):
     def remove_from_open_orders(self, order):
         order_id = order["orderId"]
         self.del_save(self.open_orders, order_id)
-        
+
         if not order.get("clientOrderId"):
             self.mw.data_open_orders_table.update()
 
@@ -107,6 +107,12 @@ class UserData(QtCore.QObject):
 
 
     def initial_open_orders(self):
-        orders = self.mw.api_manager.api_all_orders()
-        for order in orders:
-            self.add_to_open_orders(order)
+        try:
+            orders = self.mw.api_manager.api_all_orders()
+            for order in orders:
+                self.add_to_open_orders(order)
+        except BinanceAPIException:
+            print("OPEN ORDERS COULD NOT BE FETCHED!!")
+    
+    def create_dataframe(self):
+        pass

@@ -202,6 +202,8 @@ class GuiManager:
 
         charts_index = self.mw.ChartTabs.currentIndex()
 
+        data_index = self.mw.tabsBotLeft.currentIndex()
+
         # if self.mw.pd_update is True:
         #     self.mw.pd_table.update_model_data()
 
@@ -209,9 +211,13 @@ class GuiManager:
         #     self.mw.dict_index.update_model_data()
 
 
+        # if self.mw.historical.timeout > 0:
+        #     self.mw.historical.timeout -= 1
+        #     print("TIMEOUT", self.mw.historical.timeout)
 
 
-        if self.mw.new_coin_table is True and charts_index == 5:
+        if self.mw.new_coin_table is True and data_index == 0:
+            print("update")
             self.mw.test_table_view.coin_update()
 
         # if self.mw.new_coin_table is True:

@@ -68,9 +68,56 @@
         <p>To use this you have to generate an <span style="color: #f3f3f3">API Key</span>.</p>
         <p>Log into Binance and create API credentials <a href="https://www.binance.com/userCenter/createApi.html">here</a>.</p>
 
-
+        <p id="countdown">countdown</p>
       </div>
     </div>
 
   </body>
+  <script>
+  CountDownTimer('', 'countdown');
+  // CountDownTimer('02/20/2012 10:1 AM', 'newcountdown');
+
+    function CountDownTimer(dt, id)
+    {
+        var end = new Date(152564234314);
+
+        var _second = 1000;
+        var _minute = _second * 60;
+        var _hour = _minute * 60;
+        var _day = _hour * 24;
+        var timer;
+
+        function showRemaining() {
+          console.log("show remaining")
+            var now = new Date(152564154500);
+            var distance = end - now;
+            if (distance < 0) {
+
+                clearInterval(timer);
+                document.getElementById("countdown").innerHTML = 'EXPIRED!';
+
+                return;
+            }
+            var days = Math.floor(distance / _day);
+            var hours = Math.floor((distance % _day) / _hour);
+            var minutes = Math.floor((distance % _hour) / _minute);
+            var seconds = Math.floor((distance % _minute) / _second);
+            
+            var time_remaining = "";
+
+            if (hours > 0) {
+              time_remaining += hours + " hrs ";
+            }
+            time_remaining += minutes + " mins ";
+            time_remaining += seconds + " secs ";
+            // document.getElementById("countdown").innerHTML = minutes + ' mins ';
+            // document.getElementById("countdown").innerHTML += seconds + ' secs';
+            document.getElementById("countdown").innerHTML = time_remaining;
+            
+        }
+
+        timer = setInterval(showRemaining, 1000);
+    }
+
+  </script>
 </html>

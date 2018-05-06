@@ -54,6 +54,7 @@ class beeserBot(QtWidgets.QMainWindow):
         app.mw = self
         app.mutex = self.mutex
 
+        self.error = None
         self.index_data = None
 
         self.trade_history = list()
@@ -108,11 +109,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.table_view_btn.clicked.connect(self.test_table_view.setup)
-        self.add_btn.clicked.connect(self.historical.test_all)
+        # self.add_btn.clicked.connect(self.historical.test_all)
         self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
         self.btn_init_new.clicked.connect(self.newer_index.setup)
         # self.test_ud_btn.clicked.connect(self.dict_index.update_model_data)
-        self.btn_init_pd.clicked.connect(self.user_data.initial_history)
+        # self.btn_init_pd.clicked.connect(self.user_data.initial_history)
 
     def init_basics(self):
         self.log_manager = BotLogger(self)
@@ -143,9 +144,13 @@ class beeserBot(QtWidgets.QMainWindow):
             self.instantiate_api_managers()
             self.coin_selector.activated.connect(self.gui_manager.change_pair)
             self.initialize_tables()
-            
+
         else:
-            self.init_manager.show_error_page()
+            if self.api_manager.error == "banned":
+                self.init_manager.show_banned_page()
+            else:
+                self.init_manager.show_error_page()
+
 
 
 
@@ -168,10 +173,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # new:
         self.test_table_view.setup()
+        # self.test_table_view_2.setup()
         self.data_open_orders_table.setup()
 
     def initialize_data(self):
-        self.index_data = IndexData(self)
+        self.index_data = IndexData(self, self.threadpool)
         self.historical = HistoricalData(self, app.client, self.threadpool)
         self.user_data = UserData(self, self.mutex)
     # refactor: move; global ui

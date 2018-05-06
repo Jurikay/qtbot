@@ -37,6 +37,8 @@ QWidget {
 QTableWidget, QTableView{
   alternate-background-color: #2e363d;
   color: #999;
+  gridline-color: #999; 
+
 }
 QTabBar::tab:selected:first {
   border-left: 1px solid #151a1e;

@@ -20,11 +20,16 @@ class ApiCalls:
         self.mw = mw
 
 
-        self.client = self.init_client()
+        
 
-        app.client = self.client
+        
 
         self.threadpool = tp
+        print("init banned until")
+        self.banned_until = None
+        self.error = None
+        self.client = self.init_client()
+        app.client = self.client
 
     def init_client(self):
         try:
@@ -32,39 +37,57 @@ class ApiCalls:
             api_secret = self.mw.cfg_manager.api_secret
             return Client(api_key, api_secret, {"verify": True, "timeout": 10})
         except BinanceAPIException as e:
-            print(str(e))
+            print("INIT CLIENT", e)
+            if "IP banned until" in str(e):
+                print("set banned until")
+                self.banned_until = str(self.get_ban_duration(e))
+                self.error = "banned"
+            return None
 
+
+    def get_ban_duration(self, error_msg):
+        banned_until = str(error_msg).replace("APIError(code=-1003): Way too many requests; IP banned until ", "").replace(". Please use the websocket for live updates to avoid bans.", "")
+        print("GET BAN DURATION", banned_until)
+
+        return int(banned_until)
 
     def initialize(self):
 
         # print("setting client: " + str(self.client))
 
-        try:
-            val["coins"] = self.availablePairs()
+        if self.client:
+            try:
+                val["coins"] = self.availablePairs()
 
-            val["accHoldings"] = self.getHoldings()
+                val["accHoldings"] = self.getHoldings()
 
-            val["tickers"] = self.getTickers()
+                val["tickers"] = self.getTickers()
 
-            val["apiCalls"] += 3
-            # userMsg = dict()
-            # accHoldings = dict()
+                val["apiCalls"] += 3
+                # userMsg = dict()
+                # accHoldings = dict()
 
-            self.set_pair_values()
-            self.mw.is_connected = True
+                self.set_pair_values()
+                self.mw.is_connected = True
 
-        except (BinanceAPIException, NameError, AttributeError) as e:
-            print("API ERROR")
-            print(str(e))
-            if "code=-1003" in str(e):
-                print("ja ein api error :)")
-            elif "code=-2014" in str(e):
-                print("API KEY INVALID")
-            elif "code=0" in str(e):
-                print("BINANCE API DOWN!!!")
-            elif "get_products" in str(e):
-                print("PUBLIC API DOWN")
+            except (BinanceAPIException, NameError, AttributeError) as e:
+                print("API ERROR")
+                print(str(e))
+                if "code=-1003" in str(e):
+                    print("ja ein api error :)")
+                    
+                    self.banned_until = self.get_ban_duration(e)
+                    self.error = "banned"
+                elif "code=-2014" in str(e):
+                    print("API KEY INVALID")
+                elif "code=0" in str(e):
+                    print("BINANCE API DOWN!!!")
+                elif "get_products" in str(e):
+                    print("PUBLIC API DOWN")
 
+        else:
+            print("CLIENT NOT DEFINED! BANNED!")
+            self.error = "banned"
     # def get_tether(client):
     #     tether_info = client.get_ticker(symbol="BTCUSDT")
     #     return tether_info
@@ -122,6 +145,7 @@ class ApiCalls:
 
     def getTickers(self):
         """Make an initial API call to get ticker data."""
+
         ticker = self.client.get_ticker()
         # print(str(ticker))
         all_tickers = dict()

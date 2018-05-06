@@ -103,6 +103,11 @@ class InitManager:
         self.mw.api_key_label.setStyleSheet("border: 2px solid #f3ba2e;")
         self.mw.api_secret_label.setStyleSheet("border: 2px solid #f3ba2e;")
 
+    def show_banned_page(self):
+        print("show banned", self.mw.api_manager.banned_until)
+        self.mw.chart.setHtml(Webpages.build_banned_page(self.mw.api_manager.banned_until))
+        self.mw.chart.show()
+
     def ui_setup(self):
         print("setting up gui")
         self.mw.acc_label.setText("<span style='margin-bottom: 2px; font-size: 18px; color: #CDCDCD; font-family: Arial Black;'>Account: </span>")
