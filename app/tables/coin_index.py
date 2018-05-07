@@ -47,7 +47,6 @@ class CoinIndex(QtWidgets.QTableWidget):
 
 
         for i in (number + 6 for number in range(7)):
-            print("set width of col " + str(i))
             if i < 10:
                 self.setColumnWidth(i, 90)
             else:
@@ -56,7 +55,6 @@ class CoinIndex(QtWidgets.QTableWidget):
         self.start_kline_check()
 
     def filter_coin_index(self, text, state):
-        print("FILTER COIN INDEX")
         print(str(state))
         for i in range(self.rowCount()):
             if state == 2 and not self.item(i, 1).text().startswith(self.mw.cfg_manager.coin):

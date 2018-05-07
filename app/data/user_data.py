@@ -113,6 +113,19 @@ class UserData(QtCore.QObject):
                 self.add_to_open_orders(order)
         except BinanceAPIException:
             print("OPEN ORDERS COULD NOT BE FETCHED!!")
-    
+
     def create_dataframe(self):
-        pass
+        for _, order in self.open_orders.items():
+
+            order["filled_percent"] = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float((order["origQty"])) * 100), digits=2) + "%"
+            order["total_btc"] = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
+            # order["order_time"] = str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])
+            order["cancel"] = "cancel"
+            order_id = order["orderId"]
+            self.set_save(self.open_orders, order_id, order)
+
+        df = pd.DataFrame.from_dict(self.open_orders, orient='index')
+        sorted_df = df[["time", "symbol", "type", "side", "price", "origQty", "filled_percent", "total_btc", "orderId", "cancel"]]
+
+        print(sorted_df)
+        return sorted_df

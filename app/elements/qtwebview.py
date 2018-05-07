@@ -24,9 +24,10 @@ class ChartPage(QWebEngineView):
         # profile = webenginesettings.default_profile
 
         page = WebEnginePage()
+        self.page().JavaScriptConsoleMessageLevel(3)
+
         self.setPage(page)
-        self.page().JavaScriptConsoleMessageLevel(2)
-        print("CHART JESCHISCHTEN")
+        # print("CHART JESCHISCHTEN")
 
     def inject_script(self):
         script = QWebEngineScript()

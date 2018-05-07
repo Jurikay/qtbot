@@ -77,7 +77,7 @@ class HistoricalData(QtCore.QObject):
 
     def test_all(self, progress_callback=None):
         while True:
-            print("GETTING ALL PAIRS")
+            # print("GETTING ALL PAIRS")
             try:
                 # current_coin = self.mw.cfg_manager.pair
                 ticker_data = self.mw.api_manager.getTickers()
@@ -126,12 +126,7 @@ class HistoricalPair:
         self.parent = parent
         timeframes = ["1m"]
         self.tf = dict()
-
-        
-
-
         self.get_klines(timeframes, pair)
-
 
     def get_klines(self, timeframes, pair):
         for timeframe in timeframes:
@@ -153,15 +148,3 @@ class HistoricalPair:
                 self.tf[timeframe] = value_array
             except BinanceAPIException:
                 print("BINANCE API EXCEPTION!!!")
-
-
-
-def debug(self):
-    self.client = "CLIENT"
-    historical = HistoricalData(self.client, ["ADABTC", "TRXBTC"])
-    print("#######")
-    # print(historical.data["BNBBTC"].tf["1m"][999]["time"])
-
-    historical.process_this("LTCBTC")
-
-    # print(historical.data["LTCBTC"].tf["1m"][999]["close"])

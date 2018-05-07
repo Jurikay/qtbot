@@ -20,12 +20,8 @@ class ApiCalls:
         self.mw = mw
 
 
-        
-
-        
-
+    
         self.threadpool = tp
-        print("init banned until")
         self.banned_until = None
         self.error = None
         self.client = self.init_client()
@@ -47,7 +43,6 @@ class ApiCalls:
 
     def get_ban_duration(self, error_msg):
         banned_until = str(error_msg).replace("APIError(code=-1003): Way too many requests; IP banned until ", "").replace(". Please use the websocket for live updates to avoid bans.", "")
-        print("GET BAN DURATION", banned_until)
 
         return int(banned_until)
 

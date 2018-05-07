@@ -45,7 +45,6 @@ class HotKeys:
 
 
     def init_hotkeys(self):
-        print("init hotkeys: " + str(self))
         hotkey_F = QtWidgets.QShortcut(QtGui.QKeySequence(QtCore.Qt.Key_F), self.mw)
         hotkey_F.activated.connect(partial(self.hotkey_pressed, "F"))
 

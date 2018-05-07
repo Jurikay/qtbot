@@ -166,7 +166,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
     def initialize_tables(self):
-        self.coin_index.initialize()
+        # self.coin_index.initialize()
         self.open_orders.initialize()
         self.history_table.initialize()
         self.holdings_table.initialize()
