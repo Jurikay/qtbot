@@ -254,6 +254,7 @@ class HoldingsTable(QtWidgets.QTableWidget):
 
 
     def initialize(self):
+        print("INITITALIZE HD")
         self.build_holdings()
         self.setColumnWidth(0, 150)
         self.setColumnWidth(1, 75)

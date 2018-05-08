@@ -7,9 +7,10 @@
 import pandas as pd
 # import app
 import PyQt5.QtCore as QtCore
-import numpy as np
-from datetime import datetime
+# import numpy as np
+# from datetime import datetime
 from binance.exceptions import BinanceAPIException
+
 
 class UserData(QtCore.QObject):
     """Object that holds various user data like
@@ -24,21 +25,7 @@ class UserData(QtCore.QObject):
         self.open_orders = dict()
         self.trade_history = dict()
         self.current_holdings = dict()
-        self.initial_open_orders()
-
-
-    def add(self, order, value_type):
-        self.mutex.lock()
-
-        if value_type == open_orders:
-            pass
-
-
-    def update(self, order, type):
-        pass
-
-    def remove(self, order, type):
-        pass
+        # self.initial_open_orders()
 
 
     def set_save(self, storage, index, value):
@@ -54,32 +41,63 @@ class UserData(QtCore.QObject):
         self.mutex.unlock()
 
 
-    def update_accholdings(self, holdings):
-        """Receives a list of updated holdings.
-        Stores values in dictionary current_holdings."""
 
-        if isinstance(holdings, list):
-            for holding in holdings:
-                coin = holding["a"]
-                free = holding["f"]
-                locked = holding["l"]
-                total = float(free) + float(locked)
 
-                values = {"free": free,
-                          "locked": locked,
-                          "total": total}
-
-                self.set_save(self.current_holdings, coin, values)
-
+    #################################################################
+    # OPEN ORDERS
+    #################################################################
 
     def add_to_open_orders(self, order):
         order_id = order["orderId"]
+        run_setup = False
+
+        # if no order is open, run setup to initialize table widths
+        if not len(self.open_orders):
+            run_setup = True
         self.set_save(self.open_orders, order_id, order)
 
         # if clientOrderId is not present, order information comes
         # from websocket therefore open_orders_table should be updated.
         if not order.get("clientOrderId"):
-            self.mw.data_open_orders_table.update()
+            print(order)
+            order["price"] = order["orderPrice"]
+
+            # if this is the first open order, run setup.
+            # else, update open orders table
+            if run_setup:
+                print("RUNNING SETUP")
+                self.mw.data_open_orders_table.setup()
+            else:
+                self.mw.data_open_orders_table.update()
+
+
+    def initial_open_orders(self):
+        try:
+            orders = self.mw.api_manager.api_all_orders()
+            for order in orders:
+                self.add_to_open_orders(order)
+        except BinanceAPIException:
+            print("OPEN ORDERS COULD NOT BE FETCHED!!")
+
+
+    def create_dataframe(self):
+        """Create a pandas dataframe suitable for displaying open orders."""
+        for _, order in self.open_orders.items():
+            order["filled_percent"] = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float((order["origQty"])) * 100), digits=2) + "%"
+            order["total_btc"] = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
+            order["cancel"] = "cancel"
+            
+            order_id = order["orderId"]
+            self.set_save(self.open_orders, order_id, order)
+
+        if self.open_orders:
+            df = pd.DataFrame.from_dict(self.open_orders, orient='index')
+            sorted_df = df[["time", "symbol", "type", "side", "price", "origQty", "filled_percent", "total_btc", "orderId", "cancel"]]
+            return sorted_df
+        else:
+            # return an empty dataframe if no orders are open.
+            return pd.DataFrame()
+
 
     def remove_from_open_orders(self, order):
         order_id = order["orderId"]
@@ -87,6 +105,16 @@ class UserData(QtCore.QObject):
 
         if not order.get("clientOrderId"):
             self.mw.data_open_orders_table.update()
+
+    def update_order(self, order):
+        order_id = order["orderId"]
+        
+
+
+
+    #################################################################
+    # TRADE HISTORY
+    #################################################################
 
     def add_to_history(self, order):
         order_id = order["orderId"]
@@ -106,26 +134,24 @@ class UserData(QtCore.QObject):
             self.add_to_history(entry)
 
 
-    def initial_open_orders(self):
-        try:
-            orders = self.mw.api_manager.api_all_orders()
-            for order in orders:
-                self.add_to_open_orders(order)
-        except BinanceAPIException:
-            print("OPEN ORDERS COULD NOT BE FETCHED!!")
 
-    def create_dataframe(self):
-        for _, order in self.open_orders.items():
+    #################################################################
+    # ACCOUNT HOLDINGS
+    #################################################################
 
-            order["filled_percent"] = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float((order["origQty"])) * 100), digits=2) + "%"
-            order["total_btc"] = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
-            # order["order_time"] = str(datetime.fromtimestamp(int(str(order["time"])[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])
-            order["cancel"] = "cancel"
-            order_id = order["orderId"]
-            self.set_save(self.open_orders, order_id, order)
+    def update_accholdings(self, holdings):
+        """Receives a list of updated holdings.
+        Stores values in dictionary current_holdings."""
 
-        df = pd.DataFrame.from_dict(self.open_orders, orient='index')
-        sorted_df = df[["time", "symbol", "type", "side", "price", "origQty", "filled_percent", "total_btc", "orderId", "cancel"]]
+        if isinstance(holdings, list):
+            for holding in holdings:
+                coin = holding["a"]
+                free = holding["f"]
+                locked = holding["l"]
+                total = float(free) + float(locked)
 
-        print(sorted_df)
-        return sorted_df
+                values = {"free": free,
+                          "locked": locked,
+                          "total": total}
+
+                self.set_save(self.current_holdings, coin, values)

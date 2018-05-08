@@ -33,9 +33,8 @@ class ApiCalls:
             api_secret = self.mw.cfg_manager.api_secret
             return Client(api_key, api_secret, {"verify": True, "timeout": 10})
         except BinanceAPIException as e:
-            print("INIT CLIENT", e)
             if "IP banned until" in str(e):
-                print("set banned until")
+                print("first")
                 self.banned_until = str(self.get_ban_duration(e))
                 self.error = "banned"
             return None
@@ -43,7 +42,6 @@ class ApiCalls:
 
     def get_ban_duration(self, error_msg):
         banned_until = str(error_msg).replace("APIError(code=-1003): Way too many requests; IP banned until ", "").replace(". Please use the websocket for live updates to avoid bans.", "")
-
         return int(banned_until)
 
     def initialize(self):
@@ -52,6 +50,10 @@ class ApiCalls:
 
         if self.client:
             try:
+                # print("get account:", self.client.get_account())
+                print("get account status:", self.client.get_account_status())
+
+
                 val["coins"] = self.availablePairs()
 
                 val["accHoldings"] = self.getHoldings()
@@ -87,15 +89,19 @@ class ApiCalls:
     #     tether_info = client.get_ticker(symbol="BTCUSDT")
     #     return tether_info
 
+
+    # TODO remove val references
     def set_pair_values(self):
         """Set various values based on the chosen pair."""
         pair = self.mw.cfg_manager.pair
         val["decimals"] = len(str(val["coins"][pair]["tickSize"])) - 2
-
+        self.mw.decimals = len(str(val["coins"][pair]["tickSize"])) - 2
         if int(val["coins"][pair]["minTrade"]) == 1:
             val["assetDecimals"] = 0
+            self.mw.assetDecimals = 0
         else:
             val["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
+            self.mw.assetDecimals = len(str(val["coins"][pair]["minTrade"])) - 2
 
 
     def availablePairs(self):

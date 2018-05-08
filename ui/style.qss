@@ -723,7 +723,8 @@ QGroupBox::indicator:unchecked:disabled {
 }
 
 #cancel_all:hover {
-    color: #ff007a;
+    color: white;
+    background-color: #ff007a;
 }
 
 QMenu {

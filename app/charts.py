@@ -551,7 +551,7 @@ class Webpages():
       <div id="container">
       <div id="welcome">
         <h1>You are banned!</h1>
-        <p style="text-decoration: underline;">You are banned<span id="countdown"> </p>
+        <p style="text-decoration: underline;" id="ban_text">You are banned<span id="countdown"> </p>
         <p>To avoid bans, do not restart the Bot more than once per minute!</p>
       </div>
     </div>
@@ -564,9 +564,13 @@ class Webpages():
     function CountDownTimer(dt, id)
     {
         console.error(dt)
-
+        if (dt == null) {
+          console.error("dt none")
+          document.getElementById("ban_text").innerHTML = 'You are banned for a minute or so.';
+        }
+        else {
         var end = new Date(dt);
-
+        }
         var _second = 1000;
         var _minute = _second * 60;
         var _hour = _minute * 60;
@@ -580,7 +584,9 @@ class Webpages():
             if (distance < 0) {
 
                 clearInterval(timer);
-                document.getElementById("countdown").innerHTML = 'EXPIRED!';
+                document.getElementById("ban_text").innerHTML = 'YOUR BAN HAS EXPIRED! 🎈 🎉';
+                
+
 
                 return;
             }

@@ -116,10 +116,10 @@ class HistoryDelegate(QtWidgets.QStyledItemDelegate):
         """Set style options based on index column."""
 
         if index.column() == 0:
-            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=val["decimals"])
+            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.mw.decimals)
 
         elif index.column() == 1:
-            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=val["assetDecimals"])
+            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.mw.assetDecimals)
 
         elif index.column() == 2:
             option.text = str(datetime.fromtimestamp(int(str(self.parent.my_model.model_data[index.row()][3])[:-3])).strftime('%H:%M:%S.%f')[:-7])

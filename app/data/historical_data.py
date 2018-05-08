@@ -41,9 +41,12 @@ class HistoricalData(QtCore.QObject):
         # self.process_pairs()
         self.process_in_thread(self.mw.cfg_manager.pair)
 
+        
+
+
+    def get_kline_values(self):
         worker = Worker(self.test_all)
         self.mw.threadpool.start(worker)
-
 
     def init_client(self):
         """Create a binance Client object."""
@@ -71,6 +74,7 @@ class HistoricalData(QtCore.QObject):
 
 
     def process_this(self, pair, progress_callback=None):
+        # print("getting historical", pair)
         # implement check if is valid
         self.data[pair] = HistoricalPair(pair, self)
         progress_callback.emit(pair)

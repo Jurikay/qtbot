@@ -8,9 +8,9 @@ import pandas as pd
 # import app
 from PyQt5.QtCore import QObject as QObject
 import numpy as np
-import time
-from app.workers import Worker
-from functools import partial
+# import time
+# from app.workers import Worker
+# from functools import partial
 
 
 class IndexData(QObject):
@@ -37,7 +37,7 @@ class IndexData(QObject):
 
         self.initialize()
         # self.mw.test_ud_btn.clicked.connect(self.calculate_historical)
-        
+
 
     def initialize(self):
         print("INIT")
@@ -102,6 +102,7 @@ class IndexData(QObject):
             return filtered
 
     def callback_calc(self, pair, volumes=volumes):
+        # print("Callback calc")
         """Callback from historical data."""
         volume_sums = list()
         changes = list()
@@ -131,7 +132,7 @@ class IndexData(QObject):
         try:
             historical_price = self.mw.historical.data[symbol].tf["1m"][-time_delta]["close"]
             last_price = self.ticker_data[symbol]["lastPrice"]
-            hist_formatted = '{number:.{digits}f}'.format(number=float(historical_price), digits=8)
+            # hist_formatted = '{number:.{digits}f}'.format(number=float(historical_price), digits=8)
             if historical_price != 0:
                 difference = (float(last_price) / float(historical_price) - 1) * 100
                 return difference

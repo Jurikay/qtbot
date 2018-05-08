@@ -22,7 +22,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         buy_percent_val = str(self.mw.limit_buy_slider.value())
         self.mw.buy_slider_label.setText(buy_percent_val + "%")
         
-        buy_value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(buy_percent_val), val["assetDecimals"])
+        buy_value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(buy_percent_val), self.mw.assetDecimals)
         self.mw.limit_buy_amount.setValue(float(buy_value))
         order_cost = float(buy_value) * float(self.mw.limit_buy_input.value())
         self.mw.limit_buy_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC ")
@@ -51,8 +51,8 @@ class LimitOrderPane(QtWidgets.QWidget):
         # print("acch: " + str(val["accHoldings"]["BTC"]["free"]))
         # print("buy input: " + str(self.mw.limit_buy_input.value()))
         # print("btn nmber: " + str(self.mw.cfg_manager.buttonPercentage[button_number]))
-        # print("asset dec" + str(val["assetDecimals"]))
-        value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.cfg_manager.buttonPercentage[button_number]), val["assetDecimals"])
+        # print("asset dec" + str(self.mw.assetDecimals))
+        value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.cfg_manager.buttonPercentage[button_number]), self.mw.assetDecimals)
 
         self.mw.limit_buy_amount.setValue(float(value))
 
@@ -148,7 +148,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         if val["coins"][self.mw.cfg_manager.pair]["minTrade"] == 1:
             sizeRounded = int(holding)
         else:
-            sizeRounded = int(holding * 10**val["assetDecimals"]) / 10.0**val["assetDecimals"]
+            sizeRounded = int(holding * 10**self.mw.assetDecimals) / 10.0**self.mw.assetDecimals
         return sizeRounded
 
 
@@ -242,9 +242,9 @@ class LimitOrderPane(QtWidgets.QWidget):
     def create_buy_order(self):
         if val["buyAllowed"] is True:
             pair = self.mw.cfg_manager.pair
-            price = '{number:.{digits}f}'.format(number=self.mw.limit_buy_input.value(), digits=val["decimals"])
+            price = '{number:.{digits}f}'.format(number=self.mw.limit_buy_input.value(), digits=self.mw.decimals)
 
-            amount = '{number:.{digits}f}'.format(number=self.mw.limit_buy_amount.value(), digits=val["assetDecimals"])
+            amount = '{number:.{digits}f}'.format(number=self.mw.limit_buy_amount.value(), digits=self.mw.assetDecimals)
             side = "Buy"
 
             worker = Worker(partial(self.mw.api_manager.api_create_order, side, pair, price, amount))
@@ -256,9 +256,9 @@ class LimitOrderPane(QtWidgets.QWidget):
     def create_sell_order(self):
         if val["sellAllowed"] is True:
             pair = self.mw.cfg_manager.pair
-            price = '{number:.{digits}f}'.format(number=self.mw.limit_sell_input.value(), digits=val["decimals"])
+            price = '{number:.{digits}f}'.format(number=self.mw.limit_sell_input.value(), digits=self.mw.decimals)
 
-            amount = '{number:.{digits}f}'.format(number=self.mw.limit_sell_amount.value(), digits=val["assetDecimals"])
+            amount = '{number:.{digits}f}'.format(number=self.mw.limit_sell_amount.value(), digits=self.mw.assetDecimals)
 
             side = "Sell"
 
@@ -274,7 +274,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         # print("We don now")
         self.mw.limit_buy_input.setValue(float(val["bids"][0][0]))
         self.mw.limit_sell_input.setValue(float(val["asks"][0][0]))
-        value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), val["assetDecimals"])
+        value = self.percentage_amount(val["accHoldings"]["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), self.mw.assetDecimals)
         self.mw.limit_buy_amount.setValue(value)
 
         # print(val["accHoldings"][val["coin"]]["free"])
