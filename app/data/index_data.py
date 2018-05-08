@@ -19,7 +19,7 @@ class IndexData(QObject):
     Initial API call, websocket callbacks and calculated
     kline data."""
 
-    volumes = [6, 16, 61]
+    volumes = [5, 15, 60]
 
     def __init__(self, mw, tp, parent=None):
         super(IndexData, self).__init__(parent)
@@ -133,7 +133,7 @@ class IndexData(QObject):
             last_price = self.ticker_data[symbol]["lastPrice"]
             hist_formatted = '{number:.{digits}f}'.format(number=float(historical_price), digits=8)
             if historical_price != 0:
-                difference = (float(last_price) / float(historical_price) - 1) * 100
+                difference = ((float(last_price) / float(historical_price)) - 1) * 100
                 return difference
             else:
                 return 0
