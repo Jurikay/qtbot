@@ -48,7 +48,7 @@ class GuiManager:
     def initial_last_price(self):
         # init last_price
         arrow = QtGui.QPixmap("images/assets/2arrow.png")
-        formatted_price = '{number:.{digits}f}'.format(number=float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]), digits=val["decimals"])
+        formatted_price = '{number:.{digits}f}'.format(number=float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]), digits=self.mw.decimals)
         self.mw.price_arrow.setPixmap(arrow)
         self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + Colors.color_yellow + "'>" + formatted_price + "</span>")
         usd_price = '{number:.{digits}f}'.format(number=float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
@@ -75,16 +75,16 @@ class GuiManager:
         # self.mw.limit_coin_label_sell.setText("<span style='font-weight: bold; color: white;'>" + coin + "</span>")
 
         # self.mw.limit_buy_input.setText("kernoschmaus")
-        self.mw.limit_buy_input.setDecimals(val["decimals"])
+        self.mw.limit_buy_input.setDecimals(self.mw.decimals)
         self.mw.limit_buy_input.setSingleStep(float(val["coins"][pair]["tickSize"]))
 
-        self.mw.limit_sell_input.setDecimals(val["decimals"])
+        self.mw.limit_sell_input.setDecimals(self.mw.decimals)
         self.mw.limit_sell_input.setSingleStep(float(val["coins"][pair]["tickSize"]))
 
-        self.mw.limit_buy_amount.setDecimals(val["assetDecimals"])
+        self.mw.limit_buy_amount.setDecimals(self.mw.assetDecimals)
         self.mw.limit_buy_amount.setSingleStep(float(val["coins"][pair]["minTrade"]))
 
-        self.mw.limit_sell_amount.setDecimals(val["assetDecimals"])
+        self.mw.limit_sell_amount.setDecimals(self.mw.assetDecimals)
         self.mw.limit_sell_amount.setSingleStep(float(val["coins"][pair]["minTrade"]))
 
 
@@ -104,7 +104,7 @@ class GuiManager:
 
         self.mw.gui_manager.schedule_work()
 
-        self.mw.holdings_table.initialize()
+        # self.mw.holdings_table.initialize()
 
         self.mw.coin_index.build_coinindex()
 

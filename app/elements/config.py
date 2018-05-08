@@ -98,8 +98,8 @@ class ConfigManager:
         # refactor
         # self.mw.cfg_manager.pair = str(self.pair)
 
-        print()
-        print(self.mw.cfg_manager.pair)
+        # print()
+        # print(self.mw.cfg_manager.pair)
 
         self.set_config_values()
         self.read_stats()
@@ -122,8 +122,8 @@ class ConfigManager:
         else:
             defaultPair = self.mw.default_pair_label.text()
 
-        print("REMEMBER = " + str(rememberDefault))
-        print(type(rememberDefault))
+        # print("REMEMBER = " + str(rememberDefault))
+        # print(type(rememberDefault))
         # defaultTimeframe = self.mw.default_timeframe.text()
 
         raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, "1w"]
@@ -188,8 +188,6 @@ class ConfigManager:
 
             self.mw.api_key_label.setText(self.api_key)
             self.mw.api_secret_label.setText(self.api_secret)
-            print("set checked:" + str(self.rememberDefault))
-            print(type(self.rememberDefault))
             self.mw.cfg_remember.setChecked(self.rememberDefault)
 
             pbuttons = [self.mw.percent_1, self.mw.percent_2, self.mw.percent_3, self.mw.percent_4, self.mw.percent_5]

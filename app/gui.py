@@ -36,7 +36,7 @@ from app.elements.websocket_manager import WebsocketManager
 from app.data.index_data import IndexData
 from app.data.historical_data import HistoricalData
 from app.data.user_data import UserData
-
+from app.init import val
 
 class beeserBot(QtWidgets.QMainWindow):
     """Main ui class."""
@@ -59,7 +59,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.trade_history = list()
 
-        
+
 
         # kann weg:
         # self.trade_history = list()
@@ -72,9 +72,13 @@ class beeserBot(QtWidgets.QMainWindow):
         self.np_update = False
         self.pd_update = False
 
+        self.decimals = 0
+        self.assetDecimals = 0
+
         # load QtDesigner UI file
         loadUi("ui/MainWindow.ui", self)
 
+        self.button_testgo.clicked.connect(self.new_asks.setup)
 
         # set external stylesheet
         with open("ui/style.qss", "r") as fh:
@@ -111,7 +115,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.table_view_btn.clicked.connect(self.test_table_view.setup)
         # self.add_btn.clicked.connect(self.historical.test_all)
         self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
-        self.btn_init_new.clicked.connect(self.newer_index.setup)
+        # self.btn_init_new.clicked.connect(self.newer_index.setup)
         # self.test_ud_btn.clicked.connect(self.dict_index.update_model_data)
         # self.btn_init_pd.clicked.connect(self.user_data.initial_history)
 
@@ -167,7 +171,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
     def initialize_tables(self):
         # self.coin_index.initialize()
-        self.open_orders.initialize()
+        # self.open_orders.initialize()
         self.history_table.initialize()
         self.holdings_table.initialize()
 
@@ -176,10 +180,23 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.test_table_view_2.setup()
         self.data_open_orders_table.setup()
 
+        # self.new_asks.setup()
+
+
     def initialize_data(self):
         self.index_data = IndexData(self, self.threadpool)
         self.historical = HistoricalData(self, app.client, self.threadpool)
+        
+
         self.user_data = UserData(self, self.mutex)
+
+        # INITITALIZE API HEAVY STUFF TODO refactor; skip api parameter
+        if not val["jirrik"]:
+            self.user_data.initial_open_orders()
+            self.historical.get_kline_values()
+
+
+
     # refactor: move; global ui
 
 

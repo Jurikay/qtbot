@@ -43,7 +43,7 @@ class LiveData(QtWidgets.QWidget):
                 color = Colors.color_pink
 
 
-            formatted_price = '{number:.{digits}f}'.format(number=float(history[0][0]), digits=val["decimals"])
+            formatted_price = '{number:.{digits}f}'.format(number=float(history[0][0]), digits=self.mw.decimals)
             self.mw.price_arrow.setPixmap(arrow)
             self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
             usd_price = '{number:.{digits}f}'.format(number=float(history[0][0]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
@@ -64,8 +64,8 @@ class LiveData(QtWidgets.QWidget):
                 text_color = QtGui.QColor(Colors.color_green)
                 table = self.mw.bids_table
 
-            ask_price = '{number:.{digits}f}'.format(number=float(order[i][0]), digits=val["decimals"])
-            ask_quantity = '{number:.{digits}f}'.format(number=float(order[i][1]), digits=val["assetDecimals"])
+            ask_price = '{number:.{digits}f}'.format(number=float(order[i][0]), digits=self.mw.decimals)
+            ask_quantity = '{number:.{digits}f}'.format(number=float(order[i][1]), digits=self.mw.assetDecimals)
             total_btc_asks = '{number:.{digits}f}'.format(number=float(ask_price) * float(ask_quantity), digits=3)
 
             count_item = QtWidgets.QTableWidgetItem(str(i + 1).zfill(2))

@@ -1,3 +1,10 @@
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# made by Jirrik
+
+"""Class containing websocket logic."""
+
 from app.workers import Worker
 # import PyQt5.QtWidgets as QtWidgets
 # import PyQt5.QtGui as QtGui
@@ -10,6 +17,7 @@ from binance.depthcache import DepthCacheManager
 
 import pandas as pd
 import time
+
 
 class WebsocketManager:
 
@@ -141,15 +149,25 @@ class WebsocketManager:
 
             if userMsg["X"] == "NEW":
                 # add a new order to open orders table
-                worker.signals.progress.connect(self.mw.open_orders.add_to_open_orders)
-                self.mw.user_data.add_to_open_orders(order)
-                self.mw.data_open_orders_table.update()
+
+                # old
+                # worker.signals.progress.connect(self.mw.open_orders.add_to_open_orders)
+
+                # new
+                # self.mw.user_data.add_to_open_orders(order)
+                worker.signals.progress.connect(self.mw.user_data.add_to_open_orders)
+
+
+                # update new table
+                # worker.signals.progress.connect(self.mw.data_open_orders_table.update)
 
 
             elif userMsg["X"] == "CANCELED":
                 # remove a cancelled order from open orders table
-                worker.signals.progress.connect(self.mw.open_orders.remove_from_open_orders)
-                self.mw.user_data.remove_from_open_orders(order)
+                # worker.signals.progress.connect(self.mw.open_orders.remove_from_open_orders)
+
+                worker.signals.progress.connect(self.mw.user_data.remove_from_open_orders)
+
 
 
                 # if order was canceled but partially filled, add to history
@@ -159,17 +177,22 @@ class WebsocketManager:
 
             elif userMsg["X"] == "PARTIALLY_FILLED":
                 # update a partially filled open order and check if it has to be newly added.
-                worker.signals.progress.connect(self.mw.open_orders.update_open_order)
+                # worker.signals.progress.connect(self.mw.open_orders.update_open_order)
                 worker.signals.progress.connect(self.mw.holdings_table.check_add_to_holdings)
+
+                worker.signals.progress.connect(self.mw.user_data.add_to_open_orders)
+
 
 
             elif userMsg["X"] == "FILLED":
                 # remove a filled order from open orders, add trade to history and check if it
                 # has to be newly added.
-                worker.signals.progress.connect(self.mw.open_orders.remove_from_open_orders)
+                # worker.signals.progress.connect(self.mw.open_orders.remove_from_open_orders)
                 worker.signals.progress.connect(self.mw.history_table.add_to_history)
                 worker.signals.progress.connect(self.mw.holdings_table.check_add_to_holdings)
 
+                # new
+                worker.signals.progress.connect(self.mw.user_data.remove_from_open_orders)
 
             else:
                 # catch and print any other trade callback messages.
@@ -225,33 +248,8 @@ class WebsocketManager:
 
 
 
-    def build_from_val(self):
-        start_time = time.time()
-
-        all_coins = dict()
-        for pair in val["tickers"]:
-            if "USDT" not in pair:
-                coin = str(val["tickers"][pair]["symbol"]).replace("BTC", "")
-                last_price = val["tickers"][pair]["lastPrice"]
-                pric_per = float(val["tickers"][pair]["priceChangePercent"])
-                vol = float(val["tickers"][pair]["quoteVolume"])
-
-                # all_coins[coin] = [coin, coin, last_price, float(pric_per), vol, coin]
-                all_coins[coin] = {"symbol": coin, "coin": coin, "lastPrice": last_price, "priceChangePercent": pric_per, "volume": vol}
-        # df = pd.DataFrame([all_coins]).transpose()
-        df = pd.DataFrame.from_dict(all_coins, orient='index')
-        self.index_df = df
-        # print("INDEX FROM VAL took", time.time() - start_time)
-        # print(self.index_df["BNBBTC"][3])
-        # print(self.index_df)
-        # print(self.index_df.loc["VEN"]["lastPrice"])
-
-
     def build_index_data(self, ticker_data):
         start_time = time.time()
-        # print("INDEX DATA:", ticker_data)
-
-        # self.index_data[ticker_data["symbol"]] = [ticker_data["symbol"], ticker_data["lastPrice"], ticker_data["priceChangePercent"], ticker_data["quoteVolume"], ticker_data["quoteVolume"]]
         self.index_df = pd.DataFrame(ticker_data).transpose()
         print("DATAFRAME:", self.index_df)
         print("WS build index took", time.time() - start_time)

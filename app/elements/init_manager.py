@@ -104,7 +104,6 @@ class InitManager:
         self.mw.api_secret_label.setStyleSheet("border: 2px solid #f3ba2e;")
 
     def show_banned_page(self):
-        print("show banned", self.mw.api_manager.banned_until)
         self.mw.chart.setHtml(Webpages.build_banned_page(self.mw.api_manager.banned_until))
         self.mw.chart.show()
 

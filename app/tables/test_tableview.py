@@ -41,7 +41,6 @@ class TestTableView(QtWidgets.QTableView):
         self.setColumnWidth(2, 75)
         self.setColumnWidth(3, 90)
         for i in range(4, 10):
-            # self.setColumnWidth(i, 85)
             self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
 
         self.clicked.connect(self.cell_clicked)
