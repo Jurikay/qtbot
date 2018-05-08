@@ -19,10 +19,11 @@ class DataAsks(QtWidgets.QTableView):
         self.data_dict = None
         self.df = None
         self.mw = app.mw
-        # self.setItemDelegate(AsksDelegate(self))
+        self.setItemDelegate(AsksDelegate(self))
         # self.proxy_model = QtCore.QSortFilterProxyModel()
-        # self.setSortingEnabled(True)
+        self.setSortingEnabled(True)
         self.clicked.connect(self.cell_clicked)
+        self.max_ask = 0
 
     def setup(self):
         
@@ -48,32 +49,50 @@ class DataAsks(QtWidgets.QTableView):
     def update(self):
 
         self.my_model.modelAboutToBeReset.emit()
-        self.df = pd.DataFrame(val["asks"].copy())
+        # self.df = pd.DataFrame(val["asks"].copy())
 
-        self.create_dataframe(val["asks"])
+        self.df = self.create_dataframe(val["asks"])
 
         self.my_model.update(self.df)
 
         self.my_model.modelReset.emit()
 
     def create_dataframe(self, data):
-        print("create dataframe")
-        for ask in val["asks"]:
-            print(ask)
+        df = pd.DataFrame(val["asks"])
+        
+        df.columns = ["Price", "Amount", "Total"]
+        cols = df.columns
+        df[cols] = df[cols].apply(pd.to_numeric, errors='coerce')
+        total = df.Price * df.Amount
+        df["Total"] = total
+        df[""] = ""
+        df['#'] = df.index + 1
+        df = df[["", "#", "Price", "Amount", "Total"]]
+
+        # reverse asks
+        df = df.reindex(index=df.index[::-1])
+        maxval = df["Total"].max()
+        print("MAXVAL", maxval)
+        self.max_ask = maxval
+        return df
 
 
     def set_widths(self):
-        self.horizontalHeader().setDefaultSectionSize(100)
-        self.setColumnWidth(0, 130)
-        self.setColumnWidth(1, 130)
+        self.horizontalHeader().setDefaultSectionSize(20)
+        self.setColumnWidth(0, 1)
+        self.setColumnWidth(1, 25)
         # self.setColumnWidth(2, 60)
         # self.setColumnWidth(3, 60)
-        # for i in range(4, 9):
-        #     self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
+        self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        self.verticalHeader().setDefaultSectionSize(16)
+        self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
+        self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        for i in range(2, 5):
+            self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
 
     def cell_clicked(self, index):
         """Change pair or cancel order"""
-        pass
+        self.update()
 
 
 class AsksModel(QtCore.QAbstractTableModel):
@@ -81,13 +100,14 @@ class AsksModel(QtCore.QAbstractTableModel):
         super(AsksModel, self).__init__()
         self.mw = app.mw
         self.datatable = None
-        self.header_data = ["Price", "Amount", "Total"]
+        self.header_data = ["#", "Price", "Amount", "Total"]
 
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
         """Set header data."""
         if role == QtCore.Qt.DisplayRole:
             if orientation == QtCore.Qt.Horizontal:
-                return self.header_data[section]
+                # return self.header_data[section]
+                return self.datatable.columns[section]
 
 
     def update(self, dataIn):
@@ -109,39 +129,97 @@ class AsksModel(QtCore.QAbstractTableModel):
     def data(self, index, role=QtCore.Qt.DisplayRole):
         if role == QtCore.Qt.DisplayRole:
             if index.isValid():
-                print("data:", str(self.datatable.iloc[index.row(), index.column()]))
                 return str(self.datatable.iloc[index.row(), index.column()])
 
 
-# class AsksDelegate(QtWidgets.QStyledItemDelegate):
-#     """Class to define the style of index values."""
+class AsksDelegate(QtWidgets.QStyledItemDelegate):
+    """Class to define the style of index values."""
 
-#     def __init__(self, parent):
-#         super(AsksDelegate, self).__init__(parent)
-#         self.parent = parent
-#         self.mw = app.mw
+    def __init__(self, parent):
+        super(AsksDelegate, self).__init__(parent)
+        self.parent = parent
+        self.mw = app.mw
 
-#         self.center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-#         self.left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-#         self.right = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        self.left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        self.right = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
-#     def initStyleOption(self, option, index):
-#         """Set style options based on index column."""
-#         if index.column() == 0:
-#             option.text = str(datetime.fromtimestamp(int(str(index.data())[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])
-#         elif index.column() == 1:
-#             option.icon = QtGui.QIcon("images/ico/" + index.data().replace("BTC", "") + ".svg")
-#             option.text = str(index.data())
+    def initStyleOption(self, option, index):
+        """Set style options based on index column."""
+        if index.column() == 1:
+            option.text = str(index.data()).zfill(2)
 
-#         else:
-#             super(AsksDelegate, self).initStyleOption(option, index)
+        elif index.column() == 2:
+            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.mw.decimals)
+
+        elif index.column() == 3:
+            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.mw.assetDecimals)
+
+        elif index.column() == 4:
+            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=3) + " BTC"
+
+        else:
+            super(AsksDelegate, self).initStyleOption(option, index)
 
 
-#     def paint(self, painter, option, index):
-#         """Reimplemented custom paint method."""
-#         painter.save()
-#         options = QtWidgets.QStyleOptionViewItem(option)
-#         self.initStyleOption(options, index)
-#         font = QtGui.QFont()
-#         painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+    def paint(self, painter, option, index):
+        """Reimplemented custom paint method."""
+        painter.save()
+        options = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(options, index)
+        # font = QtGui.QFont()
+        
 
+        if index.column() == 0:
+            
+            # figure out percentage
+            row = index.row()
+            value = self.mw.new_asks.df.iloc[row, 4]
+
+            percentage = value / self.mw.new_asks.max_ask
+            print("percentage", percentage)
+            print(value, "/", self.mw.new_asks.max_ask)
+            painter.setPen(QtGui.QColor("#20262B"))
+            painter.setBrush(QtGui.QColor("#473043"))
+            total_width = self.mw.new_asks.horizontalHeader().width()
+
+            percent1 = float(total_width) / 100
+
+            percent50 = float(self.mw.new_asks.horizontalHeader().width()) / 1.5
+
+            # left = self.mw.new_asks.horizontalHeader().left()
+            my_rect = QtCore.QRect(0, option.rect.top(), (percentage * total_width), options.rect.height())
+            # my_clip = QtCore.QRect(0, option.rect.top(), percent1 * percentage, options.rect.height())
+
+            # painter.setClipRect(my_clip)
+            painter.drawRect(my_rect)
+
+
+
+        elif index.column() == 1:
+            painter.setPen(QtGui.QColor("#ffffff"))
+
+            painter.drawText(option.rect, self.center, options.text)
+
+
+        elif index.column() == 2:
+            painter.setPen(QtGui.QColor(Colors.color_pink))
+            painter.drawText(option.rect, self.center, options.text)
+
+        elif index.column() == 3:
+            painter.drawText(option.rect, self.center, options.text)
+
+
+        elif index.column() == 4:
+            painter.drawText(option.rect, self.center, options.text)
+            
+
+        else:
+            painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+
+        # painter.begin(painter)
+        # painter.drawText(option.rect, self.center, options.text)
+
+        # painter.end()
+
+        painter.restore()
