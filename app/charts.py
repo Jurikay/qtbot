@@ -495,6 +495,9 @@ class Webpages():
             coin_name = "amber"
         elif coin_name == "iExecRLC":
             coin_name = "rlc"
+        elif coin_name == "Bytecoin":
+            coin_name = "bytecoin-bcn"
+        
         print("Generating CMC url: " + str(coin_name))
         url = "https://coinmarketcap.com/currencies/" + coin_name.replace(" ", "-").replace(".", "") + "/"
         return url

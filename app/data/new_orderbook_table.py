@@ -26,7 +26,6 @@ class DataAsks(QtWidgets.QTableView):
         self.max_ask = 0
 
     def setup(self):
-        
         try:
             self.update()
         except (AttributeError, KeyError) as e:
@@ -34,20 +33,16 @@ class DataAsks(QtWidgets.QTableView):
             return
 
 
-
         self.setModel(self.my_model)
         # self.proxy_model.setSourceModel(self.my_model)
-        
-
 
         self.set_widths()
 
         self.sortByColumn(0, QtCore.Qt.DescendingOrder)
 
 
-
-    def update(self):
-
+    def update(self, payload=None):
+        print("asks update")
         self.my_model.modelAboutToBeReset.emit()
         # self.df = pd.DataFrame(val["asks"].copy())
 
@@ -56,6 +51,7 @@ class DataAsks(QtWidgets.QTableView):
         self.my_model.update(self.df)
 
         self.my_model.modelReset.emit()
+
 
     def create_dataframe(self, data):
         df = pd.DataFrame(val["asks"])
@@ -72,7 +68,6 @@ class DataAsks(QtWidgets.QTableView):
         # reverse asks
         df = df.reindex(index=df.index[::-1])
         maxval = df["Total"].max()
-        print("MAXVAL", maxval)
         self.max_ask = maxval
         return df
 

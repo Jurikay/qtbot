@@ -107,6 +107,8 @@ class WebsocketManager:
 
         worker = Worker(partial(self.socket_orderbook, msg))
         worker.signals.progress.connect(self.mw.live_data.progress_orderbook)
+        worker.signals.progress.connect(self.mw.new_asks.update)
+        
         self.threadpool.tryStart(worker)
         self.api_updates += 1
 
