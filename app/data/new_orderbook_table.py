@@ -25,6 +25,14 @@ class DataAsks(QtWidgets.QTableView):
         self.clicked.connect(self.cell_clicked)
         self.max_ask = 0
 
+    def paintEvent(self, event):
+        print("PAINT EVENT")
+        super(DataAsks, self).paintEvent(event)
+        for row in range(self.my_model.rowCount()):
+            rowY = self.rowViewportPosition(row)
+            rowH = self.rowHeight(row)
+            print(rowY, rowH)
+
     def setup(self):
         try:
             self.update()
@@ -157,14 +165,27 @@ class AsksDelegate(QtWidgets.QStyledItemDelegate):
             super(AsksDelegate, self).initStyleOption(option, index)
 
 
-    def paint(self, painter, option, index):
+
+    def paintN(self, painter, option, index):
         """Reimplemented custom paint method."""
         painter.save()
         options = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
-        # font = QtGui.QFont()
-        
 
+        if index.column() == 0:
+            pass
+
+
+
+    def paint(self, painter, option, index):
+        """Reimplemented custom paint method."""
+        painter.save()
+        option.backgroundBrush = QtGui.QBrush(QtCore.Qt.NoBrush)
+        options = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(options, index)
+        # font = QtGui.QFont()
+        options.backgroundBrush = QtGui.QBrush(QtCore.Qt.NoBrush)
+        
         if index.column() == 0:
             
             # figure out percentage
@@ -172,22 +193,23 @@ class AsksDelegate(QtWidgets.QStyledItemDelegate):
             value = self.mw.new_asks.df.iloc[row, 4]
 
             percentage = value / self.mw.new_asks.max_ask
-            print("percentage", percentage)
-            print(value, "/", self.mw.new_asks.max_ask)
+            # print("percentage", percentage)
+            # print(value, "/", self.mw.new_asks.max_ask)
             painter.setPen(QtGui.QColor("#20262B"))
             painter.setBrush(QtGui.QColor("#473043"))
+            bg_brush = QtGui.QBrush(QtGui.QColor("#473043"))
             total_width = self.mw.new_asks.horizontalHeader().width()
 
-            percent1 = float(total_width) / 100
+            # percent1 = float(total_width) / 100
 
-            percent50 = float(self.mw.new_asks.horizontalHeader().width()) / 1.5
+            # percent50 = float(self.mw.new_asks.horizontalHeader().width()) / 1.5
 
             # left = self.mw.new_asks.horizontalHeader().left()
             my_rect = QtCore.QRect(0, option.rect.top(), (percentage * total_width), options.rect.height())
             # my_clip = QtCore.QRect(0, option.rect.top(), percent1 * percentage, options.rect.height())
 
             # painter.setClipRect(my_clip)
-            painter.drawRect(my_rect)
+            painter.fillRect(my_rect, bg_brush)
 
 
 
