@@ -112,6 +112,7 @@ class MyTableModel(QtCore.QAbstractTableModel):
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:
             if index.isValid():
+                
                 return self.datatable.iloc[index.row(), index.column()]
 
 
@@ -203,7 +204,10 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
         
         # painter.setPen(QtGui.QColor(Colors.color_lightgrey))
 
-        alignment = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        alignment = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        align_left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+
+
 
         if index.column() == 0:
             font = QtGui.QFont()
@@ -213,6 +217,11 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
             iconRect = QtCore.QRect(option.rect.left() + 35 - option.rect.height(),
                                     option.rect.top(),
                                     option.rect.height(),
+                                    option.rect.height())
+
+            textRect = QtCore.QRect(option.rect.left() + 45 + iconRect.width() - option.rect.height(),
+                                    option.rect.top(),
+                                    option.rect.width(),
                                     option.rect.height())
 
         
@@ -225,7 +234,7 @@ class IndexDelegate(QtWidgets.QStyledItemDelegate):
             else:
                 painter.setPen(QtGui.QColor(Colors.color_lightgrey))
             
-            painter.drawText(option.rect, alignment, options.text)
+            painter.drawText(textRect, align_left, options.text)
 
             # super(IndexDelegate, self).paint(painter, option, index)
 

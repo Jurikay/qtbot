@@ -7,9 +7,9 @@ import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 import app
 import pandas as pd
-from datetime import datetime
+# from datetime import datetime
 from app.colors import Colors
-from app.init import val
+# from app.init import val
 
 
 class OrderbookTable(QtWidgets.QTableView):
@@ -53,9 +53,11 @@ class OrderbookTable(QtWidgets.QTableView):
                 painter.save()
                 my_rect = QtCore.QRect(0, rowY, (percentage * total_width), rowH)
 
-                bg_brush = QtGui.QBrush(QtGui.QColor(self.bg_color))
+                # bg_brush = QtGui.QBrush(QtGui.QColor(self.bg_color))
+                painter.setBrush(QtGui.QColor(self.bg_color))
+                painter.setPen(QtGui.QColor("#20262b"))
 
-                painter.fillRect(my_rect, bg_brush)
+                painter.drawRect(my_rect)
                 painter.restore()
     
         super(OrderbookTable, self).paintEvent(event)

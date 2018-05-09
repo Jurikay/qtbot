@@ -6,7 +6,7 @@ import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 import app
-# import pandas as pd
+import pandas as pd
 from datetime import datetime
 from app.colors import Colors
 
@@ -108,13 +108,13 @@ class OpenOrdersModel(QtCore.QAbstractTableModel):
 
 
     def rowCount(self, parent=QtCore.QModelIndex()):
-        if not self.datatable.empty:
+        if isinstance(self.datatable, pd.DataFrame):
             return len(self.datatable.index)
         else:
             return 0
 
     def columnCount(self, parent=QtCore.QModelIndex()):
-        if not self.datatable.empty:
+        if isinstance(self.datatable, pd.DataFrame):
             return len(self.datatable.columns.values)
         else:
             return 0

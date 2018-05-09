@@ -13,7 +13,7 @@ from app.init import val
 import app
 from functools import partial
 from binance.websockets import BinanceSocketManager
-from binance.depthcache import DepthCacheManager
+# from binance.depthcache import DepthCacheManager
 
 import pandas as pd
 import time

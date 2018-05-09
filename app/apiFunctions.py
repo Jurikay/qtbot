@@ -236,18 +236,9 @@ class ApiCalls:
 
 
     def api_depth(self, progress_callback):
-    #     print("SETTING ORDERBOOK")
         depth = self.getDepth(self.mw.cfg_manager.pair)
-    #     val["asks"] = depth["asks"]
-    #     self.mw.orderbook = depth
-    #     print(self.mw.orderbook["asks"])
         progress_callback.emit(depth)
-    #     val["bids"] = depth["bids"]
-    #     progress_callback.emit({"bids": val["bids"]})
-    #     val["apiCalls"] += 1
-    #     self.mw.new_bids.setup()
-    #     self.mw.new_asks.setup()
-
+    
 
 
 
@@ -279,8 +270,8 @@ class ApiCalls:
     def save_depth(self, depth):
         print("save depth", depth)
         self.mw.orderbook = depth
-        # self.mw.new_asks.setup()
-        # self.mw.new_bids.setup()
+        self.mw.new_asks.setup()
+        self.mw.new_bids.setup()
 
 
     def get_trade_history(self, pair):

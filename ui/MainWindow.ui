@@ -3210,6 +3210,9 @@
                    <property name="showGrid">
                     <bool>false</bool>
                    </property>
+                   <property name="cornerButtonEnabled">
+                    <bool>false</bool>
+                   </property>
                    <attribute name="horizontalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
@@ -3217,8 +3220,11 @@
                  </item>
                  <item row="1" column="0">
                   <layout class="QVBoxLayout" name="verticalLayout_9">
-                   <property name="bottomMargin">
+                   <property name="spacing">
                     <number>6</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
                    </property>
                    <item>
                     <widget class="QComboBox" name="coin_selector">
@@ -3311,6 +3317,9 @@
                      </property>
                      <property name="sortingEnabled">
                       <bool>true</bool>
+                     </property>
+                     <property name="cornerButtonEnabled">
+                      <bool>false</bool>
                      </property>
                      <attribute name="horizontalHeaderDefaultSectionSize">
                       <number>1</number>
@@ -3413,6 +3422,9 @@
                     <bool>false</bool>
                    </property>
                    <property name="sortingEnabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="cornerButtonEnabled">
                     <bool>false</bool>
                    </property>
                    <attribute name="horizontalHeaderStretchLastSection">
