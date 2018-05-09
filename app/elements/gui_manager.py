@@ -189,7 +189,8 @@ class GuiManager:
 
         elif payload == 15:
             print("scroll to bottom")
-            self.mw.asks_table.scrollToBottom()
+            # self.mw.asks_table.scrollToBottom()
+            self.mw.new_asks.scrollToBottom()
 
 
     # global ui

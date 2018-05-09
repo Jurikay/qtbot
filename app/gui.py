@@ -63,6 +63,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # kann weg:
         # self.trade_history = list()
+        self.orderbook = dict()
         self.klines = dict()
         self.klines["1m"] = dict()
         self.is_connected = False
@@ -79,6 +80,7 @@ class beeserBot(QtWidgets.QMainWindow):
         loadUi("ui/MainWindow.ui", self)
 
         self.button_testgo.clicked.connect(self.new_asks.setup)
+        self.button_testgo.clicked.connect(self.new_bids.setup)
 
         # set external stylesheet
         with open("ui/style.qss", "r") as fh:
@@ -181,6 +183,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.data_open_orders_table.setup()
 
         # self.new_asks.setup()
+        # self.new_bids.setup()
+
+        # self.new_asks.setup()
 
 
     def initialize_data(self):
@@ -206,7 +211,8 @@ class beeserBot(QtWidgets.QMainWindow):
         print("delayed")
 
 
-        self.asks_table.scrollToBottom()
+        # self.asks_table.scrollToBottom()
+        self.new_asks.scrollToBottom()
 
         self.timer.stop()
         logging.info('Finishing setup...')

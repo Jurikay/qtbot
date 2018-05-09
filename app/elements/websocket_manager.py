@@ -105,9 +105,17 @@ class WebsocketManager:
         val["bids"] = msg["bids"]
         val["asks"] = msg["asks"]
 
+        self.mw.mutex.lock()
+        self.mw.orderbook["bids"] = msg["bids"]
+        self.mw.orderbook["asks"] = msg["asks"]
+        self.mw.mutex.unlock()
+
+
         worker = Worker(partial(self.socket_orderbook, msg))
         worker.signals.progress.connect(self.mw.live_data.progress_orderbook)
+        
         worker.signals.progress.connect(self.mw.new_asks.update)
+        worker.signals.progress.connect(self.mw.new_bids.update)
         
         self.threadpool.tryStart(worker)
         self.api_updates += 1
