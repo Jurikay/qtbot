@@ -614,7 +614,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>11</number>
+            <number>9</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -1487,67 +1487,55 @@
              <string>Jirrik</string>
             </attribute>
             <layout class="QHBoxLayout" name="horizontalLayout_47">
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_31">
-               <property name="spacing">
-                <number>-1</number>
+              <widget class="QPushButton" name="table_test_btn">
+               <property name="text">
+                <string>init</string>
                </property>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_48">
-                 <property name="rightMargin">
-                  <number>0</number>
-                 </property>
-                </layout>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="jirrik_search">
-                 <property name="placeholderText">
-                  <string>Search</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="test_ud_btn">
-                 <property name="text">
-                  <string>update</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="add_btn">
-                 <property name="text">
-                  <string>init dict table</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="table_view_btn">
-                 <property name="text">
-                  <string>INIT table</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btn_init_new">
-                 <property name="text">
-                  <string>init new</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btn_init_pd">
-                 <property name="text">
-                  <string>hist</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="TestHist" name="new_test_table">
+               <property name="mouseTracking">
+                <bool>true</bool>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Plain</enum>
+               </property>
+               <property name="lineWidth">
+                <number>0</number>
+               </property>
+               <property name="sizeAdjustPolicy">
+                <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+               </property>
+               <property name="editTriggers">
+                <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <property name="alternatingRowColors">
+                <bool>true</bool>
+               </property>
+               <property name="selectionMode">
+                <enum>QAbstractItemView::NoSelection</enum>
+               </property>
+               <property name="showGrid">
+                <bool>false</bool>
+               </property>
+               <property name="gridStyle">
+                <enum>Qt::DashLine</enum>
+               </property>
+               <property name="sortingEnabled">
+                <bool>true</bool>
+               </property>
+               <attribute name="horizontalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -6609,11 +6597,6 @@
    <header>app/newhist.h</header>
   </customwidget>
   <customwidget>
-   <class>OpenOrdersFinal</class>
-   <extends>QTableView</extends>
-   <header>app/data/data_tables.h</header>
-  </customwidget>
-  <customwidget>
    <class>DataAsks</class>
    <extends>QTableView</extends>
    <header>app/data/new_orderbook_table.h</header>
@@ -6624,9 +6607,19 @@
    <header>app/data/new_orderbook_table.h</header>
   </customwidget>
   <customwidget>
+   <class>OpenOrdersFinal</class>
+   <extends>QTableView</extends>
+   <header>app/data/data_tables.h</header>
+  </customwidget>
+  <customwidget>
    <class>DataTradeHistory</class>
    <extends>QTableView</extends>
    <header>app/data/data_tables.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TestHist</class>
+   <extends>QTableView</extends>
+   <header>app/data/base_table_setup.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

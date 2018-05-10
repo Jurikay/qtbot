@@ -114,10 +114,10 @@ class beeserBot(QtWidgets.QMainWindow):
         self.test_slider_value.valueChanged.connect(self.slider_value)
         self.btn_my_trades.clicked.connect(partial(self.api_manager.api_my_trades, self.cfg_manager.pair))
 
-
-        self.table_view_btn.clicked.connect(self.test_table_view.setup)
+        self.table_test_btn.clicked.connect(self.new_test_table.setup)
+        # self.table_view_btn.clicked.connect(self.test_table_view.setup)
         # self.add_btn.clicked.connect(self.historical.test_all)
-        self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
+        # self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
         # self.btn_init_new.clicked.connect(self.newer_index.setup)
         # self.test_ud_btn.clicked.connect(self.dict_index.update_model_data)
         # self.btn_init_pd.clicked.connect(self.user_data.initial_history)

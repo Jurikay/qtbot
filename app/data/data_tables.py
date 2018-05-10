@@ -36,12 +36,9 @@ class DataOpenOrders(QtWidgets.QTableView):
 
 
     def update(self):
-
         self.my_model.modelAboutToBeReset.emit()
         self.df = self.set_df()
-        print("DATAFRAME", self.df)
         self.my_model.update(self.df)
-
         self.my_model.modelReset.emit()
 
     def set_widths(self):

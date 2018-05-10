@@ -28,12 +28,6 @@ class OrderbookTable(QtWidgets.QTableView):
         self.has_data = False
 
     def paintEvent(self, event):
-        # print("PAINT EVENT")
-        # try:
-        #     row_count = self.my_model.rowCount()
-        # except AttributeError as e:
-        #     print("ERROR", e)
-        #     row_count = None
 
         if self.has_data is True:
             row_count = self.my_model.rowCount()
@@ -152,13 +146,13 @@ class AsksModel(QtCore.QAbstractTableModel):
 
 
     def rowCount(self, parent=QtCore.QModelIndex()):
-        if not self.datatable.empty:
+        if isinstance(self.datatable, pd.DataFrame):
             return len(self.datatable.index)
         else:
             return 0
 
     def columnCount(self, parent=QtCore.QModelIndex()):
-        if not self.datatable.empty:
+        if isinstance(self.datatable, pd.DataFrame):
             return len(self.datatable.columns.values)
         else:
             return 0

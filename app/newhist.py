@@ -12,6 +12,7 @@ from app.colors import Colors
 from app. init import val
 
 
+
 class NewHist(QtWidgets.QTableView):
     """View to display the global trade history of a pair."""
 
@@ -31,6 +32,7 @@ class NewHist(QtWidgets.QTableView):
         """Setup the view."""
 
         self.my_model.update(self.mw.trade_history)
+
         self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self.verticalHeader().setDefaultSectionSize(15)
 
