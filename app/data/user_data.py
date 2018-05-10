@@ -29,13 +29,14 @@ class UserData(QtCore.QObject):
 
 
     def set_save(self, storage, index, value):
-        """Uses mutex to savely set dictionary values."""
+        """Use mutex to savely set dictionary values."""
         self.mutex.lock()
         storage[index] = value
         self.mutex.unlock()
 
 
     def del_save(self, storage, index):
+        """Savely delete a dictionary key."""
         self.mutex.lock()
         storage.pop(index, None)
         self.mutex.unlock()
@@ -51,7 +52,7 @@ class UserData(QtCore.QObject):
         order_id = order["orderId"]
         run_setup = False
 
-        # if no order is open, run setup to initialize table widths
+        # if no order is open, remember to run setup to initialize table widths
         if not len(self.open_orders):
             run_setup = True
         self.set_save(self.open_orders, order_id, order)
@@ -157,3 +158,6 @@ class UserData(QtCore.QObject):
                           "total": total}
 
                 self.set_save(self.current_holdings, coin, values)
+
+    def initial_holdings(self):
+        pass

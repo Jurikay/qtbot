@@ -48,6 +48,8 @@ class beeserBot(QtWidgets.QMainWindow):
 
         super(beeserBot, self).__init__()
 
+        self.version = "alpha 0.1"
+
         self.client = app.client
         self.threadpool = QtCore.QThreadPool()
         self.mutex = QtCore.QMutex()

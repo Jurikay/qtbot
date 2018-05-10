@@ -54,7 +54,7 @@ class InitManager:
 
         logging.info('Initializing GUI')
 
-        self.mw.setWindowTitle("Juris beeser Bot")
+        self.mw.setWindowTitle("Juris Beeser Binance Bot Version " + self.mw.version)
 
         self.mw.setWindowIcon(QtGui.QIcon('images/assets/256.png'))
 

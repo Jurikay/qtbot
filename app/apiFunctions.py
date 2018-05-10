@@ -3,6 +3,9 @@
 
 # made by Jirrik
 
+"""A collection of methods that rely on the Python-Binance API
+implementation to communicate with Binance."""
+
 from functools import partial
 from app.init import val
 from binance.exceptions import BinanceAPIException
@@ -20,8 +23,6 @@ class ApiCalls:
     def __init__(self, mw, tp):
         self.mw = mw
 
-
-    
         self.threadpool = tp
         self.banned_until = None
         self.error = None
@@ -48,8 +49,6 @@ class ApiCalls:
         return int(banned_until)
 
     def initialize(self):
-
-        # print("setting client: " + str(self.client))
 
         if self.client:
             try:
@@ -97,7 +96,6 @@ class ApiCalls:
     def set_pair_values(self):
         """Set various values based on the chosen pair."""
         pair = self.mw.cfg_manager.pair
-        print("ORIG TICKSIZE", str(val["coins"][pair]["tickSize"]))
         val["decimals"] = len(str(val["coins"][pair]["tickSize"])) - 2
         self.mw.decimals = len(str(val["coins"][pair]["tickSize"])) - 2
         if int(val["coins"][pair]["minTrade"]) == 1:
@@ -107,8 +105,8 @@ class ApiCalls:
             val["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
             self.mw.assetDecimals = len(str(val["coins"][pair]["minTrade"])) - 2
 
-        print("PAIR VALUES: ", pair, val["decimals"], val["assetDecimals"])
 
+    # TODO: replace; get_products is depreciated.
     def availablePairs(self):
         """
         Create a dictonary containing all BTC tradepairs excluding USDT.
@@ -304,12 +302,22 @@ class ApiCalls:
 
 #############################################################
 
+    def new_api(self):
+        api_calls = 1
+        btc_pairs = self.get_btc_pairs()
+
+
+        tickers = self.add_ticker_data(btc_pairs)
+        api_calls += (self.all_pairs / 2)
+
+
+
     def exchange_info(self):
         info = self.client.get_exchange_info()
         return info
 
 
-    def new_api(self):
+    def get_btc_pairs(self):
         """Return a dictionary containing all BTC trade pairs.
         Calculate decimal values for every pair."""
 
@@ -317,9 +325,7 @@ class ApiCalls:
         coin_dict = dict()
         all_pairs = 0
         btc_pairs = 0
-        self.api_calls = 0
         info = self.exchange_info()
-        self.api_calls += 1
         for symbol_data in info["symbols"]:
             all_pairs += 1
             print("SYMBOL DATA", symbol_data)
@@ -335,10 +341,9 @@ class ApiCalls:
                 coin_dict[pair]["assetDecimals"] = decimals[1]
                 coin_dict[pair]["tickSize"] = tickSize.rstrip("0")
 
+        self.all_pairs = all_pairs
         # print("ALL PAIRS", all_pairs)
         # self.request_open_orders(coin_dict)
-        self.all_pairs = coin_dict
-        self.add_tickers()
         return coin_dict
 
 
@@ -349,22 +354,21 @@ class ApiCalls:
         return [decimals, assetDecimals]
 
 
-    def add_tickers(self):
+    def add_ticker_data(self, btc_pairs):
         # TODO change
         tickers = val["tickers"]
-        self.api_calls += 1
 
-
-        for pair in self.all_pairs:
+        for pair in btc_pairs:
             # print("allpairs", pair)
 
             ticker_pair = tickers.get(pair)
             for item in ticker_pair.items():
                 # print("ITEM", item)
-                self.all_pairs[pair][item[0]] = item[1]
+                btc_pairs[pair][item[0]] = item[1]
             # print("TICKER PAIR", ticker_pair)
 
-        print(self.all_pairs)
+        # print(btc_pairs)
+        return btc_pairs
 
 
     def request_open_orders(self, coin_dict):
