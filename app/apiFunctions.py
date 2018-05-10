@@ -12,6 +12,7 @@ from app.workers import Worker
 # from app.initApi import set_pair_values
 from binance.client import Client
 from requests.exceptions import ReadTimeout
+import time
 
 
 class ApiCalls:
@@ -26,6 +27,8 @@ class ApiCalls:
         self.error = None
         self.client = self.init_client()
         app.client = self.client
+
+        self.counter = 0
 
     def init_client(self):
         try:
@@ -94,6 +97,7 @@ class ApiCalls:
     def set_pair_values(self):
         """Set various values based on the chosen pair."""
         pair = self.mw.cfg_manager.pair
+        print("ORIG TICKSIZE", str(val["coins"][pair]["tickSize"]))
         val["decimals"] = len(str(val["coins"][pair]["tickSize"])) - 2
         self.mw.decimals = len(str(val["coins"][pair]["tickSize"])) - 2
         if int(val["coins"][pair]["minTrade"]) == 1:
@@ -103,6 +107,7 @@ class ApiCalls:
             val["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
             self.mw.assetDecimals = len(str(val["coins"][pair]["minTrade"])) - 2
 
+        print("PAIR VALUES: ", pair, val["decimals"], val["assetDecimals"])
 
     def availablePairs(self):
         """
@@ -116,7 +121,7 @@ class ApiCalls:
 
         # API Call
         products = self.client.get_products()
-
+        print("PRODUCTS", products)
         # For every entry in API answer:
         for i, pair in enumerate(products["data"]):
 
@@ -295,3 +300,99 @@ class ApiCalls:
         worker = Worker(partial(self.mw.api_manager.api_cancel_order, app.client, order_id, symbol))
         # worker.signals.progress.connect(self.cancel_callback)
         self.threadpool.start(worker)
+
+
+#############################################################
+
+    def exchange_info(self):
+        info = self.client.get_exchange_info()
+        return info
+
+
+    def new_api(self):
+        """Return a dictionary containing all BTC trade pairs.
+        Calculate decimal values for every pair."""
+
+        print("NEW API")
+        coin_dict = dict()
+        all_pairs = 0
+        btc_pairs = 0
+        self.api_calls = 0
+        info = self.exchange_info()
+        self.api_calls += 1
+        for symbol_data in info["symbols"]:
+            all_pairs += 1
+            print("SYMBOL DATA", symbol_data)
+            if symbol_data["quoteAsset"] == "BTC":
+                btc_pairs += 1
+                pair = symbol_data["symbol"]
+
+                coin_dict[pair] = dict()
+                tickSize = str(symbol_data["filters"][0]["tickSize"])
+                minTrade = str(symbol_data["filters"][1]["minQty"])
+                decimals = self.calculate_decimals(tickSize, minTrade)
+                coin_dict[pair]["decimals"] = decimals[0]
+                coin_dict[pair]["assetDecimals"] = decimals[1]
+                coin_dict[pair]["tickSize"] = tickSize.rstrip("0")
+
+        # print("ALL PAIRS", all_pairs)
+        # self.request_open_orders(coin_dict)
+        self.all_pairs = coin_dict
+        self.add_tickers()
+        return coin_dict
+
+
+    def calculate_decimals(self, tickSize, minTrade):
+        """Returns asset and quote asset decimal precision."""
+        decimals = len(str(tickSize.rstrip("0"))) - 2
+        assetDecimals = len(str(minTrade.rstrip("0"))) - 2
+        return [decimals, assetDecimals]
+
+
+    def add_tickers(self):
+        # TODO change
+        tickers = val["tickers"]
+        self.api_calls += 1
+
+
+        for pair in self.all_pairs:
+            # print("allpairs", pair)
+
+            ticker_pair = tickers.get(pair)
+            for item in ticker_pair.items():
+                # print("ITEM", item)
+                self.all_pairs[pair][item[0]] = item[1]
+            # print("TICKER PAIR", ticker_pair)
+
+        print(self.all_pairs)
+
+
+    def request_open_orders(self, coin_dict):
+        order_dict = dict
+        self.start_time = time.time()
+        for pair in coin_dict:
+            self.counter += 1
+            # print(pair)
+            # print(type(pair))
+            # orders = self.client.get_open_orders(symbol=pair)
+            worker = Worker(partial(self.requests_per_pair, pair))
+            worker.signals.progress.connect(self.requests_callback)
+            self.threadpool.start(worker)
+            # order_dict[pair] = orders
+        print("DONE")
+
+
+    def requests_per_pair(self, pair, progress_callback):
+        trades = self.client.get_recent_trades(symbol=pair)
+        progress_callback.emit([pair, trades])
+
+    def requests_callback(self, payload):
+        # print("callbakc received")
+        self.counter -= 1
+        # print(self.counter)
+        # print(payload)
+        # print("################")
+
+        if self.counter == 0:
+            print("FINISHED")
+            print(self.start_time - time.time())

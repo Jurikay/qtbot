@@ -30,14 +30,13 @@ class BaseTableView(QtWidgets.QTableView):
             self.df = None
             self.mw = app.mw
             # self.setItemDelegate(AsksDelegate(self))
-            # self.proxy_model = QtCore.QSortFilterProxyModel()
+            self.proxy_model = QtCore.QSortFilterProxyModel()
             self.setSortingEnabled(True)
             self.clicked.connect(self.cell_clicked)
             self.max_order = 0
             self.data = None
             self.has_data = False
             self.color_background = False
-            # 
             self.has_proxy = False
 
 
@@ -209,7 +208,7 @@ class SortFilterModel(QtCore.QAbstractTableModel):
 class BasicDelegate(QtWidgets.QStyledItemDelegate):
     """Basic style delegate"""
 
-    def __init__(self, parent, text_color):
+    def __init__(self, parent, text_color=Colors.color_lightgrey):
         super(BasicDelegate, self).__init__(parent)
         self.parent = parent
         self.mw = app.mw
@@ -294,9 +293,15 @@ class TestHist(BaseTableView):
         super(TestHist, self).__init__()
         # PairDelegate = 
         self.setItemDelegateForColumn(1, PairDelegate(self))
-        # self.setItemDelegateForColumn(2, BasicDelegate)
-
+        self.setItemDelegateForColumn(2, BasicDelegate(self, "#ff0077"))
+        self.setItemDelegateForColumn(3, BasicDelegate(self))
+        self.has_proxy = True
 
     def set_df(self):
-        print("set true df")
+        # print("set true df")
+        self.mw.api_manager.new_api()
         return self.mw.user_data.create_dataframe()
+        
+
+
+    

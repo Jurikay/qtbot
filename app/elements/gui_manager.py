@@ -201,7 +201,7 @@ class GuiManager:
         val["timeRunning"] += 1
 
 
-        charts_index = self.mw.ChartTabs.currentIndex()
+        # charts_index = self.mw.ChartTabs.currentIndex()
 
         data_index = self.mw.tabsBotLeft.currentIndex()
 
@@ -218,7 +218,7 @@ class GuiManager:
 
 
         if self.mw.new_coin_table is True and data_index == 0:
-            print("update")
+            # print("update")
             self.mw.test_table_view.coin_update()
 
         # if self.mw.new_coin_table is True:

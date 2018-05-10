@@ -95,7 +95,7 @@ class HistoryModel(QtCore.QAbstractTableModel):
 
     def update(self, new_data):
         """Update model data. Does not create a copy."""
-        print("update")
+        # print("update")
         self.model_data = new_data
 
     def data(self, index, role):
