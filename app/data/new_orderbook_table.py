@@ -87,7 +87,6 @@ class OrderbookTable(QtWidgets.QTableView):
 
 
     def create_dataframe(self, side):
-        print("Create_dataframe")
         if side == "asks":
             df = pd.DataFrame(self.mw.orderbook["asks"])
         elif side == "bids":

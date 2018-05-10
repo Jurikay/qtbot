@@ -37,7 +37,7 @@ class UserData(QtCore.QObject):
 
     def del_save(self, storage, index):
         self.mutex.lock()
-        del storage[index]
+        storage.pop(index, None)
         self.mutex.unlock()
 
 
@@ -67,8 +67,9 @@ class UserData(QtCore.QObject):
             if run_setup:
                 print("RUNNING SETUP")
                 self.mw.data_open_orders_table.setup()
+                self.mw.data_open_orders_table.set_data()
             else:
-                self.mw.data_open_orders_table.update()
+                self.mw.data_open_orders_table.set_data()
 
 
     def initial_open_orders(self):
@@ -92,8 +93,9 @@ class UserData(QtCore.QObject):
 
         if self.open_orders:
             df = pd.DataFrame.from_dict(self.open_orders, orient='index')
-            sorted_df = df[["time", "symbol", "type", "side", "price", "origQty", "filled_percent", "total_btc", "orderId", "cancel"]]
-            return sorted_df
+            df = df[["time", "symbol", "type", "side", "price", "origQty", "filled_percent", "total_btc", "orderId", "cancel"]]
+            df.columns = ["Date & Time", "Pair", "Type", "Side", "Price", "Quantity", "Filled %", "Total", "id", "cancel"]
+            return df
         else:
             # return an empty dataframe if no orders are open.
             return pd.DataFrame()

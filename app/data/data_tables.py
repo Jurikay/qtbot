@@ -23,34 +23,23 @@ class DataOpenOrders(QtWidgets.QTableView):
         self.setSortingEnabled(True)
         self.clicked.connect(self.cell_clicked)
 
-
     def setup(self):
 
-        try:
-            self.update()
-        except (AttributeError, KeyError) as e:
-            print("UPDATE ERROR!", e)
-            return
-
-
+        self.update()
 
         if self.my_model.rowCount():
-
             self.proxy_model.setSourceModel(self.my_model)
             self.setModel(self.proxy_model)
 
-
             self.set_widths()
-
             self.sortByColumn(0, QtCore.Qt.DescendingOrder)
-        else:
-            print("NO ROWS")
 
 
     def update(self):
 
         self.my_model.modelAboutToBeReset.emit()
-        self.df = self.mw.user_data.create_dataframe()
+        self.df = self.set_df()
+        print("DATAFRAME", self.df)
         self.my_model.update(self.df)
 
         self.my_model.modelReset.emit()
@@ -92,15 +81,12 @@ class OpenOrdersModel(QtCore.QAbstractTableModel):
         super(OpenOrdersModel, self).__init__()
         self.mw = app.mw
         self.datatable = None
-        self.header_data = ["Date & Time", "Pair", "Type", "Side", "Price", "Quantity", "Filled %", "Total", "id", "cancel"]
 
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
         """Set header data."""
         if role == QtCore.Qt.DisplayRole:
             if orientation == QtCore.Qt.Horizontal:
-                # return self.headers[section]
-                # return self.datatable.columns[section]
-                return self.header_data[section]
+                return self.datatable.columns[section]
 
 
     def update(self, dataIn):
@@ -217,3 +203,26 @@ class OpenOrdersDelegate(QtWidgets.QStyledItemDelegate):
             painter.setPen(QtGui.QColor(Colors.color_lightgrey))
             painter.drawText(option.rect, self.center, options.text)
         painter.restore()
+
+
+class DataTradeHistory(DataOpenOrders):
+    def __init__(self, *args, **kwargs):
+        DataOpenOrders.__init__(self, *args, **kwargs)
+
+        self.data = ""
+
+
+
+class OpenOrdersFinal(DataOpenOrders):
+    def __init__(self, *args, **kwargs):
+        DataOpenOrders.__init__(self, *args, **kwargs)
+        self.data = None
+
+
+    def set_data(self):
+        self.data = self.mw.user_data.create_dataframe()
+        print("SETTING DATA", self.data)
+        self.update()
+
+    def set_df(self):
+        return self.mw.user_data.create_dataframe()

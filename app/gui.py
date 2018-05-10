@@ -38,6 +38,7 @@ from app.data.historical_data import HistoricalData
 from app.data.user_data import UserData
 from app.init import val
 
+
 class beeserBot(QtWidgets.QMainWindow):
     """Main ui class."""
 
@@ -180,7 +181,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # new:
         self.test_table_view.setup()
         # self.test_table_view_2.setup()
-        self.data_open_orders_table.setup()
+        self.data_open_orders_table.set_data()
 
         # self.new_asks.setup()
         # self.new_bids.setup()

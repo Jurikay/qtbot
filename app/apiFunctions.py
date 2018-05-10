@@ -231,7 +231,7 @@ class ApiCalls:
 
     def api_history(self, progress_callback):
         trade_history = self.getTradehistory(self.mw.cfg_manager.pair)
-        progress_callback.emit({"history": reversed(trade_history)})
+        progress_callback.emit({"history": list(reversed(trade_history))})
         val["apiCalls"] += 1
 
 
