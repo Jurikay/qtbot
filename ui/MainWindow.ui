@@ -1488,11 +1488,22 @@
             </attribute>
             <layout class="QHBoxLayout" name="horizontalLayout_47">
              <item>
-              <widget class="QPushButton" name="table_test_btn">
-               <property name="text">
-                <string>init</string>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <item>
+                <widget class="QPushButton" name="table_test_btn">
+                 <property name="text">
+                  <string>init</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="print_btn">
+                 <property name="text">
+                  <string>print</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
               <widget class="TestHist" name="new_test_table">

@@ -24,8 +24,18 @@ class UserData(QtCore.QObject):
 
         self.open_orders = dict()
         self.trade_history = dict()
-        self.current_holdings = dict()
+        self.holdings = dict()
         # self.initial_open_orders()
+
+
+    def initialize(self):
+        self.initial_open_orders()
+        self.initial_history()
+        self.initial_holdings()
+
+        self.mw.print_btn.clicked.connect(self.print_dicts)
+
+        
 
 
     def set_save(self, storage, index, value):
@@ -42,6 +52,14 @@ class UserData(QtCore.QObject):
         self.mutex.unlock()
 
 
+    def print_dicts(self):
+        print("USER DATA:")
+        print("###############")
+        print(self.open_orders)
+        print("###############")
+        print(self.trade_history)
+        print("###############")
+        print(self.holdings)
 
 
     #################################################################
@@ -111,6 +129,7 @@ class UserData(QtCore.QObject):
 
     def update_order(self, order):
         order_id = order["orderId"]
+        self.set_save(self.open_orders, order_id, order)
         
 
 
@@ -120,6 +139,7 @@ class UserData(QtCore.QObject):
     #################################################################
 
     def add_to_history(self, order):
+        # print("ADD TO HIST", order)
         order_id = order["orderId"]
         pair = order["symbol"]
         if not self.trade_history.get(pair):
@@ -129,11 +149,14 @@ class UserData(QtCore.QObject):
 
 
     def initial_history(self):
-        print("Initial history")
+        
         pair = self.mw.cfg_manager.pair
+        # print("Initial history", pair)
         history = self.mw.api_manager.api_my_trades(pair)
 
         for entry in history:
+            entry["symbol"] = pair
+            # print("init hist", entry)
             self.add_to_history(entry)
 
 
@@ -144,20 +167,32 @@ class UserData(QtCore.QObject):
 
     def update_accholdings(self, holdings):
         """Receives a list of updated holdings.
-        Stores values in dictionary current_holdings."""
+        Stores values in dictionary holdings."""
 
-        if isinstance(holdings, list):
-            for holding in holdings:
-                coin = holding["a"]
-                free = holding["f"]
-                locked = holding["l"]
-                total = float(free) + float(locked)
+        print("update holdings", holdings)
 
-                values = {"free": free,
-                          "locked": locked,
-                          "total": total}
+        for holding in holdings:
+            print(holding)
+            # coin = holding[0]
+            # free = holding[1]["free"]
+            # locked = holding[1]["locked"]
+            # total = float(free) + float(locked)
 
-                self.set_save(self.current_holdings, coin, values)
+                # coin = holding["a"]
+                # free = holding["f"]
+                # locked = holding["l"]
+                # total = float(free) + float(locked)
+
+            # values = {"free": free,
+                    #   "locked": locked,
+                    #   "total": total}
+
+            # self.set_save(self.holdings, coin, values)
 
     def initial_holdings(self):
-        pass
+        holdings = self.mw.api_manager.getHoldings()
+        print("init holdings", holdings)
+
+        self.update_accholdings(holdings)
+
+

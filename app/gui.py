@@ -197,10 +197,11 @@ class beeserBot(QtWidgets.QMainWindow):
         
 
         self.user_data = UserData(self, self.mutex)
-
+        
+        self.user_data.initialize()
         # INITITALIZE API HEAVY STUFF TODO refactor; skip api parameter
         if not val["jirrik"]:
-            self.user_data.initial_open_orders()
+            # self.user_data.initial_open_orders()
             self.historical.get_kline_values()
 
 

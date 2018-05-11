@@ -53,7 +53,7 @@ class ApiCalls:
         if self.client:
             try:
                 # print("get account:", self.client.get_account())
-                print("get account status:", self.client.get_account_status())
+                # print("get account status:", self.client.get_account_status())
 
 
                 val["coins"] = self.availablePairs()
@@ -119,7 +119,6 @@ class ApiCalls:
 
         # API Call
         products = self.client.get_products()
-        print("PRODUCTS", products)
         # For every entry in API answer:
         for i, pair in enumerate(products["data"]):
 
@@ -271,7 +270,7 @@ class ApiCalls:
 
 
     def save_depth(self, depth):
-        print("save depth", depth)
+        # print("save depth", depth)
         self.mw.orderbook = depth
         self.mw.new_asks.setup()
         self.mw.new_bids.setup()
@@ -303,9 +302,9 @@ class ApiCalls:
 #############################################################
 
     def new_api(self):
+        print("NEW API CALLS")
         api_calls = 1
         btc_pairs = self.get_btc_pairs()
-
 
         tickers = self.add_ticker_data(btc_pairs)
         api_calls += (self.all_pairs / 2)
@@ -326,12 +325,12 @@ class ApiCalls:
         all_pairs = 0
         btc_pairs = 0
         self.number_api_calls = 0
-        self.number
+        # self.number
         info = self.exchange_info()
         self.number_api_calls += 1
         for symbol_data in info["symbols"]:
             all_pairs += 1
-            print("SYMBOL DATA", symbol_data)
+            # print("SYMBOL DATA", symbol_data)
             if symbol_data["quoteAsset"] == "BTC":
                 btc_pairs += 1
                 pair = symbol_data["symbol"]
