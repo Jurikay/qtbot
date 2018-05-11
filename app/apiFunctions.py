@@ -325,7 +325,10 @@ class ApiCalls:
         coin_dict = dict()
         all_pairs = 0
         btc_pairs = 0
+        self.number_api_calls = 0
+        self.number
         info = self.exchange_info()
+        self.number_api_calls += 1
         for symbol_data in info["symbols"]:
             all_pairs += 1
             print("SYMBOL DATA", symbol_data)
@@ -357,6 +360,8 @@ class ApiCalls:
     def add_ticker_data(self, btc_pairs):
         # TODO change
         tickers = val["tickers"]
+        self.number_api_calls += 1
+
 
         for pair in btc_pairs:
             # print("allpairs", pair)
