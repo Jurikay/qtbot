@@ -28,21 +28,22 @@ class WebsocketManager:
         self.client = client
         self.api_updates = 0
 
-        self.socket_mgr = None
+        # self.socket_mgr = None
 
         self.tickers = dict()
 
 
-        # self.userWebsocket = None
-        # self.tickerWebsocket = None
+        self.userWebsocket = None
+        self.tickerWebsocket = None
 
-        # self.aggTradeSocket = None
-        # self.depthSocket = None
-        # self.klineSocket1 = None
-        # self.klineSocket5 = None
+        self.aggTradeSocket = None
+        self.depthSocket = None
+        self.klineSocket1 = None
+        self.klineSocket5 = None
 
         # self.index_data = dict()
         self.index_df = None
+        self.socket_mgr = BinanceSocketManager(self.client)
 
     # websockets
     def schedule_websockets(self):
@@ -59,9 +60,10 @@ class WebsocketManager:
     # sockets
     def start_sockets(self, progress_callback):
         print("START SOCKETS!!!")
-        self.socket_mgr = BinanceSocketManager(self.client)
+        
+
         self.websockets_symbol()
-        # time.sleep(0.1)
+        # time.sleep(0.25)
         # start user and ticker websocket separately since it does not need to be restarted
         self.userWebsocket = self.socket_mgr.start_user_socket(self.user_callback)
         print("user socket:", self.userWebsocket)
@@ -77,16 +79,17 @@ class WebsocketManager:
     def stop_sockets(self):
         self.socket_mgr.stop_socket(self.aggTradeSocket)
         self.socket_mgr.stop_socket(self.depthSocket)
-        self.socket_mgr.stop_socket(self.klineSocket1)
+        # self.socket_mgr.stop_socket(self.klineSocket1)
         # self.socket_mgr.stop_socket(self.klineSocket5)
 
 
     def websockets_symbol(self):
         """Symbol specific websockets. This gets called on pair change."""
+        # self.depthSocket = self.socket_mgr.start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
         self.aggTradeSocket = self.socket_mgr.start_aggtrade_socket(self.mw.cfg_manager.pair, self.trade_callback)
-        self.depthSocket = self.socket_mgr.start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
-        print("depth socket", self.depthSocket)
-        self.klineSocket1 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="1m")
+        
+        # print("depth socket", self.depthSocket)
+        # self.klineSocket1 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="1m")
         # self.klineSocket5 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="5m")
         # logging.info('Starting websockets for %s' % str(self.mw.cfg_manager.pair))
 
@@ -110,7 +113,8 @@ class WebsocketManager:
 
 
     def depth_callback(self, msg):
-
+        if msg["e"] == "error":
+            print("DEPTH ERROR!!!")
         val["bids"] = msg["bids"]
         val["asks"] = msg["asks"]
 
