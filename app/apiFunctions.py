@@ -83,6 +83,9 @@ class ApiCalls:
                     print("BINANCE API DOWN!!!")
                 elif "get_products" in str(e):
                     print("PUBLIC API DOWN")
+                elif "code=-1021" in str(e):
+                    print("ZEITFUCK")
+                    self.error = "time"
 
         else:
             print("CLIENT NOT DEFINED! BANNED!")
