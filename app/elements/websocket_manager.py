@@ -10,11 +10,10 @@ from app.workers import Worker
 # import PyQt5.QtGui as QtGui
 # import PyQt5.QtCore as QtCore
 from app.init import val
-import app
+# import app
 from functools import partial
 from binance.websockets import BinanceSocketManager
 # from binance.depthcache import DepthCacheManager
-
 import pandas as pd
 import time
 
@@ -34,13 +33,13 @@ class WebsocketManager:
         self.tickers = dict()
 
 
-        self.userWebsocket = None
-        self.tickerWebsocket = None
+        # self.userWebsocket = None
+        # self.tickerWebsocket = None
 
-        self.aggTradeSocket = None
-        self.depthSocket = None
-        self.klineSocket1 = None
-        self.klineSocket5 = None
+        # self.aggTradeSocket = None
+        # self.depthSocket = None
+        # self.klineSocket1 = None
+        # self.klineSocket5 = None
 
         # self.index_data = dict()
         self.index_df = None
@@ -60,32 +59,42 @@ class WebsocketManager:
     # sockets
     def start_sockets(self, progress_callback):
         print("START SOCKETS!!!")
-        self.socket_mgr = BinanceSocketManager(app.client)
+        self.socket_mgr = BinanceSocketManager(self.client)
         self.websockets_symbol()
+        # time.sleep(0.1)
         # start user and ticker websocket separately since it does not need to be restarted
         self.userWebsocket = self.socket_mgr.start_user_socket(self.user_callback)
+        print("user socket:", self.userWebsocket)
+
+        # time.sleep(0.1)
         self.tickerWebsocket = self.socket_mgr.start_ticker_socket(self.ticker_callback)
+        print("ticker socket:", self.tickerWebsocket)
+
+        # time.sleep(0.1)
+        print("socket manager", self.socket_mgr)
         self.socket_mgr.start()
 
     def stop_sockets(self):
         self.socket_mgr.stop_socket(self.aggTradeSocket)
         self.socket_mgr.stop_socket(self.depthSocket)
         self.socket_mgr.stop_socket(self.klineSocket1)
-        self.socket_mgr.stop_socket(self.klineSocket5)
+        # self.socket_mgr.stop_socket(self.klineSocket5)
 
 
     def websockets_symbol(self):
         """Symbol specific websockets. This gets called on pair change."""
         self.aggTradeSocket = self.socket_mgr.start_aggtrade_socket(self.mw.cfg_manager.pair, self.trade_callback)
         self.depthSocket = self.socket_mgr.start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
+        print("depth socket", self.depthSocket)
         self.klineSocket1 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="1m")
-        self.klineSocket5 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="5m")
+        # self.klineSocket5 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="5m")
         # logging.info('Starting websockets for %s' % str(self.mw.cfg_manager.pair))
+
+
 
     ###########################
     # CALLBACKS
     ###########################
-
 
     def trade_callback(self, msg):
         self.mw.trade_history.insert(0, [msg["p"], msg["q"], bool(msg["m"]), msg["T"]])
@@ -137,7 +146,8 @@ class WebsocketManager:
                 val["accHoldings"][userMsg["B"][i]["a"]] = {"free": userMsg["B"][i]["f"], "locked": userMsg["B"][i]["l"]}
                 self.mw.mutex.unlock()
 
-            self.mw.user_data.update_accholdings(userMsg["B"])
+            # self.mw.user_data.update_accholdings(userMsg["B"])
+            self.mw.user_data.update_holdings(userMsg["B"])
 
             worker = Worker(self.socket_update_holdings)
 
@@ -215,6 +225,7 @@ class WebsocketManager:
 
 
     def ticker_callback(self, msg):
+        print("TICKER CALLBACK")
         self.api_updates += 1
         df_data = dict()
         for value in msg:
@@ -251,10 +262,12 @@ class WebsocketManager:
 
         # self.mw.index_data.websocket_update(df_data)
 
-        worker = Worker(partial(self.socket_tickers, df_data))
-        worker.signals.progress.connect(self.mw.index_data.merge_df)
-        self.threadpool.tryStart(worker)
-        # self.build_from_val()
+        # worker = Worker(partial(self.socket_tickers, df_data))
+        # worker.signals.progress.connect(self.mw.index_data.merge_df)
+        # self.threadpool.start(worker)
+       
+        self.mw.index_data.merge_df(df_data)
+       
 
 
 

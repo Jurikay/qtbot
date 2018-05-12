@@ -1486,27 +1486,9 @@
             <attribute name="title">
              <string>Jirrik</string>
             </attribute>
-            <layout class="QHBoxLayout" name="horizontalLayout_47">
+            <layout class="QVBoxLayout" name="verticalLayout_31">
              <item>
-              <layout class="QVBoxLayout" name="verticalLayout_7">
-               <item>
-                <widget class="QPushButton" name="table_test_btn">
-                 <property name="text">
-                  <string>init</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="print_btn">
-                 <property name="text">
-                  <string>print</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="TestHist" name="new_test_table">
+              <widget class="TestOpenOrders" name="new_test_table">
                <property name="mouseTracking">
                 <bool>true</bool>
                </property>
@@ -1546,7 +1528,51 @@
                <attribute name="horizontalHeaderStretchLastSection">
                 <bool>true</bool>
                </attribute>
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
               </widget>
+             </item>
+             <item>
+              <widget class="TestHist" name="test_hist">
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
+              </widget>
+             </item>
+             <item>
+              <widget class="TestIndex" name="test_index"/>
+             </item>
+             <item>
+              <widget class="TestHoldings" name="test_holding"/>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QPushButton" name="table_test_btn">
+                 <property name="text">
+                  <string>init</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="print_btn">
+                 <property name="text">
+                  <string>print</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="create_df_btn">
+                 <property name="text">
+                  <string>create df</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
@@ -2124,7 +2150,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>1</number>
            </property>
            <property name="movable">
             <bool>false</bool>
@@ -3271,6 +3297,9 @@
                    <attribute name="horizontalHeaderVisible">
                     <bool>false</bool>
                    </attribute>
+                   <attribute name="verticalHeaderVisible">
+                    <bool>false</bool>
+                   </attribute>
                   </widget>
                  </item>
                  <item row="1" column="0">
@@ -3383,6 +3412,9 @@
                       <number>0</number>
                      </attribute>
                      <attribute name="horizontalHeaderStretchLastSection">
+                      <bool>false</bool>
+                     </attribute>
+                     <attribute name="verticalHeaderVisible">
                       <bool>false</bool>
                      </attribute>
                     </widget>
@@ -6608,6 +6640,11 @@
    <header>app/newhist.h</header>
   </customwidget>
   <customwidget>
+   <class>OpenOrdersFinal</class>
+   <extends>QTableView</extends>
+   <header>app/data/data_tables.h</header>
+  </customwidget>
+  <customwidget>
    <class>DataAsks</class>
    <extends>QTableView</extends>
    <header>app/data/new_orderbook_table.h</header>
@@ -6618,17 +6655,27 @@
    <header>app/data/new_orderbook_table.h</header>
   </customwidget>
   <customwidget>
-   <class>OpenOrdersFinal</class>
-   <extends>QTableView</extends>
-   <header>app/data/data_tables.h</header>
-  </customwidget>
-  <customwidget>
    <class>DataTradeHistory</class>
    <extends>QTableView</extends>
    <header>app/data/data_tables.h</header>
   </customwidget>
   <customwidget>
    <class>TestHist</class>
+   <extends>QTableView</extends>
+   <header>app/data/base_table_setup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TestOpenOrders</class>
+   <extends>QTableView</extends>
+   <header>app/data/base_table_setup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TestIndex</class>
+   <extends>QTableView</extends>
+   <header>app/data/base_table_setup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>TestHoldings</class>
    <extends>QTableView</extends>
    <header>app/data/base_table_setup.h</header>
   </customwidget>

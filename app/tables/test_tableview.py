@@ -64,7 +64,7 @@ class TestTableView(QtWidgets.QTableView):
 
         self.df = self.mw.index_data.coin_index
         self.my_model.update(self.df)
-        self.my_model.sort(self.my_model.order_col, self.my_model.order_dir)
+        
 
 
     def search_edited(self, searchText=None):
@@ -99,6 +99,7 @@ class MyTableModel(QtCore.QAbstractTableModel):
 
     def update(self, dataIn):
         self.datatable = dataIn
+        self.sort(self.order_col, self.order_dir)
 
 
     def rowCount(self, parent=QtCore.QModelIndex()):
