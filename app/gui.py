@@ -62,7 +62,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.trade_history = list()
 
-
+        self.tickers = None
 
         # kann weg:
         # self.trade_history = list()
@@ -84,6 +84,8 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.button_testgo.clicked.connect(self.new_asks.setup)
         self.button_testgo.clicked.connect(self.new_bids.setup)
+
+
 
         # set external stylesheet
         with open("ui/style.qss", "r") as fh:
@@ -117,6 +119,11 @@ class beeserBot(QtWidgets.QMainWindow):
         self.btn_my_trades.clicked.connect(partial(self.api_manager.api_my_trades, self.cfg_manager.pair))
 
         self.table_test_btn.clicked.connect(self.new_test_table.setup)
+        self.table_test_btn.clicked.connect(self.test_hist.setup)
+        self.table_test_btn.clicked.connect(self.test_index.setup)
+        self.table_test_btn.clicked.connect(self.test_holding.setup)
+        
+
         # self.table_view_btn.clicked.connect(self.test_table_view.setup)
         # self.add_btn.clicked.connect(self.historical.test_all)
         # self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
@@ -144,6 +151,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.init_manager = InitManager(self)
         self.init_manager.initialize()
 
+        # new
+        self.api_manager.new_api()
+
         self.check_connection()
 
 
@@ -164,7 +174,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
     def instantiate_api_managers(self):
-        self.websocket_manager = WebsocketManager(self, self.threadpool, self.client)
+        self.websocket_manager = WebsocketManager(self, self.threadpool, app.client)
 
         self.table_manager = TableManager(self)
         self.table_manager.init_filter()
@@ -203,6 +213,8 @@ class beeserBot(QtWidgets.QMainWindow):
         if not val["jirrik"]:
             # self.user_data.initial_open_orders()
             self.historical.get_kline_values()
+
+        self.create_df_btn.clicked.connect(self.user_data.create_history_df)
 
 
 

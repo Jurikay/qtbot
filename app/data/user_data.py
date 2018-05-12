@@ -142,6 +142,7 @@ class UserData(QtCore.QObject):
         # print("ADD TO HIST", order)
         order_id = order["orderId"]
         pair = order["symbol"]
+        order["total"] = float(order["qty"]) * float(order["price"])
         if not self.trade_history.get(pair):
             self.trade_history[pair] = dict()
 
@@ -160,39 +161,121 @@ class UserData(QtCore.QObject):
             self.add_to_history(entry)
 
 
+    def create_history_df(self):
+        """Create a pandas dataframe suitable for displaying trade history."""
+        print("CREATE HISTORY DF")
+        history = dict()
+        for _, historical_trade in self.trade_history.items():
+            print(historical_trade)
+            for item in historical_trade.items():
+                values = item[1]
+                order_id = item[0]
+                if values["isBuyer"] == "True":
+                    values["side"] = "BUY"
+                else:
+                    values["side"] = "SELL"
+
+                history[order_id] = values
+
+            print(type(historical_trade))
+            # print(historical_trade[0])
+            # print(historical_trade[1])
+            print("#############")
+
+        if self.trade_history:
+            df = pd.DataFrame.from_dict(history, orient='index')
+            print("DATAFRAME", df)
+            df = df[["time", "symbol", "side", "price", "qty", "total", "orderId"]]
+            df.columns = ["Date & Time", "Pair", "Side", "Price", "Quantity", "Total", "id"]
+            final_df = df.apply(pd.to_numeric, errors='ignore')
+            # final_df = df
+            return final_df
+        else:
+            return pd.DataFrame()
+
+        #     order["filled_percent"] = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float((order["origQty"])) * 100), digits=2) + "%"
+        #     order["total_btc"] = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
+        #     order["cancel"] = "cancel"
+            
+        #     order_id = order["orderId"]
+        #     self.set_save(self.open_orders, order_id, order)
+
+        # if self.open_orders:
+        #     df = pd.DataFrame.from_dict(self.open_orders, orient='index')
+        #     df = df[["time", "symbol", "type", "side", "price", "origQty", "filled_percent", "total_btc", "orderId", "cancel"]]
+        #     df.columns = ["Date & Time", "Pair", "Type", "Side", "Price", "Quantity", "Filled %", "Total", "id", "cancel"]
+        #     return df
+        # else:
+        #     # return an empty dataframe if no orders are open.
+        #     return pd.DataFrame()
+
 
     #################################################################
     # ACCOUNT HOLDINGS
     #################################################################
 
-    def update_accholdings(self, holdings):
-        """Receives a list of updated holdings.
-        Stores values in dictionary holdings."""
+    def set_accholdings(self, holdings):
+        """Receives a dict of holdings.
+        Stores values in dictionary self.holdings."""
 
-        print("update holdings", holdings)
+        for holding in holdings.items():
+            coin = holding[0]
+            free = holding[1]["free"]
+            locked = holding[1]["locked"]
+            
 
-        for holding in holdings:
-            print(holding)
-            # coin = holding[0]
-            # free = holding[1]["free"]
-            # locked = holding[1]["locked"]
-            # total = float(free) + float(locked)
+            values = self.get_holdings_array(coin, free, locked)
 
-                # coin = holding["a"]
-                # free = holding["f"]
-                # locked = holding["l"]
-                # total = float(free) + float(locked)
+            self.set_save(self.holdings, coin, values)
 
-            # values = {"free": free,
-                    #   "locked": locked,
-                    #   "total": total}
 
-            # self.set_save(self.holdings, coin, values)
+    def update_holdings(self, holdings_list):
+        """Receives a list of updated holdings and updates
+        self.holdings dict."""
+        for holding in holdings_list:
+            coin = holding["a"]
+            free = holding["f"]
+            locked = holding["l"]
+            values = self.get_holdings_array(coin, free, locked)
+
+            self.set_save(self.holdings, coin, values)
+
+
+    def get_holdings_array(self, coin, free, locked):
+        total = float(free) + float(locked)
+        if coin != "BTC":
+            coin_price = float(self.mw.tickers.get(coin + "BTC", dict()).get("lastPrice", 0))
+
+            total_btc = total * coin_price
+        else:
+            total_btc = total
+        
+        values = {"coin": coin,
+                  "free": free,
+                  "locked": locked,
+                  "total": total,
+                  "total_btc": total_btc}
+
+        return values
+
+
 
     def initial_holdings(self):
         holdings = self.mw.api_manager.getHoldings()
         print("init holdings", holdings)
 
-        self.update_accholdings(holdings)
+        self.set_accholdings(holdings)
 
 
+    def create_holdings_df(self):
+        if self.holdings:
+            df = pd.DataFrame.from_dict(self.holdings, orient='index')
+            print("DATAFRAME", df)
+            df = df[["coin", "free", "locked", "total", "total_btc"]]
+            df.columns = ["Pair", "Free", "Locked", "Total", "Total BTC"]
+            df = df.apply(pd.to_numeric, errors='ignore')
+            mask = df["Total BTC"].values >= 0.001
+            return df[mask]
+
+        else:
+            return pd.DataFrame()

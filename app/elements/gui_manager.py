@@ -220,6 +220,7 @@ class GuiManager:
         if self.mw.new_coin_table is True and data_index == 0:
             # print("update")
             self.mw.test_table_view.coin_update()
+            self.mw.test_index.update()
 
         # if self.mw.new_coin_table is True:
             # worker = Worker(self.mw.test_table_view.coin_update)

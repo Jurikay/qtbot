@@ -53,7 +53,7 @@ class IndexData(QObject):
         filtered = self.filter_tickers(update_data)
         update_df = pd.DataFrame.from_dict(filtered, orient='index')
         self.coin_index.update(update_df)
-
+        print("merge df")
         # worker = Worker(partial(self.filter_tickers, update_data))
         # worker.signals.progress.connect(self.filter_callback)
         # self.mw.threadpool.start(worker)

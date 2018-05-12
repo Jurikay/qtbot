@@ -24,20 +24,20 @@ from app.colors import Colors
 class BaseTableView(QtWidgets.QTableView):
 
     def __init__(self, *args, **kwargs):
-            QtWidgets.QTableView.__init__(self, *args, **kwargs)
-            self.my_model = BaseTableModel(self)
-            self.data_dict = None
-            self.df = None
-            self.mw = app.mw
-            # self.setItemDelegate(AsksDelegate(self))
-            self.proxy_model = QtCore.QSortFilterProxyModel()
-            self.setSortingEnabled(True)
-            self.clicked.connect(self.cell_clicked)
-            self.max_order = 0
-            self.data = None
-            self.has_data = False
-            self.color_background = False
-            self.has_proxy = False
+        QtWidgets.QTableView.__init__(self, *args, **kwargs)
+        self.my_model = BaseTableModel(self)
+        self.data_dict = None
+        self.df = None
+        self.mw = app.mw
+        # self.setItemDelegate(AsksDelegate(self))
+        self.proxy_model = QtCore.QSortFilterProxyModel()
+        self.setSortingEnabled(True)
+        self.clicked.connect(self.cell_clicked)
+        self.max_order = 0
+        self.data = None
+        self.has_data = False
+        self.color_background = False
+        self.has_proxy = False
 
 
     # move out of main tableview
@@ -54,23 +54,28 @@ class BaseTableView(QtWidgets.QTableView):
             else:
                 self.setModel(self.my_model)
 
-            self.set_widths()
+            self.set_default_widths()
             self.sortByColumn(0, QtCore.Qt.DescendingOrder)
 
     def update(self):
         print("BASE TABLE UPDATE")
-        self.my_model.modelAboutToBeReset.emit()
+        # self.my_model.modelAboutToBeReset.emit()
         # set_df has to be extended
         self.df = self.set_df()
         self.my_model.update(self.df)
-        self.my_model.modelReset.emit()
+        # self.my_model.modelReset.emit()
+
+    def set_default_widths(self):
+        self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        self.verticalHeader().setDefaultSectionSize(30)
+
+        self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        self.horizontalHeader().setDefaultSectionSize(100)
+        self.set_widths()
+
 
     def set_widths(self):
-        self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
-        self.verticalHeader().setDefaultSectionSize(15)
-
-        self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
-        self.horizontalHeader().setDefaultSectionSize(75)
+        pass
 
     def set_df(self):
         print("set empty df")
@@ -92,28 +97,28 @@ class BackgroundTable(BaseTableView):
         """Custom paint event to draw colored background to
         indicate order size."""
 
-        if self.color_background:
-            if self.has_data is True:
-                row_count = self.my_model.rowCount()
-                for row in range(row_count):
-                    rowY = self.rowViewportPosition(row)
-                    rowH = self.rowHeight(row)
+        
+        if self.has_data is True:
+            row_count = self.my_model.rowCount()
+            for row in range(row_count):
+                rowY = self.rowViewportPosition(row)
+                rowH = self.rowHeight(row)
 
-                    # Create the painter
-                    painter = QtGui.QPainter(self.viewport())
+                # Create the painter
+                painter = QtGui.QPainter(self.viewport())
 
-                    value = self.df.iloc[row, 3]
-                    percentage = value / self.max_order
-                    total_width = self.horizontalHeader().width()
+                value = self.df.iloc[row, 3]
+                percentage = value / self.max_order
+                total_width = self.horizontalHeader().width()
 
-                    painter.save()
-                    bg_rect = QtCore.QRect(0, rowY, (percentage * total_width), rowH)
-                    painter.setBrush(QtGui.QColor(self.bg_color))
-                    painter.setPen(QtGui.QColor("#20262b"))
-                    painter.drawRect(bg_rect)
-                    painter.restore()
+                painter.save()
+                bg_rect = QtCore.QRect(0, rowY, (percentage * total_width), rowH)
+                painter.setBrush(QtGui.QColor(self.bg_color))
+                painter.setPen(QtGui.QColor("#20262b"))
+                painter.drawRect(bg_rect)
+                painter.restore()
+                super(BaseTableView, self).paintEvent(event)
 
-            super(BaseTableView, self).paintEvent(event)
         else:
             super(BaseTableView, self).paintEvent(event)
 
@@ -139,7 +144,9 @@ class BaseTableModel(QtCore.QAbstractTableModel):
 
 
     def update(self, dataIn):
+        self.modelAboutToBeReset.emit()
         self.datatable = dataIn
+        self.modelReset.emit()
 
 
     def rowCount(self, parent=QtCore.QModelIndex()):
@@ -162,10 +169,13 @@ class BaseTableModel(QtCore.QAbstractTableModel):
                 return str(self.datatable.iloc[index.row(), index.column()])
 
 
-class SortFilterModel(QtCore.QAbstractTableModel):
+class SortFilterModel(BaseTableModel):
     """TableModel that receives it's data from a pandas DataFrame."""
     def __init__(self, parent=None, *args):
         super(SortFilterModel, self).__init__()
+        self.searchText = None
+        self.order_col = 0
+        self.order_dir = True
 
     def setFilter(self, searchText=None):
         self.searchText = searchText
@@ -199,6 +209,10 @@ class SortFilterModel(QtCore.QAbstractTableModel):
 
             self.modelReset.emit()
 
+
+    def update(self, dataIn):
+        self.datatable = dataIn
+        self.sort(self.order_col, self.order_dir)
 
 #################################################################
 # Cell Delegates
@@ -286,22 +300,62 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
 #################################################################
 
 
-class TestHist(BaseTableView):
+class TestOpenOrders(BaseTableView):
     """Extended TableView that draws a colored background."""
 
     def __init__(self, parent=None, *args):
-        super(TestHist, self).__init__()
-        # PairDelegate = 
+        super(TestOpenOrders, self).__init__()
         self.setItemDelegateForColumn(1, PairDelegate(self))
         self.setItemDelegateForColumn(2, BasicDelegate(self, "#ff0077"))
         self.setItemDelegateForColumn(3, BasicDelegate(self))
         self.has_proxy = True
 
     def set_df(self):
-        # print("set true df")
         self.mw.api_manager.new_api()
         return self.mw.user_data.create_dataframe()
-        
+
+
+class TestHist(BaseTableView):
+    def __init__(self, parent=None, *args):
+        super(TestHist, self).__init__()
+        self.my_model = SortFilterModel(self)
+        # self.has_proxy = True
+        self.setItemDelegate(BasicDelegate(self))
+
+    def set_df(self):
+        return self.mw.user_data.create_history_df()
+
+    def set_widths(self):
+        for i in range(self.my_model.columnCount()):
+            self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
+
+
+
+class TestHoldings(BaseTableView):
+    def __init__(self, parent=None, *args):
+        super(TestHoldings, self).__init__()
+        self.has_proxy = True
+        self.setItemDelegate(BasicDelegate(self))
+
+
+    def set_df(self):
+        return self.mw.user_data.create_holdings_df()
+
+
+class TestIndex(BaseTableView):
+    def __init__(self, parent=None, *args):
+        super(TestIndex, self).__init__()
+        self.my_model = SortFilterModel(self)
+        # self.has_proxy = True
+        self.setItemDelegate(BasicDelegate(self))
+
+    def set_df(self):
+        return self.mw.index_data.coin_index
+
+    def set_widths(self):
+        for i in range(self.my_model.columnCount()):
+            self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
+
 
 
     

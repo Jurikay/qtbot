@@ -55,6 +55,7 @@ class ApiCalls:
                 # print("get account:", self.client.get_account())
                 # print("get account status:", self.client.get_account_status())
 
+                
 
                 val["coins"] = self.availablePairs()
 
@@ -310,6 +311,7 @@ class ApiCalls:
         btc_pairs = self.get_btc_pairs()
 
         tickers = self.add_ticker_data(btc_pairs)
+        self.mw.tickers = tickers
         api_calls += (self.all_pairs / 2)
 
 
@@ -379,7 +381,7 @@ class ApiCalls:
 
 
     def request_open_orders(self, coin_dict):
-        order_dict = dict
+        # order_dict = dict
         self.start_time = time.time()
         for pair in coin_dict:
             self.counter += 1
