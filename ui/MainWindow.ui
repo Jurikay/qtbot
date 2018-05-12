@@ -719,7 +719,7 @@
                   <x>0</x>
                   <y>0</y>
                   <width>969</width>
-                  <height>521</height>
+                  <height>728</height>
                  </rect>
                 </property>
                </widget>
@@ -1489,6 +1489,18 @@
             <layout class="QVBoxLayout" name="verticalLayout_31">
              <item>
               <widget class="TestOpenOrders" name="new_test_table">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>200</height>
+                </size>
+               </property>
                <property name="mouseTracking">
                 <bool>true</bool>
                </property>
@@ -1535,13 +1547,26 @@
              </item>
              <item>
               <widget class="TestHist" name="test_hist">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <attribute name="verticalHeaderVisible">
                 <bool>false</bool>
                </attribute>
               </widget>
              </item>
              <item>
-              <widget class="TestIndex" name="test_index"/>
+              <widget class="TestIndex" name="test_index">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="TestHoldings" name="test_holding"/>
@@ -6640,11 +6665,6 @@
    <header>app/newhist.h</header>
   </customwidget>
   <customwidget>
-   <class>OpenOrdersFinal</class>
-   <extends>QTableView</extends>
-   <header>app/data/data_tables.h</header>
-  </customwidget>
-  <customwidget>
    <class>DataAsks</class>
    <extends>QTableView</extends>
    <header>app/data/new_orderbook_table.h</header>
@@ -6653,6 +6673,11 @@
    <class>DataBids</class>
    <extends>QTableView</extends>
    <header>app/data/new_orderbook_table.h</header>
+  </customwidget>
+  <customwidget>
+   <class>OpenOrdersFinal</class>
+   <extends>QTableView</extends>
+   <header>app/data/data_tables.h</header>
   </customwidget>
   <customwidget>
    <class>DataTradeHistory</class>

@@ -245,7 +245,12 @@ class beeserBot(QtWidgets.QMainWindow):
     def shutdown_bot(self):
         self.cfg_manager.write_stats()
         self.cfg_manager.write_config()
+        # api error workaround
+        self.websocket_manager.socket_mgr.close()
 
+        from twisted.internet import reactor
+
+        reactor.stop()
 
 
 
