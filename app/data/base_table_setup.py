@@ -215,8 +215,58 @@ class SortFilterModel(BaseTableModel):
         self.sort(self.order_col, self.order_dir)
 
 #################################################################
-# Cell Delegates
+# Custom Delegates
 #################################################################
+
+
+class FilledPercentDelegate(QtWidgets.QStyledItemDelegate):
+    """Basic style delegate"""
+
+    def __init__(self, parent, text_color=Colors.color_lightgrey):
+        super(FilledPercentDelegate, self).__init__(parent)
+        self.parent = parent
+        self.mw = app.mw
+        self.fg_color = text_color
+
+
+    def initStyleOption(self, option, index):
+        option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
+
+
+    def paint(self, painter, option, index):
+        painter.save()
+        options = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(options, index)
+        font = QtGui.QFont()
+        painter.setFont(font)
+        painter.setPen(QtGui.QColor(self.fg_color))
+        align_center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        painter.drawText(option.rect, align_center, options.text)
+        painter.restore()
+
+
+class DateDelegate(QtWidgets.QStyledItemDelegate):
+    """Basic style delegate"""
+
+    def __init__(self, parent, text_color=Colors.color_lightgrey):
+        super(DateDelegate, self).__init__(parent)
+        self.fg_color = text_color
+
+
+    def initStyleOption(self, option, index):
+        option.text = str(datetime.fromtimestamp(int(str(index.data())[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])
+
+
+    def paint(self, painter, option, index):
+        painter.save()
+        options = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(options, index)
+        font = QtGui.QFont()
+        painter.setFont(font)
+        painter.setPen(QtGui.QColor(self.fg_color))
+        align_center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        painter.drawText(option.rect, align_center, options.text)
+        painter.restore()
 
 
 class BasicDelegate(QtWidgets.QStyledItemDelegate):
@@ -224,8 +274,6 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
 
     def __init__(self, parent, text_color=Colors.color_lightgrey):
         super(BasicDelegate, self).__init__(parent)
-        self.parent = parent
-        self.mw = app.mw
         self.fg_color = text_color
 
 
@@ -250,8 +298,6 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
 
     def __init__(self, parent):
         super(PairDelegate, self).__init__(parent)
-        self.parent = parent
-        self.mw = app.mw
 
     def initStyleOption(self, option, index):
         """Set style options based on index column."""
@@ -310,9 +356,32 @@ class TestOpenOrders(BaseTableView):
         self.setItemDelegateForColumn(3, BasicDelegate(self))
         self.has_proxy = True
 
+
     def set_df(self):
         self.mw.api_manager.new_api()
         return self.mw.user_data.create_dataframe()
+
+
+    def cell_clicked(self, index):
+        """Change pair or cancel order"""
+        if index.column() == 9:
+            row = index.row()
+
+            # check proxy model data to account for
+            # sort order and or filter
+            model = self.proxy_model
+
+            id_index = model.index(row, 8)
+            pair_index = model.index(row, 1)
+            order_id = model.data(id_index, QtCore.Qt.DisplayRole)
+            pair = model.data(pair_index, QtCore.Qt.DisplayRole)
+
+            self.mw.api_manager.cancel_order_byId(order_id, pair)
+
+        elif index.column() == 1:
+            pair = index.data()
+            coin = pair.replace("BTC", "")
+            self.mw.gui_manager.change_to(coin)
 
 
 class TestHist(BaseTableView):

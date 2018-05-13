@@ -85,7 +85,7 @@ class WebsocketManager:
 
     def websockets_symbol(self):
         """Symbol specific websockets. This gets called on pair change."""
-        # self.depthSocket = self.socket_mgr.start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
+        self.depthSocket = self.socket_mgr.start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
         self.aggTradeSocket = self.socket_mgr.start_aggtrade_socket(self.mw.cfg_manager.pair, self.trade_callback)
         
         # print("depth socket", self.depthSocket)
@@ -113,8 +113,6 @@ class WebsocketManager:
 
 
     def depth_callback(self, msg):
-        if msg["e"] == "error":
-            print("DEPTH ERROR!!!")
         val["bids"] = msg["bids"]
         val["asks"] = msg["asks"]
 
