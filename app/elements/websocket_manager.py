@@ -149,12 +149,13 @@ class WebsocketManager:
                 self.mw.mutex.unlock()
 
             # self.mw.user_data.update_accholdings(userMsg["B"])
-            self.mw.user_data.update_holdings(userMsg["B"])
+          
 
-            worker = Worker(self.socket_update_holdings)
+            worker = Worker(partial(self.socket_update_holdings, userMsg["B"]))
 
-            # update values in holdings table
-            worker.signals.finished.connect(self.mw.holdings_table.holding_updated)
+            # new: update values in holdings table new
+            worker.signals.progress.connect(self.mw.user_data.update_holdings)
+            
             self.threadpool.start(worker)
 
 
@@ -194,7 +195,8 @@ class WebsocketManager:
 
                 # if order was canceled but partially filled, add to history
                 if float(order["executedQty"]) > 0:
-                    worker.signals.progress.connect(self.mw.history_table.add_to_history)
+                    # worker.signals.progress.connect(self.mw.history_table.add_to_history)
+                    worker.signals.progress.connect(self.mw.trade_history_view.websocket_update)
 
 
             elif userMsg["X"] == "PARTIALLY_FILLED":
@@ -202,6 +204,7 @@ class WebsocketManager:
                 # worker.signals.progress.connect(self.mw.open_orders.update_open_order)
                 worker.signals.progress.connect(self.mw.holdings_table.check_add_to_holdings)
 
+                worker.signals.progress.connect(self.mw.user_data.add_to_history)
                 worker.signals.progress.connect(self.mw.user_data.add_to_open_orders)
 
 
@@ -215,6 +218,8 @@ class WebsocketManager:
 
                 # new
                 worker.signals.progress.connect(self.mw.user_data.remove_from_open_orders)
+                worker.signals.progress.connect(self.mw.user_data.add_to_history)
+                worker.signals.progress.connect(self.mw.trade_history_view.websocket_update)
 
             else:
                 # catch and print any other trade callback messages.
@@ -227,7 +232,6 @@ class WebsocketManager:
 
 
     def ticker_callback(self, msg):
-        print("TICKER CALLBACK")
         self.api_updates += 1
         df_data = dict()
         for value in msg:
@@ -319,8 +323,8 @@ class WebsocketManager:
         progress_callback.emit(order)
 
     @staticmethod
-    def socket_update_holdings(progress_callback):
-        progress_callback.emit("update")
+    def socket_update_holdings(holdings, progress_callback):
+        progress_callback.emit(holdings)
 
     @staticmethod
     def socket_tickers(tickers, progress_callback):

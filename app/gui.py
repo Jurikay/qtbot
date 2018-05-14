@@ -118,10 +118,13 @@ class beeserBot(QtWidgets.QMainWindow):
         self.test_slider_value.valueChanged.connect(self.slider_value)
         self.btn_my_trades.clicked.connect(partial(self.api_manager.api_my_trades, self.cfg_manager.pair))
 
-        self.table_test_btn.clicked.connect(self.new_test_table.setup)
-        self.table_test_btn.clicked.connect(self.test_hist.setup)
-        self.table_test_btn.clicked.connect(self.test_index.setup)
-        self.table_test_btn.clicked.connect(self.test_holding.setup)
+        self.table_test_btn.clicked.connect(self.open_orders_view.setup)
+        self.table_test_btn.clicked.connect(self.trade_history_view.setup)
+        self.table_test_btn.clicked.connect(self.index_view.setup)
+        self.table_test_btn.clicked.connect(self.holdings_view.setup)
+        
+        # connect filter
+        # self.coinindex_filter.textChanged.connect(self.open_orders_view.my_model.setFilter)
         
 
         # self.table_view_btn.clicked.connect(self.test_table_view.setup)
@@ -148,11 +151,12 @@ class beeserBot(QtWidgets.QMainWindow):
         self.api_manager = ApiCalls(self, self.threadpool)
         self.api_manager.initialize()
 
+        # new
+        self.api_manager.new_api()
+
         self.init_manager = InitManager(self)
         self.init_manager.initialize()
 
-        # new
-        self.api_manager.new_api()
 
         self.check_connection()
 
@@ -193,8 +197,15 @@ class beeserBot(QtWidgets.QMainWindow):
         # new:
         self.test_table_view.setup()
         # self.test_table_view_2.setup()
-        self.data_open_orders_table.set_data()
-
+        self.open_orders_view.setup()
+        self.trade_history_view.setup()
+        self.index_view.setup()
+        self.holdings_view.setup()
+        self.coinindex_filter.textChanged.connect(self.open_orders_view.my_model.setFilter)
+        self.coinindex_filter.textChanged.connect(self.trade_history_view.my_model.setFilter)
+        self.coinindex_filter.textChanged.connect(self.holdings_view.my_model.setFilter)
+        self.coinindex_filter.textChanged.connect(self.index_view.my_model.setFilter)
+        
         # self.new_asks.setup()
         # self.new_bids.setup()
 

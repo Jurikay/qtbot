@@ -18,7 +18,7 @@ class UserData(QtCore.QObject):
 
     def __init__(self, mw, mutex, parent=None):
         super(UserData, self).__init__(parent)
-        print("INIT UserData")
+        # print("INIT UserData")
         self.mw = mw
         self.mutex = mutex
 
@@ -78,17 +78,19 @@ class UserData(QtCore.QObject):
         # if clientOrderId is not present, order information comes
         # from websocket therefore open_orders_table should be updated.
         if not order.get("clientOrderId"):
-            print(order)
+            # print(order)
             order["price"] = order["orderPrice"]
 
             # if this is the first open order, run setup.
             # else, update open orders table
             if run_setup:
-                print("RUNNING SETUP")
-                self.mw.data_open_orders_table.setup()
-                self.mw.data_open_orders_table.set_data()
-            else:
-                self.mw.data_open_orders_table.set_data()
+                # print("RUNNING SETUP")
+                self.mw.open_orders_view.setup()
+                
+                # self.mw.data_open_orders_table.setup()
+                # self.mw.data_open_orders_table.set_data()
+            self.mw.open_orders_view.websocket_update()
+
 
 
     def initial_open_orders(self):
@@ -100,20 +102,21 @@ class UserData(QtCore.QObject):
             print("OPEN ORDERS COULD NOT BE FETCHED!!")
 
 
-    def create_dataframe(self):
+    def create_open_orders_df(self):
         """Create a pandas dataframe suitable for displaying open orders."""
         for _, order in self.open_orders.items():
-            order["filled_percent"] = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float((order["origQty"])) * 100), digits=2) + "%"
-            order["total_btc"] = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
+            order["filled_percent"] = float(order["executedQty"]) / float((order["origQty"])) * 100
+            order["total_btc"] = float(order["origQty"]) * float(order["price"])
             order["cancel"] = "cancel"
             
-            order_id = order["orderId"]
+            order_id = int(order["orderId"])
             self.set_save(self.open_orders, order_id, order)
 
         if self.open_orders:
             df = pd.DataFrame.from_dict(self.open_orders, orient='index')
             df = df[["time", "symbol", "type", "side", "price", "origQty", "filled_percent", "total_btc", "orderId", "cancel"]]
             df.columns = ["Date & Time", "Pair", "Type", "Side", "Price", "Quantity", "Filled %", "Total", "id", "cancel"]
+            df = df.apply(pd.to_numeric, errors='ignore')
             return df
         else:
             # return an empty dataframe if no orders are open.
@@ -125,11 +128,14 @@ class UserData(QtCore.QObject):
         self.del_save(self.open_orders, order_id)
 
         if not order.get("clientOrderId"):
-            self.mw.data_open_orders_table.update()
+            self.mw.open_orders_view.websocket_update()
+
+
 
     def update_order(self, order):
         order_id = order["orderId"]
         self.set_save(self.open_orders, order_id, order)
+        self.mw.open_orders_view.websocket_update()
         
 
 
@@ -139,17 +145,20 @@ class UserData(QtCore.QObject):
     #################################################################
 
     def add_to_history(self, order):
+        # print("ADD TO HISTORY ORDER", order)
+        
         # print("ADD TO HIST", order)
         order_id = order["orderId"]
         pair = order["symbol"]
-        order["total"] = float(order["qty"]) * float(order["price"])
+        order["total"] = float(order["executedQty"]) * float(order["price"])
         if not self.trade_history.get(pair):
             self.trade_history[pair] = dict()
 
         self.set_save(self.trade_history[pair], order_id, order)
 
 
-    def initial_history(self):
+
+    def initial_history(self, progress_callback=None):
         
         pair = self.mw.cfg_manager.pair
         # print("Initial history", pair)
@@ -157,35 +166,40 @@ class UserData(QtCore.QObject):
 
         for entry in history:
             entry["symbol"] = pair
+            entry["executedQty"] = float(entry["qty"])
             # print("init hist", entry)
             self.add_to_history(entry)
+            if entry["isBuyer"] is True:
+                entry["side"] = "BUY"
+            else:
+                entry["side"] = "SELL"
+
+        if progress_callback:
+            # print("HISTORY CALLBACK UPDATE")
+            self.mw.trade_history_view.websocket_update()
 
 
     def create_history_df(self):
         """Create a pandas dataframe suitable for displaying trade history."""
-        print("CREATE HISTORY DF")
+        # print("CREATE HISTORY DF")
         history = dict()
         for _, historical_trade in self.trade_history.items():
-            print(historical_trade)
+
             for item in historical_trade.items():
                 values = item[1]
                 order_id = item[0]
-                if values["isBuyer"] == "True":
-                    values["side"] = "BUY"
-                else:
-                    values["side"] = "SELL"
 
                 history[order_id] = values
 
-            print(type(historical_trade))
+
             # print(historical_trade[0])
             # print(historical_trade[1])
-            print("#############")
+            # print("#############")
 
         if self.trade_history:
             df = pd.DataFrame.from_dict(history, orient='index')
-            print("DATAFRAME", df)
-            df = df[["time", "symbol", "side", "price", "qty", "total", "orderId"]]
+
+            df = df[["time", "symbol", "side", "price", "executedQty", "total", "orderId"]]
             df.columns = ["Date & Time", "Pair", "Side", "Price", "Quantity", "Total", "id"]
             final_df = df.apply(pd.to_numeric, errors='ignore')
             # final_df = df
@@ -241,20 +255,26 @@ class UserData(QtCore.QObject):
             self.set_save(self.holdings, coin, values)
 
 
+        self.mw.holdings_view.websocket_update()
+
     def get_holdings_array(self, coin, free, locked):
         total = float(free) + float(locked)
         if coin != "BTC":
             coin_price = float(self.mw.tickers.get(coin + "BTC", dict()).get("lastPrice", 0))
-
             total_btc = total * coin_price
-        else:
+            name = coin_price = str(self.mw.tickers.get(coin + "BTC", dict()).get("baseAssetName", 0))
+
+        elif coin == "BTC":
             total_btc = total
+            name = "Bitcoin"
+        
         
         values = {"coin": coin,
                   "free": free,
                   "locked": locked,
                   "total": total,
-                  "total_btc": total_btc}
+                  "total_btc": total_btc,
+                  "name": name}
 
         return values
 
@@ -262,7 +282,7 @@ class UserData(QtCore.QObject):
 
     def initial_holdings(self):
         holdings = self.mw.api_manager.getHoldings()
-        print("init holdings", holdings)
+
 
         self.set_accholdings(holdings)
 
@@ -270,10 +290,11 @@ class UserData(QtCore.QObject):
     def create_holdings_df(self):
         if self.holdings:
             df = pd.DataFrame.from_dict(self.holdings, orient='index')
-            print("DATAFRAME", df)
-            df = df[["coin", "free", "locked", "total", "total_btc"]]
-            df.columns = ["Pair", "Free", "Locked", "Total", "Total BTC"]
+
+            df = df[["coin", "name", "free", "locked", "total", "total_btc"]]
+            df.columns = ["Asset", "Name", "Free", "Locked", "Total", "Total BTC"]
             df = df.apply(pd.to_numeric, errors='ignore')
+
             mask = df["Total BTC"].values >= 0.001
             return df[mask]
 

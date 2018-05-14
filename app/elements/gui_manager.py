@@ -174,6 +174,10 @@ class GuiManager:
 
             self.mw.table_manager.init_filter()
 
+            # new
+            # self.mw.user_data.initial_history()
+            self.mw.trade_history_view.update()
+
 
     def change_to(self, coin):
         coinIndex = self.mw.coin_selector.findText(coin)
@@ -203,7 +207,7 @@ class GuiManager:
 
         # charts_index = self.mw.ChartTabs.currentIndex()
 
-        data_index = self.mw.tabsBotLeft.currentIndex()
+        # data_index = self.mw.tabsBotLeft.currentIndex()
 
         # if self.mw.pd_update is True:
         #     self.mw.pd_table.update_model_data()
@@ -217,14 +221,14 @@ class GuiManager:
         #     print("TIMEOUT", self.mw.historical.timeout)
 
 
-        if self.mw.new_coin_table is True and data_index == 0:
-            # print("update")
-            self.mw.test_table_view.coin_update()
-            self.mw.test_index.update()
+        # if self.mw.new_coin_table is True and data_index == 0:
+        #     # print("update")
+        #     self.mw.test_table_view.coin_update()
+        self.mw.index_view.websocket_update()
 
         # if self.mw.new_coin_table is True:
-            # worker = Worker(self.mw.test_table_view.coin_update)
-            # self.threadpool.start(worker)
+        # worker = Worker(self.mw.test_table_view.coin_update)
+        # self.threadpool.start(worker)
 
 
 

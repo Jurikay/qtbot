@@ -229,7 +229,7 @@ class ApiCalls:
 
     def api_my_trades(self, pair, progress_callback=None):
         my_trades = self.client.get_my_trades(symbol=pair)
-        
+        print("MYTRADES", my_trades)
         if progress_callback:
             progress_callback.emit([my_trades, pair])
         else:
@@ -270,7 +270,10 @@ class ApiCalls:
         # worker.signals.finished.connect(self.mw.limit_pane.t_complete)
         self.mw.threadpool.start(worker)
 
-        self.get_trade_history(self.mw.cfg_manager.pair)
+
+        worker = Worker(self.mw.user_data.initial_history)
+        self.mw.threadpool.start(worker)
+        # self.get_trade_history(self.mw.cfg_manager.pair)
 
 
     def save_depth(self, depth):
@@ -347,10 +350,9 @@ class ApiCalls:
                 coin_dict[pair]["decimals"] = decimals[0]
                 coin_dict[pair]["assetDecimals"] = decimals[1]
                 coin_dict[pair]["tickSize"] = tickSize.rstrip("0")
+                coin_dict[pair]["minTrade"] = minTrade
 
         self.all_pairs = all_pairs
-        # print("ALL PAIRS", all_pairs)
-        # self.request_open_orders(coin_dict)
         return coin_dict
 
 
@@ -364,19 +366,19 @@ class ApiCalls:
     def add_ticker_data(self, btc_pairs):
         # TODO change
         tickers = val["tickers"]
+        coins = val["coins"]
+
         self.number_api_calls += 1
 
 
         for pair in btc_pairs:
-            # print("allpairs", pair)
 
             ticker_pair = tickers.get(pair)
+            coin_name = coins.get(pair, dict()).get("baseAssetName", "-")
             for item in ticker_pair.items():
-                # print("ITEM", item)
                 btc_pairs[pair][item[0]] = item[1]
-            # print("TICKER PAIR", ticker_pair)
+            btc_pairs[pair]["baseAssetName"] = coin_name
 
-        # print(btc_pairs)
         return btc_pairs
 
 

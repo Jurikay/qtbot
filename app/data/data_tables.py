@@ -217,9 +217,9 @@ class OpenOrdersFinal(DataOpenOrders):
 
 
     def set_data(self):
-        self.data = self.mw.user_data.create_dataframe()
+        self.data = self.mw.user_data.create_open_orders_df()
         print("SETTING DATA", self.data)
         self.update()
 
     def set_df(self):
-        return self.mw.user_data.create_dataframe()
+        return self.mw.user_data.create_open_orders_df()

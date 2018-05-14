@@ -25,40 +25,35 @@ class BaseTableView(QtWidgets.QTableView):
 
     def __init__(self, *args, **kwargs):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
-        self.my_model = BaseTableModel(self)
-        self.data_dict = None
+        self.setItemDelegate(BasicDelegate(self))
+        self.my_model = SortFilterModel(self)
+
+        # print("BASE TABLE MODEL", self.my_model)
         self.df = None
         self.mw = app.mw
-        # self.setItemDelegate(AsksDelegate(self))
-        self.proxy_model = QtCore.QSortFilterProxyModel()
         self.setSortingEnabled(True)
         self.clicked.connect(self.cell_clicked)
-        self.max_order = 0
-        self.data = None
-        self.has_data = False
-        self.color_background = False
-        self.has_proxy = False
 
 
-    # move out of main tableview
+    def websocket_update(self):
+        if self.my_model.rowCount() == 0:
+            self.setup()
 
+        else:
+            self.update()
 
     def setup(self):
         self.update()
-
-        if self.my_model.rowCount():
-            print("BASE TABLE SETUP")
-            if self.has_proxy:
-                self.proxy_model.setSourceModel(self.my_model)
-                self.setModel(self.proxy_model)
-            else:
-                self.setModel(self.my_model)
-
+        df_rows = len(self.df)
+        # if self.my_model.rowCount():
+        if df_rows > 0:
+            # print("BASE TABLE SETUP")
+            self.setModel(self.my_model)
             self.set_default_widths()
             self.sortByColumn(0, QtCore.Qt.DescendingOrder)
 
     def update(self):
-        print("BASE TABLE UPDATE")
+        # print("BASE TABLE UPDATE")
         # self.my_model.modelAboutToBeReset.emit()
         # set_df has to be extended
         self.df = self.set_df()
@@ -74,11 +69,14 @@ class BaseTableView(QtWidgets.QTableView):
         self.set_widths()
 
 
+    def leaveEvent(self, event):
+        app.main_app.restoreOverrideCursor()
+
     def set_widths(self):
         pass
 
     def set_df(self):
-        print("set empty df")
+        # print("set empty df")
         """This should be overwritten."""
         return pd.DataFrame
 
@@ -92,6 +90,8 @@ class BackgroundTable(BaseTableView):
 
     def __init__(self, parent=None, *args):
         super(BackgroundTable, self).__init__()
+
+        self.has_data = False
 
     def paintEvent(self, event):
         """Custom paint event to draw colored background to
@@ -169,48 +169,60 @@ class BaseTableModel(QtCore.QAbstractTableModel):
                 return str(self.datatable.iloc[index.row(), index.column()])
 
 
+    def setFilter(self):
+        # print("BASIC FILTER")
+        pass
+
+
 class SortFilterModel(BaseTableModel):
-    """TableModel that receives it's data from a pandas DataFrame."""
-    def __init__(self, parent=None, *args):
-        super(SortFilterModel, self).__init__()
+    """SortFilterModel extends BaseTableModel and adds sort
+    and filter functionality."""
+    def __init__(self, parent=None, filter_col=0, *args, **kwargs):
+        BaseTableModel.__init__(self, *args, **kwargs)
+        self.parent = parent
         self.searchText = None
         self.order_col = 0
         self.order_dir = True
+        self.filter_col = filter_col
 
     def setFilter(self, searchText=None):
+        # print("setfilter", searchText)
+
         self.searchText = searchText
         if searchText:
             for row in range(self.rowCount()):
-                self.mw.test_table_view.setRowHidden(row, False)
+                self.parent.setRowHidden(row, False)
 
-                if str(searchText.upper()) in str(self.datatable.iloc[row, 0]).replace("BTC", ""):
-                    self.mw.test_table_view.setRowHidden(row, False)
+                if str(searchText.upper()) in str(self.datatable.iloc[row, self.filter_col]).replace("BTC", ""):
+                    self.parent.setRowHidden(row, False)
                 else:
-                    self.mw.test_table_view.setRowHidden(row, True)
+                    self.parent.setRowHidden(row, True)
 
         else:
             for row in range(self.rowCount()):
-                self.mw.test_table_view.setRowHidden(row, False)
+                self.parent.setRowHidden(row, False)
 
 
     def sort(self, Ncol, order):
         """Sort table by given column number.
         """
-        if Ncol >= 0:
+        if isinstance(self.datatable, pd.DataFrame):
             self.modelAboutToBeReset.emit()
-            self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
+
+            if len(self.datatable) > 0:
+                self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
 
             # save order dir and order col
             self.order_col = Ncol
             self.order_dir = order
 
+            self.modelReset.emit()
+
             if self.searchText:
                 self.setFilter(searchText=self.searchText)
 
-            self.modelReset.emit()
-
-
     def update(self, dataIn):
+        print("UPDATE TABLE MODEL", self, self.parent)
         self.datatable = dataIn
         self.sort(self.order_col, self.order_dir)
 
@@ -219,62 +231,14 @@ class SortFilterModel(BaseTableModel):
 #################################################################
 
 
-class FilledPercentDelegate(QtWidgets.QStyledItemDelegate):
-    """Basic style delegate"""
-
-    def __init__(self, parent, text_color=Colors.color_lightgrey):
-        super(FilledPercentDelegate, self).__init__(parent)
-        self.parent = parent
-        self.mw = app.mw
-        self.fg_color = text_color
-
-
-    def initStyleOption(self, option, index):
-        option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
-
-
-    def paint(self, painter, option, index):
-        painter.save()
-        options = QtWidgets.QStyleOptionViewItem(option)
-        self.initStyleOption(options, index)
-        font = QtGui.QFont()
-        painter.setFont(font)
-        painter.setPen(QtGui.QColor(self.fg_color))
-        align_center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        painter.drawText(option.rect, align_center, options.text)
-        painter.restore()
-
-
-class DateDelegate(QtWidgets.QStyledItemDelegate):
-    """Basic style delegate"""
-
-    def __init__(self, parent, text_color=Colors.color_lightgrey):
-        super(DateDelegate, self).__init__(parent)
-        self.fg_color = text_color
-
-
-    def initStyleOption(self, option, index):
-        option.text = str(datetime.fromtimestamp(int(str(index.data())[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])
-
-
-    def paint(self, painter, option, index):
-        painter.save()
-        options = QtWidgets.QStyleOptionViewItem(option)
-        self.initStyleOption(options, index)
-        font = QtGui.QFont()
-        painter.setFont(font)
-        painter.setPen(QtGui.QColor(self.fg_color))
-        align_center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        painter.drawText(option.rect, align_center, options.text)
-        painter.restore()
-
-
 class BasicDelegate(QtWidgets.QStyledItemDelegate):
-    """Basic style delegate"""
+    """Basic StyledItemDelegate implementation"""
 
     def __init__(self, parent, text_color=Colors.color_lightgrey):
         super(BasicDelegate, self).__init__(parent)
+        self.parent = parent
         self.fg_color = text_color
+        self.font = QtGui.QFont()
 
 
     def initStyleOption(self, option, index):
@@ -283,21 +247,139 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
 
     def paint(self, painter, option, index):
         painter.save()
+        if option.state & QtWidgets.QStyle.State_MouseOver:
+            app.main_app.restoreOverrideCursor()
+
         options = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
-        font = QtGui.QFont()
-        painter.setFont(font)
+        
+        painter.setFont(self.font)
         painter.setPen(QtGui.QColor(self.fg_color))
         align_center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
         painter.drawText(option.rect, align_center, options.text)
         painter.restore()
 
 
-class PairDelegate(QtWidgets.QStyledItemDelegate):
-    """Class to define the style of index values."""
+class ChangePercentDelegate(BasicDelegate):
+    def initStyleOption(self, option, index):
+        if float(index.data()) < 0:
+            prefix = ""
+            self.fg_color = Colors.color_pink
+        elif float(index.data()) == 0:
+            prefix = " "
+            self.fg_color = Colors.color_lightgrey
+            
+        else:
+            prefix = "+"
+            self.fg_color = Colors.color_green
+            
 
-    def __init__(self, parent):
-        super(PairDelegate, self).__init__(parent)
+        option.text = prefix + '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
+
+
+class HoverDelegate(BasicDelegate):
+    def __init__(self, parent, text_color=Colors.color_lightgrey, hover_color=Colors.color_yellow):
+        super(HoverDelegate, self).__init__(parent)
+        self.normal_color = text_color
+        self.hover_color = hover_color
+
+    def initStyleOption(self, option, index):
+        if option.state & QtWidgets.QStyle.State_MouseOver:
+            self.fg_color = self.hover_color
+            self.font.setBold(True)
+            if app.main_app.overrideCursor() != QtCore.Qt.PointingHandCursor:
+                app.main_app.setOverrideCursor(QtCore.Qt.PointingHandCursor)
+        else:
+            self.fg_color = self.normal_color
+            self.font.setBold(False)
+
+        option.text = index.data()
+
+
+
+class FilledPercentDelegate(BasicDelegate):
+
+    def initStyleOption(self, option, index):
+        if float(index.data()) == 0.00:
+            self.fg_color = Colors.color_pink
+        elif float(index.data()) < 25:
+            self.fg_color = Colors.color_pink
+        elif float(index.data()) < 75:
+            self.fg_color = Colors.color_yellow
+        else:
+            self.fg_color = Colors.color_green
+
+        option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
+
+
+
+class DateDelegate(BasicDelegate):
+    """Basic style delegate"""
+
+    def initStyleOption(self, option, index):
+        option.text = str(datetime.fromtimestamp(int(str(index.data())[:-3])).strftime('%d.%m.%y - %H:%M:%S.%f')[:-7])
+
+
+class RoundFloatDelegate(BasicDelegate):
+    """Delegate that rounds a float to the given decimal place.
+        Defaults to 8."""
+
+    def __init__(self, parent, round_to=8, suffix="", text_color=Colors.color_lightgrey):
+        super(RoundFloatDelegate, self).__init__(parent)
+        self.round_to = round_to
+        self.mw = app.mw
+        self.suffix = suffix
+
+    def initStyleOption(self, option, index):
+        option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.round_to) + str(self.suffix)
+
+
+
+class RoundAssetDelegate(RoundFloatDelegate):
+    """ Takes the parameters asset_column and paring as well as suffix."""
+    def __init__(self, parent, asset_column=1, pairing="", suffix="", text_color=Colors.color_lightgrey):
+        super(RoundAssetDelegate, self).__init__(parent)
+        self.asset_column = asset_column
+        self.suffix = suffix
+        self.pairing = pairing
+
+
+    def initStyleOption(self, option, index):
+
+        model = self.parent.model()
+
+        pair_index = model.index(index.row(), self.asset_column)
+        pair = model.data(pair_index, QtCore.Qt.DisplayRole)
+        # try:
+        if pair != "BTC":
+            assetDecimals = self.mw.tickers[pair + self.pairing]["assetDecimals"]
+        else:
+            assetDecimals = 8
+        # except KeyError as e:
+            # print("init key error", e)
+        #     assetDecimals = 8
+        self.round_to = int(assetDecimals)
+        # print(index.row(), pair, assetDecimals)
+        option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.round_to) + str(self.suffix)
+
+
+class BuySellDelegete(BasicDelegate):
+    """Delegate that colors a cell green or pink depending on
+    if it's content is "BUY" order "SELL"."""
+
+    def initStyleOption(self, option, index):
+        super(BuySellDelegete, self).initStyleOption(option, index)
+        if index.data() == "BUY":
+            self.fg_color = Colors.color_green
+        else:
+            self.fg_color = Colors.color_pink
+
+
+
+
+
+class PairDelegate(QtWidgets.QStyledItemDelegate):
+    """Delegate that adds an icon + hover effect to a pair."""
 
     def initStyleOption(self, option, index):
         """Set style options based on index column."""
@@ -316,29 +398,45 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
         self.initStyleOption(options, index)
         font = QtGui.QFont()
 
-        icon = QtGui.QIcon("images/ico/" + index.data().replace("BTC", "") + ".svg")
-        iconRect = QtCore.QRect(option.rect.left() + 15 - option.rect.height(),
+        
+        iconRect = QtCore.QRect(option.rect.left(),
                                 option.rect.top(),
+                                # icon is quadratic; set width to it's height.
                                 option.rect.height(),
                                 option.rect.height())
 
-        textRect = QtCore.QRect(option.rect.left() + 25 + iconRect.width() - option.rect.height(),
+        textRect = QtCore.QRect(option.rect.left() + iconRect.width() + 5,
                                 option.rect.top(),
-                                option.rect.width(),
+                                # subtract previously added icon width.
+                                option.rect.width() - iconRect.width(),
                                 option.rect.height())
 
-
-        icon.paint(painter, iconRect, QtCore.Qt.AlignLeft)
+        
 
         if option.state & QtWidgets.QStyle.State_MouseOver:
             painter.setPen(QtGui.QColor(Colors.color_yellow))
             font.setBold(True)
             painter.setFont(font)
+
+            # set cursor
+            if app.main_app.overrideCursor() != QtCore.Qt.PointingHandCursor:
+                app.main_app.setOverrideCursor(QtCore.Qt.PointingHandCursor)
+
         else:
             painter.setPen(QtGui.QColor(Colors.color_lightgrey))
 
+        icon = options.icon
+        icon.paint(painter, iconRect, QtCore.Qt.AlignLeft)
         painter.drawText(textRect, align_left, options.text)
         painter.restore()
+
+
+
+class CoinDelegate(PairDelegate):
+    def initStyleOption(self, option, index):
+        option.text = index.data()
+        # print("INDEX DATA", index.data())
+        option.icon = QtGui.QIcon("images/ico/" + index.data() + ".svg")
 
 
 #################################################################
@@ -346,20 +444,26 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
 #################################################################
 
 
-class TestOpenOrders(BaseTableView):
+class OpenOrders(BaseTableView):
     """Extended TableView that draws a colored background."""
 
     def __init__(self, parent=None, *args):
-        super(TestOpenOrders, self).__init__()
+        super(OpenOrders, self).__init__()
+        # self.my_model = SortFilterModel(self, 0)
+        self.setItemDelegateForColumn(0, DateDelegate(self))
         self.setItemDelegateForColumn(1, PairDelegate(self))
-        self.setItemDelegateForColumn(2, BasicDelegate(self, "#ff0077"))
-        self.setItemDelegateForColumn(3, BasicDelegate(self))
-        self.has_proxy = True
+        self.setItemDelegateForColumn(3, BuySellDelegete(self))
+        self.setItemDelegateForColumn(4, RoundFloatDelegate(self))
+        self.setItemDelegateForColumn(5, RoundAssetDelegate(self, 1))
+        self.setItemDelegateForColumn(6, FilledPercentDelegate(self))
+        self.setItemDelegateForColumn(7, RoundFloatDelegate(self, 8))
+        self.setItemDelegateForColumn(9, HoverDelegate(self, Colors.color_lightgrey, Colors.color_pink))
+
+        self.parent = parent
 
 
     def set_df(self):
-        self.mw.api_manager.new_api()
-        return self.mw.user_data.create_dataframe()
+        return self.mw.user_data.create_open_orders_df()
 
 
     def cell_clicked(self, index):
@@ -369,7 +473,7 @@ class TestOpenOrders(BaseTableView):
 
             # check proxy model data to account for
             # sort order and or filter
-            model = self.proxy_model
+            model = self.model()
 
             id_index = model.index(row, 8)
             pair_index = model.index(row, 1)
@@ -382,14 +486,28 @@ class TestOpenOrders(BaseTableView):
             pair = index.data()
             coin = pair.replace("BTC", "")
             self.mw.gui_manager.change_to(coin)
+    
+    def set_widths(self):
+        for i in range(4):
+            self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Fixed)
+
+        self.setColumnWidth(0, 130)
+        self.setColumnWidth(1, 120)
+        self.setColumnWidth(2, 60)
+        self.setColumnWidth(3, 60)
 
 
-class TestHist(BaseTableView):
+class History(BaseTableView):
     def __init__(self, parent=None, *args):
-        super(TestHist, self).__init__()
-        self.my_model = SortFilterModel(self)
-        # self.has_proxy = True
-        self.setItemDelegate(BasicDelegate(self))
+        super(History, self).__init__()
+        self.my_model = SortFilterModel(self, 1)
+        self.setItemDelegateForColumn(0, DateDelegate(self))
+        self.setItemDelegateForColumn(1, PairDelegate(self))
+        self.setItemDelegateForColumn(2, BuySellDelegete(self))
+        self.setItemDelegateForColumn(3, RoundFloatDelegate(self))
+        self.setItemDelegateForColumn(4, RoundAssetDelegate(self, 1))
+        self.setItemDelegateForColumn(5, RoundFloatDelegate(self, 8))
+
 
     def set_df(self):
         return self.mw.user_data.create_history_df()
@@ -398,33 +516,67 @@ class TestHist(BaseTableView):
         for i in range(self.my_model.columnCount()):
             self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
 
+    def cell_clicked(self, index):
+        if index.column() == 1:
+            pair = index.data()
+            coin = pair.replace("BTC", "")
+            self.mw.gui_manager.change_to(coin)
 
 
-class TestHoldings(BaseTableView):
+class Holdings(BaseTableView):
     def __init__(self, parent=None, *args):
-        super(TestHoldings, self).__init__()
-        self.has_proxy = True
-        self.setItemDelegate(BasicDelegate(self))
+        super(Holdings, self).__init__()
+        self.my_model = SortFilterModel(self, 0)
+        self.setItemDelegateForColumn(0, CoinDelegate(self))
+        self.setItemDelegateForColumn(2, RoundAssetDelegate(self, 0, "BTC"))
+        self.setItemDelegateForColumn(3, RoundAssetDelegate(self, 0, "BTC"))
+        self.setItemDelegateForColumn(4, RoundAssetDelegate(self, 0, "BTC"))
+        self.setItemDelegateForColumn(5, RoundFloatDelegate(self))
 
 
     def set_df(self):
         return self.mw.user_data.create_holdings_df()
 
+    def cell_clicked(self, index):
+        if index.column() == 0:
+            pair = index.data()
+            if pair != "BTC":
+                self.mw.gui_manager.change_to(pair)
 
-class TestIndex(BaseTableView):
+    def set_widths(self):
+        self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
+        self.setColumnWidth(0, 130)
+
+
+class Index(BaseTableView):
     def __init__(self, parent=None, *args):
-        super(TestIndex, self).__init__()
-        self.my_model = SortFilterModel(self)
-        # self.has_proxy = True
-        self.setItemDelegate(BasicDelegate(self))
+        super(Index, self).__init__()
+        self.my_model = SortFilterModel(self, 0)
+        
+        self.setItemDelegateForColumn(0, PairDelegate(self))
+        self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
+        self.setItemDelegateForColumn(2, ChangePercentDelegate(self))
+        self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 2))
+
+        for i in range(4, 7):
+            self.setItemDelegateForColumn(i, RoundFloatDelegate(self, 3))
+
+        for i in range(7, 10):
+            self.setItemDelegateForColumn(i, ChangePercentDelegate(self))
+
+
 
     def set_df(self):
         return self.mw.index_data.coin_index
 
     def set_widths(self):
-        for i in range(self.my_model.columnCount()):
-            self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
+        self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
+        self.setColumnWidth(0, 130)
+        self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        self.setColumnWidth(1, 130)
 
-
-
-    
+    def cell_clicked(self, index):
+        if index.column() == 0:
+            pair = index.data()
+            coin = pair.replace("BTC", "")
+            self.mw.gui_manager.change_to(coin)
