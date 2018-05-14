@@ -614,7 +614,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>9</number>
+            <number>12</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -718,8 +718,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>969</width>
-                  <height>746</height>
+                  <width>98</width>
+                  <height>28</height>
                  </rect>
                 </property>
                </widget>
@@ -2308,6 +2308,143 @@
              </item>
             </layout>
            </widget>
+           <widget class="QWidget" name="tab_18">
+            <attribute name="title">
+             <string>new ob</string>
+            </attribute>
+            <widget class="AsksView" name="asks_view">
+             <property name="geometry">
+              <rect>
+               <x>580</x>
+               <y>50</y>
+               <width>291</width>
+               <height>74</height>
+              </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="mouseTracking">
+              <bool>true</bool>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="lineWidth">
+              <number>1</number>
+             </property>
+             <property name="verticalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+             </property>
+             <property name="sizeAdjustPolicy">
+              <enum>QAbstractScrollArea::AdjustToContents</enum>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>false</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::NoSelection</enum>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <property name="gridStyle">
+              <enum>Qt::NoPen</enum>
+             </property>
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+             <property name="cornerButtonEnabled">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>1</number>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>0</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+            </widget>
+            <widget class="QTableView" name="bids_view">
+             <property name="geometry">
+              <rect>
+               <x>590</x>
+               <y>200</y>
+               <width>297</width>
+               <height>317</height>
+              </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="mouseTracking">
+              <bool>true</bool>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="verticalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+             </property>
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarAlwaysOff</enum>
+             </property>
+             <property name="sizeAdjustPolicy">
+              <enum>QAbstractScrollArea::AdjustToContents</enum>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::NoSelection</enum>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <property name="cornerButtonEnabled">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+            </widget>
+            <widget class="QPushButton" name="init_asks_btn">
+             <property name="geometry">
+              <rect>
+               <x>450</x>
+               <y>250</y>
+               <width>113</width>
+               <height>32</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>init asks</string>
+             </property>
+            </widget>
+           </widget>
           </widget>
           <widget class="QTabWidget" name="tabsBotLeft">
            <property name="sizePolicy">
@@ -3343,7 +3480,7 @@
                   </widget>
                  </item>
                  <item row="5" column="0">
-                  <widget class="DataBids" name="new_bids">
+                  <widget class="BidsView" name="new_bids">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                      <horstretch>0</horstretch>
@@ -3433,7 +3570,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="DataAsks" name="new_asks">
+                    <widget class="AsksView" name="new_asks">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
                        <horstretch>0</horstretch>
@@ -6299,8 +6436,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>614</width>
-                 <height>479</height>
+                 <width>141</width>
+                 <height>468</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -6720,16 +6857,6 @@
    <header>app/newhist.h</header>
   </customwidget>
   <customwidget>
-   <class>DataAsks</class>
-   <extends>QTableView</extends>
-   <header>app/data/new_orderbook_table.h</header>
-  </customwidget>
-  <customwidget>
-   <class>DataBids</class>
-   <extends>QTableView</extends>
-   <header>app/data/new_orderbook_table.h</header>
-  </customwidget>
-  <customwidget>
    <class>History</class>
    <extends>QTableView</extends>
    <header>app/data/base_table_setup.h</header>
@@ -6748,6 +6875,16 @@
    <class>Holdings</class>
    <extends>QTableView</extends>
    <header>app/data/base_table_setup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AsksView</class>
+   <extends>QTableView</extends>
+   <header>app/data/livedata_tables.h</header>
+  </customwidget>
+  <customwidget>
+   <class>BidsView</class>
+   <extends>QTableView</extends>
+   <header>app/data/livedata_tables.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

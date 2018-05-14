@@ -97,6 +97,7 @@ class OrderbookTable(QtWidgets.QTableView):
 
         # reverse asks
         if side == "asks":
+            print("reverse asks")
             df = df.reindex(index=df.index[::-1])
         
         maxval = df["Total"].max()

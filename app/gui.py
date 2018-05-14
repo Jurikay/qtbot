@@ -206,6 +206,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.coinindex_filter.textChanged.connect(self.holdings_view.my_model.setFilter)
         self.coinindex_filter.textChanged.connect(self.index_view.my_model.setFilter)
         
+
+        self.init_asks_btn.clicked.connect(self.asks_view.setup)
+        # self.asks_view.setup()
         # self.new_asks.setup()
         # self.new_bids.setup()
 

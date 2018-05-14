@@ -85,44 +85,6 @@ class BaseTableView(QtWidgets.QTableView):
         pass
 
 
-class BackgroundTable(BaseTableView):
-    """Extended TableView that draws a colored background."""
-
-    def __init__(self, parent=None, *args):
-        super(BackgroundTable, self).__init__()
-
-        self.has_data = False
-
-    def paintEvent(self, event):
-        """Custom paint event to draw colored background to
-        indicate order size."""
-
-        
-        if self.has_data is True:
-            row_count = self.my_model.rowCount()
-            for row in range(row_count):
-                rowY = self.rowViewportPosition(row)
-                rowH = self.rowHeight(row)
-
-                # Create the painter
-                painter = QtGui.QPainter(self.viewport())
-
-                value = self.df.iloc[row, 3]
-                percentage = value / self.max_order
-                total_width = self.horizontalHeader().width()
-
-                painter.save()
-                bg_rect = QtCore.QRect(0, rowY, (percentage * total_width), rowH)
-                painter.setBrush(QtGui.QColor(self.bg_color))
-                painter.setPen(QtGui.QColor("#20262b"))
-                painter.drawRect(bg_rect)
-                painter.restore()
-                super(BaseTableView, self).paintEvent(event)
-
-        else:
-            super(BaseTableView, self).paintEvent(event)
-
-
 #################################################################
 # BaseTableModel
 #################################################################
@@ -222,7 +184,6 @@ class SortFilterModel(BaseTableModel):
                 self.setFilter(searchText=self.searchText)
 
     def update(self, dataIn):
-        print("UPDATE TABLE MODEL", self, self.parent)
         self.datatable = dataIn
         self.sort(self.order_col, self.order_dir)
 
@@ -268,11 +229,10 @@ class ChangePercentDelegate(BasicDelegate):
         elif float(index.data()) == 0:
             prefix = " "
             self.fg_color = Colors.color_lightgrey
-            
+
         else:
             prefix = "+"
             self.fg_color = Colors.color_green
-            
 
         option.text = prefix + '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
 
@@ -331,7 +291,7 @@ class RoundFloatDelegate(BasicDelegate):
         self.suffix = suffix
 
     def initStyleOption(self, option, index):
-        option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.round_to) + str(self.suffix)
+        option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.round_to) + str(self.suffix)
 
 
 
@@ -360,7 +320,7 @@ class RoundAssetDelegate(RoundFloatDelegate):
         #     assetDecimals = 8
         self.round_to = int(assetDecimals)
         # print(index.row(), pair, assetDecimals)
-        option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.round_to) + str(self.suffix)
+        option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.round_to) + str(self.suffix)
 
 
 class BuySellDelegete(BasicDelegate):
@@ -580,3 +540,4 @@ class Index(BaseTableView):
             pair = index.data()
             coin = pair.replace("BTC", "")
             self.mw.gui_manager.change_to(coin)
+

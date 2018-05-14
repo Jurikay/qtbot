@@ -229,7 +229,6 @@ class ApiCalls:
 
     def api_my_trades(self, pair, progress_callback=None):
         my_trades = self.client.get_my_trades(symbol=pair)
-        print("MYTRADES", my_trades)
         if progress_callback:
             progress_callback.emit([my_trades, pair])
         else:
@@ -281,6 +280,8 @@ class ApiCalls:
         self.mw.orderbook = depth
         self.mw.new_asks.setup()
         self.mw.new_bids.setup()
+
+        # self.mw.asks_view.setup()
 
 
     def get_trade_history(self, pair):
