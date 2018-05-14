@@ -131,7 +131,6 @@ class BackgroundTable(QtWidgets.QTableView):
 
         maxval = df["Amount"].max()
         self.max_order = maxval
-        print("HISTORY DF", df)
         self.has_data = True
         return df
 
@@ -173,13 +172,13 @@ class AsksDelegate(QtWidgets.QStyledItemDelegate):
             option.text = str(index.data()).zfill(2)
 
         elif index.column() == 1:
-            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.mw.decimals)
+            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.decimals)
 
         elif index.column() == 2:
-            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.mw.assetDecimals)
+            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.assetDecimals)
 
         elif index.column() == 3:
-            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=3) + " BTC"
+            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=3) + " BTC"
 
         # else:
         #     super(AsksDelegate, self).initStyleOption(option, index)
