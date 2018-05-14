@@ -127,6 +127,9 @@ class WebsocketManager:
         
         worker.signals.progress.connect(self.mw.new_asks.update)
         worker.signals.progress.connect(self.mw.new_bids.update)
+
+        worker.signals.progress.connect(self.mw.asks_view.update)
+
         
         self.threadpool.tryStart(worker)
         self.api_updates += 1

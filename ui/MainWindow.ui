@@ -614,7 +614,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>12</number>
+            <number>11</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -718,8 +718,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>98</width>
-                  <height>28</height>
+                  <width>969</width>
+                  <height>610</height>
                  </rect>
                 </property>
                </widget>
@@ -2173,13 +2173,6 @@
                </column>
               </widget>
              </item>
-             <item row="2" column="1">
-              <widget class="QPushButton" name="button_testgo">
-               <property name="text">
-                <string>go</string>
-               </property>
-              </widget>
-             </item>
              <item row="1" column="1">
               <widget class="QTableWidget" name="bids_table">
                <property name="sizePolicy">
@@ -2306,13 +2299,75 @@
                </column>
               </widget>
              </item>
+             <item row="2" column="1">
+              <widget class="QPushButton" name="button_testgo">
+               <property name="text">
+                <string>go</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="NewHist" name="oldtradeTable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Plain</enum>
+               </property>
+               <property name="lineWidth">
+                <number>0</number>
+               </property>
+               <property name="sizeAdjustPolicy">
+                <enum>QAbstractScrollArea::AdjustToContents</enum>
+               </property>
+               <property name="editTriggers">
+                <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <property name="dragDropOverwriteMode">
+                <bool>true</bool>
+               </property>
+               <property name="alternatingRowColors">
+                <bool>false</bool>
+               </property>
+               <property name="selectionMode">
+                <enum>QAbstractItemView::NoSelection</enum>
+               </property>
+               <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectRows</enum>
+               </property>
+               <property name="showGrid">
+                <bool>false</bool>
+               </property>
+               <property name="sortingEnabled">
+                <bool>false</bool>
+               </property>
+               <property name="cornerButtonEnabled">
+                <bool>false</bool>
+               </property>
+               <attribute name="horizontalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
+              </widget>
+             </item>
             </layout>
            </widget>
            <widget class="QWidget" name="tab_18">
             <attribute name="title">
              <string>new ob</string>
             </attribute>
-            <widget class="AsksView" name="asks_view">
+            <widget class="DataAsks" name="asks_view">
              <property name="geometry">
               <rect>
                <x>580</x>
@@ -2385,7 +2440,7 @@
               <bool>false</bool>
              </attribute>
             </widget>
-            <widget class="QTableView" name="bids_view">
+            <widget class="DataBids" name="bids_view">
              <property name="geometry">
               <rect>
                <x>590</x>
@@ -2442,6 +2497,19 @@
              </property>
              <property name="text">
               <string>init asks</string>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="btn_ud">
+             <property name="geometry">
+              <rect>
+               <x>440</x>
+               <y>340</y>
+               <width>113</width>
+               <height>32</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>PushButton</string>
              </property>
             </widget>
            </widget>
@@ -3601,6 +3669,9 @@
                      <property name="sizeAdjustPolicy">
                       <enum>QAbstractScrollArea::AdjustToContents</enum>
                      </property>
+                     <property name="autoScrollMargin">
+                      <number>5</number>
+                     </property>
                      <property name="editTriggers">
                       <set>QAbstractItemView::NoEditTriggers</set>
                      </property>
@@ -3691,12 +3762,15 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="NewHist" name="tradeTable">
+                  <widget class="HistView" name="tradeTable">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="mouseTracking">
+                    <bool>true</bool>
                    </property>
                    <property name="focusPolicy">
                     <enum>Qt::NoFocus</enum>
@@ -6436,8 +6510,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>141</width>
-                 <height>468</height>
+                 <width>614</width>
+                 <height>479</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -6857,6 +6931,16 @@
    <header>app/newhist.h</header>
   </customwidget>
   <customwidget>
+   <class>DataAsks</class>
+   <extends>QTableView</extends>
+   <header>app/data/new_orderbook_table.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DataBids</class>
+   <extends>QTableView</extends>
+   <header>app/data/new_orderbook_table.h</header>
+  </customwidget>
+  <customwidget>
    <class>History</class>
    <extends>QTableView</extends>
    <header>app/data/base_table_setup.h</header>
@@ -6883,6 +6967,11 @@
   </customwidget>
   <customwidget>
    <class>BidsView</class>
+   <extends>QTableView</extends>
+   <header>app/data/livedata_tables.h</header>
+  </customwidget>
+  <customwidget>
+   <class>HistView</class>
    <extends>QTableView</extends>
    <header>app/data/livedata_tables.h</header>
   </customwidget>

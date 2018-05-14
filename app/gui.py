@@ -208,6 +208,8 @@ class beeserBot(QtWidgets.QMainWindow):
         
 
         self.init_asks_btn.clicked.connect(self.asks_view.setup)
+        # self.init_asks_btn.clicked.connect(self.bids_rebuild.setup)
+        # self.btn_ud.clicked.connect(self.bids_rebuild.update)
         # self.asks_view.setup()
         # self.new_asks.setup()
         # self.new_bids.setup()
