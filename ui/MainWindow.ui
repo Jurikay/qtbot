@@ -609,12 +609,12 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>950</width>
+             <width>0</width>
              <height>320</height>
             </size>
            </property>
            <property name="currentIndex">
-            <number>11</number>
+            <number>9</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -1488,238 +1488,6 @@
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_31">
              <item>
-              <widget class="OpenOrders" name="open_orders_view">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="mouseTracking">
-                <bool>true</bool>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Plain</enum>
-               </property>
-               <property name="lineWidth">
-                <number>0</number>
-               </property>
-               <property name="sizeAdjustPolicy">
-                <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="alternatingRowColors">
-                <bool>true</bool>
-               </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
-               </property>
-               <property name="showGrid">
-                <bool>false</bool>
-               </property>
-               <property name="gridStyle">
-                <enum>Qt::DashLine</enum>
-               </property>
-               <property name="sortingEnabled">
-                <bool>true</bool>
-               </property>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="History" name="trade_history_view">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="mouseTracking">
-                <bool>true</bool>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Plain</enum>
-               </property>
-               <property name="lineWidth">
-                <number>0</number>
-               </property>
-               <property name="sizeAdjustPolicy">
-                <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="alternatingRowColors">
-                <bool>true</bool>
-               </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
-               </property>
-               <property name="showGrid">
-                <bool>false</bool>
-               </property>
-               <property name="gridStyle">
-                <enum>Qt::DashLine</enum>
-               </property>
-               <property name="sortingEnabled">
-                <bool>true</bool>
-               </property>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="Holdings" name="holdings_view">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="mouseTracking">
-                <bool>true</bool>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Plain</enum>
-               </property>
-               <property name="lineWidth">
-                <number>0</number>
-               </property>
-               <property name="sizeAdjustPolicy">
-                <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="alternatingRowColors">
-                <bool>true</bool>
-               </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
-               </property>
-               <property name="showGrid">
-                <bool>false</bool>
-               </property>
-               <property name="gridStyle">
-                <enum>Qt::DashLine</enum>
-               </property>
-               <property name="sortingEnabled">
-                <bool>true</bool>
-               </property>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="Index" name="index_view">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="mouseTracking">
-                <bool>true</bool>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::NoFrame</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Plain</enum>
-               </property>
-               <property name="lineWidth">
-                <number>0</number>
-               </property>
-               <property name="sizeAdjustPolicy">
-                <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-               </property>
-               <property name="editTriggers">
-                <set>QAbstractItemView::NoEditTriggers</set>
-               </property>
-               <property name="alternatingRowColors">
-                <bool>true</bool>
-               </property>
-               <property name="selectionMode">
-                <enum>QAbstractItemView::NoSelection</enum>
-               </property>
-               <property name="showGrid">
-                <bool>false</bool>
-               </property>
-               <property name="gridStyle">
-                <enum>Qt::DashLine</enum>
-               </property>
-               <property name="sortingEnabled">
-                <bool>true</bool>
-               </property>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderVisible">
-                <bool>false</bool>
-               </attribute>
-              </widget>
-             </item>
-             <item>
               <layout class="QVBoxLayout" name="verticalLayout_7">
                <property name="spacing">
                 <number>0</number>
@@ -2513,6 +2281,296 @@
              </property>
             </widget>
            </widget>
+           <widget class="QWidget" name="tab_19">
+            <attribute name="title">
+             <string>old tables</string>
+            </attribute>
+            <widget class="TestTableView" name="test_table_view">
+             <property name="geometry">
+              <rect>
+               <x>-20</x>
+               <y>20</y>
+               <width>995</width>
+               <height>91</height>
+              </rect>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="sizeAdjustPolicy">
+              <enum>QAbstractScrollArea::AdjustIgnored</enum>
+             </property>
+             <property name="autoScroll">
+              <bool>true</bool>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::AllEditTriggers</set>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::NoSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>25</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <property name="gridStyle">
+              <enum>Qt::DashLine</enum>
+             </property>
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+            </widget>
+            <widget class="HistoryTable" name="history_table">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>130</y>
+               <width>995</width>
+               <height>141</height>
+              </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="lineWidth">
+              <number>0</number>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::NoSelection</enum>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <property name="sortingEnabled">
+              <bool>false</bool>
+             </property>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>100</number>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>60</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Date</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Icon</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Pair</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Type</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Price</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Filled</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Total</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string/>
+              </property>
+             </column>
+            </widget>
+            <widget class="HoldingsTable" name="holdings_table">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>280</y>
+               <width>995</width>
+               <height>171</height>
+              </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::NoFrame</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="lineWidth">
+              <number>0</number>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::NoSelection</enum>
+             </property>
+             <property name="showGrid">
+              <bool>false</bool>
+             </property>
+             <property name="gridStyle">
+              <enum>Qt::NoPen</enum>
+             </property>
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>100</number>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>0</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderCascadingSectionResizes">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Icon</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Coin</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Name</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Total Balance</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Available</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Reserved</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>BTC Value</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Trade</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>wAvg</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string/>
+              </property>
+             </column>
+            </widget>
+           </widget>
           </widget>
           <widget class="QTabWidget" name="tabsBotLeft">
            <property name="sizePolicy">
@@ -2528,7 +2586,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>4</number>
+            <number>0</number>
            </property>
            <property name="movable">
             <bool>false</bool>
@@ -2710,12 +2768,21 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="TestTableView" name="test_table_view">
+              <widget class="Index" name="index_view">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="minimumSize">
                 <size>
                  <width>0</width>
                  <height>0</height>
                 </size>
+               </property>
+               <property name="mouseTracking">
+                <bool>true</bool>
                </property>
                <property name="focusPolicy">
                 <enum>Qt::NoFocus</enum>
@@ -2726,29 +2793,20 @@
                <property name="frameShadow">
                 <enum>QFrame::Plain</enum>
                </property>
+               <property name="lineWidth">
+                <number>0</number>
+               </property>
                <property name="sizeAdjustPolicy">
                 <enum>QAbstractScrollArea::AdjustIgnored</enum>
                </property>
-               <property name="autoScroll">
-                <bool>true</bool>
-               </property>
                <property name="editTriggers">
-                <set>QAbstractItemView::AllEditTriggers</set>
+                <set>QAbstractItemView::NoEditTriggers</set>
                </property>
                <property name="alternatingRowColors">
                 <bool>true</bool>
                </property>
                <property name="selectionMode">
                 <enum>QAbstractItemView::NoSelection</enum>
-               </property>
-               <property name="selectionBehavior">
-                <enum>QAbstractItemView::SelectRows</enum>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>25</width>
-                 <height>25</height>
-                </size>
                </property>
                <property name="showGrid">
                 <bool>false</bool>
@@ -2760,7 +2818,7 @@
                 <bool>true</bool>
                </property>
                <attribute name="horizontalHeaderStretchLastSection">
-                <bool>false</bool>
+                <bool>true</bool>
                </attribute>
                <attribute name="verticalHeaderVisible">
                 <bool>false</bool>
@@ -2792,6 +2850,64 @@
              <property name="bottomMargin">
               <number>0</number>
              </property>
+             <item>
+              <widget class="OpenOrders" name="open_orders_view">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="mouseTracking">
+                <bool>true</bool>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Plain</enum>
+               </property>
+               <property name="lineWidth">
+                <number>0</number>
+               </property>
+               <property name="sizeAdjustPolicy">
+                <enum>QAbstractScrollArea::AdjustIgnored</enum>
+               </property>
+               <property name="editTriggers">
+                <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <property name="alternatingRowColors">
+                <bool>true</bool>
+               </property>
+               <property name="selectionMode">
+                <enum>QAbstractItemView::NoSelection</enum>
+               </property>
+               <property name="showGrid">
+                <bool>false</bool>
+               </property>
+               <property name="gridStyle">
+                <enum>Qt::DashLine</enum>
+               </property>
+               <property name="sortingEnabled">
+                <bool>true</bool>
+               </property>
+               <attribute name="horizontalHeaderStretchLastSection">
+                <bool>true</bool>
+               </attribute>
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
+              </widget>
+             </item>
             </layout>
            </widget>
            <widget class="QWidget" name="tab_5">
@@ -2818,12 +2934,21 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="HistoryTable" name="history_table">
+              <widget class="History" name="trade_history_view">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="mouseTracking">
+                <bool>true</bool>
                </property>
                <property name="focusPolicy">
                 <enum>Qt::NoFocus</enum>
@@ -2837,6 +2962,9 @@
                <property name="lineWidth">
                 <number>0</number>
                </property>
+               <property name="sizeAdjustPolicy">
+                <enum>QAbstractScrollArea::AdjustIgnored</enum>
+               </property>
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
@@ -2849,67 +2977,18 @@
                <property name="showGrid">
                 <bool>false</bool>
                </property>
-               <property name="sortingEnabled">
-                <bool>false</bool>
+               <property name="gridStyle">
+                <enum>Qt::DashLine</enum>
                </property>
-               <attribute name="horizontalHeaderDefaultSectionSize">
-                <number>100</number>
-               </attribute>
-               <attribute name="horizontalHeaderMinimumSectionSize">
-                <number>60</number>
-               </attribute>
+               <property name="sortingEnabled">
+                <bool>true</bool>
+               </property>
                <attribute name="horizontalHeaderStretchLastSection">
                 <bool>true</bool>
                </attribute>
                <attribute name="verticalHeaderVisible">
                 <bool>false</bool>
                </attribute>
-               <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderStretchLastSection">
-                <bool>false</bool>
-               </attribute>
-               <column>
-                <property name="text">
-                 <string>Date</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Icon</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Pair</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Type</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Price</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Filled</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Total</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string/>
-                </property>
-               </column>
               </widget>
              </item>
             </layout>
@@ -2938,12 +3017,21 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="HoldingsTable" name="holdings_table">
+              <widget class="Holdings" name="holdings_view">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="mouseTracking">
+                <bool>true</bool>
                </property>
                <property name="focusPolicy">
                 <enum>Qt::NoFocus</enum>
@@ -2956,6 +3044,9 @@
                </property>
                <property name="lineWidth">
                 <number>0</number>
+               </property>
+               <property name="sizeAdjustPolicy">
+                <enum>QAbstractScrollArea::AdjustIgnored</enum>
                </property>
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
@@ -2970,85 +3061,17 @@
                 <bool>false</bool>
                </property>
                <property name="gridStyle">
-                <enum>Qt::NoPen</enum>
+                <enum>Qt::DashLine</enum>
                </property>
                <property name="sortingEnabled">
                 <bool>true</bool>
                </property>
-               <attribute name="horizontalHeaderCascadingSectionResizes">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="horizontalHeaderDefaultSectionSize">
-                <number>100</number>
-               </attribute>
-               <attribute name="horizontalHeaderMinimumSectionSize">
-                <number>0</number>
-               </attribute>
                <attribute name="horizontalHeaderStretchLastSection">
                 <bool>true</bool>
                </attribute>
                <attribute name="verticalHeaderVisible">
                 <bool>false</bool>
                </attribute>
-               <attribute name="verticalHeaderCascadingSectionResizes">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-                <bool>true</bool>
-               </attribute>
-               <attribute name="verticalHeaderStretchLastSection">
-                <bool>false</bool>
-               </attribute>
-               <column>
-                <property name="text">
-                 <string>Icon</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Coin</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Name</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Total Balance</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Available</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Reserved</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>BTC Value</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>Trade</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>wAvg</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string/>
-                </property>
-               </column>
               </widget>
              </item>
             </layout>
@@ -3570,6 +3593,9 @@
                    <property name="sizeAdjustPolicy">
                     <enum>QAbstractScrollArea::AdjustToContents</enum>
                    </property>
+                   <property name="autoScrollMargin">
+                    <number>5</number>
+                   </property>
                    <property name="selectionMode">
                     <enum>QAbstractItemView::NoSelection</enum>
                    </property>
@@ -3581,6 +3607,12 @@
                    </property>
                    <attribute name="horizontalHeaderVisible">
                     <bool>false</bool>
+                   </attribute>
+                   <attribute name="horizontalHeaderDefaultSectionSize">
+                    <number>1</number>
+                   </attribute>
+                   <attribute name="horizontalHeaderMinimumSectionSize">
+                    <number>0</number>
                    </attribute>
                    <attribute name="verticalHeaderVisible">
                     <bool>false</bool>

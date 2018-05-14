@@ -48,13 +48,6 @@ class HistoricalData(QtCore.QObject):
         worker = Worker(self.test_all)
         self.mw.threadpool.start(worker)
 
-    def init_client(self):
-        """Create a binance Client object."""
-
-        key = "ws7MEQkmFBf6kJIFpUeCBDxPotoi5eUNodbNZTgJzMhw04p6jJjBkwu6dggTMmZm"
-        secret = "FFArS2rojmCE9iRHX7k4cYaFuYySCH6doy5aMAPOz560YLj62tqPENBC5SShzvUQ"
-        return Client(key, secret, {"verify": True, "timeout": 10})
-
 
     def get_kline(self, symbol, interval):
         """Make an API call to get historical candlestick data in list form."""

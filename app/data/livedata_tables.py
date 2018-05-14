@@ -194,22 +194,27 @@ class AsksDelegate(QtWidgets.QStyledItemDelegate):
 
         if index.column() == 0:
             painter.setPen(QtGui.QColor("#ffffff"))
-
-            painter.drawText(option.rect, self.center, options.text)
+            alignment = self.left
+            # painter.drawText(option.rect, self.center, options.text)
 
         elif index.column() == 1:
+            alignment = self.center
             if option.state & QtWidgets.QStyle.State_MouseOver:
                     painter.setPen(QtGui.QColor(self.parent.highlight))
                     font.setBold(True)
             else:
                 painter.setPen(QtGui.QColor(self.parent.color))
 
+        elif index.column() == 2:
+            painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+            alignment = self.right
+
         else:
             painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-
+            alignment = self.center
 
         painter.setFont(font)
-        painter.drawText(option.rect, self.center, options.text)
+        painter.drawText(option.rect, alignment, options.text)
 
         painter.restore()
 
@@ -254,10 +259,7 @@ class HistoryDelegate(QtWidgets.QStyledItemDelegate):
 
 
         if index.column() == 0:
-            # if self.parent.my_model.model_data[index.row()][2] is True:
-            # print("mw hist", self.mw.trade_history[index.row()])
             if self.mw.trade_history[index.row()][2] is True:
-
                 if option.state & QtWidgets.QStyle.State_MouseOver:
                     painter.setPen(QtGui.QColor("#ff58a8"))
                     font.setBold(True)
@@ -271,7 +273,7 @@ class HistoryDelegate(QtWidgets.QStyledItemDelegate):
                 else:
                     painter.setPen(QtGui.QColor(Colors.color_green))
             painter.setFont(font)
-            painter.drawText(option.rect, self.left, options.text)
+            painter.drawText(option.rect, self.center, options.text)
 
         elif index.column() == 1:
             if option.state & QtWidgets.QStyle.State_MouseOver:
@@ -280,17 +282,16 @@ class HistoryDelegate(QtWidgets.QStyledItemDelegate):
             else:
                 painter.setPen(QtGui.QColor(Colors.color_lightgrey))
             painter.setFont(font)
-            painter.drawText(option.rect, self.left, options.text)
+            painter.drawText(option.rect, self.right, options.text)
 
         elif index.column() == 2:
             painter.setPen(QtGui.QColor(Colors.color_grey))
             painter.drawText(option.rect, self.center, options.text)
-
-
-        
+    
         painter.restore()
 
 #######################################
+
 
 class AsksView(BackgroundTable):
     def __init__(self, *args, **kwargs):
@@ -299,6 +300,7 @@ class AsksView(BackgroundTable):
         self.bg_color = "#473043"
         self.highlight = "#ff58a8"
         self.data = "asks"
+        self.has_data = False
         self.setItemDelegate(AsksDelegate(self))
 
 
@@ -321,7 +323,7 @@ class BidsView(BackgroundTable):
         self.setItemDelegate(AsksDelegate(self))
 
     def set_df(self):
-        return self.create_dataframe("bids")
+        return self.create_dataframe(self.data)
 
 
 class HistView(BackgroundTable):
@@ -345,7 +347,11 @@ class HistView(BackgroundTable):
 
         self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.horizontalHeader().setDefaultSectionSize(75)
+        self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
+        self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
 
+        self.setColumnWidth(0, 80)
+        self.setColumnWidth(1, 80)
 
     def cell_clicked(self, index):
         """Copy price or quantity on click."""
