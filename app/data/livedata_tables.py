@@ -18,20 +18,22 @@ from app.colors import Colors
 from app.data.base_table_setup import BaseTableModel, BaseTableView, BasicDelegate
 
 
-class BackgroundTable(BaseTableView):
+class BackgroundTable(QtWidgets.QTableView):
     """Extended TableView that draws a colored background."""
 
-    def __init__(self, *args, **kwargs):
-        BaseTableView.__init__(self, *args, **kwargs)
-        self.max_order = 1
+    def __init__(self, parent=None, *args):
+        super(BackgroundTable, self).__init__()
+        self.max_order = None
         self.has_data = False
         self.my_model = BaseTableModel(self)
+        self.setItemDelegate(AsksDelegate(self))
+        self.mw = app.mw
+
 
     def paintEvent(self, event):
         """Custom paint event to draw colored background to
         indicate order size."""
 
-        print("bg table paint")
         if self.has_data is True:
             row_count = self.my_model.rowCount()
             for row in range(row_count):
@@ -42,6 +44,8 @@ class BackgroundTable(BaseTableView):
                 painter = QtGui.QPainter(self.viewport())
 
                 value = self.df.iloc[row, 3]
+                print("value:", value, self.max_order)
+                print(type(value))
                 percentage = value / self.max_order
                 total_width = self.horizontalHeader().width()
 
@@ -51,10 +55,10 @@ class BackgroundTable(BaseTableView):
                 painter.setPen(QtGui.QColor("#20262b"))
                 painter.drawRect(bg_rect)
                 painter.restore()
-                super(BaseTableView, self).paintEvent(event)
+                super(BackgroundTable, self).paintEvent(event)
 
         else:
-            super(BaseTableView, self).paintEvent(event)
+            super(BackgroundTable, self).paintEvent(event)
 
     def create_dataframe(self, side):
         if side == "asks":
@@ -66,11 +70,12 @@ class BackgroundTable(BaseTableView):
         df.columns = ["Price", "Amount", "Total"]
         cols = df.columns
         df[cols] = df[cols].apply(pd.to_numeric, errors='coerce')
+
         total = df.Price * df.Amount
         df["Total"] = total
         df['#'] = df.index + 1
         df = df[["#", "Price", "Amount", "Total"]]
-
+        
         # reverse asks
         if side == "asks":
             print("rev new tables")
@@ -84,20 +89,95 @@ class BackgroundTable(BaseTableView):
 
 
     def get_max_value(self, df):
-        return 1
+        max_val = df["Total"].max()
+        return max_val
 
     def set_widths(self):
         self.horizontalHeader().setSortIndicatorShown(False)
         self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self.verticalHeader().setDefaultSectionSize(16)
+        # self.horizontalHeader().setDefaultSectionSize(25)
         self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)
+        self.setColumnWidth(0, 25)
 
     def update(self):
         self.df = self.create_dataframe(self.data)
         self.my_model.update(self.df)
+    
+    def setup(self):
+        self.update()
+
+        self.setModel(self.my_model)
+        # self.proxy_model.setSourceModel(self.my_model)
+
+        self.set_widths()
+
+        self.sortByColumn(0, QtCore.Qt.DescendingOrder)
+
+
+class AsksDelegate(QtWidgets.QStyledItemDelegate):
+    """Class to define the style of index values."""
+
+    def __init__(self, parent):
+        super(AsksDelegate, self).__init__(parent)
+        self.parent = parent
+        self.mw = app.mw
+
+        self.center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        self.left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        self.right = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+
+    def initStyleOption(self, option, index):
+        """Set style options based on index column."""
+        if index.column() == 0:
+            option.text = str(index.data()).zfill(2)
+
+        elif index.column() == 1:
+            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.mw.decimals)
+
+        elif index.column() == 2:
+            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=self.mw.assetDecimals)
+
+        elif index.column() == 3:
+            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=3) + " BTC"
+
+        else:
+            super(AsksDelegate, self).initStyleOption(option, index)
+
+
+    def paint(self, painter, option, index):
+        """Reimplemented custom paint method."""
+        painter.save()
+        options = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(options, index)
+        font = QtGui.QFont()
+
+
+        if index.column() == 0:
+            painter.setPen(QtGui.QColor("#ffffff"))
+
+            painter.drawText(option.rect, self.center, options.text)
+
+        elif index.column() == 1:
+            if option.state & QtWidgets.QStyle.State_MouseOver:
+                    painter.setPen(QtGui.QColor(self.parent.highlight))
+                    font.setBold(True)
+            else:
+                painter.setPen(QtGui.QColor(self.parent.color))
+
+        else:
+            painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+
+
+        painter.setFont(font)
+        painter.drawText(option.rect, self.center, options.text)
+
+        painter.restore()
+
+
 
 
 class AsksView(BackgroundTable):
@@ -109,9 +189,9 @@ class AsksView(BackgroundTable):
         self.data = "asks"
 
 
-    def get_max_value(self, df):
-        max_val = df["Total"].max()
-        return max_val
+    # def get_max_value(self, df):
+    #     max_val = df["Total"].max()
+    #     return max_val
 
     def set_df(self):
         return self.create_dataframe(self.data)
