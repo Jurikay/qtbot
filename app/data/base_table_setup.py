@@ -348,7 +348,8 @@ class BuySellDelegete(BasicDelegate):
 class PairDelegate(QtWidgets.QStyledItemDelegate):
     """Delegate that adds an icon + hover effect to a pair."""
 
-    def initStyleOption(self, option, index):
+    @staticmethod
+    def initStyleOption(option, index):
         """Set style options based on index column."""
         option.text = index.data().replace("BTC", "") + " / BTC"
         option.icon = QtGui.QIcon("images/ico/" + index.data().replace(

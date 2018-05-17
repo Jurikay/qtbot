@@ -221,6 +221,12 @@ class AsksDelegate(QtWidgets.QStyledItemDelegate):
         painter.restore()
 
 
+class HistPriceDelegate(BasicDelegate):
+
+
+    def initStyleOption(self, option, index):
+        option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=val["decimals"])
+        assetDecimals = self.parent.tickers[self.parent.cfg_manager.pair]["assetDecimals"]
 
 
 class HistoryDelegate(QtWidgets.QStyledItemDelegate):

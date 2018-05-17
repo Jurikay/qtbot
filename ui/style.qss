@@ -808,7 +808,7 @@ QPushButton#disabled_btn {
     color: #f3f3f3;
 }
 
-#volumes, #volumes QLabel {
+#volumes_widget, #volumes_widget QLabel {
 
     font-family: Arial Black;
     color: #D6D6D6;

@@ -85,6 +85,13 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.button_testgo.clicked.connect(self.new_asks.setup)
         # self.button_testgo.clicked.connect(self.new_bids.setup)
 
+        self.delayer0 = DelayedUpdater(self.chart)
+        self.delayer1 = DelayedUpdater(self.open_orders_view)
+
+        self.delayer2 = DelayedUpdater(self.tradeTable)
+        self.delayer3 = DelayedUpdater(self.volumes_widget)
+        self.delayer4 = DelayedUpdater(self.new_asks)
+        self.delayer5 = DelayedUpdater(self.new_bids)
 
 
         # set external stylesheet
@@ -308,3 +315,30 @@ class DataManager:
 
     def get_specific(self, kind, coin):
         pass
+
+
+class DelayedUpdater(QtCore.QObject):
+
+    def __init__(self, target, parent=None):
+        super(DelayedUpdater, self).__init__(parent)
+        self.target = target
+        target.installEventFilter(self)
+
+        self.delayEnabled = True
+        self.delayTimeout = 100
+
+        self._resizeTimer = QtCore.QTimer()
+        self._resizeTimer.timeout.connect(self._delayedUpdate)
+
+    def eventFilter(self, obj, event):
+        if self.delayEnabled and obj is self.target:
+            if event.type() == event.Resize:
+                self._resizeTimer.start(self.delayTimeout)
+                self.target.setUpdatesEnabled(False)
+
+        return False
+
+    def _delayedUpdate(self):
+        print("Performing actual update")
+        self._resizeTimer.stop()
+        self.target.setUpdatesEnabled(True)
