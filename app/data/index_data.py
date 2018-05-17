@@ -83,6 +83,7 @@ class IndexData(QObject):
                                   "Price": float(values["lastPrice"]),
                                   "24h Change": float(values["priceChangePercent"]),
                                   "24h Volume": float(values["quoteVolume"]),
+                                  "Spread": float(values["bidPrice"]) / float(values["askPrice"]),
                                   "5m Volume": float(volumes[0]),
                                   "15m Volume": float(volumes[1]),
                                   "1h Volume": float(volumes[2]),
