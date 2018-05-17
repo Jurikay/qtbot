@@ -69,16 +69,18 @@ class BaseTableView(QtWidgets.QTableView):
         self.set_widths()
 
 
-    def leaveEvent(self, event):
+    @staticmethod
+    def leaveEvent(event):
         app.main_app.restoreOverrideCursor()
 
     def set_widths(self):
         pass
 
-    def set_df(self):
-        # print("set empty df")
-        """This should be overwritten."""
-        return pd.DataFrame
+
+    # def set_df(self):
+    #     # print("set empty df")
+    #     """This should be overwritten."""
+    #     return pd.DataFrame
 
     def cell_clicked(self, click):
         """This should be overwritten."""
@@ -131,9 +133,9 @@ class BaseTableModel(QtCore.QAbstractTableModel):
                 return str(self.datatable.iloc[index.row(), index.column()])
 
 
-    def setFilter(self):
-        # print("BASIC FILTER")
-        pass
+    # def setFilter(self):
+    #     # print("BASIC FILTER")
+    #     pass
 
 
 class SortFilterModel(BaseTableModel):

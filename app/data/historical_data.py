@@ -42,7 +42,6 @@ class HistoricalData(QtCore.QObject):
         self.process_in_thread(self.mw.cfg_manager.pair)
 
 
-
     def get_kline_values(self):
         worker = Worker(self.test_all)
         self.mw.threadpool.start(worker)
@@ -89,23 +88,6 @@ class HistoricalData(QtCore.QObject):
         worker = Worker(partial(self.process_this, pair))
         worker.signals.progress.connect(self.mw.index_data.callback_calc)
         self.mw.threadpool.tryStart(worker)
-
-
-""" WORK IN PROGRESS:
-    def ordered_process(self):
-        if current_pair in all_coins:
-            self.process_this(current_pair)
-            allcoins.find(current_pair).remove()
-
-        for holding in holdings:
-            if holding in all_coins:
-                self.process_this(holding)
-                allcoins.find(current_pair).remove()
-
-        while len(all_coins) > 0:
-            self.process_this(all_coins[0])
-            all_coins[0].pop()
-"""
 
 
 class HistoricalPair:

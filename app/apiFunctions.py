@@ -44,9 +44,11 @@ class ApiCalls:
             return None
 
 
-    def get_ban_duration(self, error_msg):
+    @staticmethod
+    def get_ban_duration(error_msg):
         banned_until = str(error_msg).replace("APIError(code=-1003): Way too many requests; IP banned until ", "").replace(". Please use the websocket for live updates to avoid bans.", "")
         return int(banned_until)
+
 
     def initialize(self):
 
@@ -357,7 +359,8 @@ class ApiCalls:
         return coin_dict
 
 
-    def calculate_decimals(self, tickSize, minTrade):
+    @staticmethod
+    def calculate_decimals(tickSize, minTrade):
         """Returns asset and quote asset decimal precision."""
         decimals = len(str(tickSize.rstrip("0"))) - 2
         assetDecimals = len(str(minTrade.rstrip("0"))) - 2

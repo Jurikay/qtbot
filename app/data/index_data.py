@@ -101,8 +101,8 @@ class IndexData(QObject):
         else:
             return filtered
 
-    def callback_calc(self, pair, volumes=volumes):
-        print("Callback calc")
+    def callback_calc(self, pair, volumes):
+
         """Callback from historical data."""
         volume_sums = list()
         changes = list()

@@ -6,8 +6,6 @@
 """Functions that generate HTML pages."""
 
 from app.init import val
-import time
-
 
 class Webpages():
 
@@ -497,7 +495,7 @@ class Webpages():
             coin_name = "rlc"
         elif coin_name == "Bytecoin":
             coin_name = "bytecoin-bcn"
-        
+
         # print("Generating CMC url: " + str(coin_name))
         url = "https://coinmarketcap.com/currencies/" + coin_name.replace(" ", "-").replace(".", "") + "/"
         return url
