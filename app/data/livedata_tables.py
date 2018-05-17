@@ -14,9 +14,9 @@ import app
 import pandas as pd
 from datetime import datetime
 from app.colors import Colors
-import time
-from app.data.base_table_setup import BaseTableModel, BaseTableView, BasicDelegate
-from app.data.new_orderbook_table import OrderbookTable
+# import time
+from app.data.base_table_setup import BaseTableModel
+# from app.data.new_orderbook_table import OrderbookTable
 from app.init import val
 
 
@@ -27,7 +27,7 @@ class BackgroundTable(QtWidgets.QTableView):
         self.data_dict = None
         self.df = None
         self.mw = app.mw
-        
+
         # self.proxy_model = QtCore.QSortFilterProxyModel()
         self.setSortingEnabled(True)
         self.clicked.connect(self.cell_clicked)
@@ -55,11 +55,11 @@ class BackgroundTable(QtWidgets.QTableView):
                 rowY = self.rowViewportPosition(row)
                 rowH = self.rowHeight(row)
                 # print(row, rowY, rowH)
-                
+
                 # Create the painter
                 value = self.df.iloc[row, self.compare_col]
                 percentage = value / self.max_order
-                
+
                 my_rect = QtCore.QRect(0, rowY, (percentage * total_width), rowH)
 
                 painter.save()
@@ -94,6 +94,8 @@ class BackgroundTable(QtWidgets.QTableView):
 
         self.my_model.modelReset.emit()
 
+        self.mw.live_data.set_spread()
+
 
     def set_df(self):
         return self.create_dataframe(self.data)
@@ -103,8 +105,8 @@ class BackgroundTable(QtWidgets.QTableView):
             df = pd.DataFrame(self.mw.orderbook["asks"])
         elif side == "bids":
             df = pd.DataFrame(self.mw.orderbook["bids"])
-            
-        
+
+
         df.columns = ["Price", "Amount", "Total"]
         cols = df.columns
         df[cols] = df[cols].apply(pd.to_numeric, errors='coerce')
@@ -116,7 +118,7 @@ class BackgroundTable(QtWidgets.QTableView):
         # reverse asks
         if side == "asks":
             df = df.reindex(index=df.index[::-1])
-        
+
         maxval = df["Total"].max()
         self.max_order = maxval
         self.has_data = True
@@ -287,7 +289,7 @@ class HistoryDelegate(QtWidgets.QStyledItemDelegate):
         elif index.column() == 2:
             painter.setPen(QtGui.QColor(Colors.color_grey))
             painter.drawText(option.rect, self.center, options.text)
-    
+
         painter.restore()
 
 #######################################

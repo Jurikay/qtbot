@@ -21,7 +21,7 @@ import time
 class WebsocketManager:
 
     def __init__(self, mw, tp, client):
-        print("INIT WEBSOCKET MANAGER")
+        # print("INIT WEBSOCKET MANAGER")
         self.mw = mw
         self.threadpool = tp
         # self.counter = 0
@@ -47,7 +47,7 @@ class WebsocketManager:
 
     # websockets
     def schedule_websockets(self):
-        print("SCHEDULE SOCKETS!!!!")
+        # print("SCHEDULE SOCKETS!!!!")
         # Pass the function to execute
         worker = Worker(self.start_sockets)
 
@@ -60,20 +60,17 @@ class WebsocketManager:
     # sockets
     def start_sockets(self, progress_callback):
         print("START SOCKETS!!!")
-        
+
 
         self.websockets_symbol()
         # time.sleep(0.25)
         # start user and ticker websocket separately since it does not need to be restarted
         self.userWebsocket = self.socket_mgr.start_user_socket(self.user_callback)
-        print("user socket:", self.userWebsocket)
 
         # time.sleep(0.1)
         self.tickerWebsocket = self.socket_mgr.start_ticker_socket(self.ticker_callback)
-        print("ticker socket:", self.tickerWebsocket)
 
         # time.sleep(0.1)
-        print("socket manager", self.socket_mgr)
         self.socket_mgr.start()
 
     def stop_sockets(self):
@@ -87,7 +84,7 @@ class WebsocketManager:
         """Symbol specific websockets. This gets called on pair change."""
         self.depthSocket = self.socket_mgr.start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
         self.aggTradeSocket = self.socket_mgr.start_aggtrade_socket(self.mw.cfg_manager.pair, self.trade_callback)
-        
+
         # print("depth socket", self.depthSocket)
         # self.klineSocket1 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="1m")
         # self.klineSocket5 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="5m")
@@ -123,14 +120,14 @@ class WebsocketManager:
 
 
         worker = Worker(partial(self.socket_orderbook, msg))
-        worker.signals.progress.connect(self.mw.live_data.progress_orderbook)
-        
+        # worker.signals.progress.connect(self.mw.live_data.progress_orderbook)
+
         worker.signals.progress.connect(self.mw.new_asks.update)
         worker.signals.progress.connect(self.mw.new_bids.update)
 
-        worker.signals.progress.connect(self.mw.asks_view.update)
+        # worker.signals.progress.connect(self.mw.asks_view.update)
 
-        
+
         self.threadpool.tryStart(worker)
         self.api_updates += 1
 
@@ -152,13 +149,13 @@ class WebsocketManager:
                 self.mw.mutex.unlock()
 
             # self.mw.user_data.update_accholdings(userMsg["B"])
-          
+
 
             worker = Worker(partial(self.socket_update_holdings, userMsg["B"]))
 
             # new: update values in holdings table new
             worker.signals.progress.connect(self.mw.user_data.update_holdings)
-            
+
             self.threadpool.start(worker)
 
 
@@ -242,7 +239,7 @@ class WebsocketManager:
             # print("key: " + str(key))
             # print("value: " + str(value))
             # print("ticker: " + str(ticker))
-            
+
             if "BTC" in value["s"]:
                 ticker_data = {'symbol': value["s"],
                                'priceChange': value["p"],
@@ -274,9 +271,9 @@ class WebsocketManager:
         # worker = Worker(partial(self.socket_tickers, df_data))
         # worker.signals.progress.connect(self.mw.index_data.merge_df)
         # self.threadpool.start(worker)
-       
+
         self.mw.index_data.merge_df(df_data)
-       
+
 
 
 
@@ -313,12 +310,13 @@ class WebsocketManager:
     def socket_history(progress_callback):
         progress_callback.emit(1)
 
-    @staticmethod
-    def socket_orderbook(depth, progress_callback):
+
+    def socket_orderbook(self, depth, progress_callback):
         if depth.get("asks"):
             progress_callback.emit([depth["asks"], "asks"])
         if depth.get("bids"):
             progress_callback.emit([depth["bids"], "bids"])
+
 
 
     @staticmethod

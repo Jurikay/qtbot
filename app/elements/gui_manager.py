@@ -34,12 +34,10 @@ class GuiManager:
             icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
             self.mw.coin_selector.addItem(icon, coin[:-3])
 
-        print("set coin selector coin " + str(self.mw.cfg_manager.coin))
         self.mw.coin_selector.model().sort(0)
         self.mw.coin_selector.setIconSize(QtCore.QSize(25, 25))
 
         coinIndex = self.mw.coin_selector.findText(str(self.mw.cfg_manager.coin))
-        print("coin index: " + str(coinIndex))
 
         self.mw.coin_selector.setCurrentIndex(coinIndex)
 
@@ -96,7 +94,6 @@ class GuiManager:
 
 
 
-        print("schedule")
         self.mw.websocket_manager.schedule_websockets()
         # self.mw.websocket_manager.start_sockets()
 
@@ -106,7 +103,7 @@ class GuiManager:
 
         # self.mw.holdings_table.initialize()
 
-        self.mw.coin_index.build_coinindex()
+        # self.mw.coin_index.build_coinindex()
 
         self.mw.ChartTabs.setCornerWidget(self.mw.volume_widget)
 
@@ -168,7 +165,7 @@ class GuiManager:
 
             self.mw.websocket_manager.websockets_symbol()
 
-            self.mw.history_table.setRowCount(0)
+            # self.mw.history_table.setRowCount(0)
 
             self.mw.api_manager.api_calls()
 
@@ -283,26 +280,27 @@ class GuiManager:
         self.mw.debug.setText('{number:.{digits}f}'.format(number=float(val["volDirection"]), digits=4) + "BTC")
 
         self.percent_changes()
-        self.volume_values()
+        # self.volume_values()
 
         self.check_websocket()
 
         self.update_stats()
         # only update the currently active table
-        tab_index_botLeft = self.mw.tabsBotLeft.currentIndex()
+        # tab_index_botLeft = self.mw.tabsBotLeft.currentIndex()
 
-        if tab_index_botLeft == 3:
-            self.mw.holdings_table.update_holding_prices()
-            val["indexTabOpen"] = False
-        elif tab_index_botLeft == 0:
-            self.mw.coin_index.update_coin_index_prices()
+        # if tab_index_botLeft == 3:
+        #     self.mw.holdings_table.update_holding_prices()
+        #     val["indexTabOpen"] = False
+        # elif tab_index_botLeft == 0:
+        #     self.mw.coin_index.update_coin_index_prices()
 
-            # decouple eventually
-            val["indexTabOpen"] = True
-            # self.start_kline_iterator()
-        else:
-            val["indexTabOpen"] = False
-        self.mw.coin_index.start_kline_iterator()
+        # decouple eventually
+        # val["indexTabOpen"] = True
+        # self.start_kline_iterator()
+        # else:
+        #     val["indexTabOpen"] = False
+
+        # self.mw.coin_index.start_kline_iterator()
 
     def update_stats(self):
         session_time = str(timedelta(seconds=val["timeRunning"]))
@@ -379,17 +377,17 @@ class GuiManager:
 
 
     # refactor: rather get this from kline websocket for current coin
-    def volume_values(self):
-        volume_labels = [self.mw.volume_1m, self.mw.volume_5m, self.mw.volume_15m, self.mw.volume_1h]
+    # def volume_values(self):
+    #     volume_labels = [self.mw.volume_1m, self.mw.volume_5m, self.mw.volume_15m, self.mw.volume_1h]
 
-        volume_values = [self.mw.coin_index.new_volume_1m_value,
-                         self.mw.coin_index.new_volume_5m_value,
-                         self.mw.coin_index.new_volume_15m_value,
-                         self.mw.coin_index.new_volume_1h_value]
+        # volume_values = [self.mw.coin_index.new_volume_1m_value,
+        #                  self.mw.coin_index.new_volume_5m_value,
+        #                  self.mw.coin_index.new_volume_15m_value,
+        #                  self.mw.coin_index.new_volume_1h_value]
 
-        for i, label in enumerate(volume_labels):
-            label_text = "<span style='color: " + "white" + "'>" + "{0:.2f}".format(volume_values[i]) + " BTC</span>"
-            label.setText(label_text)
+        # for i, label in enumerate(volume_labels):
+        #     label_text = "<span style='color: " + "white" + "'>" + "{0:.2f}".format(volume_values[i]) + " BTC</span>"
+        #     label.setText(label_text)
 
     @staticmethod
     def calc_total_btc():

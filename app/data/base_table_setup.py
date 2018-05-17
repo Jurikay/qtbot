@@ -147,6 +147,8 @@ class SortFilterModel(BaseTableModel):
         self.order_dir = True
         self.filter_col = filter_col
 
+        self.current_coin = None
+
     def setFilter(self, searchText=None):
         # print("setfilter", searchText)
 
@@ -155,7 +157,10 @@ class SortFilterModel(BaseTableModel):
             for row in range(self.rowCount()):
                 self.parent.setRowHidden(row, False)
 
-                if str(searchText.upper()) in str(self.datatable.iloc[row, self.filter_col]).replace("BTC", ""):
+
+                current_coin = str(self.datatable.iloc[row, self.filter_col]).replace("BTC", "")
+
+                if str(searchText.upper()) in current_coin or str(self.current_coin.upper()) in current_coin:
                     self.parent.setRowHidden(row, False)
                 else:
                     self.parent.setRowHidden(row, True)
@@ -213,7 +218,7 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
 
         options = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
-        
+
         painter.setFont(self.font)
         painter.setPen(QtGui.QColor(self.fg_color))
         align_center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
@@ -358,7 +363,7 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
         self.initStyleOption(options, index)
         font = QtGui.QFont()
 
-        
+
         iconRect = QtCore.QRect(option.rect.left(),
                                 option.rect.top(),
                                 # icon is quadratic; set width to it's height.
@@ -371,7 +376,7 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
                                 option.rect.width() - iconRect.width(),
                                 option.rect.height())
 
-        
+
 
         if option.state & QtWidgets.QStyle.State_MouseOver:
             painter.setPen(QtGui.QColor(Colors.color_yellow))
@@ -446,7 +451,7 @@ class OpenOrders(BaseTableView):
             pair = index.data()
             coin = pair.replace("BTC", "")
             self.mw.gui_manager.change_to(coin)
-    
+
     def set_widths(self):
         for i in range(4):
             self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Fixed)
@@ -512,7 +517,7 @@ class Index(BaseTableView):
     def __init__(self, parent=None, *args):
         super(Index, self).__init__()
         self.my_model = SortFilterModel(self, 0)
-        
+
         self.setItemDelegateForColumn(0, PairDelegate(self))
         self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
         self.setItemDelegateForColumn(2, ChangePercentDelegate(self))
@@ -540,4 +545,3 @@ class Index(BaseTableView):
             pair = index.data()
             coin = pair.replace("BTC", "")
             self.mw.gui_manager.change_to(coin)
-

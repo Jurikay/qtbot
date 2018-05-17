@@ -1,6 +1,6 @@
 import logging
 # from app.workers import Worker
-import PyQt5.QtWidgets as QtWidgets
+# import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
 from app.init import val
@@ -61,8 +61,6 @@ class InitManager:
         self.mw.restart_warning.setStyleSheet("color: transparent;")
         # self.mw.spread_area.setStyleSheet("background: #2e363d;")
 
-        self.mw.holdings_table.setStyleSheet("alternate-background-color: #2e363d;")
-
         self.mw.counter = 0
 
         self.mw.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", self.mw.cfg_manager.btcTimeframe, self.mw.cfg_manager.btcExchange))
@@ -73,19 +71,19 @@ class InitManager:
     # maybe move this into limit_pane
     def table_setup(self):
 
+        pass
+        # bids_header = self.mw.bids_table.horizontalHeader()
+        # asks_header = self.mw.asks_table.horizontalHeader()
 
-        bids_header = self.mw.bids_table.horizontalHeader()
-        asks_header = self.mw.asks_table.horizontalHeader()
+        # bids_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
+        # bids_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        # bids_header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        # bids_header.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
 
-        bids_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
-        bids_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
-        bids_header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        bids_header.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
-
-        asks_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
-        asks_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
-        asks_header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
-        asks_header.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
+        # asks_header.setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
+        # asks_header.setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        # asks_header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        # asks_header.setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
         # asks_header.setSectionResizeMode(4, QtWidgets.QHeaderView.Fixed)
 
         # trades_header = self.mw.tradeTable.horizontalHeader()

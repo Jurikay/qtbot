@@ -82,8 +82,8 @@ class beeserBot(QtWidgets.QMainWindow):
         # load QtDesigner UI file
         loadUi("ui/MainWindow.ui", self)
 
-        self.button_testgo.clicked.connect(self.new_asks.setup)
-        self.button_testgo.clicked.connect(self.new_bids.setup)
+        # self.button_testgo.clicked.connect(self.new_asks.setup)
+        # self.button_testgo.clicked.connect(self.new_bids.setup)
 
 
 
@@ -106,7 +106,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # connect elements to functions
         self.chart.inject_script()
 
-        self.debug2_button.clicked.connect(self.limit_pane.test_func)
+        # self.debug2_button.clicked.connect(self.limit_pane.test_func)
         self.wavg_button.clicked.connect(calc_wavg)
         self.calc_all_wavg_button.clicked.connect(calc_all_wavgs)
         self.btn_reload_api.clicked.connect(self.init_basics)
@@ -122,10 +122,10 @@ class beeserBot(QtWidgets.QMainWindow):
         self.table_test_btn.clicked.connect(self.trade_history_view.setup)
         self.table_test_btn.clicked.connect(self.index_view.setup)
         self.table_test_btn.clicked.connect(self.holdings_view.setup)
-        
+
         # connect filter
         # self.coinindex_filter.textChanged.connect(self.open_orders_view.my_model.setFilter)
-        
+
 
         # self.table_view_btn.clicked.connect(self.test_table_view.setup)
         # self.add_btn.clicked.connect(self.historical.test_all)
@@ -191,11 +191,12 @@ class beeserBot(QtWidgets.QMainWindow):
     def initialize_tables(self):
         # self.coin_index.initialize()
         # self.open_orders.initialize()
-        self.history_table.initialize()
-        self.holdings_table.initialize()
+        # self.history_table.initialize()
+        # self.holdings_table.initialize()
 
         # new:
-        self.test_table_view.setup()
+        # self.test_table_view.setup()
+
         # self.test_table_view_2.setup()
         self.open_orders_view.setup()
         self.trade_history_view.setup()
@@ -205,9 +206,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.coinindex_filter.textChanged.connect(self.trade_history_view.my_model.setFilter)
         self.coinindex_filter.textChanged.connect(self.holdings_view.my_model.setFilter)
         self.coinindex_filter.textChanged.connect(self.index_view.my_model.setFilter)
-        
 
-        self.init_asks_btn.clicked.connect(self.asks_view.setup)
+
+        # self.init_asks_btn.clicked.connect(self.asks_view.setup)
         # self.init_asks_btn.clicked.connect(self.bids_rebuild.setup)
         # self.btn_ud.clicked.connect(self.bids_rebuild.update)
         # self.asks_view.setup()
@@ -220,10 +221,10 @@ class beeserBot(QtWidgets.QMainWindow):
     def initialize_data(self):
         self.index_data = IndexData(self, self.threadpool)
         self.historical = HistoricalData(self, app.client, self.threadpool)
-        
+
 
         self.user_data = UserData(self, self.mutex)
-        
+
         self.user_data.initialize()
         # INITITALIZE API HEAVY STUFF TODO refactor; skip api parameter
         if not val["jirrik"]:
