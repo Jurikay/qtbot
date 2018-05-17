@@ -17,7 +17,11 @@ QWidget {
   background-color: #2e363d;
 }
 
-
+#version_label{
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #f3f3f3;
+}
 
 
 

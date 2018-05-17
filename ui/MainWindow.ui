@@ -167,7 +167,7 @@
            <number>5</number>
           </property>
           <property name="leftMargin">
-           <number>25</number>
+           <number>5</number>
           </property>
           <property name="topMargin">
            <number>0</number>
@@ -2728,7 +2728,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
