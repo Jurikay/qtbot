@@ -141,7 +141,7 @@ class Webpages():
           ],
           supportedResolutions: [ "1", "15"],
 
-          fullscreen: false,
+          fullscreen: true,
           symbol: 'BINANCE:""" + pair + """',
             autosize: true,
             timezone: "Europe/Berlin",
@@ -213,7 +213,7 @@ class Webpages():
           //   "study_Overlay@tv-basicstudies.areaStyle.color2": "green",
           //   "StochasticRSI@tv-basicstudies.background.color": "green"
           },
-          debug: true,
+          debug: false,
           time_frames: [
             //{ text: "50y", resolution: "6M" },
             //{ text: "1d", resolution: "5" },

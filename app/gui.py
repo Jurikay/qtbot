@@ -325,7 +325,7 @@ class DelayedUpdater(QtCore.QObject):
         target.installEventFilter(self)
 
         self.delayEnabled = True
-        self.delayTimeout = 100
+        self.delayTimeout = 200
 
         self._resizeTimer = QtCore.QTimer()
         self._resizeTimer.timeout.connect(self._delayedUpdate)
@@ -339,6 +339,5 @@ class DelayedUpdater(QtCore.QObject):
         return False
 
     def _delayedUpdate(self):
-        print("Performing actual update")
         self._resizeTimer.stop()
         self.target.setUpdatesEnabled(True)

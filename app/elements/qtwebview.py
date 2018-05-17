@@ -24,13 +24,15 @@ class ChartPage(QWebEngineView):
         # profile = webenginesettings.default_profile
 
         page = WebEnginePage()
-        self.page().JavaScriptConsoleMessageLevel(3)
+        self.page().JavaScriptConsoleMessageLevel(2)
 
         self.setPage(page)
         # print("CHART JESCHISCHTEN")
 
+        self.setUpdatesEnabled(False)
+
         self.delayEnabled = False
-        self.delayTimeout = 250
+        self.delayTimeout = 500
 
         self._resizeTimer = QtCore.QTimer(self)
         self._resizeTimer.timeout.connect(self._delayedUpdate)
@@ -41,10 +43,9 @@ class ChartPage(QWebEngineView):
             self._resizeTimer.start(self.delayTimeout)
             self.setUpdatesEnabled(False)
 
-        super(ChartPage, self).resizeEvent(event)
+        # super(ChartPage, self).resizeEvent(event)
 
     def _delayedUpdate(self):
-        print("Performing actual update")
         self._resizeTimer.stop()
         self.setUpdatesEnabled(True)
 
@@ -66,26 +67,3 @@ class WebEnginePage(QWebEnginePage):
     """Custom QWebEnginePage subclass."""
     def __init__(self, parent=None):
         super(WebEnginePage, self).__init__()
-
-        self.delayEnabled = False
-        self.delayTimeout = 1000
-
-        self._resizeTimer = QtCore.QTimer(self)
-        self._resizeTimer.timeout.connect(self._delayedUpdate)
-
-
-    def resizeEvent(self, event):
-        if self.delayEnabled:
-            self._resizeTimer.start(self.delayTimeout)
-            self.setUpdatesEnabled(False)
-
-        super(ChartPage, self).resizeEvent(event)
-
-    def _delayedUpdate(self):
-        print("Performing actual update")
-        self._resizeTimer.stop()
-        self.setUpdatesEnabled(True)
-        # self.theme_color = theme_color
-        # self.setBackgroundColor(QtGui.QColor(QtCore.Qt.blue))
-
-        # self.JavaScriptConsoleMessageLevel(2)
