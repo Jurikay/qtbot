@@ -30,7 +30,7 @@ from app.elements.hotkeys import HotKeys
 from app.elements.init_manager import InitManager
 from app.elements.custom_logger import BotLogger
 from app.elements.gui_manager import GuiManager
-from app.tables.table_manager import TableManager
+# from app.tables.table_manager import TableManager
 from app.elements.websocket_manager import WebsocketManager
 
 from app.data.index_data import IndexData
@@ -180,8 +180,8 @@ class beeserBot(QtWidgets.QMainWindow):
     def instantiate_api_managers(self):
         self.websocket_manager = WebsocketManager(self, self.threadpool, app.client)
 
-        self.table_manager = TableManager(self)
-        self.table_manager.init_filter()
+        # self.table_manager = TableManager(self)
+        # self.table_manager.init_filter()
 
         self.gui_manager = GuiManager(self)
         self.gui_manager.initialize()
@@ -224,7 +224,6 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.user_data = UserData(self, self.mutex)
-
         self.user_data.initialize()
         # INITITALIZE API HEAVY STUFF TODO refactor; skip api parameter
         if not val["jirrik"]:

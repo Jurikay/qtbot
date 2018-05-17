@@ -169,7 +169,7 @@ class GuiManager:
 
             self.mw.api_manager.api_calls()
 
-            self.mw.table_manager.init_filter()
+            # self.mw.table_manager.init_filter()
 
             # new
             # self.mw.user_data.initial_history()
