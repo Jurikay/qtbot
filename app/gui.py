@@ -85,11 +85,11 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.button_testgo.clicked.connect(self.new_asks.setup)
         # self.button_testgo.clicked.connect(self.new_bids.setup)
 
-        self.delayer0 = DelayedUpdater(self.chart)
+        # self.delayer0 = DelayedUpdater(self.chart)
         self.delayer1 = DelayedUpdater(self.open_orders_view)
 
         self.delayer2 = DelayedUpdater(self.tradeTable)
-        self.delayer3 = DelayedUpdater(self.volumes_widget)
+        # self.delayer3 = DelayedUpdater(self.volumes_widget)
         self.delayer4 = DelayedUpdater(self.new_asks)
         self.delayer5 = DelayedUpdater(self.new_bids)
 

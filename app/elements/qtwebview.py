@@ -5,7 +5,7 @@
 
 
 # import PyQt5.QtGui as QtGui
-import PyQt5.QtCore as QtCore
+# import PyQt5.QtCore as QtCore
 # import PyQt5.QtWidgets as QtWidgets
 
 
@@ -28,26 +28,6 @@ class ChartPage(QWebEngineView):
 
         self.setPage(page)
         # print("CHART JESCHISCHTEN")
-
-        self.setUpdatesEnabled(False)
-
-        self.delayEnabled = False
-        self.delayTimeout = 500
-
-        self._resizeTimer = QtCore.QTimer(self)
-        self._resizeTimer.timeout.connect(self._delayedUpdate)
-
-
-    def resizeEvent(self, event):
-        if self.delayEnabled:
-            self._resizeTimer.start(self.delayTimeout)
-            self.setUpdatesEnabled(False)
-
-        # super(ChartPage, self).resizeEvent(event)
-
-    def _delayedUpdate(self):
-        self._resizeTimer.stop()
-        self.setUpdatesEnabled(True)
 
 
     def inject_script(self):

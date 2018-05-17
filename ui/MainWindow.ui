@@ -2728,7 +2728,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -2855,7 +2855,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;0.00000000 BTC &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14px;&quot;&gt;0.00000000 BTC &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
@@ -3472,7 +3472,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;0.00000000 BTC&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14px;&quot;&gt;0.00000000 BTC&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
@@ -3491,7 +3491,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;0 $&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>0 $</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
@@ -3918,7 +3918,7 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <property name="spacing">
-             <number>0</number>
+             <number>-1</number>
             </property>
             <property name="leftMargin">
              <number>5</number>
@@ -4243,7 +4243,7 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <property name="spacing">
-             <number>0</number>
+             <number>-1</number>
             </property>
             <property name="leftMargin">
              <number>5</number>
@@ -4259,8 +4259,11 @@
             </property>
             <item>
              <layout class="QGridLayout" name="gridLayout_15">
-              <property name="spacing">
+              <property name="horizontalSpacing">
                <number>0</number>
+              </property>
+              <property name="verticalSpacing">
+               <number>-1</number>
               </property>
               <item row="2" column="0">
                <widget class="QCheckBox" name="checkBox_3">
@@ -5321,6 +5324,12 @@
              <widget class="QLabel" name="restart_warning">
               <property name="enabled">
                <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
               <property name="text">
                <string>Please restart after you have entered/changed your api credentials.</string>

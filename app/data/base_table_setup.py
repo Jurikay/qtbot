@@ -201,15 +201,18 @@ class SortFilterModel(BaseTableModel):
 
 class BasicDelegate(QtWidgets.QStyledItemDelegate):
     """Basic StyledItemDelegate implementation"""
+    center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
 
-    def __init__(self, parent, text_color=Colors.color_lightgrey):
+    def __init__(self, parent, text_color=Colors.color_lightgrey, align=center):
         super(BasicDelegate, self).__init__(parent)
         self.parent = parent
         self.fg_color = text_color
         self.font = QtGui.QFont()
+        self.mw = app.mw
+        self.align = align
 
-    @staticmethod
-    def initStyleOption(option, index):
+
+    def initStyleOption(self, option, index):
         option.text = index.data()
 
 
@@ -223,29 +226,13 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
 
         painter.setFont(self.font)
         painter.setPen(QtGui.QColor(self.fg_color))
-        align_center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        painter.drawText(option.rect, align_center, options.text)
+        
+        painter.drawText(option.rect, self.align, options.text)
         painter.restore()
 
 
-class ChangePercentDelegate(BasicDelegate):
-    def initStyleOption(self, option, index):
-        if float(index.data()) < 0:
-            prefix = ""
-            self.fg_color = Colors.color_pink
-        elif float(index.data()) == 0:
-            prefix = " "
-            self.fg_color = Colors.color_lightgrey
-
-        else:
-            prefix = "+"
-            self.fg_color = Colors.color_green
-
-        option.text = prefix + '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
-
-
 class HoverDelegate(BasicDelegate):
-    def __init__(self, parent, text_color=Colors.color_lightgrey, hover_color=Colors.color_yellow):
+    def __init__(self, parent, hover_color=Colors.color_yellow, text_color=Colors.color_lightgrey):
         super(HoverDelegate, self).__init__(parent)
         self.normal_color = text_color
         self.hover_color = hover_color
@@ -262,6 +249,25 @@ class HoverDelegate(BasicDelegate):
 
         option.text = index.data()
 
+
+
+
+
+
+class ChangePercentDelegate(BasicDelegate):
+    def initStyleOption(self, option, index):
+        if float(index.data()) < 0:
+            prefix = ""
+            self.fg_color = Colors.color_pink
+        elif float(index.data()) == 0:
+            prefix = " "
+            self.fg_color = Colors.color_lightgrey
+
+        else:
+            prefix = "+"
+            self.fg_color = Colors.color_green
+
+        option.text = prefix + '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
 
 
 class FilledPercentDelegate(BasicDelegate):

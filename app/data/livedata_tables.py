@@ -15,7 +15,7 @@ import pandas as pd
 from datetime import datetime
 from app.colors import Colors
 # import time
-from app.data.base_table_setup import BaseTableModel, BasicDelegate
+from app.data.base_table_setup import BaseTableModel, BasicDelegate, HoverDelegate, RoundFloatDelegate
 # from app.data.new_orderbook_table import OrderbookTable
 from app.init import val
 
@@ -225,8 +225,47 @@ class HistPriceDelegate(BasicDelegate):
 
 
     def initStyleOption(self, option, index):
-        option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=val["decimals"])
-        assetDecimals = self.parent.tickers[self.parent.cfg_manager.pair]["assetDecimals"]
+        decimals = self.mw.tickers[self.mw.cfg_manager.pair]["decimals"]
+        option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=decimals)
+
+        if self.mw.trade_history[index.row()][2] is True:
+            self.normal_color = Colors.color_pink
+            self.hover_color = "#ff58a8"
+
+        else:
+            self.normal_color = Colors.color_green
+            self.hover_color = "#aaff00"
+
+        if option.state & QtWidgets.QStyle.State_MouseOver:
+            self.fg_color = self.hover_color
+            self.font.setBold(True)
+            if app.main_app.overrideCursor() != QtCore.Qt.PointingHandCursor:
+                app.main_app.setOverrideCursor(QtCore.Qt.PointingHandCursor)
+        else:
+            self.fg_color = self.normal_color
+            self.font.setBold(False)
+
+
+class OrderbookPriceDelegate(HoverDelegate):
+    def initStyleOption(self, option, index):
+        super(OrderbookPriceDelegate, self).initStyleOption(option, index)
+        option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.decimals)
+
+
+class OrderbookQtyDelegate(HoverDelegate):
+    def initStyleOption(self, option, index):
+        super(OrderbookPriceDelegate, self).initStyleOption(option, index)
+        option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.assetDecimals)
+
+
+
+
+class TimeDelegate(BasicDelegate):
+    """Basic style delegate"""
+
+    def initStyleOption(self, option, index):
+        option.text = str(datetime.fromtimestamp(int(str(index.data())[:-3])).strftime('%H:%M:%S.%f')[:-7])
+
 
 
 class HistoryDelegate(QtWidgets.QStyledItemDelegate):
@@ -309,8 +348,10 @@ class AsksView(BackgroundTable):
         self.highlight = "#ff58a8"
         self.data = "asks"
         self.has_data = False
-        self.setItemDelegate(AsksDelegate(self))
 
+        self.setItemDelegateForColumn(1, OrderbookPriceDelegate(self, "#ff58a8", Colors.color_pink))
+        self.setItemDelegateForColumn(2, HoverDelegate(self, "#fff"))
+        self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, "BTC"))
 
     # def get_max_value(self, df):
     #     max_val = df["Total"].max()
@@ -328,7 +369,9 @@ class BidsView(BackgroundTable):
         self.highlight = "#aaff00"
         self.data = "bids"
         self.has_data = False
-        self.setItemDelegate(AsksDelegate(self))
+        self.setItemDelegateForColumn(1, HoverDelegate(self, "#aaff00", Colors.color_green))
+        self.setItemDelegateForColumn(2, HoverDelegate(self, "#fff"))
+        self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, "BTC"))
 
     def set_df(self):
         return self.create_dataframe(self.data)
@@ -342,8 +385,11 @@ class HistView(BackgroundTable):
         self.highlight = "#aaff00"
         self.has_data = False
         self.compare_col = 1
-        self.setItemDelegate(HistoryDelegate(self))
+        # self.setItemDelegate(HistoryDelegate(self))
         self.get_color = True
+        self.setItemDelegateForColumn(0, HistPriceDelegate(self))
+        self.setItemDelegateForColumn(1, HoverDelegate(self, "#fff"))
+        self.setItemDelegateForColumn(2, TimeDelegate(self, Colors.color_grey))
 
     def set_df(self):
         return self.create_history_df()

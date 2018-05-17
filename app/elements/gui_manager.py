@@ -135,7 +135,7 @@ class GuiManager:
         scroll asks to bottom."""
         current_height = self.mw.frameGeometry().height()
         while True:
-            if current_height > self.mw.frameGeometry().height():
+            if current_height != self.mw.frameGeometry().height():
                 progress_callback.emit(15)
 
             current_height = self.mw.frameGeometry().height()
@@ -191,6 +191,7 @@ class GuiManager:
         elif payload == 15:
             print("scroll to bottom")
             # self.mw.asks_table.scrollToBottom()
+            self.mw.new_asks.scrollToTop()
             self.mw.new_asks.scrollToBottom()
 
 
