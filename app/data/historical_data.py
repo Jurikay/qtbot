@@ -5,7 +5,7 @@
 
 
 import numpy as np
-from binance.client import Client
+# from binance.client import Client
 import PyQt5.QtCore as QtCore
 from app.workers import Worker
 from functools import partial
@@ -41,7 +41,6 @@ class HistoricalData(QtCore.QObject):
         # self.process_pairs()
         self.process_in_thread(self.mw.cfg_manager.pair)
 
-        
 
 
     def get_kline_values(self):
@@ -55,10 +54,6 @@ class HistoricalData(QtCore.QObject):
         # print("gettting", symbol, interval)
         klines = self.client.get_klines(symbol=symbol, interval=interval)
         return klines
-
-        
-
-
 
 
     def process_pairs(self):

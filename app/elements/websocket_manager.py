@@ -310,8 +310,8 @@ class WebsocketManager:
     def socket_history(progress_callback):
         progress_callback.emit(1)
 
-
-    def socket_orderbook(self, depth, progress_callback):
+    @staticmethod
+    def socket_orderbook(depth, progress_callback):
         if depth.get("asks"):
             progress_callback.emit([depth["asks"], "asks"])
         if depth.get("bids"):
