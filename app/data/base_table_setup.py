@@ -82,9 +82,9 @@ class BaseTableView(QtWidgets.QTableView):
     #     """This should be overwritten."""
     #     return pd.DataFrame
 
-    def cell_clicked(self, click):
-        """This should be overwritten."""
-        pass
+    # def cell_clicked(self, index):
+    #     """This should be overwritten."""
+    #     pass
 
 
 #################################################################
@@ -208,8 +208,8 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
         self.fg_color = text_color
         self.font = QtGui.QFont()
 
-
-    def initStyleOption(self, option, index):
+    @staticmethod
+    def initStyleOption(option, index):
         option.text = index.data()
 
 
