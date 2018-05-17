@@ -33,9 +33,9 @@ class UserData(QtCore.QObject):
         self.initial_history()
         self.initial_holdings()
 
-        self.mw.print_btn.clicked.connect(self.print_dicts)
+        # self.mw.print_btn.clicked.connect(self.print_dicts)
 
-        
+
 
 
     def set_save(self, storage, index, value):
@@ -86,7 +86,7 @@ class UserData(QtCore.QObject):
             if run_setup:
                 # print("RUNNING SETUP")
                 self.mw.open_orders_view.setup()
-                
+
                 # self.mw.data_open_orders_table.setup()
                 # self.mw.data_open_orders_table.set_data()
             self.mw.open_orders_view.websocket_update()
@@ -108,7 +108,7 @@ class UserData(QtCore.QObject):
             order["filled_percent"] = float(order["executedQty"]) / float((order["origQty"])) * 100
             order["total_btc"] = float(order["origQty"]) * float(order["price"])
             order["cancel"] = "cancel"
-            
+
             order_id = int(order["orderId"])
             self.set_save(self.open_orders, order_id, order)
 
@@ -136,7 +136,7 @@ class UserData(QtCore.QObject):
         order_id = order["orderId"]
         self.set_save(self.open_orders, order_id, order)
         self.mw.open_orders_view.websocket_update()
-        
+
 
 
 
@@ -146,9 +146,7 @@ class UserData(QtCore.QObject):
 
     def add_to_history(self, order):
         # print("ADD TO HISTORY ORDER", order)
-        
-        # print("ADD TO HIST", order)
-        order_id = order["orderId"]
+        order_id = order["id"]
         pair = order["symbol"]
         order["total"] = float(order["executedQty"]) * float(order["price"])
         if not self.trade_history.get(pair):
@@ -159,7 +157,7 @@ class UserData(QtCore.QObject):
 
 
     def initial_history(self, progress_callback=None):
-        
+
         pair = self.mw.cfg_manager.pair
         # print("Initial history", pair)
         history = self.mw.api_manager.api_my_trades(pair)
@@ -210,7 +208,7 @@ class UserData(QtCore.QObject):
         #     order["filled_percent"] = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float((order["origQty"])) * 100), digits=2) + "%"
         #     order["total_btc"] = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
         #     order["cancel"] = "cancel"
-            
+
         #     order_id = order["orderId"]
         #     self.set_save(self.open_orders, order_id, order)
 
@@ -236,7 +234,7 @@ class UserData(QtCore.QObject):
             coin = holding[0]
             free = holding[1]["free"]
             locked = holding[1]["locked"]
-            
+
 
             values = self.get_holdings_array(coin, free, locked)
 
@@ -254,8 +252,12 @@ class UserData(QtCore.QObject):
 
             self.set_save(self.holdings, coin, values)
 
-
+        # update table
         self.mw.holdings_view.websocket_update()
+
+        # update limit pane values
+        self.mw.limit_pane.set_holding_values()
+
 
     def get_holdings_array(self, coin, free, locked):
         total = float(free) + float(locked)
@@ -267,8 +269,8 @@ class UserData(QtCore.QObject):
         elif coin == "BTC":
             total_btc = total
             name = "Bitcoin"
-        
-        
+
+
         values = {"coin": coin,
                   "free": free,
                   "locked": locked,

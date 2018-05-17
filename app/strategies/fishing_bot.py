@@ -9,7 +9,7 @@ from app.init import val
 # from functools import partial
 import app
 # import time
-import logging
+# import logging
 
 
 class FishingBot(QtWidgets.QTableWidget):
@@ -185,16 +185,16 @@ class FishingBot(QtWidgets.QTableWidget):
 
     def fish_logic(self):
         """Run this in a fixed interval."""
-        trades_to_check = list()
+        # trades_to_check = list()
 
-        percent_difference = 1
+        # percent_difference = 1
         print(str(self.rowCount()))
         for i in range(self.rowCount()):
             # trades_to_check.append([self.item(i, 0).currentText()])
             coin = self.cellWidget(i, 0).currentText()
-            pair = coin + "BTC"
+            # pair = coin + "BTC"
 
-            current_price = float(val["tickers"][pair]["lastPrice"])
+            # current_price = float(val["tickers"][pair]["lastPrice"])
 
             side = self.cellWidget(i, 1).currentText()
             price_target = self.cellWidget(i, 2).value()

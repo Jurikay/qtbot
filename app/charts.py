@@ -6,8 +6,6 @@
 """Functions that generate HTML pages."""
 
 from app.init import val
-import time
-
 
 class Webpages():
 
@@ -143,7 +141,7 @@ class Webpages():
           ],
           supportedResolutions: [ "1", "15"],
 
-          fullscreen: false,
+          fullscreen: true,
           symbol: 'BINANCE:""" + pair + """',
             autosize: true,
             timezone: "Europe/Berlin",
@@ -215,7 +213,7 @@ class Webpages():
           //   "study_Overlay@tv-basicstudies.areaStyle.color2": "green",
           //   "StochasticRSI@tv-basicstudies.background.color": "green"
           },
-          debug: true,
+          debug: false,
           time_frames: [
             //{ text: "50y", resolution: "6M" },
             //{ text: "1d", resolution: "5" },
@@ -497,8 +495,8 @@ class Webpages():
             coin_name = "rlc"
         elif coin_name == "Bytecoin":
             coin_name = "bytecoin-bcn"
-        
-        print("Generating CMC url: " + str(coin_name))
+
+        # print("Generating CMC url: " + str(coin_name))
         url = "https://coinmarketcap.com/currencies/" + coin_name.replace(" ", "-").replace(".", "") + "/"
         return url
 

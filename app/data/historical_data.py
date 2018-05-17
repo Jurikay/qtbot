@@ -5,7 +5,7 @@
 
 
 import numpy as np
-from binance.client import Client
+# from binance.client import Client
 import PyQt5.QtCore as QtCore
 from app.workers import Worker
 from functools import partial
@@ -39,9 +39,7 @@ class HistoricalData(QtCore.QObject):
 
         self.data = dict()
         # self.process_pairs()
-        self.process_in_thread(self.mw.cfg_manager.pair)
-
-        
+        # self.process_in_thread(self.mw.cfg_manager.pair)
 
 
     def get_kline_values(self):
@@ -55,10 +53,6 @@ class HistoricalData(QtCore.QObject):
         # print("gettting", symbol, interval)
         klines = self.client.get_klines(symbol=symbol, interval=interval)
         return klines
-
-        
-
-
 
 
     def process_pairs(self):
@@ -94,23 +88,6 @@ class HistoricalData(QtCore.QObject):
         worker = Worker(partial(self.process_this, pair))
         worker.signals.progress.connect(self.mw.index_data.callback_calc)
         self.mw.threadpool.tryStart(worker)
-
-
-""" WORK IN PROGRESS:
-    def ordered_process(self):
-        if current_pair in all_coins:
-            self.process_this(current_pair)
-            allcoins.find(current_pair).remove()
-
-        for holding in holdings:
-            if holding in all_coins:
-                self.process_this(holding)
-                allcoins.find(current_pair).remove()
-
-        while len(all_coins) > 0:
-            self.process_this(all_coins[0])
-            all_coins[0].pop()
-"""
 
 
 class HistoricalPair:

@@ -69,20 +69,22 @@ class BaseTableView(QtWidgets.QTableView):
         self.set_widths()
 
 
-    def leaveEvent(self, event):
+    @staticmethod
+    def leaveEvent(event):
         app.main_app.restoreOverrideCursor()
 
     def set_widths(self):
         pass
 
-    def set_df(self):
-        # print("set empty df")
-        """This should be overwritten."""
-        return pd.DataFrame
 
-    def cell_clicked(self, click):
-        """This should be overwritten."""
-        pass
+    # def set_df(self):
+    #     # print("set empty df")
+    #     """This should be overwritten."""
+    #     return pd.DataFrame
+
+    # def cell_clicked(self, index):
+    #     """This should be overwritten."""
+    #     pass
 
 
 #################################################################
@@ -131,9 +133,9 @@ class BaseTableModel(QtCore.QAbstractTableModel):
                 return str(self.datatable.iloc[index.row(), index.column()])
 
 
-    def setFilter(self):
-        # print("BASIC FILTER")
-        pass
+    # def setFilter(self):
+    #     # print("BASIC FILTER")
+    #     pass
 
 
 class SortFilterModel(BaseTableModel):
@@ -147,6 +149,8 @@ class SortFilterModel(BaseTableModel):
         self.order_dir = True
         self.filter_col = filter_col
 
+        self.current_coin = None
+
     def setFilter(self, searchText=None):
         # print("setfilter", searchText)
 
@@ -155,7 +159,10 @@ class SortFilterModel(BaseTableModel):
             for row in range(self.rowCount()):
                 self.parent.setRowHidden(row, False)
 
-                if str(searchText.upper()) in str(self.datatable.iloc[row, self.filter_col]).replace("BTC", ""):
+
+                current_coin = str(self.datatable.iloc[row, self.filter_col]).replace("BTC", "")
+
+                if str(searchText.upper()) in current_coin or str(self.current_coin.upper()) in current_coin:
                     self.parent.setRowHidden(row, False)
                 else:
                     self.parent.setRowHidden(row, True)
@@ -194,12 +201,15 @@ class SortFilterModel(BaseTableModel):
 
 class BasicDelegate(QtWidgets.QStyledItemDelegate):
     """Basic StyledItemDelegate implementation"""
+    center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
 
-    def __init__(self, parent, text_color=Colors.color_lightgrey):
+    def __init__(self, parent, text_color=Colors.color_lightgrey, align=center):
         super(BasicDelegate, self).__init__(parent)
         self.parent = parent
         self.fg_color = text_color
         self.font = QtGui.QFont()
+        self.mw = app.mw
+        self.align = align
 
 
     def initStyleOption(self, option, index):
@@ -213,32 +223,16 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
 
         options = QtWidgets.QStyleOptionViewItem(option)
         self.initStyleOption(options, index)
-        
+
         painter.setFont(self.font)
         painter.setPen(QtGui.QColor(self.fg_color))
-        align_center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        painter.drawText(option.rect, align_center, options.text)
+        
+        painter.drawText(option.rect, self.align, options.text)
         painter.restore()
 
 
-class ChangePercentDelegate(BasicDelegate):
-    def initStyleOption(self, option, index):
-        if float(index.data()) < 0:
-            prefix = ""
-            self.fg_color = Colors.color_pink
-        elif float(index.data()) == 0:
-            prefix = " "
-            self.fg_color = Colors.color_lightgrey
-
-        else:
-            prefix = "+"
-            self.fg_color = Colors.color_green
-
-        option.text = prefix + '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
-
-
 class HoverDelegate(BasicDelegate):
-    def __init__(self, parent, text_color=Colors.color_lightgrey, hover_color=Colors.color_yellow):
+    def __init__(self, parent, hover_color=Colors.color_yellow, text_color=Colors.color_lightgrey):
         super(HoverDelegate, self).__init__(parent)
         self.normal_color = text_color
         self.hover_color = hover_color
@@ -255,6 +249,25 @@ class HoverDelegate(BasicDelegate):
 
         option.text = index.data()
 
+
+
+
+
+
+class ChangePercentDelegate(BasicDelegate):
+    def initStyleOption(self, option, index):
+        if float(index.data()) < 0:
+            prefix = ""
+            self.fg_color = Colors.color_pink
+        elif float(index.data()) == 0:
+            prefix = " "
+            self.fg_color = Colors.color_lightgrey
+
+        else:
+            prefix = "+"
+            self.fg_color = Colors.color_green
+
+        option.text = prefix + '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
 
 
 class FilledPercentDelegate(BasicDelegate):
@@ -341,7 +354,8 @@ class BuySellDelegete(BasicDelegate):
 class PairDelegate(QtWidgets.QStyledItemDelegate):
     """Delegate that adds an icon + hover effect to a pair."""
 
-    def initStyleOption(self, option, index):
+    @staticmethod
+    def initStyleOption(option, index):
         """Set style options based on index column."""
         option.text = index.data().replace("BTC", "") + " / BTC"
         option.icon = QtGui.QIcon("images/ico/" + index.data().replace(
@@ -358,7 +372,7 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
         self.initStyleOption(options, index)
         font = QtGui.QFont()
 
-        
+
         iconRect = QtCore.QRect(option.rect.left(),
                                 option.rect.top(),
                                 # icon is quadratic; set width to it's height.
@@ -371,7 +385,7 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
                                 option.rect.width() - iconRect.width(),
                                 option.rect.height())
 
-        
+
 
         if option.state & QtWidgets.QStyle.State_MouseOver:
             painter.setPen(QtGui.QColor(Colors.color_yellow))
@@ -446,7 +460,7 @@ class OpenOrders(BaseTableView):
             pair = index.data()
             coin = pair.replace("BTC", "")
             self.mw.gui_manager.change_to(coin)
-    
+
     def set_widths(self):
         for i in range(4):
             self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Fixed)
@@ -512,7 +526,7 @@ class Index(BaseTableView):
     def __init__(self, parent=None, *args):
         super(Index, self).__init__()
         self.my_model = SortFilterModel(self, 0)
-        
+
         self.setItemDelegateForColumn(0, PairDelegate(self))
         self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
         self.setItemDelegateForColumn(2, ChangePercentDelegate(self))
@@ -540,4 +554,3 @@ class Index(BaseTableView):
             pair = index.data()
             coin = pair.replace("BTC", "")
             self.mw.gui_manager.change_to(coin)
-

@@ -24,10 +24,11 @@ class ChartPage(QWebEngineView):
         # profile = webenginesettings.default_profile
 
         page = WebEnginePage()
-        self.page().JavaScriptConsoleMessageLevel(3)
+        self.page().JavaScriptConsoleMessageLevel(2)
 
         self.setPage(page)
         # print("CHART JESCHISCHTEN")
+
 
     def inject_script(self):
         script = QWebEngineScript()
@@ -46,7 +47,3 @@ class WebEnginePage(QWebEnginePage):
     """Custom QWebEnginePage subclass."""
     def __init__(self, parent=None):
         super(WebEnginePage, self).__init__()
-        # self.theme_color = theme_color
-        # self.setBackgroundColor(QtGui.QColor(QtCore.Qt.blue))
-
-        # self.JavaScriptConsoleMessageLevel(2)

@@ -44,9 +44,11 @@ class ApiCalls:
             return None
 
 
-    def get_ban_duration(self, error_msg):
+    @staticmethod
+    def get_ban_duration(error_msg):
         banned_until = str(error_msg).replace("APIError(code=-1003): Way too many requests; IP banned until ", "").replace(". Please use the websocket for live updates to avoid bans.", "")
         return int(banned_until)
+
 
     def initialize(self):
 
@@ -55,7 +57,7 @@ class ApiCalls:
                 # print("get account:", self.client.get_account())
                 # print("get account status:", self.client.get_account_status())
 
-                
+
 
                 val["coins"] = self.availablePairs()
 
@@ -75,7 +77,7 @@ class ApiCalls:
                 print(str(e))
                 if "code=-1003" in str(e):
                     print("ja ein api error :)")
-                    
+
                     self.banned_until = self.get_ban_duration(e)
                     self.error = "banned"
                 elif "code=-2014" in str(e):
@@ -243,7 +245,7 @@ class ApiCalls:
     def api_depth(self, progress_callback):
         depth = self.getDepth(self.mw.cfg_manager.pair)
         progress_callback.emit(depth)
-    
+
 
 
 
@@ -254,7 +256,7 @@ class ApiCalls:
             progress_callback.emit(orders)
         else:
             return orders
-        
+
 
     def api_calls(self):
         """Initial and coin specific api calls"""
@@ -264,7 +266,7 @@ class ApiCalls:
 
         worker = Worker(self.api_depth)
         worker.signals.progress.connect(self.save_depth)
-        
+
         # worker.signals.progress.connect(self.mw.live_data.batch_orderbook)
         # worker.signals.finished.connect(self.mw.limit_pane.t_complete)
         self.mw.threadpool.start(worker)
@@ -340,7 +342,7 @@ class ApiCalls:
         for symbol_data in info["symbols"]:
             all_pairs += 1
             # print("SYMBOL DATA", symbol_data)
-            if symbol_data["quoteAsset"] == "BTC":
+            if symbol_data["quoteAsset"] == "BTC" or symbol_data["symbol"] == "BTCUSDT":
                 btc_pairs += 1
                 pair = symbol_data["symbol"]
 
@@ -357,7 +359,8 @@ class ApiCalls:
         return coin_dict
 
 
-    def calculate_decimals(self, tickSize, minTrade):
+    @staticmethod
+    def calculate_decimals(tickSize, minTrade):
         """Returns asset and quote asset decimal precision."""
         decimals = len(str(tickSize.rstrip("0"))) - 2
         assetDecimals = len(str(minTrade.rstrip("0"))) - 2

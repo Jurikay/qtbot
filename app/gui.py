@@ -30,13 +30,13 @@ from app.elements.hotkeys import HotKeys
 from app.elements.init_manager import InitManager
 from app.elements.custom_logger import BotLogger
 from app.elements.gui_manager import GuiManager
-from app.tables.table_manager import TableManager
+# from app.tables.table_manager import TableManager
 from app.elements.websocket_manager import WebsocketManager
 
 from app.data.index_data import IndexData
 from app.data.historical_data import HistoricalData
 from app.data.user_data import UserData
-from app.init import val
+# from app.init import val
 
 
 class beeserBot(QtWidgets.QMainWindow):
@@ -82,9 +82,16 @@ class beeserBot(QtWidgets.QMainWindow):
         # load QtDesigner UI file
         loadUi("ui/MainWindow.ui", self)
 
-        self.button_testgo.clicked.connect(self.new_asks.setup)
-        self.button_testgo.clicked.connect(self.new_bids.setup)
+        # self.button_testgo.clicked.connect(self.new_asks.setup)
+        # self.button_testgo.clicked.connect(self.new_bids.setup)
 
+        # self.delayer0 = DelayedUpdater(self.chart)
+        self.delayer1 = DelayedUpdater(self.open_orders_view)
+
+        self.delayer2 = DelayedUpdater(self.tradeTable)
+        # self.delayer3 = DelayedUpdater(self.volumes_widget)
+        self.delayer4 = DelayedUpdater(self.new_asks)
+        self.delayer5 = DelayedUpdater(self.new_bids)
 
 
         # set external stylesheet
@@ -106,7 +113,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # connect elements to functions
         self.chart.inject_script()
 
-        self.debug2_button.clicked.connect(self.limit_pane.test_func)
+        # self.debug2_button.clicked.connect(self.limit_pane.test_func)
         self.wavg_button.clicked.connect(calc_wavg)
         self.calc_all_wavg_button.clicked.connect(calc_all_wavgs)
         self.btn_reload_api.clicked.connect(self.init_basics)
@@ -122,10 +129,10 @@ class beeserBot(QtWidgets.QMainWindow):
         self.table_test_btn.clicked.connect(self.trade_history_view.setup)
         self.table_test_btn.clicked.connect(self.index_view.setup)
         self.table_test_btn.clicked.connect(self.holdings_view.setup)
-        
+
         # connect filter
         # self.coinindex_filter.textChanged.connect(self.open_orders_view.my_model.setFilter)
-        
+
 
         # self.table_view_btn.clicked.connect(self.test_table_view.setup)
         # self.add_btn.clicked.connect(self.historical.test_all)
@@ -180,8 +187,8 @@ class beeserBot(QtWidgets.QMainWindow):
     def instantiate_api_managers(self):
         self.websocket_manager = WebsocketManager(self, self.threadpool, app.client)
 
-        self.table_manager = TableManager(self)
-        self.table_manager.init_filter()
+        # self.table_manager = TableManager(self)
+        # self.table_manager.init_filter()
 
         self.gui_manager = GuiManager(self)
         self.gui_manager.initialize()
@@ -191,11 +198,12 @@ class beeserBot(QtWidgets.QMainWindow):
     def initialize_tables(self):
         # self.coin_index.initialize()
         # self.open_orders.initialize()
-        self.history_table.initialize()
-        self.holdings_table.initialize()
+        # self.history_table.initialize()
+        # self.holdings_table.initialize()
 
         # new:
-        self.test_table_view.setup()
+        # self.test_table_view.setup()
+
         # self.test_table_view_2.setup()
         self.open_orders_view.setup()
         self.trade_history_view.setup()
@@ -205,9 +213,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.coinindex_filter.textChanged.connect(self.trade_history_view.my_model.setFilter)
         self.coinindex_filter.textChanged.connect(self.holdings_view.my_model.setFilter)
         self.coinindex_filter.textChanged.connect(self.index_view.my_model.setFilter)
-        
 
-        self.init_asks_btn.clicked.connect(self.asks_view.setup)
+
+        # self.init_asks_btn.clicked.connect(self.asks_view.setup)
         # self.init_asks_btn.clicked.connect(self.bids_rebuild.setup)
         # self.btn_ud.clicked.connect(self.bids_rebuild.update)
         # self.asks_view.setup()
@@ -220,15 +228,14 @@ class beeserBot(QtWidgets.QMainWindow):
     def initialize_data(self):
         self.index_data = IndexData(self, self.threadpool)
         self.historical = HistoricalData(self, app.client, self.threadpool)
-        
+
 
         self.user_data = UserData(self, self.mutex)
-        
         self.user_data.initialize()
         # INITITALIZE API HEAVY STUFF TODO refactor; skip api parameter
-        if not val["jirrik"]:
-            # self.user_data.initial_open_orders()
-            self.historical.get_kline_values()
+        # if not val["jirrik"]:
+        # self.user_data.initial_open_orders()
+        # self.historical.get_kline_values()
 
         self.create_df_btn.clicked.connect(self.user_data.create_history_df)
 
@@ -308,3 +315,29 @@ class DataManager:
 
     def get_specific(self, kind, coin):
         pass
+
+
+class DelayedUpdater(QtCore.QObject):
+
+    def __init__(self, target, parent=None):
+        super(DelayedUpdater, self).__init__(parent)
+        self.target = target
+        target.installEventFilter(self)
+
+        self.delayEnabled = True
+        self.delayTimeout = 200
+
+        self._resizeTimer = QtCore.QTimer()
+        self._resizeTimer.timeout.connect(self._delayedUpdate)
+
+    def eventFilter(self, obj, event):
+        if self.delayEnabled and obj is self.target:
+            if event.type() == event.Resize:
+                self._resizeTimer.start(self.delayTimeout)
+                self.target.setUpdatesEnabled(False)
+
+        return False
+
+    def _delayedUpdate(self):
+        self._resizeTimer.stop()
+        self.target.setUpdatesEnabled(True)
