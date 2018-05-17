@@ -19,7 +19,6 @@ class IndexData(QObject):
     Initial API call, websocket callbacks and calculated
     kline data."""
 
-    volumes = [5, 15, 60]
 
     def __init__(self, mw, tp, parent=None):
         super(IndexData, self).__init__(parent)
@@ -34,6 +33,8 @@ class IndexData(QObject):
 
         self.volumes = dict()
         self.changes = dict()
+
+        self.volume_tfs = [5, 15, 60]
 
         self.initialize()
         # self.mw.test_ud_btn.clicked.connect(self.calculate_historical)
@@ -101,9 +102,10 @@ class IndexData(QObject):
         else:
             return filtered
 
-    def callback_calc(self, pair, volumes):
+    def callback_calc(self, pair):
 
         """Callback from historical data."""
+        volumes = self.volumes
         volume_sums = list()
         changes = list()
         for volume in volumes:

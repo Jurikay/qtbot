@@ -61,6 +61,8 @@ class InitManager:
         self.mw.restart_warning.setStyleSheet("color: transparent;")
         # self.mw.spread_area.setStyleSheet("background: #2e363d;")
 
+        self.mw.version_label.setText("Version: " + str(self.mw.version))
+
         self.mw.counter = 0
 
         self.mw.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", self.mw.cfg_manager.btcTimeframe, self.mw.cfg_manager.btcExchange))

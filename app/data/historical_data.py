@@ -39,7 +39,7 @@ class HistoricalData(QtCore.QObject):
 
         self.data = dict()
         # self.process_pairs()
-        self.process_in_thread(self.mw.cfg_manager.pair)
+        # self.process_in_thread(self.mw.cfg_manager.pair)
 
 
     def get_kline_values(self):

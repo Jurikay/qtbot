@@ -36,7 +36,7 @@ from app.elements.websocket_manager import WebsocketManager
 from app.data.index_data import IndexData
 from app.data.historical_data import HistoricalData
 from app.data.user_data import UserData
-from app.init import val
+# from app.init import val
 
 
 class beeserBot(QtWidgets.QMainWindow):
@@ -226,9 +226,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.user_data = UserData(self, self.mutex)
         self.user_data.initialize()
         # INITITALIZE API HEAVY STUFF TODO refactor; skip api parameter
-        if not val["jirrik"]:
-            # self.user_data.initial_open_orders()
-            self.historical.get_kline_values()
+        # if not val["jirrik"]:
+        # self.user_data.initial_open_orders()
+        # self.historical.get_kline_values()
 
         self.create_df_btn.clicked.connect(self.user_data.create_history_df)
 

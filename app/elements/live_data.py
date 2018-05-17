@@ -21,9 +21,8 @@ class LiveData(QtWidgets.QWidget):
         self.ob_progressed = False
 
 
-    def set_orderbook_values(self):
+    def set_history_values(self):
         self.set_last_price()
-        self.set_spread()
         self.mw.tradeTable.update()
 
 

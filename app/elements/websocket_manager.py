@@ -105,7 +105,7 @@ class WebsocketManager:
         self.api_updates += 1
 
         worker = Worker(self.socket_history)
-        worker.signals.progress.connect(self.mw.live_data.set_orderbook_values)
+        worker.signals.progress.connect(self.mw.live_data.set_history_values)
         self.threadpool.start(worker)
 
 
