@@ -29,7 +29,7 @@ class GuiManager:
         self.api_init()
         self.mw.limit_pane.init_tables()
 
-        for coin in val["coins"]:
+        for coin in self.mw.tickers:
 
             icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
             self.mw.coin_selector.addItem(icon, coin[:-3])
@@ -46,10 +46,10 @@ class GuiManager:
     def initial_last_price(self):
         # init last_price
         arrow = QtGui.QPixmap("images/assets/2arrow.png")
-        formatted_price = '{number:.{digits}f}'.format(number=float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]), digits=self.mw.decimals)
+        formatted_price = '{number:.{digits}f}'.format(number=float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
         self.mw.price_arrow.setPixmap(arrow)
         self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + Colors.color_yellow + "'>" + formatted_price + "</span>")
-        usd_price = '{number:.{digits}f}'.format(number=float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
+        usd_price = '{number:.{digits}f}'.format(number=float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
         self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
 
@@ -60,11 +60,15 @@ class GuiManager:
         coin = self.mw.cfg_manager.coin
         pair = self.mw.cfg_manager.pair
 
+        holdings = self.mw.user_data.holdings
+        tickers = self.mw.tickers
+
+
         self.mw.buy_asset.setText(coin)
         self.mw.sell_asset.setText(coin)
 
-        self.mw.limit_total_btc.setText(str(val["accHoldings"]["BTC"]["free"]) + " BTC")
-        self.mw.limit_total_coin.setText(str(val["accHoldings"][coin]["free"]) + " " + coin)
+        self.mw.limit_total_btc.setText(str(holdings["BTC"]["free"]) + " BTC")
+        self.mw.limit_total_coin.setText(str(holdings[coin]["free"]) + " " + coin)
 
         self.mw.limit_buy_label.setText("<span style='font-weight: bold; font-size: 12px;'>Buy " + coin + "</span>")
         self.mw.limit_sell_label.setText("<span style='font-weight: bold; font-size: 12px;'>Sell " + coin + "</span>")
@@ -73,17 +77,17 @@ class GuiManager:
         # self.mw.limit_coin_label_sell.setText("<span style='font-weight: bold; color: white;'>" + coin + "</span>")
 
         # self.mw.limit_buy_input.setText("kernoschmaus")
-        self.mw.limit_buy_input.setDecimals(self.mw.decimals)
-        self.mw.limit_buy_input.setSingleStep(float(val["coins"][pair]["tickSize"]))
+        self.mw.limit_buy_input.setDecimals(tickers[pair]["decimals"])
+        self.mw.limit_buy_input.setSingleStep(float(tickers[pair]["tickSize"]))
 
-        self.mw.limit_sell_input.setDecimals(self.mw.decimals)
-        self.mw.limit_sell_input.setSingleStep(float(val["coins"][pair]["tickSize"]))
+        self.mw.limit_sell_input.setDecimals(tickers[pair]["decimals"])
+        self.mw.limit_sell_input.setSingleStep(float(tickers[pair]["tickSize"]))
 
-        self.mw.limit_buy_amount.setDecimals(self.mw.assetDecimals)
-        self.mw.limit_buy_amount.setSingleStep(float(val["coins"][pair]["minTrade"]))
+        self.mw.limit_buy_amount.setDecimals(tickers[pair]["assetDecimals"])
+        self.mw.limit_buy_amount.setSingleStep(float(tickers[pair]["minTrade"]))
 
-        self.mw.limit_sell_amount.setDecimals(self.mw.assetDecimals)
-        self.mw.limit_sell_amount.setSingleStep(float(val["coins"][pair]["minTrade"]))
+        self.mw.limit_sell_amount.setDecimals(tickers[pair]["assetDecimals"])
+        self.mw.limit_sell_amount.setSingleStep(float(tickers[pair]["minTrade"]))
 
 
 
@@ -149,7 +153,7 @@ class GuiManager:
         """Change the active pair and call symbol specific functions."""
         newcoin = self.mw.coin_selector.currentText()
 
-        if any(newcoin + "BTC" in s for s in val["coins"]) and newcoin != self.mw.cfg_manager.coin:
+        if any(newcoin + "BTC" in s for s in self.mw.tickers) and newcoin != self.mw.cfg_manager.coin:
             self.mw.cfg_manager.coin = newcoin
             self.mw.cfg_manager.pair = newcoin + "BTC"
 
@@ -159,7 +163,7 @@ class GuiManager:
 
             logging.info('Switching to %s' % newcoin + " / BTC")
 
-            self.mw.api_manager.set_pair_values()
+            # self.mw.api_manager.set_pair_values()
 
             self.initial_values()
 
@@ -234,11 +238,11 @@ class GuiManager:
 
         self.mw.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
 
-        total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2) + "$"
+        total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2) + "$"
 
         self.mw.total_usd_label.setText("<span style='font-size: 14px; color: white; font-family: Arial Black;'>" + total_usd_value + "</span>")
 
-        last_btc_price = float(val["tickers"]["BTCUSDT"]["lastPrice"])
+        last_btc_price = float(self.mw.tickers["BTCUSDT"]["lastPrice"])
         last_btc_price_formatted = '{number:,.{digits}f}'.format(number=last_btc_price, digits=2) + "$"
 
 
@@ -253,7 +257,7 @@ class GuiManager:
         self.last_btc_price = last_btc_price
 
         operator = ""
-        percent_change = float(val["tickers"]["BTCUSDT"]["priceChangePercent"])
+        percent_change = float(self.mw.tickers["BTCUSDT"]["priceChangePercent"])
         if percent_change > 0:
             operator = "+"
             percent_color = Colors.color_green
@@ -263,9 +267,9 @@ class GuiManager:
         btc_percent = operator + '{number:,.{digits}f}'.format(number=percent_change, digits=2) + "%"
         self.mw.btc_percent_label.setText("<span style='color: " + percent_color + "'>" + btc_percent + "</span>")
 
-        high = float(val["tickers"]["BTCUSDT"]["highPrice"])
-        low = float(val["tickers"]["BTCUSDT"]["lowPrice"])
-        vol = float(val["tickers"]["BTCUSDT"]["volume"])
+        high = float(self.mw.tickers["BTCUSDT"]["highPrice"])
+        low = float(self.mw.tickers["BTCUSDT"]["lowPrice"])
+        vol = float(self.mw.tickers["BTCUSDT"]["volume"])
 
         high_formatted = '{number:,.{digits}f}'.format(number=high, digits=2) + "$"
         low_formatted = '{number:,.{digits}f}'.format(number=low, digits=2) + "$"
@@ -350,13 +354,13 @@ class GuiManager:
             close_1h = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-60][4])
             close_4h = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-240][4])
 
-            change_5m_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_5m)) - 1) * 100
-            change_15m_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_15m)) - 1) * 100
-            # change_30m_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_30m)) - 1) * 100
-            change_1h_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_1h)) - 1) * 100
-            change_4h_value = ((float(val["tickers"][self.mw.cfg_manager.pair]["lastPrice"]) / float(close_4h)) - 1) * 100
+            change_5m_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_5m)) - 1) * 100
+            change_15m_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_15m)) - 1) * 100
+            # change_30m_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_30m)) - 1) * 100
+            change_1h_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_1h)) - 1) * 100
+            change_4h_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_4h)) - 1) * 100
 
-            change_1d_value = float(val["tickers"][self.mw.cfg_manager.pair]["priceChangePercent"])
+            change_1d_value = float(self.mw.tickers[self.mw.cfg_manager.pair]["priceChangePercent"])
 
 
             changes = [self.mw.change_5m, self.mw.change_15m, self.mw.change_1h, self.mw.change_4h, self.mw.change_1d]
@@ -390,8 +394,7 @@ class GuiManager:
         #     label_text = "<span style='color: " + "white" + "'>" + "{0:.2f}".format(volume_values[i]) + " BTC</span>"
         #     label.setText(label_text)
 
-    @staticmethod
-    def calc_total_btc():
+    def calc_total_btc(self):
         """Multiply holdings by their current price to get
         the total account value."""
         total_btc_val = 0
@@ -400,10 +403,10 @@ class GuiManager:
             locked = val["accHoldings"][holding]["locked"]
             total = float(free) + float(locked)
 
-            if holding + "BTC" in val["coins"]:
-                if holding != "BTC" and total * float(val["tickers"][holding + "BTC"]["lastPrice"]) > 0.001:
+            if holding + "BTC" in self.mw.tickers:
+                if holding != "BTC" and total * float(self.mw.tickers[holding + "BTC"]["lastPrice"]) > 0.001:
 
-                    coin_total = total * float(val["tickers"][holding + "BTC"]["lastPrice"])
+                    coin_total = total * float(self.mw.tickers[holding + "BTC"]["lastPrice"])
                     total_btc_val += coin_total
 
             elif holding == "BTC":

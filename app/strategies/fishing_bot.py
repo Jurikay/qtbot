@@ -36,14 +36,14 @@ class FishingBot(QtWidgets.QTableWidget):
         side_combo_box.addItem("Sell")
 
         price_selector = QtWidgets.QDoubleSpinBox()
-        price_selector.setDecimals(val["decimals"])
-        price_selector.setSingleStep(float(val["coins"][self.mw.cfg_manager.pair]["tickSize"]))
+        price_selector.setDecimals(self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
+        price_selector.setSingleStep(float(self.mw.tickers[self.mw.cfg_manager.pair]["tickSize"]))
         price_selector.setValue(float(val["tickers"][self.mw.cfg_manager.pair]["lowPrice"]))
 
 
         amount_selector = QtWidgets.QDoubleSpinBox()
-        amount_selector.setDecimals(val["assetDecimals"])
-        amount_selector.setSingleStep(float(val["coins"][self.mw.cfg_manager.pair]["minTrade"]))
+        amount_selector.setDecimals(self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
+        amount_selector.setSingleStep(float(self.mw.tickers[self.mw.cfg_manager.pair]["minTrade"]))
         amount_selector.setMaximum(999999)
 
         row_count = self.rowCount()
@@ -66,7 +66,7 @@ class FishingBot(QtWidgets.QTableWidget):
 
     def build_coin_selector(self):
         coin_combo_box = QtWidgets.QComboBox()
-        for coin in val["coins"]:
+        for coin in self.mw.tickers:
             icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
             coin_combo_box.addItem(icon, coin[:-3])
 

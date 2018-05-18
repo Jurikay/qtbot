@@ -17,7 +17,7 @@ from app.colors import Colors
 # import time
 from app.data.base_table_setup import BaseTableModel, BasicDelegate, HoverDelegate, RoundFloatDelegate
 # from app.data.new_orderbook_table import OrderbookTable
-from app.init import val
+# from app.init import val
 
 
 class BackgroundTable(QtWidgets.QTableView):
@@ -151,9 +151,28 @@ class BackgroundTable(QtWidgets.QTableView):
             self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
 
     def cell_clicked(self, index):
-        """Change pair or cancel order"""
-        # self.update()
-        pass
+        """When Orderbook is clicked, copy price or quantity on click."""
+        try:
+            row = index.row()
+            col = index.column()
+            # copy price
+
+            if self.data == "asks":
+                row = 20 - row - 1
+
+            if col == 1:
+                self.mw.limit_buy_input.setValue(float(self.mw.orderbook[self.data][row][0]))
+                self.mw.limit_sell_input.setValue(float(self.mw.orderbook[self.data][row][0]))
+            # copy quantity
+            elif col == 2:
+                self.mw.limit_buy_amount.setValue(float(self.mw.orderbook[self.data][row][1]))
+                self.mw.limit_sell_amount.setValue(float(self.mw.orderbook[self.data][row][1]))
+        except IndexError as e:
+            print("CELL CLICK ERROR: " + str(e))
+
+    def leaveEvent(self, event):
+        print("LEAVE EVENT")
+        app.main_app.restoreOverrideCursor()
 
 
 class AsksDelegate(QtWidgets.QStyledItemDelegate):
@@ -223,7 +242,6 @@ class AsksDelegate(QtWidgets.QStyledItemDelegate):
 
 class HistPriceDelegate(BasicDelegate):
 
-
     def initStyleOption(self, option, index):
         decimals = self.mw.tickers[self.mw.cfg_manager.pair]["decimals"]
         option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=decimals)
@@ -246,17 +264,24 @@ class HistPriceDelegate(BasicDelegate):
             self.font.setBold(False)
 
 
+class OrderbookCountDelegate(BasicDelegate):
+    def initStyleOption(self, option, index):
+        option.text = str(index.data()).zfill(2)
+
+
 class OrderbookPriceDelegate(HoverDelegate):
     def initStyleOption(self, option, index):
         super(OrderbookPriceDelegate, self).initStyleOption(option, index)
-        option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.decimals)
+        decimals = self.mw.tickers[self.mw.cfg_manager.pair]["decimals"]
+        option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=decimals)
 
 
 class OrderbookQtyDelegate(HoverDelegate):
     def initStyleOption(self, option, index):
-        super(OrderbookPriceDelegate, self).initStyleOption(option, index)
-        option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.assetDecimals)
-
+        super(OrderbookQtyDelegate, self).initStyleOption(option, index)
+        assetDecimals = self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"]
+        option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=assetDecimals)
+        self.align = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
 
 
@@ -266,76 +291,6 @@ class TimeDelegate(BasicDelegate):
     def initStyleOption(self, option, index):
         option.text = str(datetime.fromtimestamp(int(str(index.data())[:-3])).strftime('%H:%M:%S.%f')[:-7])
 
-
-
-class HistoryDelegate(QtWidgets.QStyledItemDelegate):
-    """Class to define a custom item style."""
-
-    def __init__(self, parent):
-        super(HistoryDelegate, self).__init__(parent)
-        self.parent = parent
-        self.mw = app.mw
-        self.center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        self.left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-        self.right = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-
-
-
-    def initStyleOption(self, option, index):
-        """Set style options based on index column."""
-
-        if index.column() == 0:
-            option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=val["decimals"])
-
-        elif index.column() == 1:
-            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=val["assetDecimals"])
-
-        elif index.column() == 2:
-            option.text = str(datetime.fromtimestamp(int(str(index.data())[:-3])).strftime('%H:%M:%S.%f')[:-7])
-
-        else:
-            super(HistoryDelegate, self).initStyleOption(option, index)
-
-
-    def paint(self, painter, option, index):
-        """Reimplemented custom paint method."""
-        painter.save()
-        options = QtWidgets.QStyleOptionViewItem(option)
-        self.initStyleOption(options, index)
-        font = QtGui.QFont()
-
-
-        if index.column() == 0:
-            if self.mw.trade_history[index.row()][2] is True:
-                if option.state & QtWidgets.QStyle.State_MouseOver:
-                    painter.setPen(QtGui.QColor("#ff58a8"))
-                    font.setBold(True)
-                else:
-                    painter.setPen(QtGui.QColor(Colors.color_pink))
-            else:
-
-                if option.state & QtWidgets.QStyle.State_MouseOver:
-                    painter.setPen(QtGui.QColor("#aaff00"))
-                    font.setBold(True)
-                else:
-                    painter.setPen(QtGui.QColor(Colors.color_green))
-            painter.setFont(font)
-            painter.drawText(option.rect, self.center, options.text)
-
-        elif index.column() == 1:
-            if option.state & QtWidgets.QStyle.State_MouseOver:
-                painter.setPen(QtGui.QColor(QtCore.Qt.white))
-                font.setBold(True)
-            else:
-                painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-            painter.setFont(font)
-            painter.drawText(option.rect, self.right, options.text)
-
-        elif index.column() == 2:
-            painter.setPen(QtGui.QColor(Colors.color_grey))
-            painter.drawText(option.rect, self.center, options.text)
-
-        painter.restore()
 
 #######################################
 
@@ -348,10 +303,10 @@ class AsksView(BackgroundTable):
         self.highlight = "#ff58a8"
         self.data = "asks"
         self.has_data = False
-
+        self.setItemDelegateForColumn(0, OrderbookCountDelegate(self))
         self.setItemDelegateForColumn(1, OrderbookPriceDelegate(self, "#ff58a8", Colors.color_pink))
-        self.setItemDelegateForColumn(2, HoverDelegate(self, "#fff"))
-        self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, "BTC"))
+        self.setItemDelegateForColumn(2, OrderbookQtyDelegate(self, "#fff"))
+        self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, " BTC"))
 
     # def get_max_value(self, df):
     #     max_val = df["Total"].max()
@@ -369,9 +324,10 @@ class BidsView(BackgroundTable):
         self.highlight = "#aaff00"
         self.data = "bids"
         self.has_data = False
-        self.setItemDelegateForColumn(1, HoverDelegate(self, "#aaff00", Colors.color_green))
-        self.setItemDelegateForColumn(2, HoverDelegate(self, "#fff"))
-        self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, "BTC"))
+        self.setItemDelegateForColumn(0, OrderbookCountDelegate(self))
+        self.setItemDelegateForColumn(1, OrderbookPriceDelegate(self, "#aaff00", Colors.color_green))
+        self.setItemDelegateForColumn(2, OrderbookQtyDelegate(self, "#fff"))
+        self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, " BTC"))
 
     def set_df(self):
         return self.create_dataframe(self.data)
@@ -388,7 +344,7 @@ class HistView(BackgroundTable):
         # self.setItemDelegate(HistoryDelegate(self))
         self.get_color = True
         self.setItemDelegateForColumn(0, HistPriceDelegate(self))
-        self.setItemDelegateForColumn(1, HoverDelegate(self, "#fff"))
+        self.setItemDelegateForColumn(1, OrderbookQtyDelegate(self, "#fff"))
         self.setItemDelegateForColumn(2, TimeDelegate(self, Colors.color_grey))
 
     def set_df(self):
@@ -408,7 +364,7 @@ class HistView(BackgroundTable):
         self.setColumnWidth(1, 80)
 
     def cell_clicked(self, index):
-        """Copy price or quantity on click."""
+        """When History is clicked, copy price or quantity on click."""
         try:
             row = index.row()
             col = index.column()

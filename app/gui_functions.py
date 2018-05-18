@@ -70,7 +70,7 @@ def calc_wavg(self):
 
 
             if coin != "BTC":
-                if remaining <= float(val["coins"][coin + "BTC"]["minTrade"]):
+                if remaining <= float(self.mw.tickers[coin + "BTC"]["minTrade"]):
 
                     if current_total > 0:
                         # if remaining < 0:

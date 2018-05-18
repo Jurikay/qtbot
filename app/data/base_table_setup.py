@@ -69,8 +69,8 @@ class BaseTableView(QtWidgets.QTableView):
         self.set_widths()
 
 
-    @staticmethod
-    def leaveEvent(event):
+    def leaveEvent(self, event):
+        print("LEAVE EVENT")
         app.main_app.restoreOverrideCursor()
 
     def set_widths(self):
@@ -214,6 +214,7 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
 
     def initStyleOption(self, option, index):
         option.text = index.data()
+        self.font = QtGui.QFont()
 
 
     def paint(self, painter, option, index):
@@ -226,7 +227,7 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
 
         painter.setFont(self.font)
         painter.setPen(QtGui.QColor(self.fg_color))
-        
+
         painter.drawText(option.rect, self.align, options.text)
         painter.restore()
 

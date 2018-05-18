@@ -2728,7 +2728,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -3193,7 +3193,7 @@
                    <string/>
                   </property>
                   <property name="maximum">
-                   <double>9999999.000000000000000</double>
+                   <double>999999999.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -3715,7 +3715,7 @@
                    <locale language="C" country="AnyCountry"/>
                   </property>
                   <property name="maximum">
-                   <double>9999999.000000000000000</double>
+                   <double>999999999.000000000000000</double>
                   </property>
                  </widget>
                 </item>

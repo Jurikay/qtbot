@@ -265,7 +265,7 @@ class UserData(QtCore.QObject):
             coin_price = float(self.mw.tickers.get(coin + "BTC", dict()).get("lastPrice", 0))
             total_btc = total * coin_price
             name = coin_price = str(self.mw.tickers.get(coin + "BTC", dict()).get("baseAssetName", 0))
-
+            # print("name", name)
         elif coin == "BTC":
             total_btc = total
             name = "Bitcoin"

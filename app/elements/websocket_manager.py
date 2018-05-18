@@ -20,7 +20,7 @@ import time
 
 class WebsocketManager:
 
-    def __init__(self, mw, tp, client):
+    def __init__(self, mw, tp, client, mutex):
         # print("INIT WEBSOCKET MANAGER")
         self.mw = mw
         self.threadpool = tp
@@ -44,6 +44,7 @@ class WebsocketManager:
         # self.index_data = dict()
         self.index_df = None
         self.socket_mgr = BinanceSocketManager(self.client)
+        self.mutex = mutex
 
     # websockets
     def schedule_websockets(self):
@@ -263,7 +264,12 @@ class WebsocketManager:
                                'lastId': value["L"],
                                'count': value["n"]}
 
-                val["tickers"][value["s"]] = ticker_data
+                # for item, value in ticker_data.items():
+
+                #     self.mutex.lock()
+                #     self.mw.tickers.get(value["s"], dict())[item] = value
+                #     self.mutex.unlock()
+
                 df_data[value["s"]] = ticker_data
 
         # self.mw.index_data.websocket_update(df_data)

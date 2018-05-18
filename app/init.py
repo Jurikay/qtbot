@@ -57,7 +57,7 @@ else:
 
 # val["globalList"] = list()
 # val["tradeHistory"] = list()
-val["tickers"] = dict()
+# val["tickers"] = dict()
 
 val["buyAllowed"] = False
 val["sellAllowed"] = False

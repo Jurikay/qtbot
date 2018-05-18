@@ -9,6 +9,9 @@ from app.init import val
 
 class Webpages():
 
+    def __init__(self, mw):
+        self.mw = mw
+
     @staticmethod
     def build_chart(exchange, pair):
         tradingview = '<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>'
@@ -468,7 +471,7 @@ class Webpages():
 
     def build_cmc(self):
         """Make coin names coinmarketcap conform."""
-        coin_name = val["coins"][self.mw.cfg_manager.pair]["baseAssetName"]
+        coin_name = self.mw.tickers[self.mw.cfg_manager.pair]["baseAssetName"]
         if coin_name == "Wancoin":
             coin_name = "Wanchain"
         elif coin_name == "MIOTA":
@@ -502,7 +505,7 @@ class Webpages():
 
     @staticmethod
     def build_binance_info():
-        coin_name = val["coins"][self.mw.cfg_manager.pair]["baseAssetName"]
+        coin_name = self.mw.tickers[self.mw.cfg_manager.pair]["baseAssetName"]
         url = "https://info.binance.com/currencies/" + coin_name.replace(" ", "-").replace(".", "") + "/"
         return url
 

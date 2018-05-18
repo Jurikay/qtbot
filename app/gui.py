@@ -185,7 +185,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
     def instantiate_api_managers(self):
-        self.websocket_manager = WebsocketManager(self, self.threadpool, app.client)
+        self.websocket_manager = WebsocketManager(self, self.threadpool, app.client, self.mutex)
 
         # self.table_manager = TableManager(self)
         # self.table_manager.init_filter()

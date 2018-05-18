@@ -7,7 +7,7 @@ import PyQt5.QtWidgets as QtWidgets
 # import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
 import app
-from app.init import val
+# from app.init import val
 # from app.table_items import CoinDelegate
 from app.colors import Colors
 
@@ -43,10 +43,10 @@ class LiveData(QtWidgets.QWidget):
                 color = Colors.color_pink
 
 
-            formatted_price = '{number:.{digits}f}'.format(number=float(history[0][0]), digits=self.mw.decimals)
+            formatted_price = '{number:.{digits}f}'.format(number=float(history[0][0]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
             self.mw.price_arrow.setPixmap(arrow)
             self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
-            usd_price = '{number:.{digits}f}'.format(number=float(history[0][0]) * float(val["tickers"]["BTCUSDT"]["lastPrice"]), digits=2)
+            usd_price = '{number:.{digits}f}'.format(number=float(history[0][0]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
             self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
 

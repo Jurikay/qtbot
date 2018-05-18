@@ -2,7 +2,7 @@ import logging
 # from app.workers import Worker
 # import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
-import PyQt5.QtCore as QtCore
+# import PyQt5.QtCore as QtCore
 from app.init import val
 from app.charts import Webpages
 # from app.colors import Colors
@@ -50,7 +50,7 @@ class InitManager:
     def main_init(self):
         """One time gui initialization."""
         # set default locale
-        QtCore.QLocale.setDefault(QtCore.QLocale(QtCore.QLocale.C))
+        # QtCore.QLocale.setDefault(QtCore.QLocale.C)
 
         logging.info('Initializing GUI')
 

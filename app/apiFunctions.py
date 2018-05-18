@@ -59,17 +59,17 @@ class ApiCalls:
 
 
 
-                val["coins"] = self.availablePairs()
+                # val["coins"] = self.availablePairs()
 
                 val["accHoldings"] = self.getHoldings()
 
-                val["tickers"] = self.getTickers()
+                # val["tickers"] = self.getTickers()
 
                 val["apiCalls"] += 3
                 # userMsg = dict()
                 # accHoldings = dict()
 
-                self.set_pair_values()
+                # self.set_pair_values()
                 self.mw.is_connected = True
 
             except (BinanceAPIException, NameError, AttributeError) as e:
@@ -99,17 +99,17 @@ class ApiCalls:
 
 
     # TODO remove val references
-    def set_pair_values(self):
-        """Set various values based on the chosen pair."""
-        pair = self.mw.cfg_manager.pair
-        val["decimals"] = len(str(val["coins"][pair]["tickSize"])) - 2
-        self.mw.decimals = len(str(val["coins"][pair]["tickSize"])) - 2
-        if int(val["coins"][pair]["minTrade"]) == 1:
-            val["assetDecimals"] = 0
-            self.mw.assetDecimals = 0
-        else:
-            val["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
-            self.mw.assetDecimals = len(str(val["coins"][pair]["minTrade"])) - 2
+    # def set_pair_values(self):
+    #     """Set various values based on the chosen pair."""
+    #     pair = self.mw.cfg_manager.pair
+    #     val["decimals"] = len(str(val["coins"][pair]["tickSize"])) - 2
+    #     self.mw.decimals = len(str(val["coins"][pair]["tickSize"])) - 2
+    #     if int(val["coins"][pair]["minTrade"]) == 1:
+    #         val["assetDecimals"] = 0
+    #         self.mw.assetDecimals = 0
+    #     else:
+    #         val["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
+    #         self.mw.assetDecimals = len(str(val["coins"][pair]["minTrade"])) - 2
 
 
     # TODO: replace; get_products is depreciated.
@@ -369,8 +369,8 @@ class ApiCalls:
 
     def add_ticker_data(self, btc_pairs):
         # TODO change
-        tickers = val["tickers"]
-        coins = val["coins"]
+        tickers = self.getTickers()
+        coins = self.availablePairs()
 
         self.number_api_calls += 1
 
