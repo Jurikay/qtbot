@@ -12,6 +12,7 @@ import PyQt5.QtCore as QtCore
 from binance.exceptions import BinanceAPIException
 import logging
 
+
 class UserData(QtCore.QObject):
     """Object that holds various user data like
     open orders, trade history and current holdings."""

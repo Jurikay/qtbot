@@ -36,6 +36,7 @@ class BackgroundTable(QtWidgets.QTableView):
         self.has_data = False
         self.compare_col = 3
         self.get_color = False
+        self.rowH = None
 
     def paintEvent(self, event):
 
@@ -53,14 +54,16 @@ class BackgroundTable(QtWidgets.QTableView):
                         self.bg_color = "#3b4c37"
 
                 rowY = self.rowViewportPosition(row)
-                rowH = self.rowHeight(row)
+                # rowH = self.rowHeight(row)
+                if not self.rowH:
+                    self.rowH = self.rowHeight(row)
                 # print(row, rowY, rowH)
 
                 # Create the painter
                 value = self.df.iloc[row, self.compare_col]
                 percentage = value / self.max_order
 
-                my_rect = QtCore.QRect(0, rowY, (percentage * total_width), rowH)
+                my_rect = QtCore.QRect(0, rowY, (percentage * total_width), self.rowH)
 
                 painter.save()
                 painter.setBrush(QtGui.QColor(self.bg_color))
