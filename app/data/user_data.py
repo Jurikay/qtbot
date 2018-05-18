@@ -157,7 +157,7 @@ class UserData(QtCore.QObject):
 
     def add_to_history(self, order):
         # print("ADD TO HISTORY ORDER", order)
-        order_id = order["id"]
+        order_id = order["orderId"]
         pair = order["symbol"]
         order["total"] = float(order["executedQty"]) * float(order["price"])
         if not self.trade_history.get(pair):

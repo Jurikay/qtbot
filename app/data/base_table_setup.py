@@ -294,8 +294,8 @@ class ChangePercentDelegate(BasicDelegate):
 class FilledPercentDelegate(BasicDelegate):
 
     def initStyleOption(self, option, index):
-        if float(index.data()) == 0.00:
-            self.fg_color = Colors.color_pink
+        if float(index.data()) == 0:
+            self.fg_color = Colors.color_lightgrey
         elif float(index.data()) < 25:
             self.fg_color = Colors.color_pink
         elif float(index.data()) < 75:
@@ -452,7 +452,7 @@ class OpenOrders(BaseTableView):
         self.setItemDelegateForColumn(5, RoundAssetDelegate(self, 1))
         self.setItemDelegateForColumn(6, FilledPercentDelegate(self))
         self.setItemDelegateForColumn(7, RoundFloatDelegate(self, 8))
-        self.setItemDelegateForColumn(9, HoverDelegate(self, Colors.color_lightgrey, Colors.color_pink))
+        self.setItemDelegateForColumn(9, HoverDelegate(self, Colors.color_pink, Colors.color_lightgrey))
 
         self.parent = parent
 

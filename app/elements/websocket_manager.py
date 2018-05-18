@@ -196,7 +196,6 @@ class WebsocketManager:
                 worker.signals.progress.connect(self.mw.user_data.remove_from_open_orders)
 
 
-
                 # if order was canceled but partially filled, add to history
                 if float(order["executedQty"]) > 0:
                     # worker.signals.progress.connect(self.mw.history_table.add_to_history)
@@ -206,7 +205,7 @@ class WebsocketManager:
             elif userMsg["X"] == "PARTIALLY_FILLED":
                 # update a partially filled open order and check if it has to be newly added.
                 # worker.signals.progress.connect(self.mw.open_orders.update_open_order)
-                worker.signals.progress.connect(self.mw.user_data.holdings_table.check_add_to_holdings)
+                # worker.signals.progress.connect(self.mw.user_data.holdings_table.check_add_to_holdings)
 
                 worker.signals.progress.connect(self.mw.user_data.add_to_history)
                 worker.signals.progress.connect(self.mw.user_data.add_to_open_orders)
