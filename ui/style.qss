@@ -214,6 +214,13 @@ QTabWidget QPushButton {
      border: 1px solid #f3ba2e;
      color: #f3ba2e;
 }
+
+QPushButton::pressed {
+    background-color: #f3ba2e;
+    color: #262d33;
+    border-color: #262d33;
+}
+
 QPushButton#limit_buy_button::pressed {
     /* border: 2px solid orange; */
     color: white;
@@ -504,7 +511,7 @@ QComboBox QAbstractItemView {
     border: 1px solid #76797C;
     selection-background-color: #f3ba2e;
     /* margin-bottom: 50px; */
-    selection-color: black;
+    selection-color: #262d33;
 }
 
 QComboBox::drop-down {
@@ -729,6 +736,14 @@ QGroupBox::indicator:unchecked:disabled {
 #cancel_all:hover {
     color: white;
     background-color: #ff007a;
+}
+
+
+#cancel_all::pressed {
+    color: #ff007a;
+    background-color: white;
+    border-color: white;
+
 }
 
 QMenu {

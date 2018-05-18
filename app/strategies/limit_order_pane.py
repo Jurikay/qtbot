@@ -31,7 +31,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         buy_percent_val = str(self.mw.limit_buy_slider.value())
         self.mw.buy_slider_label.setText(buy_percent_val + "%")
 
-        buy_value = self.percentage_amount(self.mw.user_data.holdings["BTC"]["free"], self.mw.limit_buy_input.value(), int(buy_percent_val), self.mw.assetDecimals)
+        buy_value = self.percentage_amount(self.mw.user_data.holdings["BTC"]["free"], self.mw.limit_buy_input.value(), int(buy_percent_val), self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
         self.mw.limit_buy_amount.setValue(float(buy_value))
         order_cost = float(buy_value) * float(self.mw.limit_buy_input.value())
         self.mw.limit_buy_total.setText('{number:.{digits}f}'.format(number=order_cost, digits=8) + " BTC ")
@@ -60,8 +60,8 @@ class LimitOrderPane(QtWidgets.QWidget):
         # print("acch: " + str(self.mw.user_data.holdings["BTC"]["free"]))
         # print("buy input: " + str(self.mw.limit_buy_input.value()))
         # print("btn nmber: " + str(self.mw.cfg_manager.buttonPercentage[button_number]))
-        # print("asset dec" + str(self.mw.assetDecimals))
-        value = self.percentage_amount(self.mw.user_data.holdings["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.cfg_manager.buttonPercentage[button_number]), self.mw.assetDecimals)
+        # print("asset dec" + str(self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"]))
+        value = self.percentage_amount(self.mw.user_data.holdings["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.cfg_manager.buttonPercentage[button_number]), self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
 
         self.mw.limit_buy_amount.setValue(float(value))
 
@@ -156,7 +156,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         if self.mw.tickers[self.mw.cfg_manager.pair]["minTrade"] == 1:
             sizeRounded = int(holding)
         else:
-            sizeRounded = int(holding * 10**self.mw.assetDecimals) / 10.0**self.mw.assetDecimals
+            sizeRounded = int(holding * 10**self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"]) / 10.0**self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"]
         return sizeRounded
 
 
@@ -250,9 +250,9 @@ class LimitOrderPane(QtWidgets.QWidget):
     def create_buy_order(self):
         if val["buyAllowed"] is True:
             pair = self.mw.cfg_manager.pair
-            price = '{number:.{digits}f}'.format(number=self.mw.limit_buy_input.value(), digits=self.mw.decimals)
+            price = '{number:.{digits}f}'.format(number=self.mw.limit_buy_input.value(), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
 
-            amount = '{number:.{digits}f}'.format(number=self.mw.limit_buy_amount.value(), digits=self.mw.assetDecimals)
+            amount = '{number:.{digits}f}'.format(number=self.mw.limit_buy_amount.value(), digits=self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
             side = "Buy"
 
             worker = Worker(partial(self.mw.api_manager.api_create_order, side, pair, price, amount))
@@ -264,9 +264,9 @@ class LimitOrderPane(QtWidgets.QWidget):
     def create_sell_order(self):
         if val["sellAllowed"] is True:
             pair = self.mw.cfg_manager.pair
-            price = '{number:.{digits}f}'.format(number=self.mw.limit_sell_input.value(), digits=self.mw.decimals)
+            price = '{number:.{digits}f}'.format(number=self.mw.limit_sell_input.value(), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
 
-            amount = '{number:.{digits}f}'.format(number=self.mw.limit_sell_amount.value(), digits=self.mw.assetDecimals)
+            amount = '{number:.{digits}f}'.format(number=self.mw.limit_sell_amount.value(), digits=self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
 
             side = "Sell"
 
@@ -282,7 +282,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         # print("We don now")
         self.mw.limit_buy_input.setValue(float(val["bids"][0][0]))
         self.mw.limit_sell_input.setValue(float(val["asks"][0][0]))
-        value = self.percentage_amount(self.mw.user_data.holdings["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), self.mw.assetDecimals)
+        value = self.percentage_amount(self.mw.user_data.holdings["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
         self.mw.limit_buy_amount.setValue(value)
 
         # print(self.mw.user_data.holdings[val["coin"]]["free"])

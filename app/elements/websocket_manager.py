@@ -142,12 +142,15 @@ class WebsocketManager:
 
         if userMsg["e"] == "outboundAccountInfo":
             for i in range(len(userMsg["B"])):
-
+                pass
                 # put account info in accHoldings dictionary. Access
                 # free and locked holdings like so: accHoldings["BTC"]["free"]
-                self.mw.mutex.lock()
-                val["accHoldings"][userMsg["B"][i]["a"]] = {"free": userMsg["B"][i]["f"], "locked": userMsg["B"][i]["l"]}
-                self.mw.mutex.unlock()
+
+
+                # self.mw.mutex.lock()
+                # val["accHoldings"][userMsg["B"][i]["a"]] = {"free": userMsg["B"][i]["f"], "locked": userMsg["B"][i]["l"]}
+                # self.mw.mutex.unlock()
+
 
             # self.mw.user_data.update_accholdings(userMsg["B"])
 
@@ -203,7 +206,7 @@ class WebsocketManager:
             elif userMsg["X"] == "PARTIALLY_FILLED":
                 # update a partially filled open order and check if it has to be newly added.
                 # worker.signals.progress.connect(self.mw.open_orders.update_open_order)
-                worker.signals.progress.connect(self.mw.holdings_table.check_add_to_holdings)
+                worker.signals.progress.connect(self.mw.user_data.holdings_table.check_add_to_holdings)
 
                 worker.signals.progress.connect(self.mw.user_data.add_to_history)
                 worker.signals.progress.connect(self.mw.user_data.add_to_open_orders)
@@ -214,8 +217,8 @@ class WebsocketManager:
                 # remove a filled order from open orders, add trade to history and check if it
                 # has to be newly added.
                 # worker.signals.progress.connect(self.mw.open_orders.remove_from_open_orders)
-                worker.signals.progress.connect(self.mw.history_table.add_to_history)
-                worker.signals.progress.connect(self.mw.holdings_table.check_add_to_holdings)
+                # worker.signals.progress.connect(self.mw.history_table.add_to_history)
+                # worker.signals.progress.connect(self.mw.user_data.holdings_table.check_add_to_holdings)
 
                 # new
                 worker.signals.progress.connect(self.mw.user_data.remove_from_open_orders)
@@ -264,11 +267,11 @@ class WebsocketManager:
                                'lastId': value["L"],
                                'count': value["n"]}
 
-                # for item, value in ticker_data.items():
-
-                #     self.mutex.lock()
-                #     self.mw.tickers.get(value["s"], dict())[item] = value
-                #     self.mutex.unlock()
+                # savely set ticker item values
+                for item, item_value in ticker_data.items():
+                    self.mutex.lock()
+                    self.mw.tickers[value["s"]][item] = item_value
+                    self.mutex.unlock()
 
                 df_data[value["s"]] = ticker_data
 

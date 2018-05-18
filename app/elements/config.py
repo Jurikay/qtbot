@@ -268,7 +268,7 @@ class ConfigManager:
 
 
     def write_stats(self):
-        total_running = int(val["stats"]["timeRunning"]) + int(val["timeRunning"])
+        total_running = int(val["stats"]["timeRunning"]) + int(self.mw.gui_manager.runtime)
         total_trades = int(val["stats"]["execTrades"]) + int(val["execTrades"])
         total_bot_trades = int(val["stats"]["execBotTrades"]) + int(val["execBotTrades"])
         api_updates = int(val["stats"]["apiUpdates"]) + int(self.mw.websocket_manager.api_updates)

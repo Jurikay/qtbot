@@ -21,6 +21,7 @@ class GuiManager:
         mw.popup_btn.clicked.connect(self.show_notification)
 
         self.last_btc_price = 0
+        self.runtime = 0
 
 
     def initialize(self):
@@ -30,9 +31,9 @@ class GuiManager:
         self.mw.limit_pane.init_tables()
 
         for coin in self.mw.tickers:
-
-            icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
-            self.mw.coin_selector.addItem(icon, coin[:-3])
+            if "USDT" not in coin:
+                icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
+                self.mw.coin_selector.addItem(icon, coin[:-3])
 
         self.mw.coin_selector.model().sort(0)
         self.mw.coin_selector.setIconSize(QtCore.QSize(25, 25))
@@ -105,11 +106,12 @@ class GuiManager:
 
         self.mw.gui_manager.schedule_work()
 
-        # self.mw.holdings_table.initialize()
+        # self.mw.user_data.holdings_table.initialize()
 
         # self.mw.coin_index.build_coinindex()
-
+        print("SET CORNER WIDGETS")
         self.mw.ChartTabs.setCornerWidget(self.mw.volume_widget)
+        self.mw.tabsBotLeft.setCornerWidget(self.mw.coin_index_filter)
 
         self.set_charts(self.mw.cfg_manager.pair)
         self.mw.chart.show()
@@ -204,7 +206,7 @@ class GuiManager:
 
         """Update some values every second."""
 
-        val["timeRunning"] += 1
+        self.runtime += 1
 
 
         # charts_index = self.mw.ChartTabs.currentIndex()
@@ -294,7 +296,7 @@ class GuiManager:
         # tab_index_botLeft = self.mw.tabsBotLeft.currentIndex()
 
         # if tab_index_botLeft == 3:
-        #     self.mw.holdings_table.update_holding_prices()
+        #     self.mw.user_data.holdings_table.update_holding_prices()
         #     val["indexTabOpen"] = False
         # elif tab_index_botLeft == 0:
         #     self.mw.coin_index.update_coin_index_prices()
@@ -308,8 +310,8 @@ class GuiManager:
         # self.mw.coin_index.start_kline_iterator()
 
     def update_stats(self):
-        session_time = str(timedelta(seconds=val["timeRunning"]))
-        total_time = str(timedelta(seconds=val["timeRunning"] + int(val["stats"]["timeRunning"])))
+        session_time = str(timedelta(seconds=self.runtime))
+        total_time = str(timedelta(seconds=self.runtime + int(val["stats"]["timeRunning"])))
 
         self.mw.session_running.setText(session_time)
         self.mw.total_running.setText(total_time)
@@ -398,9 +400,9 @@ class GuiManager:
         """Multiply holdings by their current price to get
         the total account value."""
         total_btc_val = 0
-        for holding in val["accHoldings"]:
-            free = val["accHoldings"][holding]["free"]
-            locked = val["accHoldings"][holding]["locked"]
+        for holding in self.mw.user_data.holdings:
+            free = self.mw.user_data.holdings[holding]["free"]
+            locked = self.mw.user_data.holdings[holding]["locked"]
             total = float(free) + float(locked)
 
             if holding + "BTC" in self.mw.tickers:

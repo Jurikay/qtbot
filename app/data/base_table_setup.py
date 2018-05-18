@@ -150,6 +150,26 @@ class SortFilterModel(BaseTableModel):
         self.filter_col = filter_col
 
         self.current_coin = None
+        self.old_search_text = None
+
+
+    def set_current_coin(self, state):
+        print("SET CURRENT COIN")
+        print("state", state)
+        if state == 2:
+            self.old_search_text = self.mw.coinindex_filter.text()
+            self.searchText = self.mw.cfg_manager.coin
+            self.setFilter(self.searchText)
+            self.mw.coinindex_filter.setText(self.searchText)
+            self.mw.coinindex_filter.setEnabled(False)
+            self.mw.coinindex_filter.setStyleSheet("color: grey")
+        else:
+            self.searchText = self.old_search_text
+            self.setFilter(self.searchText)
+            self.mw.coinindex_filter.setText(self.old_search_text)
+            self.mw.coinindex_filter.setEnabled(True)
+            self.mw.coinindex_filter.setStyleSheet("color: white")
+
 
     def setFilter(self, searchText=None):
         # print("setfilter", searchText)
@@ -162,7 +182,7 @@ class SortFilterModel(BaseTableModel):
 
                 current_coin = str(self.datatable.iloc[row, self.filter_col]).replace("BTC", "")
 
-                if str(searchText.upper()) in current_coin or str(self.current_coin.upper()) in current_coin:
+                if str(searchText.upper()) in current_coin:
                     self.parent.setRowHidden(row, False)
                 else:
                     self.parent.setRowHidden(row, True)
@@ -424,7 +444,7 @@ class OpenOrders(BaseTableView):
 
     def __init__(self, parent=None, *args):
         super(OpenOrders, self).__init__()
-        # self.my_model = SortFilterModel(self, 0)
+        self.my_model = SortFilterModel(self, 1)
         self.setItemDelegateForColumn(0, DateDelegate(self))
         self.setItemDelegateForColumn(1, PairDelegate(self))
         self.setItemDelegateForColumn(3, BuySellDelegete(self))

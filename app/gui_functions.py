@@ -38,8 +38,8 @@ def calc_wavg(self):
     symbol = self.mw.cfg_manager.pair
     coin = symbol.replace("BTC", "")
 
-    current_free = val["accHoldings"][coin]["free"]
-    current_locked = val["accHoldings"][coin]["locked"]
+    current_free = self.mw.user_data.holdings[coin]["free"]
+    current_locked = self.mw.user_data.holdings[coin]["locked"]
     current_total = float(current_free) + float(current_locked)
 
     remaining = current_total

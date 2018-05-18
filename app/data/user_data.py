@@ -10,7 +10,7 @@ import PyQt5.QtCore as QtCore
 # import numpy as np
 # from datetime import datetime
 from binance.exceptions import BinanceAPIException
-
+import logging
 
 class UserData(QtCore.QObject):
     """Object that holds various user data like
@@ -138,6 +138,16 @@ class UserData(QtCore.QObject):
         self.mw.open_orders_view.websocket_update()
 
 
+    def cancel_all(self):
+        print("CANCEL ALL")
+        logging.info("CANCEL OPEN ORDERS:")
+        for i in range(self.mw.open_orders_view.model().rowCount()):
+            if not self.mw.open_orders_view.isRowHidden(i):
+                order_id = self.mw.open_orders_view.model().index(i, 8).data(QtCore.Qt.DisplayRole)
+                pair = self.mw.open_orders_view.model().index(i, 1).data(QtCore.Qt.DisplayRole)
+                logging.info("Cancel " + str(pair) + " Order: " + str(order_id))
+
+                self.mw.api_manager.cancel_order_byId(order_id, pair)
 
 
     #################################################################

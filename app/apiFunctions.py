@@ -30,6 +30,7 @@ class ApiCalls:
         app.client = self.client
 
         self.counter = 0
+        self.api_calls_counter = 0
 
     def init_client(self):
         try:
@@ -65,7 +66,7 @@ class ApiCalls:
 
                 # val["tickers"] = self.getTickers()
 
-                val["apiCalls"] += 3
+                self.api_calls_counter += 3
                 # userMsg = dict()
                 # accHoldings = dict()
 
@@ -103,13 +104,13 @@ class ApiCalls:
     #     """Set various values based on the chosen pair."""
     #     pair = self.mw.cfg_manager.pair
     #     val["decimals"] = len(str(val["coins"][pair]["tickSize"])) - 2
-    #     self.mw.decimals = len(str(val["coins"][pair]["tickSize"])) - 2
+    #     self.mw.tickers[self.mw.cfg_manager.pair]["decimals"] = len(str(val["coins"][pair]["tickSize"])) - 2
     #     if int(val["coins"][pair]["minTrade"]) == 1:
     #         val["assetDecimals"] = 0
-    #         self.mw.assetDecimals = 0
+    #         self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"] = 0
     #     else:
     #         val["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
-    #         self.mw.assetDecimals = len(str(val["coins"][pair]["minTrade"])) - 2
+    #         self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
 
 
     # TODO: replace; get_products is depreciated.
@@ -227,7 +228,7 @@ class ApiCalls:
     def api_order_history(self, pair, progress_callback):
         orders = self.client.get_all_orders(symbol=pair)
         progress_callback.emit(orders)
-        val["apiCalls"] += 1
+        self.api_calls_counter += 1
 
     def api_my_trades(self, pair, progress_callback=None):
         my_trades = self.client.get_my_trades(symbol=pair)
@@ -239,7 +240,7 @@ class ApiCalls:
     def api_history(self, progress_callback):
         trade_history = self.getTradehistory(self.mw.cfg_manager.pair)
         progress_callback.emit({"history": list(reversed(trade_history))})
-        val["apiCalls"] += 1
+        self.api_calls_counter += 1
 
 
     def api_depth(self, progress_callback):
@@ -294,7 +295,7 @@ class ApiCalls:
     def get_kline(self, pair, progress_callback):
         """Make an API call to get historical data of a coin pair."""
         interval = "1m"
-        val["apiCalls"] += 1
+        self.api_calls_counter += 1
         try:  # try since this is used heavily
             klines = self.client.get_klines(symbol=pair, interval=interval)
             progress_callback.emit([klines, pair, interval])
@@ -305,8 +306,12 @@ class ApiCalls:
     def cancel_order_byId(self, order_id, symbol):
         """Cancel an order by id from within a separate thread."""
         worker = Worker(partial(self.mw.api_manager.api_cancel_order, app.client, order_id, symbol))
-        # worker.signals.progress.connect(self.cancel_callback)
+        worker.signals.progress.connect(self.cancel_callback)
         self.threadpool.start(worker)
+
+
+    def cancel_callback(self, order="empty"):
+        print("SUCCESSFULLY CANCELLED ORDER: ", order)
 
 
 #############################################################

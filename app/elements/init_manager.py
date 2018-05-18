@@ -34,8 +34,8 @@ class InitManager:
             # self.tabsBotLeft.setTabEnabled(0, False)
             self.mw.tabsBotLeft.removeTab(0)
             self.mw.ChartTabs.removeTab(8)
-            self.mw.ChartTabs.removeTab(5)
-            self.mw.ChartTabs.removeTab(4)
+            # self.mw.ChartTabs.removeTab(5)
+            # self.mw.ChartTabs.removeTab(4)
             self.mw.ChartTabs.removeTab(3)
             self.mw.ChartTabs.setTabEnabled(1, False)
 

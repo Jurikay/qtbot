@@ -86,7 +86,7 @@ class BackgroundTable(QtWidgets.QTableView):
     def update(self, payload=None):
         # print("asks update")
         self.my_model.modelAboutToBeReset.emit()
-        # self.df = pd.DataFrame(val["asks"].copy())
+
 
         self.df = self.set_df()
 
@@ -193,10 +193,10 @@ class AsksDelegate(QtWidgets.QStyledItemDelegate):
             option.text = str(index.data()).zfill(2)
 
         elif index.column() == 1:
-            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.decimals)
+            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
 
         elif index.column() == 2:
-            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.assetDecimals)
+            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
 
         elif index.column() == 3:
             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=3) + " BTC"

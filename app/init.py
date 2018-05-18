@@ -71,7 +71,7 @@ val["ticker"] = dict()
 val["stats"] = dict()
 
 val["websocketCheck"] = 0
-val["timeRunning"] = 0
+# val["timeRunning"] = 0
 val["execTrades"] = 0
 val["execBotTrades"] = 0
 val["apiCalls"] = 0
