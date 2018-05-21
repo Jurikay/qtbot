@@ -268,9 +268,10 @@ class WebsocketManager:
 
                 # savely set ticker item values
                 for item, item_value in ticker_data.items():
-                    self.mutex.lock()
-                    self.mw.tickers[value["s"]][item] = item_value
-                    self.mutex.unlock()
+                    if self.mw.tickers.get(value["s"], None):
+                        self.mutex.lock()
+                        self.mw.tickers[value["s"]][item] = item_value
+                        self.mutex.unlock()
 
                 df_data[value["s"]] = ticker_data
 
