@@ -621,3 +621,59 @@ class Webpages():
 </html>
 """
         return banned_page
+
+
+
+    @staticmethod
+    def build_time_page():
+        time_page = """
+        <!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <style media="screen">
+      body {
+        background: #262d33;
+        font-family: arial;
+        font-size: 24px;
+        color: #999;
+      }
+      a {
+        color: #f3ba2e;
+      }
+      h1 {
+        color: #f3ba2e;
+
+      }
+      #container {
+
+        text-align: center;
+      }
+
+      #welcome {
+        display: inline-block;
+        margin-top: 10px;
+      }
+      svg{
+        width: 275px;
+        height: auto;
+        margin-bottom: -10px;
+      }
+
+    </style>
+
+    <title></title>
+  </head>
+  <body>
+
+      <div id="container">
+      <div id="welcome">
+        <h1>Your local computer time differs from the Binance server time!</h1>
+        <p>Please update your system time to use the program.</p>
+      </div>
+    </div>
+
+  </body>
+  </html>
+"""
+        return time_page

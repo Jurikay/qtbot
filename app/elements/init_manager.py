@@ -107,6 +107,12 @@ class InitManager:
         self.mw.chart.setHtml(Webpages.build_banned_page(self.mw.api_manager.banned_until))
         self.mw.chart.show()
 
+    def show_time_error_page(self):
+        self.mw.chart.setHtml(Webpages.build_time_page())
+        self.mw.chart.show()
+
+
+
     def ui_setup(self):
         print("setting up gui")
         self.mw.acc_label.setText("<span style='margin-bottom: 2px; font-size: 18px; color: #CDCDCD; font-family: Arial Black;'>Account: </span>")

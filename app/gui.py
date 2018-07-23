@@ -178,6 +178,10 @@ class beeserBot(QtWidgets.QMainWindow):
         else:
             if self.api_manager.error == "banned":
                 self.init_manager.show_banned_page()
+            
+            elif self.api_manager.error == "time":
+                self.init_manager.show_time_error_page()
+            
             else:
                 self.init_manager.show_error_page()
 
