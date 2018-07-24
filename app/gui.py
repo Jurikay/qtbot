@@ -242,7 +242,8 @@ class beeserBot(QtWidgets.QMainWindow):
         # INITITALIZE API HEAVY STUFF TODO refactor; skip api parameter
         # if not val["jirrik"]:
         # self.user_data.initial_open_orders()
-        # self.historical.get_kline_values()
+        
+        
 
         self.create_df_btn.clicked.connect(self.user_data.create_history_df)
 
@@ -259,6 +260,10 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # self.asks_table.scrollToBottom()
         self.new_asks.scrollToBottom()
+
+
+        # start periodic historical data loop
+        self.historical.get_kline_values()
 
         self.timer.stop()
         logging.info('Finishing setup...')
