@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <g fill="none" fill-rule="evenodd">
+    <circle cx="16" cy="16" r="16" fill="#00FFDF"/>
+     <g>
+      <polygon points="17.75 5.41 17.75 10.51 22.17 7.96 17.75 5.41" style="fill: #fff"/>
+      <polygon points="22.17 7.96 22.17 13.06 26.6 10.51 22.17 7.96" style="fill: #fff;opacity: 0.8999999761581421;isolation: isolate"/>
+      <polygon points="17.75 10.51 17.75 15.6 22.17 13.06 17.75 10.51" style="fill: #fff;opacity: 0.800000011920929;isolation: isolate"/>
+      <polygon points="22.17 13.06 22.17 18.16 26.6 15.6 22.17 13.06" style="fill: #fff;opacity: 0.800000011920929;isolation: isolate"/>
+      <polygon points="17.75 15.6 17.75 20.7 22.17 18.16 17.75 15.6" style="fill: #fff;opacity: 0.800000011920929;isolation: isolate"/>
+      <polygon points="22.17 18.16 22.17 23.25 26.6 20.7 22.17 18.16" style="fill: #fff"/>
+      <polygon points="6.31 10.34 6.31 15.43 10.73 12.88 6.31 10.34" style="fill: #fff;opacity: 0.4000000059604645;isolation: isolate"/>
+      <polygon points="11.89 12.23 11.89 17.33 16.31 14.78 11.89 12.23" style="fill: #fff;opacity: 0.20000000298023224;isolation: isolate"/>
+      <polygon points="8.61 15.45 8.61 20.55 13.04 18 8.61 15.45" style="fill: #fff;opacity: 0.30000001192092896;isolation: isolate"/>
+      <polygon points="11.53 19.3 11.53 24.4 15.95 21.84 11.53 19.3" style="fill: #fff;opacity: 0.8999999761581421;isolation: isolate"/>
+      <polygon points="17.71 21.49 17.71 26.59 22.13 24.04 17.71 21.49" style="fill: #fff;opacity: 0.699999988079071;isolation: isolate"/>
+      <polygon points="12.63 9.71 12.63 14.81 17.05 12.27 12.63 9.71" style="fill: #fff;opacity: 0.8999999761581421;isolation: isolate"/>
+      <polygon points="17.75 5.41 17.75 10.51 13.32 7.96 17.75 5.41" style="fill: #fff;opacity: 0.800000011920929;isolation: isolate"/>
+      <polygon points="12.63 7.58 12.63 12.67 8.21 10.12 12.63 7.58" style="fill: #fff;opacity: 0.6000000238418579;isolation: isolate"/>
+      <polygon points="17.05 10.1 17.05 15.2 12.63 12.64 17.05 10.1" style="fill: #fff;opacity: 0.6000000238418579;isolation: isolate"/>
+      <polygon points="11.87 12.23 11.87 17.33 7.45 14.78 11.87 12.23" style="fill: #fff;opacity: 0.949999988079071;isolation: isolate"/>
+      <polygon points="17.75 15.6 17.75 20.7 13.33 18.16 17.75 15.6" style="fill: #fff;opacity: 0.6000000238418579;isolation: isolate"/>
+      <polygon points="8.61 16.79 8.61 21.89 4.19 19.34 8.61 16.79" style="fill: #fff;opacity: 0.550000011920929;isolation: isolate"/>
+      <polygon points="26.6 10.51 26.6 15.6 22.17 13.06 26.6 10.51" style="fill: #fff"/>
+      <polygon points="22.17 13.06 22.17 18.16 17.75 15.6 22.17 13.06" style="fill: #fff;opacity: 0.949999988079071;isolation: isolate"/>
+      <polygon points="26.6 15.6 26.6 20.7 22.17 18.16 26.6 15.6" style="fill: #fff;opacity: 0.8999999761581421;isolation: isolate"/>
+      <polygon points="22.17 18.16 22.17 23.25 17.75 20.7 22.17 18.16" style="fill: #fff;opacity: 0.699999988079071;isolation: isolate"/>
+      <polygon points="16.77 20.28 16.77 25.38 12.34 22.83 16.77 20.28" style="fill: #fff;opacity: 0.4000000059604645;isolation: isolate"/>
+      <polygon points="22.17 7.96 22.17 13.06 17.75 10.51 22.17 7.96" style="fill: #fff"/>
+    </g>
+  </g>
+</svg>
