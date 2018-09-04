@@ -1,1 +1,4 @@
 https://stackoverflow.com/questions/17697352/pyqt-implement-a-qabstracttablemodel-for-display-in-qtableview
+
+https://www.kannon.link/free/2016/06/09/setting-windows-system-time-from-ntp-server/
+test
