@@ -353,7 +353,7 @@ class ApiCalls:
 
                 coin_dict[pair] = dict()
                 tickSize = str(symbol_data["filters"][0]["tickSize"])
-                minTrade = str(symbol_data["filters"][1]["minQty"])
+                minTrade = str(symbol_data["filters"][2]["minQty"])
                 decimals = self.calculate_decimals(tickSize, minTrade)
                 coin_dict[pair]["decimals"] = decimals[0]
                 coin_dict[pair]["assetDecimals"] = decimals[1]

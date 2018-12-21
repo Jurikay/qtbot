@@ -119,7 +119,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.btn_reload_api.clicked.connect(self.init_basics)
 
         # Fix a linter error...
-        self.linterfix = QWebEngineView()
+        # self.linterfix = QWebEngineView()
 
         self.test_slider.valueChanged.connect(self.spinbox_value)
         self.test_slider_value.valueChanged.connect(self.slider_value)
@@ -285,7 +285,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
         from twisted.internet import reactor
 
-        reactor.stop()
+        self.chart.stop()
+        self.btc_chart.stop()
+        
+
+        # reactor.stop()
 
 
 

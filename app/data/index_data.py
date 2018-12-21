@@ -75,16 +75,22 @@ class IndexData(QObject):
             if "USDT" not in coin:
                 if self.volumes.get(coin):
                     volumes = self.volumes.get(coin)
+                    print("VOLUMES: " + str(volumes))
                     changes = self.changes.get(coin)
                 else:
                     volumes = [0, 0, 0]
                     changes = [0, 0, 0]
 
+                try:
+                    spread = float(values["bidPrice"]) / float(values["askPrice"])
+                except ZeroDivisionError:
+                    spread = 0;
+
                 filtered[coin] = {"Pair": str(values["symbol"]),
                                   "Price": float(values["lastPrice"]),
                                   "24h Change": float(values["priceChangePercent"]),
                                   "24h Volume": float(values["quoteVolume"]),
-                                  "Spread": float(values["bidPrice"]) / float(values["askPrice"]),
+                                  "Spread": spread,
                                   "5m Volume": float(volumes[0]),
                                   "15m Volume": float(volumes[1]),
                                   "1h Volume": float(volumes[2]),
@@ -126,8 +132,9 @@ class IndexData(QObject):
             volume_sum = np.sum(volume_slice)
 
             return volume_sum
-        except KeyError as e:
-            print("get sum key error:", e)
+        except (KeyError, TypeError) as e:
+            print("get_sum key error:", e)
+            print(self.mw.historical.data[symbol])
             return 0
 
 
@@ -141,6 +148,7 @@ class IndexData(QObject):
                 return difference
             else:
                 return 0
-        except KeyError as e:
+        except (KeyError, TypeError) as e:
             print("get difference key error", e)
+            print(self.mw.historical.data[symbol])
             return 0
