@@ -118,8 +118,9 @@ class IndexData(QObject):
         for volume in volumes:
             volume_sum = self.get_sum(pair, volume)
             volume_sums.append(volume_sum)
-            difference = self.get_difference(pair, volume)
-            changes.append(difference)
+            # difference = self.get_difference(pair, volume)
+            # changes.append(difference)
+            changes.append(0)
 
         self.volumes[pair] = volume_sums
         self.changes[pair] = changes
@@ -128,27 +129,29 @@ class IndexData(QObject):
 
     def get_sum(self, symbol, time_delta):
         try:
-            volume_slice = self.mw.historical.data[symbol].tf["1m"][-time_delta:]["quote volume"]
+            volume_slice = self.mw.historical.data[symbol].tf["1m"][time_delta:]["quote volume"]
             volume_sum = np.sum(volume_slice)
 
             return volume_sum
         except (KeyError, TypeError) as e:
-            print("get_sum key error:", e)
-            print(self.mw.historical.data[symbol])
+            # print("get_sum key error:", e)
+            # print(self.mw.historical.data[symbol].tf["1m"])
             return 0
 
 
     def get_difference(self, symbol, time_delta):
         try:
-            historical_price = self.mw.historical.data[symbol].tf["1m"][-time_delta]["close"]
+            historical_price = self.mw.historical.data[symbol].tf["1m"][time_delta]["close"]
+            print("hist price: ", historical_price)
             last_price = self.ticker_data[symbol]["lastPrice"]
+            print("last price", last_price)
             # hist_formatted = '{number:.{digits}f}'.format(number=float(historical_price), digits=8)
             if historical_price != 0:
                 difference = ((float(last_price) / float(historical_price)) - 1) * 100
                 return difference
             else:
                 return 0
-        except (KeyError, TypeError) as e:
+        except (KeyError, TypeError, ValueError) as e:
             print("get difference key error", e)
             print(self.mw.historical.data[symbol])
             return 0
