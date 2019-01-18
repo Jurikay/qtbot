@@ -14,7 +14,7 @@ import logging
 
 
 class UserData(QtCore.QObject):
-    """Object that holds various user data like
+    """Object that holds various dicts of user data like
     open orders, trade history and current holdings."""
 
     def __init__(self, mw, mutex, parent=None):
@@ -31,7 +31,7 @@ class UserData(QtCore.QObject):
 
     def initialize(self):
         self.initial_open_orders()
-        self.initial_history()
+        # self.initial_history()
         self.initial_holdings()
 
         # self.mw.print_btn.clicked.connect(self.print_dicts)
@@ -157,13 +157,36 @@ class UserData(QtCore.QObject):
 
     def add_to_history(self, order):
         # print("ADD TO HISTORY ORDER", order)
-        order_id = order["orderId"]
+        
+        # Bugfix: Store historical orders in a dictionary where the key is
+        # "id", which is unique, unlike orderId which is used to combine partial orders.
+        # TODO fix in other places; make sure to differentiate between orderId and id.
+        # implement method that combines multiple partial fills
+        try:
+            order_id = order["id"]
+        except KeyError:
+            print("Order filled: check id/orderId!")
+            order_id = order["orderId"]
+        
         pair = order["symbol"]
         order["total"] = float(order["executedQty"]) * float(order["price"])
+        qty = 0
         if not self.trade_history.get(pair):
             self.trade_history[pair] = dict()
+        elif (self.trade_history[pair].get(order_id)):
+            oldOrder = self.trade_history[pair].get(order_id)
+            print("OLD ORDER; ", oldOrder)
+            print("COMPARE ORDERS: ", oldOrder["orderId"], order_id)
+            print("die order: ", self.trade_history[pair][order_id])
+            qty = self.trade_history[pair][order_id]["executedQty"]
+            print("got quant! ", qty)
+            order["executedQty"] = float(order["executedQty"]) + float(qty)
+            print("New qty is: ", order["executedQty"])
 
-        self.set_save(self.trade_history[pair], order_id, order)
+
+
+        print((order["executedQty"]))
+        self.set_save(self.trade_history[pair], order["orderId"], order)
 
 
 
@@ -176,7 +199,7 @@ class UserData(QtCore.QObject):
         for entry in history:
             entry["symbol"] = pair
             entry["executedQty"] = float(entry["qty"])
-            # print("init hist", entry)
+            print("init hist", entry)
             self.add_to_history(entry)
             if entry["isBuyer"] is True:
                 entry["side"] = "BUY"
@@ -185,11 +208,14 @@ class UserData(QtCore.QObject):
 
         if progress_callback:
             # print("HISTORY CALLBACK UPDATE")
-            self.mw.trade_history_view.websocket_update()
+            progress_callback.emit("update")
+            
+            
+            # self.mw.trade_history_view.websocket_update()
 
 
     def create_history_df(self):
-        """Create a pandas dataframe suitable for displaying trade history."""
+        """Create a pandas dataframe suitable for displaying the trade history."""
         # print("CREATE HISTORY DF")
         history = dict()
         for _, historical_trade in self.trade_history.items():
