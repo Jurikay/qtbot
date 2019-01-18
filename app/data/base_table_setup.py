@@ -6,7 +6,7 @@
 """Base implementations of QTableView, QAbstractTableModel and
 QStyledItemDelegate that serve as a starting point for all tableviews."""
 
-
+import os
 import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
@@ -378,9 +378,16 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
     @staticmethod
     def initStyleOption(option, index):
         """Set style options based on index column."""
+
+        iconPath = "images/ico/" + index.data().replace("BTC", "") + ".svg"
+
+        if (os.path.isfile(iconPath)):
+            option.icon = QtGui.QIcon(iconPath)
+        else:
+            option.icon = QtGui.QIcon("images/ico/BTC.svg")
+
+
         option.text = index.data().replace("BTC", "") + " / BTC"
-        option.icon = QtGui.QIcon("images/ico/" + index.data().replace(
-                                  "BTC", "") + ".svg")
 
     def paint(self, painter, option, index):
         """Reimplemented custom paint method."""
@@ -562,6 +569,7 @@ class Index(BaseTableView):
 
 
     def set_df(self):
+        return dict()
         return self.mw.index_data.coin_index
 
     def set_widths(self):
