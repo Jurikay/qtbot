@@ -1,0 +1,18 @@
+todo:
+
+When order is partially filled and then cancelled, the order that is put in history has a wrong amount:
+Only the last filled part not all fills together are used. not fixed by restart
+
+replace "images/ico/BTC.svg" with real missing icon icon
+
+bot strategies:
+Detect buy sell walls;
+Evaluate if buy wall is fake or real
+Monitor sell walls getting eaten
+
+fix stats
+
+implement charts as simple url call:
+https://s.tradingview.com/widgetembed/?frameElementId=tradingview_5d65b&symbol=BINANCE%3ANANOBTC&interval=5&hidesidetoolbar=0&symboledit=0&saveimage=0&toolbarbg=rgba(32,38,43,1)&studies=BB%40tv-basicstudies%1FStochasticRSI%40tv-basicstudies&hideideas=1&theme=Dark&timezone=Europe%2FBerlin&withdateranges=1&studies_overrides=%7B%22bollinger%20bands.median.color%22%3A%22blue%22%2C%22bollinger%20bands.upper.color%22%3A%22red%22%2C%22BB%40tv-basicstudies.upper.color%22%3A%22blue%22%2C%22bollinger%20bands.upper.linewidth%22%3A14%7D&overrides=%7B%22paneProperties.background%22%3A%22red%22%2C%22paneProperties.vertGridProperties.color%22%3A%22%23323c45%22%2C%22paneProperties.horzGridProperties.color%22%3A%22%23323c45%22%2C%22paneProperties.crossHairProperties.color%22%3A%22white%22%2C%22mainSeriesProperties.candleStyle.upColor%22%3A%22%2394c940%22%2C%22mainSeriesProperties.candleStyle.downColor%22%3A%22%23ff007a%22%2C%22paneProperties.legendProperties.showStudyArguments%22%3Afalse%2C%22paneProperties.legendProperties.showSeriesOHLC%22%3Afalse%7D&enabled_features=%5B%22seconds_resolution%22%2C%22caption_buttons_text_if_possible%22%2C%22narrow_chart_enabled%22%2C%22use_localstorage_for_settings%22%5D&disabled_features=%5B%22header_compare%22%2C%22study_market_minimized%22%2C%22control_bar%22%2C%22items_favoriting%22%5D&locale=en&utm_source=&utm_medium=widget&utm_campaign=chart&utm_term=BINANCE%3ANANOBTC
+
+ta-lib handle small prices: https://github.com/mrjbq7/ta-lib/issues/157#issuecomment-335255783

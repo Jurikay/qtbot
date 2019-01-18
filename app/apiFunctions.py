@@ -39,7 +39,6 @@ class ApiCalls:
             return Client(api_key, api_secret, {"verify": True, "timeout": 10})
         except BinanceAPIException as e:
             if "IP banned until" in str(e):
-                print("first")
                 self.banned_until = str(self.get_ban_duration(e))
                 self.error = "banned"
             return None
@@ -62,7 +61,7 @@ class ApiCalls:
 
                 # val["coins"] = self.availablePairs()
 
-                val["accHoldings"] = self.getHoldings()
+                # val["accHoldings"] = self.getHoldings()
 
                 # val["tickers"] = self.getTickers()
 
@@ -225,10 +224,10 @@ class ApiCalls:
             print("cancel failed")
 
 
-    def api_order_history(self, pair, progress_callback):
-        orders = self.client.get_all_orders(symbol=pair)
-        progress_callback.emit(orders)
-        self.api_calls_counter += 1
+    # def api_order_history(self, pair, progress_callback):
+    #     orders = self.client.get_all_orders(symbol=pair)
+    #     progress_callback.emit(orders)
+    #     self.api_calls_counter += 1
 
     def api_my_trades(self, pair, progress_callback=None):
         my_trades = self.client.get_my_trades(symbol=pair)
@@ -274,9 +273,14 @@ class ApiCalls:
 
 
         worker = Worker(self.mw.user_data.initial_history)
+        worker.signals.progress.connect(self.updateHistTable)
         self.mw.threadpool.start(worker)
         # self.get_trade_history(self.mw.cfg_manager.pair)
 
+
+    def updateHistTable(self):
+        print("CALLBACK HELLO")
+        self.mw.trade_history_view.websocket_update()
 
     def save_depth(self, depth):
         # print("save depth", depth)
