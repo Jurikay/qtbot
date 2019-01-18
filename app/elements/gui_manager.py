@@ -1,4 +1,5 @@
 # from app.workers import Worker
+import os
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
@@ -32,7 +33,13 @@ class GuiManager:
 
         for coin in self.mw.tickers:
             if "USDT" not in coin:
-                icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
+
+                iconPath = "images/ico/" + coin[:-3] + ".svg"
+                if(os.path.isfile(iconPath)):
+                    icon = QtGui.QIcon(iconPath)
+                else:
+                    icon = QtGui.QIcon("images/ico/BTC.svg")
+
                 self.mw.coin_selector.addItem(icon, coin[:-3])
 
         self.mw.coin_selector.model().sort(0)
@@ -201,6 +208,7 @@ class GuiManager:
             self.mw.new_asks.scrollToBottom()
 
 
+    # TODO refactor
     # global ui
     def one_second_update(self):
 
@@ -208,6 +216,7 @@ class GuiManager:
 
         self.runtime += 1
 
+        print(self.mw.data.gib())
 
         # charts_index = self.mw.ChartTabs.currentIndex()
 
