@@ -6,6 +6,7 @@ __pycache__/
 .DS_Store
 .vscode/
 
+callgrind*
 # config
 config.ini
 
