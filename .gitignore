@@ -9,7 +9,6 @@ __pycache__/
 callgrind*
 # config
 config.ini
-
 stats.ini
 
 # C extensions

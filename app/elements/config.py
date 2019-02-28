@@ -259,7 +259,7 @@ class ConfigManager:
         # for i, cfg in enumerate(config["Stats"]):
         #     stat_vals[i] = int(config["Stats"][cfg])
 
-        #     print(str(config["Stats"][cfg]))
+            # print(str(config["Stats"][cfg]))
         val["stats"]["timeRunning"] = config["Stats"]["timeRunning"]
         val["stats"]["execTrades"] = config["Stats"]["execTrades"]
         val["stats"]["execBotTrades"] = config["Stats"]["execBotTrades"]

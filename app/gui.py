@@ -36,6 +36,11 @@ from app.elements.websocket_manager import WebsocketManager
 from app.data.index_data import IndexData
 from app.data.historical_data import HistoricalData
 from app.data.user_data import UserData
+
+from datetime import datetime
+import yappi
+from twisted.internet import reactor
+
 # from app.init import val
 
 
@@ -280,18 +285,21 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
     def shutdown_bot(self):
+        func_stats = yappi.get_func_stats()
+        func_stats.save('callgrind.out.' + datetime.now().isoformat(), 'CALLGRIND')
+        yappi.stop()
+        yappi.clear_stats()
         self.cfg_manager.write_stats()
         self.cfg_manager.write_config()
         # api error workaround
         self.websocket_manager.socket_mgr.close()
 
-        from twisted.internet import reactor
+        # self.chart.stop()
+        # self.btc_chart.stop()
 
-        self.chart.stop()
-        self.btc_chart.stop()
         
 
-        # reactor.stop()
+        reactor.stop()
 
 
 

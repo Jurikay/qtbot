@@ -272,10 +272,12 @@ class ApiCalls:
         # worker.signals.finished.connect(self.mw.limit_pane.t_complete)
         self.mw.threadpool.start(worker)
 
-
+        # TODO: COme back
         worker = Worker(self.mw.user_data.initial_history)
-        worker.signals.progress.connect(self.updateHistTable)
+        # worker.signals.progress.connect(self.updateHistTable)
         self.mw.threadpool.start(worker)
+
+
         # self.get_trade_history(self.mw.cfg_manager.pair)
 
 

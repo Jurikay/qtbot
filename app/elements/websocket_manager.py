@@ -226,12 +226,12 @@ class WebsocketManager:
 
             else:
                 # catch and print any other trade callback messages.
-                print(msg)
+                print("inner else", msg)
 
             self.threadpool.start(worker)
 
         else:
-            print(msg)
+            print("outer else", msg)
 
 
     def ticker_callback(self, msg):

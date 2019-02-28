@@ -157,7 +157,7 @@ class UserData(QtCore.QObject):
 
     def add_to_history(self, order):
         # print("ADD TO HISTORY ORDER", order)
-        
+
         # Bugfix: Store historical orders in a dictionary where the key is
         # "id", which is unique, unlike orderId which is used to combine partial orders.
         # TODO fix in other places; make sure to differentiate between orderId and id.
@@ -167,7 +167,7 @@ class UserData(QtCore.QObject):
         except KeyError:
             print("Order filled: check id/orderId!")
             order_id = order["orderId"]
-        
+
         pair = order["symbol"]
         order["total"] = float(order["executedQty"]) * float(order["price"])
         qty = 0
@@ -205,11 +205,11 @@ class UserData(QtCore.QObject):
             else:
                 entry["side"] = "SELL"
 
-        if progress_callback:
+        # TODO COME BACK
+        # if progress_callback:
             # print("HISTORY CALLBACK UPDATE")
-            progress_callback.emit("update")
-            
-            
+            # progress_callback.emit("update")
+
             # self.mw.trade_history_view.websocket_update()
 
 
