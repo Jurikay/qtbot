@@ -176,7 +176,6 @@ class BackgroundTable(QtWidgets.QTableView):
             print("CELL CLICK ERROR: " + str(e))
 
     def leaveEvent(self, event):
-        print("LEAVE EVENT")
         app.main_app.restoreOverrideCursor()
 
 

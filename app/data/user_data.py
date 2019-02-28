@@ -206,9 +206,9 @@ class UserData(QtCore.QObject):
                 entry["side"] = "SELL"
 
         # TODO COME BACK
-        # if progress_callback:
-            # print("HISTORY CALLBACK UPDATE")
-            # progress_callback.emit("update")
+        if progress_callback:
+            print("HISTORY CALLBACK UPDATE")
+            progress_callback.emit("update")
 
             # self.mw.trade_history_view.websocket_update()
 

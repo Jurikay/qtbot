@@ -725,8 +725,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>969</width>
-                  <height>521</height>
+                  <width>98</width>
+                  <height>28</height>
                  </rect>
                 </property>
                </widget>
@@ -2735,7 +2735,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -4692,7 +4692,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="FishingBot" name="fishbot_table">
+             <widget class="QTableWidget" name="fishbot_table">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -5402,8 +5402,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>614</width>
-                 <height>479</height>
+                 <width>141</width>
+                 <height>468</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -5786,11 +5786,6 @@
    <extends>QWidget</extends>
    <header>app/elements/qtwebview</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>FishingBot</class>
-   <extends>QTableWidget</extends>
-   <header>app/strategies/fishing_bot.h</header>
   </customwidget>
   <customwidget>
    <class>History</class>

@@ -18,23 +18,23 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView  # QWebEnginePage
 
 from app.apiFunctions import ApiCalls
 # from app.charts import Webpages as Webpages
-from app.gui_functions import (calc_wavg, calc_all_wavgs)
+# from app.gui_functions import (calc_wavg, calc_all_wavgs)
 # filter_coin_index, global_filter, filter_confirmed,
 # from app.strategies.fishing_bot import FishingBot
 # from app.strategies.limit_order import LimitOrder
 import app
 from app.elements.config import ConfigManager
-from app.elements.hotkeys import HotKeys
+# from app.elements.hotkeys import HotKeys
 # from app.elements.kline_data import KlineManager
 # from app.elements.test_class import TestKlasse
-from app.elements.init_manager import InitManager
+# from app.elements.init_manager import InitManager
 from app.elements.custom_logger import BotLogger
 from app.elements.gui_manager import GuiManager
 # from app.tables.table_manager import TableManager
 from app.elements.websocket_manager import WebsocketManager
 
 from app.data.index_data import IndexData
-from app.data.historical_data import HistoricalData
+# from app.data.historical_data import HistoricalData
 from app.data.user_data import UserData
 
 from datetime import datetime
@@ -113,15 +113,15 @@ class beeserBot(QtWidgets.QMainWindow):
         # initialize limit order signals and slots
         self.limit_pane.initialize()
 
-        self.fishbot_table.initialize()
+        # self.fishbot_table.initialize()
 
 
         # connect elements to functions
         self.chart.inject_script()
 
         # self.debug2_button.clicked.connect(self.limit_pane.test_func)
-        self.wavg_button.clicked.connect(calc_wavg)
-        self.calc_all_wavg_button.clicked.connect(calc_all_wavgs)
+        # self.wavg_button.clicked.connect(calc_wavg)
+        # self.calc_all_wavg_button.clicked.connect(calc_all_wavgs)
         self.btn_reload_api.clicked.connect(self.init_basics)
 
         # Fix a linter error...
@@ -154,8 +154,8 @@ class beeserBot(QtWidgets.QMainWindow):
         self.cfg_manager = ConfigManager(self)
         self.cfg_manager.initialize()
 
-        self.hotkey_manager = HotKeys(self)
-        self.hotkey_manager.init_hotkeys()
+        # self.hotkey_manager = HotKeys(self)
+        # self.hotkey_manager.init_hotkeys()
 
         self.init_api_classes()
 
@@ -167,8 +167,8 @@ class beeserBot(QtWidgets.QMainWindow):
         # new
         self.api_manager.new_api()
 
-        self.init_manager = InitManager(self)
-        self.init_manager.initialize()
+        # self.init_manager = InitManager(self)
+        # self.init_manager.initialize()
 
 
         self.check_connection()
@@ -241,7 +241,7 @@ class beeserBot(QtWidgets.QMainWindow):
     def initialize_data(self):
         # TEST/REFACTOR
         # self.index_data = IndexData(self, self.threadpool)
-        self.historical = HistoricalData(self, app.client, self.threadpool)
+        # self.historical = HistoricalData(self, app.client, self.threadpool)
 
 
         self.user_data = UserData(self, self.mutex)

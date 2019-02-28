@@ -3,7 +3,7 @@ import os
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
-from app.init import val
+# from app.init import val
 from app.colors import Colors
 from datetime import timedelta
 import time
@@ -154,7 +154,7 @@ class GuiManager:
             current_height = self.mw.frameGeometry().height()
             progress_callback.emit(1)
 
-            self.mw.fishbot_table.check_fish_bot()
+            # self.mw.fishbot_table.check_fish_bot()
             time.sleep(1)
 
     # main gui
@@ -289,9 +289,9 @@ class GuiManager:
         self.mw.btc_vol_label.setText("<span style='color: " + Colors.color_lightgrey + "'>" + vol_formatted + "</span>")
 
 
-        self.mw.debug.setText(str(val["volDirection"]))
+        # self.mw.debug.setText(str(val["volDirection"]))
 
-        self.mw.debug.setText('{number:.{digits}f}'.format(number=float(val["volDirection"]), digits=4) + "BTC")
+        # self.mw.debug.setText('{number:.{digits}f}'.format(number=float(val["volDirection"]), digits=4) + "BTC")
 
         self.percent_changes()
         # self.volume_values()
@@ -318,14 +318,14 @@ class GuiManager:
 
     def update_stats(self):
         session_time = str(timedelta(seconds=self.runtime))
-        total_time = str(timedelta(seconds=self.runtime + int(val["stats"]["timeRunning"])))
+        # total_time = str(timedelta(seconds=self.runtime + int(val["stats"]["timeRunning"])))
 
         self.mw.session_running.setText(session_time)
-        self.mw.total_running.setText(total_time)
+        # self.mw.total_running.setText(total_time)
 
         self.mw.current_time.setText(str(time.strftime('%a, %d %b %Y %H:%M:%S')))
 
-        self.mw.explicit_api_calls_label.setText(str(val["apiCalls"]))
+        # self.mw.explicit_api_calls_label.setText(str(val["apiCalls"]))
         self.mw.explicit_api_updates.setText(str(self.mw.websocket_manager.api_updates))
 
 

@@ -9,7 +9,7 @@ from app.workers import Worker
 # import PyQt5.QtWidgets as QtWidgets
 # import PyQt5.QtGui as QtGui
 # import PyQt5.QtCore as QtCore
-from app.init import val
+# from app.init import val
 # import app
 from functools import partial
 from binance.websockets import BinanceSocketManager
@@ -111,8 +111,6 @@ class WebsocketManager:
 
 
     def depth_callback(self, msg):
-        val["bids"] = msg["bids"]
-        val["asks"] = msg["asks"]
 
         self.mw.mutex.lock()
         self.mw.orderbook["bids"] = msg["bids"]

@@ -7,7 +7,7 @@
 implementation to communicate with Binance."""
 
 from functools import partial
-from app.init import val
+# from app.init import val
 from binance.exceptions import BinanceAPIException
 # from requests.exceptions import InvalidHeader
 import app
@@ -274,7 +274,7 @@ class ApiCalls:
 
         # TODO: COme back
         worker = Worker(self.mw.user_data.initial_history)
-        # worker.signals.progress.connect(self.updateHistTable)
+        worker.signals.progress.connect(self.updateHistTable)
         self.mw.threadpool.start(worker)
 
 

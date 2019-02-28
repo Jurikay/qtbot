@@ -8,7 +8,7 @@ import os.path
 import logging
 
 # import app
-from app.init import val
+# from app.init import val
 from app.charts import Webpages
 
 
@@ -107,6 +107,7 @@ class ConfigManager:
 
     def write_config(self):
         print("write cfg")
+        return
         key = self.mw.api_key_label.text()
         secret = self.mw.api_secret_label.text()
 
@@ -128,15 +129,17 @@ class ConfigManager:
 
         raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, "1w"]
 
-        default_timeframe = self.mw.default_timeframe_selector.currentText()
-        btc_timeframe = self.mw.btc_timeframe_selector.currentText()
+        # TODO: Restore
 
-        for i, valid_tf in enumerate(val["validTimeframes"]):
-            if str(valid_tf) == str(default_timeframe):
-                tf_index = i
+        # default_timeframe = self.mw.default_timeframe_selector.currentText()
+        # btc_timeframe = self.mw.btc_timeframe_selector.currentText()
 
-            if str(valid_tf) == str(btc_timeframe):
-                btc_tf_index = i
+        # for i, valid_tf in enumerate(val["validTimeframes"]):
+        #     if str(valid_tf) == str(default_timeframe):
+        #         tf_index = i
+
+        #     if str(valid_tf) == str(btc_timeframe):
+        #         btc_tf_index = i
 
         copy_price = self.mw.copy_price_box.isChecked()
         copy_qty = self.mw.copy_qty_box.isChecked()
@@ -260,19 +263,22 @@ class ConfigManager:
         #     stat_vals[i] = int(config["Stats"][cfg])
 
             # print(str(config["Stats"][cfg]))
-        val["stats"]["timeRunning"] = config["Stats"]["timeRunning"]
-        val["stats"]["execTrades"] = config["Stats"]["execTrades"]
-        val["stats"]["execBotTrades"] = config["Stats"]["execBotTrades"]
-        val["stats"]["apiCalls"] = config["Stats"]["apiCalls"]
-        val["stats"]["apiUpdates"] = config["Stats"]["apiUpdates"]
+        # TODO: Restore
+        # val["stats"]["timeRunning"] = config["Stats"]["timeRunning"]
+        # val["stats"]["execTrades"] = config["Stats"]["execTrades"]
+        # val["stats"]["execBotTrades"] = config["Stats"]["execBotTrades"]
+        # val["stats"]["apiCalls"] = config["Stats"]["apiCalls"]
+        # val["stats"]["apiUpdates"] = config["Stats"]["apiUpdates"]
 
 
     def write_stats(self):
-        total_running = int(val["stats"]["timeRunning"]) + int(self.mw.gui_manager.runtime)
-        total_trades = int(val["stats"]["execTrades"]) + int(val["execTrades"])
-        total_bot_trades = int(val["stats"]["execBotTrades"]) + int(val["execBotTrades"])
-        api_updates = int(val["stats"]["apiUpdates"]) + int(self.mw.websocket_manager.api_updates)
-        api_calls = int(val["stats"]["apiCalls"]) + int(val["apiCalls"])
+        # TODO: Restore
+        # total_running = int(val["stats"]["timeRunning"]) + int(self.mw.gui_manager.runtime)
+        # total_trades = int(val["stats"]["execTrades"]) + int(val["execTrades"])
+        # total_bot_trades = int(val["stats"]["execBotTrades"]) + int(val["execBotTrades"])
+        # api_updates = int(val["stats"]["apiUpdates"]) + int(self.mw.websocket_manager.api_updates)
+        # api_calls = int(val["stats"]["apiCalls"]) + int(val["apiCalls"])
+        return
 
         config = configparser.ConfigParser()
 
@@ -290,11 +296,13 @@ class ConfigManager:
 
 
     def set_stats(self):
+        pass
         # self.mw.total_running.setText(str(val["stats"]["timeRunning"]))
-        self.mw.total_trades.setText(str(val["stats"]["execTrades"]))
-        self.mw.total_bot_trades.setText(str(val["stats"]["execBotTrades"]))
-        self.mw.total_api_calls.setText(str(val["stats"]["apiCalls"]))
-        self.mw.total_api_updates.setText(str(val["stats"]["apiUpdates"]))
+        # TODO: Restore
+        # self.mw.total_trades.setText(str(val["stats"]["execTrades"]))
+        # self.mw.total_bot_trades.setText(str(val["stats"]["execBotTrades"]))
+        # self.mw.total_api_calls.setText(str(val["stats"]["apiCalls"]))
+        # self.mw.total_api_updates.setText(str(val["stats"]["apiUpdates"]))
 
 
     def ui_value_text(self):

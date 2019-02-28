@@ -70,7 +70,6 @@ class BaseTableView(QtWidgets.QTableView):
 
 
     def leaveEvent(self, event):
-        print("LEAVE EVENT")
         app.main_app.restoreOverrideCursor()
 
     def set_widths(self):

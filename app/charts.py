@@ -5,7 +5,7 @@
 
 """Functions that generate HTML pages."""
 
-from app.init import val
+# from app.init import val
 
 class Webpages():
 
