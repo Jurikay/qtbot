@@ -503,8 +503,7 @@ class Webpages():
         url = "https://coinmarketcap.com/currencies/" + coin_name.replace(" ", "-").replace(".", "") + "/"
         return url
 
-    @staticmethod
-    def build_binance_info():
+    def build_binance_info(self):
         coin_name = self.mw.tickers[self.mw.cfg_manager.pair]["baseAssetName"]
         url = "https://info.binance.com/currencies/" + coin_name.replace(" ", "-").replace(".", "") + "/"
         return url

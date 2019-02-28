@@ -250,6 +250,7 @@ class ApiCalls:
 
 
     def api_all_orders(self, progress_callback=None):
+        print("API ALL ORDERS")
         orders = self.client.get_open_orders()
 
         if progress_callback:
@@ -280,6 +281,7 @@ class ApiCalls:
 
     def updateHistTable(self):
         print("CALLBACK HELLO")
+        
         self.mw.trade_history_view.websocket_update()
 
     def save_depth(self, depth):
@@ -370,7 +372,7 @@ class ApiCalls:
 
     @staticmethod
     def calculate_decimals(tickSize, minTrade):
-        """Returns asset and quote asset decimal precision."""
+        """Returns asset and quote asset decimal precision. As integers"""
         decimals = len(str(tickSize.rstrip("0"))) - 2
         assetDecimals = len(str(minTrade.rstrip("0"))) - 2
         return [decimals, assetDecimals]

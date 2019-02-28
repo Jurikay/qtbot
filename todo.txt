@@ -16,3 +16,83 @@ implement charts as simple url call:
 https://s.tradingview.com/widgetembed/?frameElementId=tradingview_5d65b&symbol=BINANCE%3ANANOBTC&interval=5&hidesidetoolbar=0&symboledit=0&saveimage=0&toolbarbg=rgba(32,38,43,1)&studies=BB%40tv-basicstudies%1FStochasticRSI%40tv-basicstudies&hideideas=1&theme=Dark&timezone=Europe%2FBerlin&withdateranges=1&studies_overrides=%7B%22bollinger%20bands.median.color%22%3A%22blue%22%2C%22bollinger%20bands.upper.color%22%3A%22red%22%2C%22BB%40tv-basicstudies.upper.color%22%3A%22blue%22%2C%22bollinger%20bands.upper.linewidth%22%3A14%7D&overrides=%7B%22paneProperties.background%22%3A%22red%22%2C%22paneProperties.vertGridProperties.color%22%3A%22%23323c45%22%2C%22paneProperties.horzGridProperties.color%22%3A%22%23323c45%22%2C%22paneProperties.crossHairProperties.color%22%3A%22white%22%2C%22mainSeriesProperties.candleStyle.upColor%22%3A%22%2394c940%22%2C%22mainSeriesProperties.candleStyle.downColor%22%3A%22%23ff007a%22%2C%22paneProperties.legendProperties.showStudyArguments%22%3Afalse%2C%22paneProperties.legendProperties.showSeriesOHLC%22%3Afalse%7D&enabled_features=%5B%22seconds_resolution%22%2C%22caption_buttons_text_if_possible%22%2C%22narrow_chart_enabled%22%2C%22use_localstorage_for_settings%22%5D&disabled_features=%5B%22header_compare%22%2C%22study_market_minimized%22%2C%22control_bar%22%2C%22items_favoriting%22%5D&locale=en&utm_source=&utm_medium=widget&utm_campaign=chart&utm_term=BINANCE%3ANANOBTC
 
 ta-lib handle small prices: https://github.com/mrjbq7/ta-lib/issues/157#issuecomment-335255783
+
+- Add sound effect on order create/fill
+- Add options to set custom sounds
+
+Price analysis:
+Determine realistic gain estimation after buy:
+Iterate over historical kline data; Find when the price was X percent above current
+
+Find good purchase opportunities based on:
+- Manual coin trust rating
+- Current trend
+    check price in intervals during fixed time frame. determine if price is continously increasing/declining
+- Fluctuation
+    Check if it is likely the price moves by at least 1 percent during a short time
+
+
+New bot strategy: Buy list opportunity
+Table containing pairs sorted by chance of success. List entries contain suggested entrypoints, colored percentage distance, button to create suggested buy order
+- Checkbox that indicates to automatically create a buy order once the price is below the suggested entrypoint
+- This could replace fishing bot
+
+Already store more complex data like historical kline data in pandas dataframes.
+
+Course of action:
+
+Finish newbot data class/ websocket/api data
+consider separation of concerns
+extract model/view data from current bot; Build elements as modules that access data and fail gracefully
+websocket answers store data and call a specific ui update function
+- add cli mode for better separation between logic and ui
+
+bot:
+api data
+ui
+data conversion
+bot calculations
+
+
+#########       #############
+#       #       # Initial / #
+#  DATA #+++++++# per coin  #--------- (periodic api calls)
+#       #       # api calls #
+#########       #############
+     +
+     +
+#############
+#           #
+# websocket #
+#   data    #
+#           #
+#############
+
+Get data:
+GLOBAL | CURRENT PAIR | CURRENT COIN | USER
+-----------------------------------
+Modify data:
+- Conversion
+- calculations
+- calculate indicator data (TODO)
+
+
+------------------------------------
+UI:
+- init
+- mvc parts
+- connect ui elements/ button methods
+- periodic updates
+- websocket updates
+- TODO: add raw data panel; Find better way to hide nav tabs than by index. 
+-------------------------------------
+Bot logic/ Stratgies:
+- Calculate likelyhood of profitable trade for each pair based on:
+    -volume
+    -current trend
+    -order book analysis
+    -indicator analysis
+- Watcher system that compares current prices to targets and orchestrates orders
+    - system has to be robust; Has to keep exact track of (partially) filled orders,
+    - (re)create sell orders as soon as first purchase
+    - could also be time based; Plan to sell within 1 hour for example watch price rising until indication of reversal.

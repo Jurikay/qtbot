@@ -42,8 +42,9 @@ from app.data.user_data import UserData
 class beeserBot(QtWidgets.QMainWindow):
     """Main ui class."""
 
-    def __init__(self):
+    def __init__(self, data):
 
+        self.data = data
         """Main gui init method."""
 
         super(beeserBot, self).__init__()
@@ -88,7 +89,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.delayer0 = DelayedUpdater(self.chart)
         self.delayer1 = DelayedUpdater(self.open_orders_view)
 
-        self.delayer2 = DelayedUpdater(self.tradeTable)
+        # self.delayer2 = DelayedUpdater(self.tradeTable)
         # self.delayer3 = DelayedUpdater(self.volumes_widget)
         self.delayer4 = DelayedUpdater(self.new_asks)
         self.delayer5 = DelayedUpdater(self.new_bids)
@@ -194,7 +195,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.table_manager = TableManager(self)
         # self.table_manager.init_filter()
 
-        self.gui_manager = GuiManager(self)
+        self.gui_manager = GuiManager(self, self.threadpool)
         self.gui_manager.initialize()
 
 
@@ -233,7 +234,8 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
     def initialize_data(self):
-        self.index_data = IndexData(self, self.threadpool)
+        # TEST/REFACTOR
+        # self.index_data = IndexData(self, self.threadpool)
         self.historical = HistoricalData(self, app.client, self.threadpool)
 
 
@@ -262,8 +264,8 @@ class beeserBot(QtWidgets.QMainWindow):
         self.new_asks.scrollToBottom()
 
 
-        # start periodic historical data loop
-        self.historical.get_kline_values()
+        # start periodic historical data loop # TODO FIX; REENABLE
+        # self.historical.get_kline_values()
 
         self.timer.stop()
         logging.info('Finishing setup...')

@@ -199,7 +199,6 @@ class UserData(QtCore.QObject):
         for entry in history:
             entry["symbol"] = pair
             entry["executedQty"] = float(entry["qty"])
-            print("init hist", entry)
             self.add_to_history(entry)
             if entry["isBuyer"] is True:
                 entry["side"] = "BUY"

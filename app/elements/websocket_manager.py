@@ -98,7 +98,7 @@ class WebsocketManager:
     ###########################
 
     def trade_callback(self, msg):
-        self.mw.trade_history.insert(0, [msg["p"], msg["q"], bool(msg["m"]), msg["T"]])
+        self.mw.trade_history.insert(0, {"price": msg["p"], "quantity": msg["q"], "maker": bool(msg["m"]), "time": msg["T"]})
 
         if len(self.mw.trade_history) > 50:
             self.mw.trade_history.pop()
@@ -281,7 +281,10 @@ class WebsocketManager:
         # worker.signals.progress.connect(self.mw.index_data.merge_df)
         # self.threadpool.start(worker)
 
-        self.mw.index_data.merge_df(df_data)
+
+        # Workaround to fix random crashes; TODO: refactor
+        if self.mw.index_data is not None:
+            self.mw.index_data.merge_df(df_data)
 
 
 

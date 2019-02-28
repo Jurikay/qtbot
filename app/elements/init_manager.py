@@ -112,7 +112,7 @@ class InitManager:
         self.mw.chart.show()
 
 
-
+    # todo refactor
     def ui_setup(self):
         print("setting up gui")
         self.mw.acc_label.setText("<span style='margin-bottom: 2px; font-size: 18px; color: #CDCDCD; font-family: Arial Black;'>Account: </span>")

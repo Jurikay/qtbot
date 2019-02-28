@@ -30,7 +30,7 @@ class LiveData(QtWidgets.QWidget):
 
         history = self.mw.trade_history
 
-        if history:
+        if history == "debug":
             # set color and arrow based on the last two trades
             if float(history[0][0]) > float(history[1][0]):
                 arrow = QtGui.QPixmap("images/assets/2arrow_up.png")
@@ -68,9 +68,10 @@ class LiveData(QtWidgets.QWidget):
         self.mw.trade_history = []
         self.history_progressed = False
         history = payload.get("history", "")
-        for trade in enumerate(history):
-            self.mw.trade_history.append([trade[1]["price"], trade[1]["quantity"], bool(trade[1]["maker"]), trade[1]["time"]])
-
+        self.mw.trade_history = history
+        # for trade in enumerate(history):
+        #     histDict = {"price": trade["p"], "quantity": trade["q"], "maker": bool(trade["m"]), "time": trade["T"]}
+        #     self.mw.trade_history.append(histDict)
         self.history_progressed = True
         self.set_last_price()
 

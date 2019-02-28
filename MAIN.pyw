@@ -11,8 +11,18 @@ from PyQt5.QtWidgets import QApplication, QStyleFactory
 from app.gui import beeserBot
 import sys
 import app
+import yappi
+from datetime import datetime
 
 if __name__ == "__main__":
+
+    class DataStuff:
+        rndnumber = 3
+
+        def gib():
+            return 55
+
+
     main_app = QApplication(sys.argv)
 
     # QFontDatabase.addmain_applicationFont('static/Roboto-Bold.ttf')
@@ -24,10 +34,17 @@ if __name__ == "__main__":
     if hasattr(QStyleFactory, 'AA_UseHighDpiPixmaps'):
         main_app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
 
-    widget = beeserBot()
+    widget = beeserBot(DataStuff)
+    yappi.start()
     widget.show()
     main_app.aboutToQuit.connect(widget.shutdown_bot)
 
     app.main_app = main_app
+
+
+    func_stats = yappi.get_func_stats()
+    func_stats.save('callgrind.out.' + datetime.now().isoformat(), 'CALLGRIND')
+    yappi.stop()
+    yappi.clear_stats()
 
     sys.exit(main_app.exec_())

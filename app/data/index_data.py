@@ -75,16 +75,17 @@ class IndexData(QObject):
             if "USDT" not in coin:
                 if self.volumes.get(coin):
                     volumes = self.volumes.get(coin)
-                    print("VOLUMES: " + str(volumes))
+                    # print("VOLUMES: " + str(volumes))
                     changes = self.changes.get(coin)
                 else:
                     volumes = [0, 0, 0]
                     changes = [0, 0, 0]
 
+                # todo refactor
                 try:
                     spread = float(values["bidPrice"]) / float(values["askPrice"])
                 except ZeroDivisionError:
-                    spread = 0;
+                    spread = 0
 
                 filtered[coin] = {"Pair": str(values["symbol"]),
                                   "Price": float(values["lastPrice"]),
@@ -130,6 +131,7 @@ class IndexData(QObject):
     def get_sum(self, symbol, time_delta):
         try:
             volume_slice = self.mw.historical.data[symbol].tf["1m"][time_delta:]["quote volume"]
+            print("VOL SLIce: ", volume_slice)
             volume_sum = np.sum(volume_slice)
 
             return volume_sum

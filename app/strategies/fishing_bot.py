@@ -64,17 +64,17 @@ class FishingBot(QtWidgets.QTableWidget):
         self.set_properties()
 
 
-    def build_coin_selector(self):
-        coin_combo_box = QtWidgets.QComboBox()
-        for coin in self.mw.tickers:
-            icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
-            coin_combo_box.addItem(icon, coin[:-3])
+    # def build_coin_selector(self):
+    #     coin_combo_box = QtWidgets.QComboBox()
+    #     for coin in self.mw.tickers:
+    #         icon = QtGui.QIcon("images/ico/" + coin[:-3] + ".svg")
+    #         coin_combo_box.addItem(icon, coin[:-3])
 
-        coinIndex = coin_combo_box.findText(self.mw.cfg_manager.coin)
-        coin_combo_box.setCurrentIndex(coinIndex)
-        coin_combo_box.setEditable(True)
-        coin_combo_box.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
-        return coin_combo_box
+    #     coinIndex = coin_combo_box.findText(self.mw.cfg_manager.coin)
+    #     coin_combo_box.setCurrentIndex(coinIndex)
+    #     coin_combo_box.setEditable(True)
+    #     coin_combo_box.setInsertPolicy(QtWidgets.QComboBox.NoInsert)
+    #     return coin_combo_box
 
 
     def set_properties(self):

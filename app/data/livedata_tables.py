@@ -18,7 +18,7 @@ from app.colors import Colors
 from app.data.base_table_setup import BaseTableModel, BasicDelegate, HoverDelegate, RoundFloatDelegate
 # from app.data.new_orderbook_table import OrderbookTable
 # from app.init import val
-
+import time
 
 class BackgroundTable(QtWidgets.QTableView):
     def __init__(self, *args, **kwargs):
@@ -37,10 +37,15 @@ class BackgroundTable(QtWidgets.QTableView):
         self.compare_col = 3
         self.get_color = False
         self.rowH = None
+        self.paint_count = 0
 
     def paintEvent(self, event):
+        now = time.time()
 
         if self.has_data is True:
+            if not self.data:
+                self.paint_count += 1
+                print(self.paint_count)
             row_count = self.my_model.rowCount()
             total_width = self.horizontalHeader().width()
             painter = QtGui.QPainter(self.viewport())
@@ -48,7 +53,7 @@ class BackgroundTable(QtWidgets.QTableView):
 
                 # get row color:
                 if self.get_color is True:
-                    if self.mw.trade_history[row][2] is True:
+                    if self.mw.trade_history[row]["maker"] is True:
                         self.bg_color = "#473043"
                     else:
                         self.bg_color = "#3b4c37"
@@ -71,8 +76,13 @@ class BackgroundTable(QtWidgets.QTableView):
 
                 painter.drawRect(my_rect)
                 painter.restore()
-
+        delta = time.time() - now
+        print("Delta", delta)
+        now = time.time()
         super(BackgroundTable, self).paintEvent(event)
+        delta = time.time() - now
+        print("Delta2", delta)
+
 
 
     def setup(self):
@@ -100,8 +110,8 @@ class BackgroundTable(QtWidgets.QTableView):
         self.mw.live_data.set_spread()
 
 
-    def set_df(self):
-        return self.create_dataframe(self.data)
+    # def set_df(self):
+    #     return self.create_dataframe(self.data)
 
     def create_dataframe(self, side):
         if side == "asks":
@@ -130,11 +140,13 @@ class BackgroundTable(QtWidgets.QTableView):
 
     def create_history_df(self):
         df = pd.DataFrame(self.mw.trade_history)
-        df.columns = ["Price", "Amount", "isBuyer", "Time"]
+        
+        df.columns = ["maker", "price", "quantity", "time"]
+        print("Hist df", df)
         df = df.apply(pd.to_numeric, errors="ignore")
-        df = df[["Price", "Amount", "Time"]]
+        df = df[["price", "quantity", "time"]]
 
-        maxval = df["Amount"].max()
+        maxval = df["quantity"].max()
         self.max_order = maxval
         self.has_data = True
         return df
@@ -244,12 +256,13 @@ class AsksDelegate(QtWidgets.QStyledItemDelegate):
 
 
 class HistPriceDelegate(BasicDelegate):
-
     def initStyleOption(self, option, index):
+        now = time.time()
+
         decimals = self.mw.tickers[self.mw.cfg_manager.pair]["decimals"]
         option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=decimals)
 
-        if self.mw.trade_history[index.row()][2] is True:
+        if self.mw.trade_history[index.row()]["maker"] is True:
             self.normal_color = Colors.color_pink
             self.hover_color = "#ff58a8"
 
@@ -265,6 +278,8 @@ class HistPriceDelegate(BasicDelegate):
         else:
             self.fg_color = self.normal_color
             self.font.setBold(False)
+        delta = time.time() - now
+        print("hist delegate {number:,.{digits}f}".format(number=float(delta), digits=8))
 
 
 class OrderbookCountDelegate(BasicDelegate):

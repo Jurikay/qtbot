@@ -14,11 +14,11 @@ from app.charts import Webpages
 
 class GuiManager:
 
-    def __init__(self, mw):
+    def __init__(self, mw, tp):
         self.mw = mw
         self.update_count = 0
         self.no_updates = 0
-        self.threadpool = QtCore.QThreadPool()
+        self.threadpool = tp
         mw.popup_btn.clicked.connect(self.show_notification)
 
         self.last_btc_price = 0
@@ -215,8 +215,6 @@ class GuiManager:
         """Update some values every second."""
 
         self.runtime += 1
-
-        print(self.mw.data.gib())
 
         # charts_index = self.mw.ChartTabs.currentIndex()
 
