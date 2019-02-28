@@ -18,7 +18,7 @@ from app.colors import Colors
 from app.data.base_table_setup import BaseTableModel, BasicDelegate, HoverDelegate, RoundFloatDelegate
 # from app.data.new_orderbook_table import OrderbookTable
 # from app.init import val
-import time
+
 
 class BackgroundTable(QtWidgets.QTableView):
     def __init__(self, *args, **kwargs):
@@ -37,15 +37,9 @@ class BackgroundTable(QtWidgets.QTableView):
         self.compare_col = 3
         self.get_color = False
         self.rowH = None
-        self.paint_count = 0
 
     def paintEvent(self, event):
-        now = time.time()
-
         if self.has_data is True:
-            if not self.data:
-                self.paint_count += 1
-                print(self.paint_count)
             row_count = self.my_model.rowCount()
             total_width = self.horizontalHeader().width()
             painter = QtGui.QPainter(self.viewport())
@@ -76,12 +70,9 @@ class BackgroundTable(QtWidgets.QTableView):
 
                 painter.drawRect(my_rect)
                 painter.restore()
-        delta = time.time() - now
-        print("Delta", delta)
-        now = time.time()
+
         super(BackgroundTable, self).paintEvent(event)
-        delta = time.time() - now
-        print("Delta2", delta)
+
 
 
 
@@ -140,9 +131,8 @@ class BackgroundTable(QtWidgets.QTableView):
 
     def create_history_df(self):
         df = pd.DataFrame(self.mw.trade_history)
-        
+
         df.columns = ["maker", "price", "quantity", "time"]
-        print("Hist df", df)
         df = df.apply(pd.to_numeric, errors="ignore")
         df = df[["price", "quantity", "time"]]
 
@@ -257,7 +247,6 @@ class AsksDelegate(QtWidgets.QStyledItemDelegate):
 
 class HistPriceDelegate(BasicDelegate):
     def initStyleOption(self, option, index):
-        now = time.time()
 
         decimals = self.mw.tickers[self.mw.cfg_manager.pair]["decimals"]
         option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=decimals)
@@ -278,8 +267,6 @@ class HistPriceDelegate(BasicDelegate):
         else:
             self.fg_color = self.normal_color
             self.font.setBold(False)
-        delta = time.time() - now
-        print("hist delegate {number:,.{digits}f}".format(number=float(delta), digits=8))
 
 
 class OrderbookCountDelegate(BasicDelegate):
