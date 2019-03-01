@@ -19,7 +19,7 @@ class UserData(QtCore.QObject):
 
     def __init__(self, mw, mutex, parent=None):
         super(UserData, self).__init__(parent)
-        # print("INIT UserData")
+        print("INIT UserData")
         self.mw = mw
         self.mutex = mutex
 
@@ -333,6 +333,7 @@ class UserData(QtCore.QObject):
             df.columns = ["Asset", "Name", "Free", "Locked", "Total", "Total BTC"]
             df = df.apply(pd.to_numeric, errors='ignore')
 
+            # Filter dataframe by total_btc column
             mask = df["Total BTC"].values >= 0.001
             return df[mask]
 

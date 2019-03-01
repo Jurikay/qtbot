@@ -5,6 +5,9 @@
 
 """Named color variables."""
 
+# TODO: Move every color definition here;
+# Think of customization/ color themes
+
 
 class Colors:
     color_pink = "#ff007a"

@@ -9,11 +9,13 @@
 # import PyQt5.QtWidgets as QtWidgets
 
 
-from PyQt5.QtWebEngineWidgets import (QWebEngineView, QWebEnginePage,
-                                      QWebEngineScript)
+# from PyQt5.QtWebEngineWidgets import (QWebEngineView, QWebEnginePage,
+#                                       QWebEngineScript)
+
+from PyQt5 import QtWebEngineWidgets
 
 
-class ChartPage(QWebEngineView):
+class ChartPage(QtWebEngineWidgets.QWebEngineView):
 
     """Custom WebEngineView subclass"""
 
@@ -23,27 +25,28 @@ class ChartPage(QWebEngineView):
         # theme_color = self.style().standardPalette().color(QtGui.QPalette.Base)
         # profile = webenginesettings.default_profile
 
-        page = WebEnginePage()
-        self.page().JavaScriptConsoleMessageLevel(2)
+        page = CustomWebEnginePage()
+
+        # self.page().JavaScriptConsoleMessageLevel(2)
 
         self.setPage(page)
-        # print("CHART JESCHISCHTEN")
+        print("CHART JESCHISCHTEN")
 
 
-    def inject_script(self):
-        script = QWebEngineScript()
-        script.setSourceCode('''
-            console.log("hi javascript!");
+    # def inject_script(self):
+    #     script = QWebEngineScript()
+    #     script.setSourceCode('''
+    #         console.log("hi javascript!");
 
-        ''')
-        script.setWorldId(QWebEngineScript.MainWorld)
-        script.setInjectionPoint(QWebEngineScript.DocumentReady)
-        script.setRunsOnSubFrames(False)
-        self.page().scripts().insert(script)
+    #     ''')
+    #     script.setWorldId(QWebEngineScript.MainWorld)
+    #     script.setInjectionPoint(QWebEngineScript.DocumentReady)
+    #     script.setRunsOnSubFrames(False)
+    #     self.page().scripts().insert(script)
 
 
 
-class WebEnginePage(QWebEnginePage):
-    """Custom QWebEnginePage subclass."""
-    def __init__(self, parent=None):
-        super(WebEnginePage, self).__init__()
+class CustomWebEnginePage (QtWebEngineWidgets.QWebEnginePage):
+    def javaScriptConsoleMessage(self, level, message, lineNumber, sourceId):
+        print("JS CL")
+        #Send the log entry to Python's logging or do whatever you want

@@ -5,6 +5,10 @@
 
 """Functions that generate HTML pages."""
 
+# TODO: Make better use of inheritence:
+# Base chart class -> cmc and binance; BTC chart inherits from binance
+# with some fixed properties
+
 # from app.init import val
 
 class Webpages():

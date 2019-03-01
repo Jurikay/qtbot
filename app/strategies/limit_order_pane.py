@@ -312,7 +312,11 @@ class LimitOrderPane(QtWidgets.QWidget):
         return maxSizeRounded
 
     def init_tables(self):
+        # Handle table initialization 
         pass
+
+
+
         # for _ in range(20):
         #     self.mw.bids_table.insertRow(0)
         #     self.mw.asks_table.insertRow(0)
