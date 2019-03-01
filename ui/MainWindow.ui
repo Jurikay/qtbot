@@ -725,8 +725,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>98</width>
-                  <height>28</height>
+                  <width>969</width>
+                  <height>521</height>
                  </rect>
                 </property>
                </widget>
@@ -5402,8 +5402,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>141</width>
-                 <height>468</height>
+                 <width>614</width>
+                 <height>479</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -5778,49 +5778,49 @@
   <customwidget>
    <class>LiveData</class>
    <extends>QWidget</extends>
-   <header>app/elements/live_data.h</header>
+   <header>app/widgets/live_data.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ChartPage</class>
    <extends>QWidget</extends>
-   <header>app/elements/qtwebview</header>
+   <header>app/widgets/qtwebview</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>History</class>
    <extends>QTableView</extends>
-   <header>app/data/base_table_setup.h</header>
+   <header>app/widgets/base_table_setup.h</header>
   </customwidget>
   <customwidget>
    <class>OpenOrders</class>
    <extends>QTableView</extends>
-   <header>app/data/base_table_setup.h</header>
+   <header>app/widgets/base_table_setup.h</header>
   </customwidget>
   <customwidget>
    <class>Index</class>
    <extends>QTableView</extends>
-   <header>app/data/base_table_setup.h</header>
+   <header>app/widgets/base_table_setup.h</header>
   </customwidget>
   <customwidget>
    <class>Holdings</class>
    <extends>QTableView</extends>
-   <header>app/data/base_table_setup.h</header>
+   <header>app/widgets/base_table_setup.h</header>
   </customwidget>
   <customwidget>
    <class>AsksView</class>
    <extends>QTableView</extends>
-   <header>app/data/livedata_tables.h</header>
+   <header>app/widgets/livedata_tables.h</header>
   </customwidget>
   <customwidget>
    <class>BidsView</class>
    <extends>QTableView</extends>
-   <header>app/data/livedata_tables.h</header>
+   <header>app/widgets/livedata_tables.h</header>
   </customwidget>
   <customwidget>
    <class>HistView</class>
    <extends>QTableView</extends>
-   <header>app/data/livedata_tables.h</header>
+   <header>app/widgets/livedata_tables.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

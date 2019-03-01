@@ -33,7 +33,8 @@ from app.elements.gui_manager import GuiManager
 # from app.tables.table_manager import TableManager
 from app.elements.websocket_manager import WebsocketManager
 
-from app.data.index_data import IndexData
+# from app.data.index_data import IndexData
+
 # from app.data.historical_data import HistoricalData
 from app.data.user_data import UserData
 

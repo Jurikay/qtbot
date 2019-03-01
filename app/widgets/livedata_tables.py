@@ -15,7 +15,7 @@ import pandas as pd
 from datetime import datetime
 from app.colors import Colors
 # import time
-from app.data.base_table_setup import BaseTableModel, BasicDelegate, HoverDelegate, RoundFloatDelegate
+from app.widgets.base_table_setup import BaseTableModel, BasicDelegate, HoverDelegate, RoundFloatDelegate
 # from app.data.new_orderbook_table import OrderbookTable
 # from app.init import val
 

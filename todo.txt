@@ -96,3 +96,12 @@ Bot logic/ Stratgies:
     - system has to be robust; Has to keep exact track of (partially) filled orders,
     - (re)create sell orders as soon as first purchase
     - could also be time based; Plan to sell within 1 hour for example watch price rising until indication of reversal.
+
+    ##############
+    STRIPPED
+    ##############
+    Make manager classes fault tolerant; Work without api data;
+    No need for setup function; Use constructor
+
+    * implement data class
+    * 

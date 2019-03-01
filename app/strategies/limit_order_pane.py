@@ -7,6 +7,8 @@ import app
 # from app.init import val
 from app.workers import Worker
 
+# TODO: Refactor; replace val references
+
 
 class LimitOrderPane(QtWidgets.QWidget):
     def __init__(self):
