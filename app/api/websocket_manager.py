@@ -60,18 +60,10 @@ class WebsocketManager:
 
     # sockets
     def start_sockets(self, progress_callback):
-        print("START SOCKETS!!!")
-
-
+        print("Start sockets")
         self.websockets_symbol()
-        # time.sleep(0.25)
-        # start user and ticker websocket separately since it does not need to be restarted
         self.userWebsocket = self.socket_mgr.start_user_socket(self.user_callback)
-
-        # time.sleep(0.1)
         self.tickerWebsocket = self.socket_mgr.start_ticker_socket(self.ticker_callback)
-
-        # time.sleep(0.1)
         self.socket_mgr.start()
 
     def stop_sockets(self):
@@ -105,6 +97,9 @@ class WebsocketManager:
 
         self.api_updates += 1
 
+        # New Data
+        self.mw.data.set_trades(msg)
+
         worker = Worker(self.socket_history)
         worker.signals.progress.connect(self.mw.live_data.set_history_values)
         self.threadpool.start(worker)
@@ -117,6 +112,8 @@ class WebsocketManager:
         self.mw.orderbook["asks"] = msg["asks"]
         self.mw.mutex.unlock()
 
+        # NEW DATA
+        self.mw.data.set_depth(msg)
 
         worker = Worker(partial(self.socket_orderbook, msg))
         # worker.signals.progress.connect(self.mw.live_data.progress_orderbook)
@@ -139,8 +136,9 @@ class WebsocketManager:
             userMsg[key] = value
 
         if userMsg["e"] == "outboundAccountInfo":
-            for i in range(len(userMsg["B"])):
-                pass
+            # for i in range(len(userMsg["B"])):
+            #     pass
+
                 # put account info in accHoldings dictionary. Access
                 # free and locked holdings like so: accHoldings["BTC"]["free"]
 
@@ -235,6 +233,10 @@ class WebsocketManager:
     def ticker_callback(self, msg):
         self.api_updates += 1
         df_data = dict()
+
+        # New Data
+        self.mw.data.set_tickers(msg)
+
         for value in msg:
             # ticker[key] = value
             # print("key: " + str(key))
@@ -287,15 +289,18 @@ class WebsocketManager:
 
 
 
-    def build_index_data(self, ticker_data):
-        start_time = time.time()
-        self.index_df = pd.DataFrame(ticker_data).transpose()
-        print("DATAFRAME:", self.index_df)
-        print("WS build index took", time.time() - start_time)
+    # def build_index_data(self, ticker_data):
+    #     start_time = time.time()
+    #     self.index_df = pd.DataFrame(ticker_data).transpose()
+    #     print("DATAFRAME:", self.index_df)
+    #     print("WS build index took", time.time() - start_time)
 
 
     def kline_callback(self, msg):
         kline_msg = dict()
+        # New Data
+        self.mw.data.set_klines(msg)
+
         for key, value in msg.items():
             kline_msg[key] = value
         # print("kline msg:")

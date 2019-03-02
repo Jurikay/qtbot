@@ -24,7 +24,7 @@ class GuiManager:
         self.last_btc_price = 0
         self.runtime = 0
 
-
+    # Refactor
     def initialize(self):
         self.initial_last_price()
         self.initial_values()
@@ -50,7 +50,7 @@ class GuiManager:
         self.mw.coin_selector.setCurrentIndex(coinIndex)
 
 
-
+    # Refactor
     def initial_last_price(self):
         # init last_price
         arrow = QtGui.QPixmap("images/assets/2arrow.png")

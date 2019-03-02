@@ -17,7 +17,7 @@ from PyQt5 import QtWebEngineWidgets
 
 class ChartPage(QtWebEngineWidgets.QWebEngineView):
 
-    """Custom WebEngineView subclass"""
+    """Custom QWebEngineView subclass"""
 
     def __init__(self, parent=None):
         super(ChartPage, self).__init__(parent)

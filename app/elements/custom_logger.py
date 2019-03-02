@@ -4,6 +4,7 @@ import PyQt5.QtWidgets as QtWidgets
 # import PyQt5.QtCore as QtCore
 from app.gui import logging
 
+# TODO Revisit; add more logging entries
 
 class BotLogger:
 

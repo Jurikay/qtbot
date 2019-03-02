@@ -22,7 +22,7 @@ from twisted.internet import reactor
 # from app.strategies.fishing_bot import FishingBot
 # from app.strategies.limit_order import LimitOrder
 import app
-from app.apiFunctions import ApiCalls
+from app.api.apiFunctions import ApiCalls
 # from app.data.historical_data import HistoricalData
 from app.data.user_data import UserData
 from app.elements.config import ConfigManager
@@ -33,8 +33,9 @@ from app.elements.config import ConfigManager
 from app.elements.custom_logger import BotLogger
 from app.elements.gui_manager import GuiManager
 # from app.tables.table_manager import TableManager
-from app.elements.websocket_manager import WebsocketManager
+from app.api.websocket_manager import WebsocketManager
 
+from app.data.datamanager import DataManager
 # from app.init import val
 
 
@@ -51,9 +52,9 @@ from app.elements.websocket_manager import WebsocketManager
 class beeserBot(QtWidgets.QMainWindow):
     """Main ui class."""
 
-    def __init__(self, data):
+    def __init__(self):
 
-        self.data = data
+        self.data = DataManager
         """Main gui init method."""
 
         super(beeserBot, self).__init__()

@@ -15,17 +15,11 @@ from datetime import datetime
 
 if __name__ == "__main__":
 
-    class DataStuff:
-        rndnumber = 3
-
-        def gib():
-            return 55
-
 
     main_app = QApplication(sys.argv)
 
     # QFontDatabase.addmain_applicationFont('static/Roboto-Bold.ttf')
-    #
+    
 
     main_app.setStyle(QStyleFactory.create('Fusion'))
     main_app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -33,7 +27,7 @@ if __name__ == "__main__":
     if hasattr(QStyleFactory, 'AA_UseHighDpiPixmaps'):
         main_app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
 
-    widget = beeserBot(DataStuff)
+    widget = beeserBot()
     widget.show()
     main_app.aboutToQuit.connect(widget.shutdown_bot)
 
