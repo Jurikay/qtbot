@@ -7,7 +7,7 @@
 implementation to communicate with Binance."""
 
 from functools import partial
-# from app.init import val
+
 from binance.exceptions import BinanceAPIException
 # from requests.exceptions import InvalidHeader
 import app
@@ -259,31 +259,34 @@ class ApiCalls:
             return orders
 
 
+    # Initial api calls old data;
+    # TODO: Fully replace
     def api_calls(self):
         """Initial and coin specific api calls"""
         worker = Worker(self.api_history)
         worker.signals.progress.connect(self.mw.live_data.batch_history)
-        self.mw.threadpool.start(worker)
+        self.threadpool.start(worker)
 
         worker = Worker(self.api_depth)
         worker.signals.progress.connect(self.save_depth)
 
         # worker.signals.progress.connect(self.mw.live_data.batch_orderbook)
         # worker.signals.finished.connect(self.mw.limit_pane.t_complete)
-        self.mw.threadpool.start(worker)
+        self.threadpool.start(worker)
 
-        # TODO: COme back
+        # TODO: COme back to
         worker = Worker(self.mw.user_data.initial_history)
-        worker.signals.progress.connect(self.updateHistTable)
-        self.mw.threadpool.start(worker)
+        # worker.signals.progress.connect(self.updateHistTable)
+        self.threadpool.start(worker)
 
 
         # self.get_trade_history(self.mw.cfg_manager.pair)
 
 
+    # Websocket history table update?
     def updateHistTable(self):
         print("CALLBACK HELLO")
-        
+        # TODO: Reenable
         self.mw.trade_history_view.websocket_update()
 
     def save_depth(self, depth):

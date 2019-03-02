@@ -8,7 +8,7 @@ import os.path
 import logging
 
 # import app
-# from app.init import val
+
 from app.charts import Webpages
 
 

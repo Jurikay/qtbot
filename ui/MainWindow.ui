@@ -529,6 +529,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QLabel" name="label_fps">
+            <property name="text">
+             <string>fps</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -1431,7 +1438,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>3</number>
            </property>
            <property name="movable">
             <bool>false</bool>

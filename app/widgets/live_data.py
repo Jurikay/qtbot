@@ -7,7 +7,7 @@ import PyQt5.QtWidgets as QtWidgets
 # import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
 import app
-# from app.init import val
+
 # from app.table_items import CoinDelegate
 from app.colors import Colors
 

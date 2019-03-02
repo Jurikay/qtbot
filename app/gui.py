@@ -36,17 +36,12 @@ from app.elements.gui_manager import GuiManager
 from app.api.websocket_manager import WebsocketManager
 
 from app.data.datamanager import DataManager
-# from app.init import val
+from app.api.new_api_data import ApiManager
+
 
 
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
-
-
 # from app.data.index_data import IndexData
-
-
-
-# from app.init import val
 
 
 class beeserBot(QtWidgets.QMainWindow):
@@ -54,7 +49,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
     def __init__(self):
 
-        self.data = DataManager
+        self.data = DataManager()
         """Main gui init method."""
 
         super(beeserBot, self).__init__()
@@ -75,8 +70,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.tickers = None
 
-        # kann weg:
-        # self.trade_history = list()
+
         self.orderbook = dict()
         self.klines = dict()
         self.klines["1m"] = dict()
@@ -122,12 +116,6 @@ class beeserBot(QtWidgets.QMainWindow):
         self.test_slider_value.valueChanged.connect(self.slider_value)
         self.btn_my_trades.clicked.connect(
             partial(self.api_manager.api_my_trades, self.cfg_manager.pair))
-
-        self.table_test_btn.clicked.connect(self.open_orders_view.setup)
-        self.table_test_btn.clicked.connect(self.trade_history_view.setup)
-        self.table_test_btn.clicked.connect(self.index_view.setup)
-        self.table_test_btn.clicked.connect(self.holdings_view.setup)
-
         # connect filter
         # self.coinindex_filter.textChanged.connect(self.open_orders_view.my_model.setFilter)
 
@@ -152,8 +140,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
     def init_api_classes(self):
 
-        self.api_manager = ApiCalls(self, self.threadpool)
+        self.api_manager = ApiCalls(self, self.threadpool)        
         self.api_manager.initialize()
+
+        self.new_api = ApiManager(self, self.api_manager.client)
+
 
         # new
         self.api_manager.new_api()
@@ -200,15 +191,17 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.test_table_view.setup()
 
         # self.test_table_view_2.setup()
+
+        # This is used
         self.open_orders_view.setup()
         self.trade_history_view.setup()
-        self.index_view.setup()
+        # self.index_view.setup()
         self.holdings_view.setup()
 
         self.coinindex_filter.textChanged.connect(
             self.open_orders_view.my_model.setFilter)
-        self.coinindex_filter.textChanged.connect(
-            self.trade_history_view.my_model.setFilter)
+        # self.coinindex_filter.textChanged.connect(
+        #     self.trade_history_view.my_model.setFilter)
         self.coinindex_filter.textChanged.connect(
             self.holdings_view.my_model.setFilter)
         self.coinindex_filter.textChanged.connect(

@@ -3,7 +3,7 @@ import os
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
-# from app.init import val
+
 from app.colors import Colors
 from datetime import timedelta
 import time
@@ -13,6 +13,8 @@ from app.charts import Webpages
 
 
 class GuiManager:
+
+    """Methods concerning the global UI."""
 
     def __init__(self, mw, tp):
         self.mw = mw
@@ -129,11 +131,20 @@ class GuiManager:
         self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
         self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
 
+        # delayed stuff; TODO: Refactor
         self.mw.timer = QtCore.QTimer()
         self.mw.timer.setInterval(200)
         self.mw.timer.timeout.connect(self.mw.delayed_stuff)
         self.mw.timer.start()
 
+    # TODO: Implement FPS Counter
+    def fps_counter(self):
+        """Initializes fps counter. Spawns a qthread with an endless loop."""
+
+
+    def fps_loop(self):
+        while True:
+            pass
 
     def set_charts(self, pair):
         self.mw.chart.setHtml(Webpages.build_chart2(pair, self.mw.cfg_manager.defaultTimeframe))

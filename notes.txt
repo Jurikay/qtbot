@@ -2,3 +2,4 @@ https://stackoverflow.com/questions/17697352/pyqt-implement-a-qabstracttablemode
 
 https://www.kannon.link/free/2016/06/09/setting-windows-system-time-from-ntp-server/
 test
+https://stackoverflow.com/questions/45359569/how-to-update-qtableview-on-qabstracttablemodel-change

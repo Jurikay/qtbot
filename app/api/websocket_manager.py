@@ -9,7 +9,7 @@ from app.workers import Worker
 # import PyQt5.QtWidgets as QtWidgets
 # import PyQt5.QtGui as QtGui
 # import PyQt5.QtCore as QtCore
-# from app.init import val
+
 # import app
 from functools import partial
 from binance.websockets import BinanceSocketManager
@@ -234,9 +234,7 @@ class WebsocketManager:
         self.api_updates += 1
         df_data = dict()
 
-        # New Data
-        self.mw.data.set_tickers(msg)
-
+        
         for value in msg:
             # ticker[key] = value
             # print("key: " + str(key))
@@ -274,6 +272,11 @@ class WebsocketManager:
                         self.mutex.unlock()
 
                 df_data[value["s"]] = ticker_data
+
+        # New Data
+        # needs more refactoring..
+        # self.mw.data.set_tickers(df_data)
+
 
         # self.mw.index_data.websocket_update(df_data)
 

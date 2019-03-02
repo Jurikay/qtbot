@@ -12,9 +12,11 @@ import PyQt5.QtCore as QtCore
 from binance.exceptions import BinanceAPIException
 import logging
 
+# Todo: Think of location; Move into dataclass; Verify necessity of QObject
+# inheritence and 
 
 class UserData(QtCore.QObject):
-    """Object that holds various dicts of user data like
+    """QObject that holds various dicts of user data like
     open orders, trade history and current holdings."""
 
     def __init__(self, mw, mutex, parent=None):
@@ -162,6 +164,9 @@ class UserData(QtCore.QObject):
         # "id", which is unique, unlike orderId which is used to combine partial orders.
         # TODO fix in other places; make sure to differentiate between orderId and id.
         # implement method that combines multiple partial fills
+        
+        # Refactor: Rather than try/except handle like dataclass methods; isinstance() to
+        # differentiate between api call and websocket.
         try:
             order_id = order["id"]
         except KeyError:
@@ -184,8 +189,6 @@ class UserData(QtCore.QObject):
             print("New qty is: ", order["executedQty"])
 
 
-
-        print((order["executedQty"]))
         self.set_save(self.trade_history[pair], order["orderId"], order)
 
 
@@ -197,6 +200,7 @@ class UserData(QtCore.QObject):
         history = self.mw.api_manager.api_my_trades(pair)
 
         for entry in history:
+            print("ENTRYY")
             entry["symbol"] = pair
             entry["executedQty"] = float(entry["qty"])
             self.add_to_history(entry)
@@ -206,15 +210,15 @@ class UserData(QtCore.QObject):
                 entry["side"] = "SELL"
 
         # TODO COME BACK
-        if progress_callback:
-            print("HISTORY CALLBACK UPDATE")
-            progress_callback.emit("update")
+        # if progress_callback:
+        #     print("HISTORY CALLBACK UPDATE")
+        #     progress_callback.emit("update")
 
-            # self.mw.trade_history_view.websocket_update()
+        self.mw.trade_history_view.websocket_update()
 
 
     def create_history_df(self):
-        """Create a pandas dataframe suitable for displaying the trade history."""
+        """Create a pandas dataframe containing user trade information."""
         # print("CREATE HISTORY DF")
         history = dict()
         for _, historical_trade in self.trade_history.items():
