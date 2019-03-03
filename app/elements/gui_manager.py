@@ -11,6 +11,12 @@ from app.gui import logging
 from app.workers import Worker
 from app.charts import Webpages
 
+class ExamplePopup(QtWidgets.QDialog):
+    
+    def __init__(self, name, parent=None):
+        super().__init__(parent)
+        self.name = name
+        self.label = QtWidgets.QLabel(self.name, self)
 
 class GuiManager:
 
@@ -25,6 +31,19 @@ class GuiManager:
 
         self.last_btc_price = 0
         self.runtime = 0
+        self.buildExamplePopup("name")
+        
+
+
+    def buildExamplePopup(self, name):
+        self.exPopup = ExamplePopup(name, self.mw)
+        self.exPopup.setGeometry(100, 200, 100, 100)
+        self.exPopup.show()
+
+    def show_tooltip(self):
+        point = QtCore.QPoint(100,100)
+        QtWidgets.QToolTip.showText(point, "LELLO SCHMELLO", self.mw.top_groupBox)
+
 
     # Refactor
     def initialize(self):

@@ -38,8 +38,7 @@ from app.api.websocket_manager import WebsocketManager
 from app.data.datamanager import DataManager
 from app.api.new_api_data import ApiManager
 
-from app.elements.timescript import set_system_time
-
+import platform
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 # from app.data.index_data import IndexData
 
@@ -60,7 +59,9 @@ class beeserBot(QtWidgets.QMainWindow):
         super(beeserBot, self).__init__()
 
         # Set System Time
-        set_system_time()
+        if platform.system() == "Windows":
+            from app.elements.timescript import set_system_time
+            set_system_time()
 
         self.version = "alpha 0.1"
 
