@@ -164,6 +164,7 @@ class LimitOrderPane(QtWidgets.QWidget):
 
     def overbid_undercut(self):
         try:
+            print("NAME:", str(self.mw.sender))
             if self.mw.sender().text() == "outbid":
                 self.mw.limit_buy_input.setValue(float(val["bids"][0][0]) + float(self.mw.tickers[self.mw.cfg_manager.pair]["tickSize"]))
             elif self.mw.sender().text() == "undercut":

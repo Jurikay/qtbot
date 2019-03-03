@@ -5,7 +5,7 @@
 
 
 # import PyQt5.QtGui as QtGui
-# import PyQt5.QtCore as QtCore
+import PyQt5.QtCore as QtCore
 # import PyQt5.QtWidgets as QtWidgets
 
 
@@ -25,7 +25,7 @@ class ChartPage(QtWebEngineWidgets.QWebEngineView):
         # theme_color = self.style().standardPalette().color(QtGui.QPalette.Base)
         # profile = webenginesettings.default_profile
 
-        page = CustomWebEnginePage()
+        page = WebEnginePage()
 
         # self.page().JavaScriptConsoleMessageLevel(2)
 
@@ -45,8 +45,31 @@ class ChartPage(QtWebEngineWidgets.QWebEngineView):
     #     self.page().scripts().insert(script)
 
 
+class WebEnginePage(QtWebEngineWidgets.QWebEnginePage):
+
+    @staticmethod
+    def javaScriptConsoleMessage(level, msg, line, source):
+        print("JAVSCRIPT MSG")
+
+    def javaScriptAlert(self, url, js_msg):
+        print("JS ALERT")
 
 class CustomWebEnginePage (QtWebEngineWidgets.QWebEnginePage):
-    def javaScriptConsoleMessage(self, level, message, lineNumber, sourceId):
-        print("JS CL")
+    def __init__(self):
+        
+        # self.app = QApplication(sys.argv)
+        QtWebEngineWidgets.QWebEnginePage.__init__(self)
+        self.JavaScriptConsoleMessageLevel = 2
+        # self.html = ''
+        # self.loadFinished.connect(self._on_load_finished)
+        # self.load(QtCore.QUrl(url))
+        # self.app.exec_()
+
+    def javaScriptConsoleMessage(self, level, msg, line, source):
+        print("JS CONSOLE")
+        
+        
+
+    # def javaScriptConsoleMessage(self, level, message, lineNumber, sourceId):
+    #     print("JS CL")
         #Send the log entry to Python's logging or do whatever you want

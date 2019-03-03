@@ -276,17 +276,17 @@ class ApiCalls:
 
         # TODO: COme back to
         worker = Worker(self.mw.user_data.initial_history)
-        # worker.signals.progress.connect(self.updateHistTable)
+        worker.signals.progress.connect(self.updateHistTable)
         self.threadpool.start(worker)
 
 
         # self.get_trade_history(self.mw.cfg_manager.pair)
 
 
-    # Websocket history table update?
+    # Websocket history table update
+    # TODO: Move out of apiFunctions
     def updateHistTable(self):
-        print("CALLBACK HELLO")
-        # TODO: Reenable
+        print("apiFunctions update histTable")
         self.mw.trade_history_view.websocket_update()
 
     def save_depth(self, depth):

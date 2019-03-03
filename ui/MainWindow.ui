@@ -499,7 +499,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Account: </string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Account: &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
            </widget>
           </item>
@@ -628,7 +628,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>4</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -732,8 +732,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>969</width>
-                  <height>521</height>
+                  <width>981</width>
+                  <height>485</height>
                  </rect>
                 </property>
                </widget>
@@ -1138,7 +1138,7 @@
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_29">
               <property name="spacing">
-               <number>-1</number>
+               <number>6</number>
               </property>
               <property name="leftMargin">
                <number>0</number>
@@ -2461,7 +2461,7 @@
                     <bool>false</bool>
                    </attribute>
                    <attribute name="horizontalHeaderDefaultSectionSize">
-                    <number>1</number>
+                    <number>35</number>
                    </attribute>
                    <attribute name="horizontalHeaderMinimumSectionSize">
                     <number>0</number>
@@ -2578,7 +2578,7 @@
                       <bool>false</bool>
                      </property>
                      <attribute name="horizontalHeaderDefaultSectionSize">
-                      <number>1</number>
+                      <number>35</number>
                      </attribute>
                      <attribute name="horizontalHeaderMinimumSectionSize">
                       <number>0</number>
@@ -2742,7 +2742,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideRight</enum>
@@ -3932,7 +3932,7 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <property name="spacing">
-             <number>-1</number>
+             <number>6</number>
             </property>
             <property name="leftMargin">
              <number>5</number>
@@ -4257,7 +4257,7 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <property name="spacing">
-             <number>-1</number>
+             <number>6</number>
             </property>
             <property name="leftMargin">
              <number>5</number>
@@ -4277,7 +4277,7 @@
                <number>0</number>
               </property>
               <property name="verticalSpacing">
-               <number>-1</number>
+               <number>6</number>
               </property>
               <item row="2" column="0">
                <widget class="QCheckBox" name="checkBox_3">
@@ -4684,7 +4684,7 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_19">
             <property name="spacing">
-             <number>-1</number>
+             <number>6</number>
             </property>
             <property name="leftMargin">
              <number>0</number>
@@ -5410,7 +5410,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>614</width>
-                 <height>479</height>
+                 <height>482</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -5760,7 +5760,7 @@
      <x>0</x>
      <y>0</y>
      <width>1686</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

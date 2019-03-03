@@ -38,7 +38,7 @@ from app.api.websocket_manager import WebsocketManager
 from app.data.datamanager import DataManager
 from app.api.new_api_data import ApiManager
 
-
+from app.elements.timescript import set_system_time
 
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 # from app.data.index_data import IndexData
@@ -48,11 +48,19 @@ class beeserBot(QtWidgets.QMainWindow):
     """Main ui class."""
 
     def __init__(self):
+        
+        # env = QtCore.QProcessEnvironment.systemEnvironment()
+        # env.insert("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-logging")
+        # env.insert("QT_SCALE_FACTOR", "0.8")
+        # self.process.setProcessEnvironment(env)
 
         self.data = DataManager()
         """Main gui init method."""
 
         super(beeserBot, self).__init__()
+
+        # Set System Time
+        set_system_time()
 
         self.version = "alpha 0.1"
 
@@ -257,11 +265,11 @@ class beeserBot(QtWidgets.QMainWindow):
                   (resolution.height() / 2) - (self.frameSize().height() / 2))
 
     def shutdown_bot(self):
-        func_stats = yappi.get_func_stats()
-        func_stats.save('callgrind.out.' +
-                        datetime.now().isoformat(), 'CALLGRIND')
-        yappi.stop()
-        yappi.clear_stats()
+        # func_stats = yappi.get_func_stats()
+        # func_stats.save('callgrind.out.' +
+        #                 datetime.now().isoformat(), 'CALLGRIND')
+        # yappi.stop()
+        # yappi.clear_stats()
         self.cfg_manager.write_stats()
         self.cfg_manager.write_config()
         # api error workaround

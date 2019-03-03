@@ -32,8 +32,9 @@ class UserData(QtCore.QObject):
 
 
     def initialize(self):
+        print("INIT USER DATA")
         self.initial_open_orders()
-        # self.initial_history()
+        self.initial_history()
         self.initial_holdings()
 
         # self.mw.print_btn.clicked.connect(self.print_dicts)
@@ -200,7 +201,6 @@ class UserData(QtCore.QObject):
         history = self.mw.api_manager.api_my_trades(pair)
 
         for entry in history:
-            print("ENTRYY")
             entry["symbol"] = pair
             entry["executedQty"] = float(entry["qty"])
             self.add_to_history(entry)
@@ -210,11 +210,13 @@ class UserData(QtCore.QObject):
                 entry["side"] = "SELL"
 
         # TODO COME BACK
-        # if progress_callback:
-        #     print("HISTORY CALLBACK UPDATE")
-        #     progress_callback.emit("update")
+        if progress_callback:
+            print("HISTORY CALLBACK UPDATE")
+            progress_callback.emit("update")
 
-        self.mw.trade_history_view.websocket_update()
+        else:
+            print("INIT HIST W/O PROGRESS_CALLBACK")
+        # self.mw.trade_history_view.websocket_update()
 
 
     def create_history_df(self):
