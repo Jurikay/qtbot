@@ -18,7 +18,8 @@ from app.colors import Colors
 from app.widgets.base_table_setup import BaseTableModel, BasicDelegate, HoverDelegate, RoundFloatDelegate
 # from app.data.new_orderbook_table import OrderbookTable
 
-
+# debug
+from pprint import pprint
 
 class BackgroundTable(QtWidgets.QTableView):
     def __init__(self, *args, **kwargs):
@@ -39,6 +40,7 @@ class BackgroundTable(QtWidgets.QTableView):
         self.rowH = None
 
     def paintEvent(self, event):
+  
         if self.has_data is True:
             row_count = self.my_model.rowCount()
             total_width = self.horizontalHeader().width()
