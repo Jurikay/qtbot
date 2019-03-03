@@ -20,11 +20,31 @@ class LiveData(QtWidgets.QWidget):
         self.history_progressed = False
         self.ob_progressed = False
 
+        # new
+        self.arrow_up = QtGui.QPixmap("images/assets/2arrow_up.png")
+        self.arrow = QtGui.QPixmap("images/assets/2arrow.png")
+        self.arrow_down = QtGui.QPixmap("images/assets/2arrow_down.png")
 
     def set_history_values(self):
         self.set_last_price()
         self.mw.tradeTable.update()
 
+        self.new_last_price()
+
+
+    def new_last_price(self):
+        history = self.mw.data.current.history
+        print("new last price", history)
+        if float(history[0]["price"] > float(history[1]["price"])):
+            arrow = self.arrow_up
+        else:
+            arrow = self.arrow_down
+
+        formatted_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
+        self.mw.price_arrow.setPixmap(arrow)
+        self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
+        usd_price = '{number:.{digits}f}'.format(number=float(history[0][0]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
+        self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
     def set_last_price(self):
 
