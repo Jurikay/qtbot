@@ -16,4 +16,6 @@ class GuiMgr:
     # ######## Setup ##########
     def set_tooltips(self):
         print("Setting tooltips")
-        self.mw.limit_buy_input.setToolTip = "BUY TOOLTIP" 
+        # self.mw.limit_buy_input.setStatusTip("BUY TOOLTIP")
+        # self.mw.limit_buy_input.setWhatsThis("WHAT TEH FUG")
+        print("INPUT:", self.mw.limit_buy_input.value())

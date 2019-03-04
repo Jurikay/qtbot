@@ -732,8 +732,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>981</width>
-                  <height>485</height>
+                  <width>98</width>
+                  <height>28</height>
                  </rect>
                 </property>
                </widget>
@@ -2915,6 +2915,9 @@
                   </property>
                   <property name="cursor">
                    <cursorShape>SizeVerCursor</cursorShape>
+                  </property>
+                  <property name="toolTip">
+                   <string>qt designer tt</string>
                   </property>
                   <property name="locale">
                    <locale language="C" country="AnyCountry"/>
@@ -5409,8 +5412,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>614</width>
-                 <height>482</height>
+                 <width>130</width>
+                 <height>443</height>
                 </rect>
                </property>
                <property name="sizePolicy">

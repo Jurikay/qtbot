@@ -216,12 +216,12 @@ class LimitOrderPane(QtWidgets.QWidget):
             if total > float(self.mw.user_data.holdings["BTC"]["free"]) or total < 0.001:
                 self.mw.limit_buy_button.setStyleSheet("border: 2px solid transparent; background: #70a800; color: #f3f3f3;")
                 self.mw.limit_buy_button.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
-                val["buyAllowed"] = False
+                # val["buyAllowed"] = False
 
             else:
                 self.mw.limit_buy_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
                 self.mw.limit_buy_button.setStyleSheet("border: 2px solid transparent;")
-                val["buyAllowed"] = True
+                # val["buyAllowed"] = True
 
         except ValueError as error:
             print(str(error))

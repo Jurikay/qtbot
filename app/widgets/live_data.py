@@ -20,7 +20,7 @@ class LiveData(QtWidgets.QWidget):
         self.history_progressed = False
         self.ob_progressed = False
 
-        # new
+        # new; setup QPixmap arrows once
         self.arrow_up = QtGui.QPixmap("images/assets/2arrow_up.png")
         self.arrow = QtGui.QPixmap("images/assets/2arrow.png")
         self.arrow_down = QtGui.QPixmap("images/assets/2arrow_down.png")
@@ -34,7 +34,6 @@ class LiveData(QtWidgets.QWidget):
 
     def new_last_price(self):
         history = self.mw.data.current.history
-        print("new last price", history)
         if float(history[0]["price"]) > float(history[1]["price"]):
             arrow = self.arrow_up
             color = Colors.color_green

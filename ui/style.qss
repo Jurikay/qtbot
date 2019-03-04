@@ -1,10 +1,14 @@
 
 QToolTip {
-    border: 1px solid #76797C;
-    background-color: #5A7566;
-    color: white;
-    padding: 0px;                /*remove padding, for fix combobox tooltip.*/
-    opacity: 200;
+    border: 1px solid white;
+    border-spacing: 15px;
+    background-color: rgb(28, 28, 28);
+    color: #f3f3f3;
+    padding: 6px;                /*remove padding, for fix combobox tooltip.*/
+    opacity: 150;
+    border-radius: 5px;
+    box-shadow: none;
+    box-sizing: border-box;
 }
 QWidget {
     background-color: #262d33;
@@ -23,12 +27,9 @@ QWidget {
     color: #f3f3f3;
 }
 
-
-
 #stats_grid QLineEdit, #stats_grid QLineEdit:hover {
   border: 2px solid transparent;
 }
-
 
 #tradeTable, #bids_table, #asks_table, #new_asks, #new_bids {
   background-color: #20262b;
@@ -95,8 +96,6 @@ QLabel {
   color: #999;
 }
 
-
-
 #limit_buy_total, #limit_sell_total, #limit_buy_label, #limit_sell_label, #limit_total_btc, #limit_total_coin {
   color: white;
 }
@@ -151,7 +150,6 @@ QHeaderView::section:checked {
     color: white;
     background-color: #334e5e;
 }
-
 
 /* style the sort indicator */
 
@@ -231,7 +229,6 @@ QPushButton#limit_sell_button::pressed {
     color: white;
     background-color: #ff52a3;
 }
-
 
 /* QComboBox {
      width: 90%;
@@ -332,7 +329,6 @@ QPushButton#limit_sell_button::pressed {
      background-color: red;
      background: blue;
 } */
-
 
  QComboBox::drop-down {
      font-size: 16px;
@@ -465,7 +461,6 @@ QScrollBar::sub-page:vertical {
     background: none;
 }
 
-
 QPushButton:checked {
     background-color: #76797C;
     border-color: #6A6969;
@@ -489,8 +484,6 @@ QPushButton:pressed {
     color: white;
 }
 
-
-
 QComboBox {
     selection-background-color: #f3ba2e;
     border-style: solid;
@@ -502,8 +495,6 @@ QComboBox {
     font-size: 14px;
     font-weight: normal;
 }
-
-
 
 QComboBox QAbstractItemView {
     background-color: #262d33;
@@ -519,7 +510,6 @@ QComboBox::drop-down {
     subcontrol-position: top right;
     width: 15px;
     border: 1px solid transparent;
-
 
     /* margin-bottom: 50px; */
 }
@@ -594,8 +584,6 @@ QAbstractSpinBox::down-arrow:hover {
     background-color: #1d2327;
 }
 
-
-
 /* #coin_index_filter QPushButton {
     height: 5px;
     margin-top: 5px;
@@ -618,8 +606,6 @@ QTableWidget QPushButton {
     background-color: transparent;
     min-height: 13px;
 }
-
-
 
 QCheckBox {
     spacing: 5px;
@@ -738,7 +724,6 @@ QGroupBox::indicator:unchecked:disabled {
     background-color: #ff007a;
 }
 
-
 #cancel_all::pressed {
     color: #ff007a;
     background-color: white;
@@ -829,4 +814,3 @@ QPushButton#disabled_btn {
     color: #D6D6D6;
     background-color: transparent;
 }
-
