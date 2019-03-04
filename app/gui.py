@@ -38,6 +38,8 @@ from app.api.websocket_manager import WebsocketManager
 from app.data.datamanager import DataManager
 from app.api.new_api_data import ApiManager
 
+from app.new_gui import GuiMgr
+
 import platform
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 # from app.data.index_data import IndexData
@@ -189,6 +191,10 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.gui_manager = GuiManager(self, self.threadpool)
         self.gui_manager.initialize()
+
+
+        # new gui
+        self.gui_mgr = GuiMgr(self)
 
     def initialize_tables(self):
         # self.coin_index.initialize()
