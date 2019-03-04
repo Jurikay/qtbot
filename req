@@ -1,2 +1,7 @@
 pip install pyqt5
 pip install PyQtWebEngine
+
+pyinstaller:
+make loadui path absolute
+copy C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs
+copy C:\Users\jurek\Desktop\bot import
