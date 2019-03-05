@@ -5,3 +5,15 @@ pyinstaller:
 make loadui path absolute
 copy C:\Program Files (x86)\Windows Kits\10\Redist\ucrt\DLLs
 copy C:\Users\jurek\Desktop\bot import
+
+venv:
+# install venv in env directory
+python -m venv env
+
+# activate venv
+source env/bin/activate   
+
+# to deactivate
+deactivate
+
+pip install --upgrade pip

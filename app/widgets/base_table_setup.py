@@ -390,8 +390,8 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
 
     def paint(self, painter, option, index):
         """Reimplemented custom paint method."""
-
-        # alignment = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+ 
+     # alignment = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
         align_left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
 
         painter.save()

@@ -1,0 +1,6 @@
+numpy==1.16.2
+pandas==0.24.1
+PyQt5==5.12
+PyQtWebEngine==5.12
+python-binance==0.7.1
+addict==2.2.0

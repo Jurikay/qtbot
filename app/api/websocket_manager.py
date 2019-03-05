@@ -98,7 +98,7 @@ class WebsocketManager:
         self.api_updates += 1
 
         # New Data
-        self.mw.data.set_trades(msg)
+        self.mw.data.set_hist(msg)
 
         worker = Worker(self.socket_history)
         worker.signals.progress.connect(self.mw.live_data.set_history_values)
@@ -240,7 +240,7 @@ class WebsocketManager:
             # print("key: " + str(key))
             # print("value: " + str(value))
             # print("ticker: " + str(ticker))
-
+            all_tickers = list()
             if "BTC" in value["s"]:
                 ticker_data = {'symbol': value["s"],
                                'priceChange': value["p"],
@@ -263,7 +263,7 @@ class WebsocketManager:
                                'firstId': value["F"],
                                'lastId': value["L"],
                                'count': value["n"]}
-
+                all_tickers.append(ticker_data)
                 # savely set ticker item values
                 for item, item_value in ticker_data.items():
                     if self.mw.tickers.get(value["s"], None):
@@ -272,6 +272,7 @@ class WebsocketManager:
                         self.mutex.unlock()
 
                 df_data[value["s"]] = ticker_data
+        self.mw.data.set_tickers(all_tickers)
 
         # New Data
         # needs more refactoring..

@@ -61,14 +61,14 @@ class GuiManager:
                 else:
                     icon = QtGui.QIcon("images/ico/BTC.svg")
 
-                self.mw.coin_selector.addItem(icon, coin[:-3])
+                # self.mw.coin_selector.addItem(icon, coin[:-3])
+        self.mw.coin_selector.setup()
+        # self.mw.coin_selector.model().sort(0)
+        # self.mw.coin_selector.setIconSize(QtCore.QSize(25, 25))
 
-        self.mw.coin_selector.model().sort(0)
-        self.mw.coin_selector.setIconSize(QtCore.QSize(25, 25))
+        # coinIndex = self.mw.coin_selector.findText(str(self.mw.cfg_manager.coin))
 
-        coinIndex = self.mw.coin_selector.findText(str(self.mw.cfg_manager.coin))
-
-        self.mw.coin_selector.setCurrentIndex(coinIndex)
+        # self.mw.coin_selector.setCurrentIndex(coinIndex)
 
 
     # Refactor

@@ -116,6 +116,9 @@ QHeaderView{
 
 }
 
+#trade_history_view QHeaderView::section {
+    background-color: #222
+}
 QHeaderView::section {
     background-color: #2e363d;
     /* color: #eff0f1; */

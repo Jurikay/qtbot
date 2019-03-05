@@ -34,7 +34,26 @@ class ApiManager:
         self.data.set_depth(self.getDepth(symbol))
         self.data.set_tickers(self.get_tickers())
         self.data.set_hist(self.getTradehistory(symbol))
+        
+        self.get_acc_info()
 
+    # Debug; Testing only, TODO: Replace
+    def get_acc_info(self):
+        print("GET ACC INFO")
+        info = self.client.get_account()
+        print("INFO#############")
+        print(info)
+        print()
+
+        balance = self.client.get_asset_balance(asset='BTC')
+        print("balance#############")
+        print(balance)
+        print()
+
+        details = self.client.get_asset_details()
+        print("details#############")
+        print(details)
+        print()
 
     def get_tickers(self):
         """Make an initial API call to get ticker data."""

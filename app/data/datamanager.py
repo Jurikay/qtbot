@@ -25,8 +25,12 @@ class DataManager():
     def set_depth(self, depth):
         """Receives current bids and asks of selected pair."""
         self.current["orderbook"] = Dict(depth)
+        self.depth_df("bids")
+        self.depth_df("asks")
+        
     
     def set_tickers(self, ticker):
+        print("set tickers")
         # Iterate over list of tickers
         for info in ticker:
             # Filter only BTC pairs; TODO: Evaluate other currency pairs too
@@ -56,7 +60,9 @@ class DataManager():
         # Api call: Receive complete list of history entries; Store reversed list
         elif isinstance(history, list):
             self.current["history"] = list(reversed(history))
-    
+        
+        self.history_df()
+
     def set_info(self, info, products):
     
         pair_info = Dict()
@@ -75,3 +81,48 @@ class DataManager():
 
         # Store 'static' info in self.pairs
         self.pairs = pair_info
+
+    # ############### DATAFRAMES ######################
+    def depth_df(self, side):
+        """(Re)creates two pandas dataframes: One for asks and one for bids."""
+        # print(self.current.orderbook[side])
+        # for side in sides:
+        df = pd.DataFrame(self.current.orderbook[side])
+        df.columns = ["Price", "Amount", "Total"]
+
+        # Convert to numerical values
+        df = df.apply(pd.to_numeric, errors='coerce')
+
+        # Calculate total
+        total = df.Price * df.Amount
+        df["Total"] = total
+        df['#'] = df.index + 1
+        df = df[["#", "Price", "Amount", "Total"]]
+
+        # Reverse asks
+        if side == "asks":
+            df = df.reindex(index=df.index[::-1])
+        
+        self.current.depth_df[side] = df
+        return df
+
+    def history_df(self):
+        df = pd.DataFrame(self.current["history"])
+        df.columns = ["maker", "price", "quantity", "time"]
+        df = df[["price", "quantity", "time"]]
+        # df = df.rename(columns={"price": "Price", "quantity": "Quantity", "time": "Time"})
+        df = df.apply(pd.to_numeric, errors="coerce")
+        self.current.history_df = df
+        return df
+    
+    def ticker_df(self):
+        print("Creating ticker df")
+        df = pd.DataFrame(self.tickers)
+        # df = df[["price", "quantity", "time"]]
+        df = df.transpose()
+        df = df[["symbol", "bidPrice", "priceChangePercent", "quoteVolume"]]
+        # print(df)
+        df = df.apply(pd.to_numeric, errors="ignore")
+        df = df.rename(columns={"symbol": "Pair", "bidPrice": "Price", "priceChangePercent": "Chnage", "quoteVolume": "Volume"})
+        self.current.ticker_df = df
+        return df
