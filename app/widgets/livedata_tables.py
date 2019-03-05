@@ -37,15 +37,58 @@ class BackgroundTable(QtWidgets.QTableView):
         self.has_data = False
         self.compare_col = 3
         self.get_color = False
-        self.rowH = None
+        self.rowH = 18
+
+
+    # def paintEfent(self, event):
+    #     if self.has_data is True:
+    #         print(dir(self))
+    #         # row_count = self.my_model.rowCount()
+    #         total_width = self.horizontalHeader().width()
+    #         painter = QtGui.QPainter(self.viewport())
+
+    #         value = self.df.iloc[row, self.compare_col]
+
+    #         percentage = value / self.max_order
+
+    #         my_rect = QtCore.QRect(0, rowY, (percentage * total_width), self.rowH)
+
+    #         painter.save()
+    #         painter.setBrush(QtGui.QColor(self.bg_color))
+    #         painter.setPen(QtGui.QColor("#20262b"))
+
+    #         painter.drawRect(my_rect)
+    #         painter.restore()
+    #         super(BackgroundTable, self).paintEvent(event)
+
 
     def paintEvent(self, event):
-  
-        if self.has_data is True:
-            row_count = self.my_model.rowCount()
+        if self.df is not None and isinstance(self.df, pd.DataFrame) and not self.df.empty:
+            # print("paintEV:", dir(self))
+            # print(self.SelectRows)
+
+            # Shortcuts to vertical and horizontal headers
+            vh = self.verticalHeader()
+    
+            # Get the first and last rows that are visible in the view and if the 
+            # last visiable row returns -1 set it to the row count
+            firstVisualRow = max([vh.visualIndexAt(0), 0])
+            lastVisualRow = vh.visualIndexAt(vh.viewport().height())
+            if lastVisualRow == -1:
+                lastVisualRow = self.model().rowCount(self.rootIndex()) - 1
+            # print("first/last:", firstVisualRow, lastVisualRow)
+
+            # for vrow in range(firstVisualRow, lastVisualRow + 1):
+            #     row = vh.logicalIndex(vrow)
+            #     FirstRow = (vrow == 0)
+            #     if vh.isSectionHidden(row):
+            #         continue
+
             total_width = self.horizontalHeader().width()
             painter = QtGui.QPainter(self.viewport())
-            for row in range(row_count):
+            # print(dir(event.region().RegionType))
+            # print(event.rect())
+            for row in range(firstVisualRow, lastVisualRow + 1):
 
                 # get row color:
                 if self.get_color is True:
@@ -56,19 +99,25 @@ class BackgroundTable(QtWidgets.QTableView):
 
                 rowY = self.rowViewportPosition(row)
                 # rowH = self.rowHeight(row)
-                if not self.rowH:
-                    self.rowH = self.rowHeight(row)
+                # if not self.rowH:
+                #     self.rowH = self.rowHeight(row)
                 # print(row, rowY, rowH)
 
                 # Create the painter
                 value = self.df.iloc[row, self.compare_col]
-                percentage = value / self.max_order
+
+                if self.data:
+                    maxval = self.df["Total"].max()
+                else:
+                    maxval = self.df["quantity"].max()
+
+                percentage = value / maxval
 
                 my_rect = QtCore.QRect(0, rowY, (percentage * total_width), self.rowH)
 
                 painter.save()
                 painter.setBrush(QtGui.QColor(self.bg_color))
-                painter.setPen(QtGui.QColor("#20262b"))
+                painter.setPen(QtGui.QColor("transparent"))
 
                 painter.drawRect(my_rect)
                 painter.restore()
@@ -101,47 +150,47 @@ class BackgroundTable(QtWidgets.QTableView):
         self.my_model.modelReset.emit()
 
         self.mw.live_data.set_spread()
-
+        # self.drawBg()
 
     # def set_df(self):
     #     return self.create_dataframe(self.data)
 
-    def create_dataframe(self, side):
-        if side == "asks":
-            df = pd.DataFrame(self.mw.orderbook["asks"])
-        elif side == "bids":
-            df = pd.DataFrame(self.mw.orderbook["bids"])
+    # def create_dataframe(self, side):
+    #     if side == "asks":
+    #         df = pd.DataFrame(self.mw.orderbook["asks"])
+    #     elif side == "bids":
+    #         df = pd.DataFrame(self.mw.orderbook["bids"])
 
 
-        df.columns = ["Price", "Amount", "Total"]
-        cols = df.columns
-        df[cols] = df[cols].apply(pd.to_numeric, errors='coerce')
-        total = df.Price * df.Amount
-        df["Total"] = total
-        df['#'] = df.index + 1
-        df = df[["#", "Price", "Amount", "Total"]]
+        # df.columns = ["Price", "Amount", "Total"]
+        # cols = df.columns
+        # df[cols] = df[cols].apply(pd.to_numeric, errors='coerce')
+        # total = df.Price * df.Amount
+        # df["Total"] = total
+        # df['#'] = df.index + 1
+        # df = df[["#", "Price", "Amount", "Total"]]
 
-        # reverse asks
-        if side == "asks":
-            df = df.reindex(index=df.index[::-1])
+        # # reverse asks
+        # if side == "asks":
+        #     df = df.reindex(index=df.index[::-1])
 
-        maxval = df["Total"].max()
-        self.max_order = maxval
-        self.has_data = True
-        # print("return df", df["Total"])
-        return df
+        # maxval = df["Total"].max()
+        # self.max_order = maxval
+        # self.has_data = True
+        # # print("return df", df["Total"])
+        # return df
 
-    def create_history_df(self):
-        df = pd.DataFrame(self.mw.trade_history)
+    # def create_history_df(self):
+    #     df = pd.DataFrame(self.mw.trade_history)
 
-        df.columns = ["maker", "price", "quantity", "time"]
-        df = df.apply(pd.to_numeric, errors="ignore")
-        df = df[["price", "quantity", "time"]]
+    #     df.columns = ["maker", "price", "quantity", "time"]
+    #     df = df.apply(pd.to_numeric, errors="ignore")
+    #     df = df[["price", "quantity", "time"]]
 
-        maxval = df["quantity"].max()
-        self.max_order = maxval
-        self.has_data = True
-        return df
+    #     maxval = df["quantity"].max()
+    #     self.max_order = maxval
+    #     self.has_data = True
+    #     return df
 
 
     def set_widths(self):
@@ -181,69 +230,69 @@ class BackgroundTable(QtWidgets.QTableView):
         app.main_app.restoreOverrideCursor()
 
 
-class AsksDelegate(QtWidgets.QStyledItemDelegate):
-    """Class to define the style of index values."""
+# class AsksDelegate(QtWidgets.QStyledItemDelegate):
+#     """Class to define the style of index values."""
 
-    def __init__(self, parent):
-        super(AsksDelegate, self).__init__(parent)
-        self.parent = parent
-        self.mw = app.mw
+#     def __init__(self, parent):
+#         super(AsksDelegate, self).__init__(parent)
+#         self.parent = parent
+#         self.mw = app.mw
 
-        self.center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        self.left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-        self.right = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+#         self.center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+#         self.left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+#         self.right = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
-    def initStyleOption(self, option, index):
-        """Set style options based on index column."""
-        if index.column() == 0:
-            option.text = str(index.data()).zfill(2)
+#     def initStyleOption(self, option, index):
+#         """Set style options based on index column."""
+#         if index.column() == 0:
+#             option.text = str(index.data()).zfill(2)
 
-        elif index.column() == 1:
-            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
+#         elif index.column() == 1:
+#             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
 
-        elif index.column() == 2:
-            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
+#         elif index.column() == 2:
+#             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
 
-        elif index.column() == 3:
-            option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=3) + " BTC"
+#         elif index.column() == 3:
+#             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=3) + " BTC"
 
-        # else:
-        #     super(AsksDelegate, self).initStyleOption(option, index)
-
-
-    def paint(self, painter, option, index):
-        """Reimplemented custom paint method."""
-        painter.save()
-        options = QtWidgets.QStyleOptionViewItem(option)
-        self.initStyleOption(options, index)
-        font = QtGui.QFont()
+#         # else:
+#         #     super(AsksDelegate, self).initStyleOption(option, index)
 
 
-        if index.column() == 0:
-            painter.setPen(QtGui.QColor("#ffffff"))
-            alignment = self.left
-            # painter.drawText(option.rect, self.center, options.text)
+#     def paint(self, painter, option, index):
+#         """Reimplemented custom paint method."""
+#         painter.save()
+#         options = QtWidgets.QStyleOptionViewItem(option)
+#         self.initStyleOption(options, index)
+#         font = QtGui.QFont()
 
-        elif index.column() == 1:
-            alignment = self.center
-            if option.state & QtWidgets.QStyle.State_MouseOver:
-                    painter.setPen(QtGui.QColor(self.parent.highlight))
-                    font.setBold(True)
-            else:
-                painter.setPen(QtGui.QColor(self.parent.color))
 
-        elif index.column() == 2:
-            painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-            alignment = self.right
+#         if index.column() == 0:
+#             painter.setPen(QtGui.QColor("#ffffff"))
+#             alignment = self.left
+#             # painter.drawText(option.rect, self.center, options.text)
 
-        else:
-            painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-            alignment = self.center
+#         elif index.column() == 1:
+#             alignment = self.center
+#             if option.state & QtWidgets.QStyle.State_MouseOver:
+#                     painter.setPen(QtGui.QColor(self.parent.highlight))
+#                     font.setBold(True)
+#             else:
+#                 painter.setPen(QtGui.QColor(self.parent.color))
 
-        painter.setFont(font)
-        painter.drawText(option.rect, alignment, options.text)
+#         elif index.column() == 2:
+#             painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+#             alignment = self.right
 
-        painter.restore()
+#         else:
+#             painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+#             alignment = self.center
+
+#         painter.setFont(font)
+#         painter.drawText(option.rect, alignment, options.text)
+
+#         painter.restore()
 
 
 class HistPriceDelegate(BasicDelegate):
@@ -319,7 +368,11 @@ class AsksView(BackgroundTable):
     #     return max_val
 
     def set_df(self):
-        return self.create_dataframe(self.data)
+
+        # print("SET DF", self.mw.data.current.history_df[self.data])
+        # if self.mw.data.current.history_df:
+        #     return self.mw.data.current.history_df[self.data]
+        return self.mw.data.current.depth_df[self.data]
 
 
 class BidsView(BackgroundTable):
@@ -336,7 +389,10 @@ class BidsView(BackgroundTable):
         self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, " BTC"))
 
     def set_df(self):
-        return self.create_dataframe(self.data)
+        # return self.create_dataframe(self.data)
+        # return self.mw.data.current.history_df[self.data]
+        return self.mw.data.current.depth_df[self.data]
+
 
 
 class HistView(BackgroundTable):
@@ -347,6 +403,7 @@ class HistView(BackgroundTable):
         self.highlight = "#aaff00"
         self.has_data = False
         self.compare_col = 1
+        self.data = None
         # self.setItemDelegate(HistoryDelegate(self))
         self.get_color = True
         self.setItemDelegateForColumn(0, HistPriceDelegate(self))
@@ -354,7 +411,8 @@ class HistView(BackgroundTable):
         self.setItemDelegateForColumn(2, TimeDelegate(self, Colors.color_grey))
 
     def set_df(self):
-        return self.create_history_df()
+        # 
+        return self.mw.data.current.history_df
 
 
     def set_widths(self):

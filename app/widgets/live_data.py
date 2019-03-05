@@ -26,10 +26,10 @@ class LiveData(QtWidgets.QWidget):
         self.arrow_down = QtGui.QPixmap("images/assets/2arrow_down.png")
 
     def set_history_values(self):
-        self.set_last_price()
-        self.mw.tradeTable.update()
-
-        self.new_last_price()
+        # self.set_last_price()
+        # self.mw.tradeTable.update()
+        pass
+        
 
 
     def new_last_price(self):
