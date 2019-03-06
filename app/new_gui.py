@@ -5,6 +5,7 @@
 import PyQt5.QtCore as QtCore
 from PyQt5.QtCore import pyqtSlot
 import numpy as np
+import pandas as pd
 
 class GuiMgr:
 
@@ -28,9 +29,10 @@ class GuiMgr:
         self.timer_count += 1
         df1 = self.mw.tradeTable.df
         df2 = self.mw.data.current.history_df
-        if not np.allclose(df1,df2):
-            self.mw.tradeTable.update()
-            self.mw.live_data.new_last_price()
+        if isinstance(df1, pd.DataFrame) and isinstance(df2, pd.DataFrame):
+            if not np.allclose(df1,df2): 
+                self.mw.tradeTable.update()
+                self.mw.live_data.new_last_price()
         
         if self.timer_count >= 4:
             ticker_df = self.mw.data.ticker_df()
