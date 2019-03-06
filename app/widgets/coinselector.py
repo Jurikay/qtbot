@@ -18,21 +18,48 @@ class CoinSelector(QtWidgets.QComboBox):
 
         self.mw = app.mw
         self.model = None
-        # self.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
-        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
-    
-    # def mousePressEvent(self, event):
-    #     print("MOUSE!", event)
-        # self.mousePressed.emit(event)
+        self.completer = None
+        self.activated.connect(self.select_coin)
+
+    def select_coin(self, kw):
+        print("SC KW", kw)
+        
+
     def update(self):
+        # print("TDF", self.mw.data.current.ticker_df)
         self.model.update(self.mw.data.current.ticker_df)
+        # self.completer.setModel(self.model)
+        # self.setCompleter(self.completer)
 
     def setup(self):
         self.model = SelectorModel()
         self.setModel(self.model)
         self.setView(SelectorView())
+
+        self.completer = MyCompleter()
+        self.completer.setModel(self.model)
+        self.completer.setCompletionColumn(0)
+        # self.completer.setCompletionRole(QtCore.Qt.EditRole)
+        self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        self.completer.setCompletionMode(1)
+        
+        self.completer.setModelSorting(0)
+        self.completer.setFilterMode(QtCore.Qt.MatchStartsWith)
+        self.completer.popup().setItemDelegate(PairDelegate(self))
+        # self.completer.popup().
+        self.setCompleter(self.completer)
+        
+
+
         self.model.update(self.mw.data.current.ticker_df)
         # self.view().window.setFixedWidth(1000)
+
+class MyCompleter(QtWidgets.QCompleter):
+    def __init__(self, parent=None):
+        super(MyCompleter, self).__init__(parent)
+        # self.delegate = PairDelegate(self)
+        # self.popup().setItemDelegate(self.delegate)
+
 
 class SelectorModel(SortFilterModel):
     def __init__(self, *args, **kwargs):
@@ -75,8 +102,8 @@ class SelectorView(BaseTableView):
         self.setItemDelegateForColumn(2, ChangePercentDelegate(self))
         self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 2, " BTC"))
         
-        self.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
-        # self.setSelectionBehavior(QtWidgets.QAbstractItemView.NoSelection)
+        # self.setSelectionMode(QtWidgets.QAbstractItemView.SelectRows)
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.setAlternatingRowColors(True)
         self.setSortingEnabled(True)
         self.setMouseTracking(True)
@@ -89,6 +116,7 @@ class SelectorView(BaseTableView):
         # print(self.parent)
         self.setMinimumWidth(500)
         self.set_widths()
+        # self.setMaximumHeight(400)
 
     def set_widths(self):
         self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)

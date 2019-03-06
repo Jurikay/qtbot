@@ -140,16 +140,16 @@ class BackgroundTable(QtWidgets.QTableView):
 
     def update(self, payload=None):
         # print("asks update")
-        self.my_model.modelAboutToBeReset.emit()
-
+        # self.my_model.modelAboutToBeReset.emit()
+        self.my_model.layoutAboutToBeChanged.emit()
 
         self.df = self.set_df()
 
         self.my_model.update(self.df)
 
         self.my_model.modelReset.emit()
-
-        self.mw.live_data.set_spread()
+        self.my_model.layoutChanged.emit()
+        
         # self.drawBg()
 
     # def set_df(self):

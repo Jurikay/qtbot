@@ -169,7 +169,7 @@ class beeserBot(QtWidgets.QMainWindow):
         if self.is_connected is True:
             self.initialize_data()
             self.instantiate_api_managers()
-            self.coin_selector.activated.connect(self.gui_manager.change_pair)
+            # self.coin_selector.activated.connect(self.gui_manager.change_pair)
             self.initialize_tables()
 
         else:
@@ -195,6 +195,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # new gui
         self.gui_mgr = GuiMgr(self)
+        self.gui_mgr.set_api_dependant()
 
     def initialize_tables(self):
         # self.coin_index.initialize()
@@ -261,6 +262,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # start periodic historical data loop # TODO FIX; REENABLE
         # self.historical.get_kline_values()
+        self.gui_mgr.set_api_dependant()
 
         self.timer.stop()
         logging.info('Finishing setup...')

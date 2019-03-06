@@ -27,9 +27,13 @@ class LiveData(QtWidgets.QWidget):
 
     def set_history_values(self):
         # self.set_last_price()
+        self.new_last_price()
+        self.set_spread()
         # self.mw.tradeTable.update()
-        pass
+        # pass
         
+    # def set_trade_values(self):
+
 
 
     def new_last_price(self):
@@ -80,7 +84,7 @@ class LiveData(QtWidgets.QWidget):
     def set_spread(self):
         """Calclulate and set the percentual difference between the best bid and ask."""
         if self.mw.orderbook:
-            spread = ((float(self.mw.orderbook["asks"][0][0]) / float(self.mw.orderbook["bids"][0][0])) - 1) * 100
+            spread = ((float(self.mw.data.current.orderbook["asks"][0][0]) / float(self.mw.data.current.orderbook["bids"][0][0])) - 1) * 100
             spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
             self.mw.spread_label.setText("<span style='font-size: 18px; font-family: Arial Black; color:" + Colors.color_lightgrey + "'>" + spread_formatted + "</span>")
 

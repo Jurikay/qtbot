@@ -21,6 +21,7 @@ class DataManager():
 
         # Hardcoded default
         self.current.symbol = "ETHBTC"
+        self.current.tickers = dict()
 
     def set_depth(self, depth):
         """Receives current bids and asks of selected pair."""
@@ -125,4 +126,5 @@ class DataManager():
         df = df.apply(pd.to_numeric, errors="ignore")
         df = df.rename(columns={"symbol": "Pair", "bidPrice": "Price", "priceChangePercent": "Chnage", "quoteVolume": "Volume"})
         self.current.ticker_df = df
+        # print(df)
         return df

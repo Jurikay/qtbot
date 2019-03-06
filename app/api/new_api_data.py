@@ -41,9 +41,7 @@ class ApiManager:
     def get_acc_info(self):
         print("GET ACC INFO")
         info = self.client.get_account()
-        print("INFO#############")
-        print(info)
-        print()
+
 
         balance = self.client.get_asset_balance(asset='BTC')
         print("balance#############")

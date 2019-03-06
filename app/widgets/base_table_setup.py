@@ -55,10 +55,13 @@ class BaseTableView(QtWidgets.QTableView):
     def update(self):
         # print("BASE TABLE UPDATE")
         # self.my_model.modelAboutToBeReset.emit()
+        self.my_model.layoutAboutToBeChanged.emit()
         # set_df has to be extended
         self.df = self.set_df()
         self.my_model.update(self.df)
         # self.my_model.modelReset.emit()
+        # print("3emit layout changed")
+        self.my_model.layoutChanged.emit()
 
     def set_default_widths(self):
         self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
@@ -107,9 +110,11 @@ class BaseTableModel(QtCore.QAbstractTableModel):
 
 
     def update(self, dataIn):
-        self.modelAboutToBeReset.emit()
+        # self.modelAboutToBeReset.emit()
+        self.layoutAboutToBeChanged.emit()
         self.datatable = dataIn
-        self.modelReset.emit()
+        # self.modelReset.emit()
+        self.layoutChanged.emit()
 
 
     def rowCount(self, parent=QtCore.QModelIndex()):
@@ -195,8 +200,8 @@ class SortFilterModel(BaseTableModel):
         """Sort table by given column number.
         """
         if isinstance(self.datatable, pd.DataFrame):
-            self.modelAboutToBeReset.emit()
-
+            # self.modelAboutToBeReset.emit()
+            self.layoutAboutToBeChanged.emit()
             if len(self.datatable) > 0:
                 self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
 
@@ -204,12 +209,14 @@ class SortFilterModel(BaseTableModel):
             self.order_col = Ncol
             self.order_dir = order
 
-            self.modelReset.emit()
+            # self.modelReset.emit()
+            self.layoutChanged.emit()
 
             if self.searchText:
                 self.setFilter(searchText=self.searchText)
 
     def update(self, dataIn):
+        # print("SortFilter update", self.datatable)
         self.datatable = dataIn
         self.sort(self.order_col, self.order_dir)
 

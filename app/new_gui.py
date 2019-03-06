@@ -16,6 +16,8 @@ class GuiMgr:
         self.set_timer()
         self.timer_count = 0
 
+        self.mw.coin_selector.update()
+
 
     def set_timer(self):
         self.timer= QtCore.QTimer(self.mw)
@@ -30,10 +32,10 @@ class GuiMgr:
         df2 = self.mw.data.current.history_df
         if not np.allclose(df1,df2):
             self.mw.tradeTable.update()
-            self.mw.live_data.new_last_price()
+            # self.mw.live_data.new_last_price()
         
         if self.timer_count >= 4:
-            ticker_df = self.mw.data.ticker_df()
+            self.mw.data.ticker_df()
             self.mw.coin_selector.update()
             self.timer_count = 0
             # if df1 != df2:
@@ -43,9 +45,14 @@ class GuiMgr:
         # except Exception as e:
         #     print("ERROR:", e)
 
+
     # ######## Setup ##########
     def set_tooltips(self):
         print("Setting tooltips")
         # self.mw.limit_buy_input.setStatusTip("BUY TOOLTIP")
         # self.mw.limit_buy_input.setWhatsThis("WHAT TEH FUG")
         print("INPUT:", self.mw.limit_buy_input.value())
+    
+    def set_api_dependant(self):
+        print("Setting api dependant gui values")
+        self.mw.coin_selector.update()

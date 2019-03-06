@@ -233,15 +233,17 @@ class WebsocketManager:
     def ticker_callback(self, msg):
         self.api_updates += 1
         df_data = dict()
-
+        all_tickers = list()
+        ticker_dict = dict()
         
         for value in msg:
             # ticker[key] = value
             # print("key: " + str(key))
             # print("value: " + str(value))
             # print("ticker: " + str(ticker))
-            all_tickers = list()
-            if "BTC" in value["s"]:
+            
+            if value["s"][-3:] == "BTC":
+                # print ("value", value)
                 ticker_data = {'symbol': value["s"],
                                'priceChange': value["p"],
                                'priceChangePercent': float(value["P"]),
@@ -263,16 +265,22 @@ class WebsocketManager:
                                'firstId': value["F"],
                                'lastId': value["L"],
                                'count': value["n"]}
-                all_tickers.append(ticker_data)
-                # savely set ticker item values
-                for item, item_value in ticker_data.items():
-                    if self.mw.tickers.get(value["s"], None):
-                        self.mutex.lock()
-                        self.mw.tickers[value["s"]][item] = item_value
-                        self.mutex.unlock()
 
-                df_data[value["s"]] = ticker_data
-        self.mw.data.set_tickers(all_tickers)
+                all_tickers.append(ticker_data)
+                # ticker_dict[value["s"]] = ticker_data
+                # print("APPEND", ticker_data)
+                # savely set ticker item values
+                # for item, item_value in ticker_data.items():
+                #     if self.mw.tickers.get(value["s"], None):
+                #         self.mutex.lock()
+                #         self.mw.tickers[value["s"]][item] = item_value
+                #         self.mutex.unlock()
+
+                # df_data[value["s"]] = ticker_data
+        # print("ALL TICKERS", all_tickers)
+        # print("TICKER DICT", ticker_dict)
+        if len(all_tickers) > 0:
+            self.mw.data.set_tickers(all_tickers)
 
         # New Data
         # needs more refactoring..
