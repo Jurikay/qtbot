@@ -30,10 +30,12 @@ class CoinSelector(QtWidgets.QComboBox):
         pair = self.model.index(cindex, 0).data()
         print(pair)
         # self.setCurrentText(pair)
-        # self.setCurrentIndex(4)
+        # self.setCurrentIndex(cindex)
         # self.update()
-        # self.setEditText(pair)
+        self.setEditText(pair)
         print("INDEX:", self.currentIndex())
+        findres = self.findText("BNBBTC")
+        print("FIND", findres)
 
     def update(self):
         # print("TDF", self.mw.data.current.ticker_df)
@@ -44,7 +46,7 @@ class CoinSelector(QtWidgets.QComboBox):
     def setup(self):
         self.model = SelectorModel()
         self.setModel(self.model)
-        self.setModelColumn(0)
+        
 
 
         self.view = SelectorView()
@@ -65,6 +67,7 @@ class CoinSelector(QtWidgets.QComboBox):
 
 
         self.model.update(self.mw.data.current.ticker_df)
+        self.setModelColumn(0)
         # self.view().window.setFixedWidth(1000)
 
 class MyCompleter(QtWidgets.QCompleter):
