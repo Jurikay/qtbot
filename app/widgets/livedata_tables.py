@@ -196,15 +196,18 @@ class BackgroundTable(QtWidgets.QTableView):
     def set_widths(self):
         self.horizontalHeader().setDefaultSectionSize(100)
 
-        self.setColumnWidth(0, 25)
+        self.setColumnWidth(0, 24)
+        self.setColumnWidth(2, 56)
 
         self.horizontalHeader().setSortIndicatorShown(False)
         self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self.verticalHeader().setDefaultSectionSize(16)
         self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
-        for i in range(1, 4):
-            self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
+        # for i in range(1, 4):
+        #     self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
+        self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        self.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
 
     def cell_clicked(self, index):
         """When Orderbook is clicked, copy price or quantity on click."""
@@ -434,11 +437,11 @@ class HistView(BackgroundTable):
             col = index.column()
             # copy price
             if col == 0:
-                self.mw.limit_buy_input.setValue(float(self.mw.trade_history[row][0]))
-                self.mw.limit_sell_input.setValue(float(self.mw.trade_history[row][0]))
+                self.mw.limit_buy_input.setValue(float(self.mw.data.current.history[row]["price"]))
+                self.mw.limit_sell_input.setValue(float(self.mw.data.current.history[row]["price"]))
             # copy quantity
             elif col == 1:
-                self.mw.limit_buy_amount.setValue(float(self.mw.trade_history[row][1]))
-                self.mw.limit_sell_amount.setValue(float(self.mw.trade_history[row][1]))
+                self.mw.limit_buy_amount.setValue(float(self.mw.data.current.history[row]["quantity"]))
+                self.mw.limit_sell_amount.setValue(float(self.mw.data.current.history[row]["quantity"]))
         except IndexError as e:
             print("CELL CLICK ERROR: " + str(e))

@@ -31,7 +31,6 @@ class DataManager():
         
     
     def set_tickers(self, ticker):
-        print("set tickers")
         # Iterate over list of tickers
         for info in ticker:
             # Filter only BTC pairs; TODO: Evaluate other currency pairs too
@@ -117,7 +116,6 @@ class DataManager():
         return df
     
     def ticker_df(self):
-        print("Creating ticker df")
         df = pd.DataFrame(self.tickers)
         # df = df[["price", "quantity", "time"]]
         df = df.transpose()

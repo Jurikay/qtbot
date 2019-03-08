@@ -732,8 +732,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>969</width>
-                  <height>521</height>
+                  <width>981</width>
+                  <height>485</height>
                  </rect>
                 </property>
                </widget>
@@ -2439,6 +2439,9 @@
                    <property name="focusPolicy">
                     <enum>Qt::NoFocus</enum>
                    </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Plain</enum>
+                   </property>
                    <property name="verticalScrollBarPolicy">
                     <enum>Qt::ScrollBarAlwaysOff</enum>
                    </property>
@@ -2455,6 +2458,12 @@
                     <enum>QAbstractItemView::NoSelection</enum>
                    </property>
                    <property name="showGrid">
+                    <bool>false</bool>
+                   </property>
+                   <property name="gridStyle">
+                    <enum>Qt::NoPen</enum>
+                   </property>
+                   <property name="wordWrap">
                     <bool>false</bool>
                    </property>
                    <property name="cornerButtonEnabled">
@@ -2507,17 +2516,23 @@
                        <pointsize>15</pointsize>
                       </font>
                      </property>
+                     <property name="focusPolicy">
+                      <enum>Qt::ClickFocus</enum>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true"/>
                      </property>
                      <property name="editable">
                       <bool>true</bool>
                      </property>
+                     <property name="currentIndex">
+                      <number>-1</number>
+                     </property>
                      <property name="maxVisibleItems">
                       <number>10</number>
                      </property>
                      <property name="insertPolicy">
-                      <enum>QComboBox::NoInsert</enum>
+                      <enum>QComboBox::InsertAlphabetically</enum>
                      </property>
                      <property name="sizeAdjustPolicy">
                       <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
@@ -2575,7 +2590,10 @@
                       <enum>Qt::NoPen</enum>
                      </property>
                      <property name="sortingEnabled">
-                      <bool>true</bool>
+                      <bool>false</bool>
+                     </property>
+                     <property name="wordWrap">
+                      <bool>false</bool>
                      </property>
                      <property name="cornerButtonEnabled">
                       <bool>false</bool>
@@ -5416,7 +5434,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>614</width>
-                 <height>479</height>
+                 <height>482</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -5766,7 +5784,7 @@
      <x>0</x>
      <y>0</y>
      <width>1686</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

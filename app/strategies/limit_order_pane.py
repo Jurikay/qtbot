@@ -15,6 +15,8 @@ class LimitOrderPane(QtWidgets.QWidget):
         super(LimitOrderPane, self).__init__()
         self.mw = app.mw
         # self.initialize()
+        self.buy_allowed = False
+        self.sell_allowed = False
 
     def set_holding_values(self):
         """Update values based on updated holdings."""
@@ -166,9 +168,9 @@ class LimitOrderPane(QtWidgets.QWidget):
         try:
             print("NAME:", str(self.mw.sender))
             if self.mw.sender().text() == "outbid":
-                self.mw.limit_buy_input.setValue(float(val["bids"][0][0]) + float(self.mw.tickers[self.mw.cfg_manager.pair]["tickSize"]))
+                self.mw.limit_buy_input.setValue(float(self.mw.data.current.orderbook["bids"][0][0]) + float(self.mw.tickers[self.mw.cfg_manager.pair]["tickSize"]))
             elif self.mw.sender().text() == "undercut":
-                self.mw.limit_sell_input.setValue(float(val["asks"][0][0]) - float(self.mw.tickers[self.mw.cfg_manager.pair]["tickSize"]))
+                self.mw.limit_sell_input.setValue(float(self.mw.data.current.orderbook["asks"][0][0]) - float(self.mw.tickers[self.mw.cfg_manager.pair]["tickSize"]))
             elif self.mw.sender().text() == "daily low":
                 self.mw.limit_buy_input.setValue(float(self.mw.tickers[self.mw.cfg_manager.pair]["lowPrice"]))
             elif self.mw.sender().text() == "daily high":
@@ -190,11 +192,12 @@ class LimitOrderPane(QtWidgets.QWidget):
             if sell_amount > free_amount or sell_amount * sell_price < 0.001:
                 self.mw.limit_sell_button.setStyleSheet("border: 2px solid transparent; background: #ff077a; color: #f3f3f3;")
                 self.mw.limit_sell_button.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
-                val["sellAllowed"] = False
+                # TODO: Reimplement order allowed check
+                # self.sell_allowed = False
             else:
                 self.mw.limit_sell_button.setStyleSheet("border: 2px solid transparent;")
                 self.mw.limit_sell_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-                val["sellAllowed"] = True
+                # self.sell_allowed = True
 
         except ValueError:
             print("val error")
@@ -216,12 +219,12 @@ class LimitOrderPane(QtWidgets.QWidget):
             if total > float(self.mw.user_data.holdings["BTC"]["free"]) or total < 0.001:
                 self.mw.limit_buy_button.setStyleSheet("border: 2px solid transparent; background: #70a800; color: #f3f3f3;")
                 self.mw.limit_buy_button.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
-                # val["buyAllowed"] = False
+                self.buy_allowed = False
 
             else:
                 self.mw.limit_buy_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
                 self.mw.limit_buy_button.setStyleSheet("border: 2px solid transparent;")
-                # val["buyAllowed"] = True
+                self.buy_allowed = True
 
         except ValueError as error:
             print(str(error))
@@ -231,27 +234,24 @@ class LimitOrderPane(QtWidgets.QWidget):
 
     def cell_was_clicked(self, row, column):
         try:
-
-
             self.mw.limit_buy_input.setValue(float(self.mw.trade_history[row]["price"]))
             self.mw.limit_sell_input.setValue(float(self.mw.trade_history[row]["price"]))
-
         except IndexError as e:
             print(str(e))
 
 
-    def bids_cell_clicked(self, row, column):
-        self.mw.limit_buy_input.setValue(float(val["bids"][row][0]))
-        self.mw.limit_sell_input.setValue(float(val["bids"][row][0]))
+    # def bids_cell_clicked(self, row, column):
+    #     self.mw.limit_buy_input.setValue(float(val["bids"][row][0]))
+    #     self.mw.limit_sell_input.setValue(float(val["bids"][row][0]))
 
 
-    def asks_cell_clicked(self, row, column):
-        self.mw.limit_buy_input.setValue(float(val["asks"][19 - row][0]))
-        self.mw.limit_sell_input.setValue(float(val["asks"][19 - row][0]))
+    # def asks_cell_clicked(self, row, column):
+    #     self.mw.limit_buy_input.setValue(float(val["asks"][19 - row][0]))
+    #     self.mw.limit_sell_input.setValue(float(val["asks"][19 - row][0]))
 
 
     def create_buy_order(self):
-        if val["buyAllowed"] is True:
+        if self.buy_allowed is True:
             pair = self.mw.cfg_manager.pair
             price = '{number:.{digits}f}'.format(number=self.mw.limit_buy_input.value(), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
 
@@ -265,7 +265,7 @@ class LimitOrderPane(QtWidgets.QWidget):
 
 
     def create_sell_order(self):
-        if val["sellAllowed"] is True:
+        if self.sell_allowed is True:
             pair = self.mw.cfg_manager.pair
             price = '{number:.{digits}f}'.format(number=self.mw.limit_sell_input.value(), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
 
@@ -281,19 +281,19 @@ class LimitOrderPane(QtWidgets.QWidget):
 
     # do stuff once api data has arrived
 
-    def t_complete(self):
-        # print("We don now")
-        self.mw.limit_buy_input.setValue(float(val["bids"][0][0]))
-        self.mw.limit_sell_input.setValue(float(val["asks"][0][0]))
-        value = self.percentage_amount(self.mw.user_data.holdings["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
-        self.mw.limit_buy_amount.setValue(value)
+    # def t_complete(self):
+    #     # print("We don now")
+    #     self.mw.limit_buy_input.setValue(float(val["bids"][0][0]))
+    #     self.mw.limit_sell_input.setValue(float(val["asks"][0][0]))
+    #     value = self.percentage_amount(self.mw.user_data.holdings["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.buy_slider_label.text().strip("%")), self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
+    #     self.mw.limit_buy_amount.setValue(value)
 
-        # print(self.mw.user_data.holdings[val["coin"]]["free"])
-        sell_percent = str(self.mw.limit_sell_slider.value())
+    #     # print(self.mw.user_data.holdings[val["coin"]]["free"])
+    #     sell_percent = str(self.mw.limit_sell_slider.value())
 
-        sell_size = self.mw.limit_pane.round_sell_amount(sell_percent)
+    #     sell_size = self.mw.limit_pane.round_sell_amount(sell_percent)
 
-        self.mw.limit_sell_amount.setValue(sell_size)
+    #     self.mw.limit_sell_amount.setValue(sell_size)
 
 
     @staticmethod
@@ -311,31 +311,3 @@ class LimitOrderPane(QtWidgets.QWidget):
 
         maxSizeRounded = int(maxSize * 10**decimals) / 10.0**decimals
         return maxSizeRounded
-
-    def init_tables(self):
-        # Handle table initialization 
-        pass
-
-
-
-        # for _ in range(20):
-        #     self.mw.bids_table.insertRow(0)
-        #     self.mw.asks_table.insertRow(0)
-        # self.mw.new_table.insertRow(0)
-
-        # for _ in range(50):
-        #     self.mw.tradeTable.insertRow(0)
-
-        # self.mw.asks_table.setColumnWidth(0, 22)
-        # self.mw.bids_table.setColumnWidth(0, 22)
-        # self.mw.asks_table.setColumnWidth(1, 80)
-        # self.mw.bids_table.setColumnWidth(1, 80)
-        # self.mw.asks_table.setColumnWidth(2, 40)
-        # self.mw.bids_table.setColumnWidth(2, 40)
-        # self.mw.asks_table.setColumnWidth(3, 80)
-        # self.mw.bids_table.setColumnWidth(3, 80)
-
-        # self.mw.asks_table.setColumnWidth(4, 1)
-
-        # self.mw.tradeTable.setColumnWidth(0, 80)
-        # self.mw.tradeTable.setColumnWidth(1, 80)

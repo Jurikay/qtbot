@@ -50,7 +50,6 @@ class GuiManager:
         self.initial_last_price()
         self.initial_values()
         self.api_init()
-        self.mw.limit_pane.init_tables()
 
         for coin in self.mw.tickers:
             if "USDT" not in coin:
@@ -191,6 +190,7 @@ class GuiManager:
     def change_pair(self):
         """Change the active pair and call symbol specific functions."""
         newcoin = self.mw.coin_selector.currentText()
+        table_sel = self.mw.coin_selector.model()
 
         if any(newcoin + "BTC" in s for s in self.mw.tickers) and newcoin != self.mw.cfg_manager.coin:
             self.mw.cfg_manager.coin = newcoin
@@ -221,6 +221,9 @@ class GuiManager:
 
     def change_to(self, coin):
         coinIndex = self.mw.coin_selector.findText(coin)
+        coinData = self.mw.coin_selector.findData(coin)
+        ind = self.mw.coin_selector.model()
+        print("INDEX", ind)
         self.mw.coin_selector.setCurrentIndex(coinIndex)
 
         self.change_pair()

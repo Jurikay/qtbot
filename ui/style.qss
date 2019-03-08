@@ -113,11 +113,16 @@ QTabWidget {
 }
 QHeaderView{
   text-align: left;
+  /* height: 25px; */
+}
 
+#tradeTable QHeaderView::section, #new_asks QHeaderView::section {
+    height: 16px;
 }
 
 #trade_history_view QHeaderView::section {
-    background-color: #222
+    background-color: #222;
+    height: 26px;
 }
 QHeaderView::section {
     background-color: #2e363d;

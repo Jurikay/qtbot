@@ -13,6 +13,9 @@ python -m venv env
 # activate venv
 source env/bin/activate   
 
+# windows:
+. .\env\Scripts\activate
+
 # to deactivate
 deactivate
 

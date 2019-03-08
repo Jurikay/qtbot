@@ -4,3 +4,4 @@ PyQt5==5.12
 PyQtWebEngine==5.12
 python-binance==0.7.1
 addict==2.2.0
+ntplib==0.3.3
