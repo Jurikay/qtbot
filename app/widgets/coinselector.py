@@ -109,7 +109,7 @@ class MyCompleter(QtWidgets.QCompleter):
         # self.popup().setItemDelegate(self.delegate)
 
 
-class SelectorModel(BaseTableModel):
+class SelectorModel(SortFilterModel):
     def __init__(self, *args, **kwargs):
         QtCore.QAbstractTableModel.__init__(self, *args, **kwargs)
         self.datatable = None
