@@ -60,9 +60,9 @@ class CoinSelector(QtWidgets.QComboBox):
         pair = self.model.index(cindex, 0).data()
         print(pair)
         # self.setCurrentText(pair)
-        # self.setCurrentIndex(4)
+        # self.setCurrentIndex(cindex)
         # self.update()
-        # self.setEditText(pair)
+        self.setEditText(pair)
         print("INDEX:", self.currentIndex())
         # find = self.findText("ICX", flags=QtCore.Qt.MatchStartsWith)
         # print("FIND", find)
@@ -99,6 +99,7 @@ class CoinSelector(QtWidgets.QComboBox):
 
 
         self.model.update(self.mw.data.current.ticker_df)
+        self.setModelColumn(0)
         # self.view().window.setFixedWidth(1000)
 
 class MyCompleter(QtWidgets.QCompleter):
