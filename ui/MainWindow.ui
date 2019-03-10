@@ -732,8 +732,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>981</width>
-                  <height>485</height>
+                  <width>969</width>
+                  <height>521</height>
                  </rect>
                 </property>
                </widget>
@@ -2517,25 +2517,43 @@
                       </font>
                      </property>
                      <property name="focusPolicy">
-                      <enum>Qt::ClickFocus</enum>
+                      <enum>Qt::NoFocus</enum>
+                     </property>
+                     <property name="contextMenuPolicy">
+                      <enum>Qt::NoContextMenu</enum>
                      </property>
                      <property name="styleSheet">
                       <string notr="true"/>
                      </property>
                      <property name="editable">
-                      <bool>true</bool>
+                      <bool>false</bool>
                      </property>
                      <property name="currentIndex">
                       <number>-1</number>
                      </property>
                      <property name="maxVisibleItems">
-                      <number>10</number>
+                      <number>12</number>
                      </property>
                      <property name="insertPolicy">
-                      <enum>QComboBox::InsertAlphabetically</enum>
+                      <enum>QComboBox::NoInsert</enum>
                      </property>
                      <property name="sizeAdjustPolicy">
                       <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+                     </property>
+                     <property name="minimumContentsLength">
+                      <number>100</number>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>25</width>
+                       <height>23</height>
+                      </size>
+                     </property>
+                     <property name="duplicatesEnabled">
+                      <bool>false</bool>
+                     </property>
+                     <property name="modelColumn">
+                      <number>0</number>
                      </property>
                     </widget>
                    </item>
@@ -2582,6 +2600,9 @@
                      </property>
                      <property name="selectionMode">
                       <enum>QAbstractItemView::NoSelection</enum>
+                     </property>
+                     <property name="selectionBehavior">
+                      <enum>QAbstractItemView::SelectItems</enum>
                      </property>
                      <property name="showGrid">
                       <bool>false</bool>
@@ -5434,7 +5455,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>614</width>
-                 <height>482</height>
+                 <height>479</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -5784,7 +5805,7 @@
      <x>0</x>
      <y>0</y>
      <width>1686</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

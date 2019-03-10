@@ -475,7 +475,15 @@ class Webpages():
 
     def build_cmc(self):
         """Make coin names coinmarketcap conform."""
+        print("BUILD CMC")
+        print("cfg mgr pair: ", self.mw.cfg_manager.pair)
+
+
         coin_name = self.mw.tickers[self.mw.cfg_manager.pair]["baseAssetName"]
+
+        print("coin name: ", coin_name)
+
+
         if coin_name == "Wancoin":
             coin_name = "Wanchain"
         elif coin_name == "MIOTA":

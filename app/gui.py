@@ -214,10 +214,11 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.index_view.setup()
         self.holdings_view.setup()
 
+        # Bottom table filtering
         self.coinindex_filter.textChanged.connect(
             self.open_orders_view.my_model.setFilter)
-        # self.coinindex_filter.textChanged.connect(
-        #     self.trade_history_view.my_model.setFilter)
+        self.coinindex_filter.textChanged.connect(
+            self.trade_history_view.my_model.setFilter)
         self.coinindex_filter.textChanged.connect(
             self.holdings_view.my_model.setFilter)
         self.coinindex_filter.textChanged.connect(

@@ -200,8 +200,8 @@ class SortFilterModel(BaseTableModel):
         """Sort table by given column number.
         """
         if isinstance(self.datatable, pd.DataFrame):
-            # self.modelAboutToBeReset.emit()
-            self.layoutAboutToBeChanged.emit()
+            self.modelAboutToBeReset.emit()
+            # self.layoutAboutToBeChanged.emit()
             if len(self.datatable) > 0:
                 self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
 
@@ -209,8 +209,8 @@ class SortFilterModel(BaseTableModel):
             self.order_col = Ncol
             self.order_dir = order
 
-            # self.modelReset.emit()
-            self.layoutChanged.emit()
+            self.modelReset.emit()
+            # self.layoutChanged.emit()
 
             if self.searchText:
                 self.setFilter(searchText=self.searchText)
