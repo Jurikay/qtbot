@@ -170,7 +170,7 @@ class GuiManager:
         url = Webpages.build_cmc(self)
         self.mw.cmc_chart.load(QtCore.QUrl(url))
 
-
+    # refactor
     # global ui
     def check_for_update(self, progress_callback):
         """Check if main window height has changed. If so,
@@ -188,23 +188,32 @@ class GuiManager:
 
     # main gui
     def change_pair(self):
+        print("Change_pair")
         """Change the active pair and call symbol specific functions."""
         newcoin = self.mw.coin_selector.currentText()
-        table_sel = self.mw.coin_selector.model()
+        print("CHANGEPAIR newcoin", newcoin)
+        # table_sel = self.mw.coin_selector.model
 
-        if any(newcoin + "BTC" in s for s in self.mw.tickers) and newcoin != self.mw.cfg_manager.coin:
-            self.mw.cfg_manager.coin = newcoin
-            self.mw.cfg_manager.pair = newcoin + "BTC"
+        if any(newcoin in s for s in self.mw.tickers) and newcoin != self.mw.cfg_manager.coin:
+            print("inside if", newcoin)
+            self.mw.cfg_manager.coin = newcoin[:-3]
+            self.mw.cfg_manager.pair = newcoin
+            self.mw.data.current.pair = newcoin
+            self.mw.data.current.coin = newcoin[:-3]
 
             self.set_charts(self.mw.cfg_manager.pair)
 
             self.mw.websocket_manager.stop_sockets()
 
-            logging.info('Switching to %s' % newcoin + " / BTC")
+            logging.info('Switching to %s' % newcoin)
 
             # self.mw.api_manager.set_pair_values()
 
             self.initial_values()
+
+            # new 'initial data'
+            # self.mw.new_api.store_pair_data(newcoin)
+            self.mw.new_api.threaded_pair_update()
 
             self.mw.websocket_manager.websockets_symbol()
 
@@ -220,11 +229,14 @@ class GuiManager:
 
 
     def change_to(self, coin):
-        coinIndex = self.mw.coin_selector.findText(coin)
-        coinData = self.mw.coin_selector.findData(coin)
-        ind = self.mw.coin_selector.model()
-        print("INDEX", ind)
-        self.mw.coin_selector.setCurrentIndex(coinIndex)
+        print("Chnage_to:", coin)
+        # coinIndex = self.mw.coin_selector.findText(coin)
+        # coinData = self.mw.coin_selector.findData(coin)
+        # ind = self.mw.coin_selector.model()
+        # print("INDEX", ind)
+
+        find = self.mw.coin_selector.findText(coin, flags=QtCore.Qt.MatchStartsWith)
+        self.mw.coin_selector.setCurrentIndex(find)
 
         self.change_pair()
 

@@ -23,6 +23,9 @@ class DataManager():
         self.current.symbol = "ETHBTC"
         self.current.tickers = dict()
 
+    def set_thread(self, callback):
+        print("CALLBACK:", callback)
+
     def set_depth(self, depth):
         """Receives current bids and asks of selected pair."""
         self.current["orderbook"] = Dict(depth)

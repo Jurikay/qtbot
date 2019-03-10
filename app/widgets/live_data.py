@@ -86,7 +86,7 @@ class LiveData(QtWidgets.QWidget):
         if self.mw.orderbook:
             spread = ((float(self.mw.data.current.orderbook["asks"][0][0]) / float(self.mw.data.current.orderbook["bids"][0][0])) - 1) * 100
             spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
-            self.mw.spread_label.setText("<span style='font-size: 18px; font-family: Arial Black; color:" + Colors.color_lightgrey + "'>" + spread_formatted + "</span>")
+            self.mw.spread_label.setText(spread_formatted)
 
 
 

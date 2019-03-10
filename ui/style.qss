@@ -822,3 +822,9 @@ QPushButton#disabled_btn {
     color: #D6D6D6;
     background-color: transparent;
 }
+
+#spread_label {
+    font-family: Arial Black;
+    color: #999;
+    font-size: 18px;
+}

@@ -157,7 +157,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.new_api = ApiManager(self, self.api_manager.client)
 
 
-        # new
+        # newer not newest
         self.api_manager.new_api()
 
         # self.init_manager = InitManager(self)

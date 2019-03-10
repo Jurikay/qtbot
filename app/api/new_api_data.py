@@ -8,8 +8,9 @@ import os
 from binance.exceptions import BinanceAPIException
 from binance.client import Client
 
+from app.workers import Worker
 # from app.helpers import write_file
-
+from functools import partial
 
 """Methods that make use of the binance API."""
 
@@ -28,14 +29,31 @@ class ApiManager:
 
     def store_initial_data(self):
         """Makes inital api calls and stores received data in data class."""
-        symbol = self.data.current.symbol
-        print("NEW API MANAGER: storing data for:", symbol)
-
-        self.data.set_depth(self.getDepth(symbol))
+        # Move to threads maybe
         self.data.set_tickers(self.get_tickers())
-        self.data.set_hist(self.getTradehistory(symbol))
-        
         self.get_acc_info()
+
+        
+        self.store_pair_data()
+
+    def store_pair_data(self, progress_callback=None):
+        """This is called whenever the current pair is changed."""
+        symbol = self.data.current.symbol
+
+        print("store_pair_data:", symbol)
+
+        self.data.set_hist(self.getTradehistory(symbol))
+        self.data.set_depth(self.getDepth(symbol))
+
+        if progress_callback:
+            progress_callback.emit(1)
+
+
+    def threaded_pair_update(self):
+        print("Threaded pair update:")
+        worker = Worker(self.store_pair_data)
+        worker.signals.progress.connect(self.data.set_thread)
+
 
     # Debug; Testing only, TODO: Replace
     def get_acc_info(self):

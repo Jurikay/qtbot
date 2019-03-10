@@ -46,7 +46,13 @@ class CoinSelector(QtWidgets.QComboBox):
 
         painter.drawControl(QtWidgets.QStyle.CE_ComboBoxLabel, option)
 
-
+    def showPopup(self):
+        """Reimplemented."""
+        print("SHOWING POPUP")
+        # emit the new signal
+        # self.popupAboutToBeShown.emit()
+        # call the base method now to display the popup
+        super().showPopup()
 
     def select_coin(self, cindex):
         # print("SC KW", kw)
@@ -58,6 +64,8 @@ class CoinSelector(QtWidgets.QComboBox):
         # self.update()
         # self.setEditText(pair)
         print("INDEX:", self.currentIndex())
+        # find = self.findText("ICX", flags=QtCore.Qt.MatchStartsWith)
+        # print("FIND", find)
         # self.lineEdit().setText(pair)
 
     def update(self):
