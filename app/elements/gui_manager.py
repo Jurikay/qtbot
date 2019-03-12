@@ -138,7 +138,13 @@ class GuiManager:
         # self.mw.coin_index.build_coinindex()
         print("SET CORNER WIDGETS")
         self.mw.ChartTabs.setCornerWidget(self.mw.volume_widget)
+        self.mw.ChartTabs.adjustSize()
+
         self.mw.tabsBotLeft.setCornerWidget(self.mw.coin_index_filter)
+        self.mw.coin_index_filter.adjustSize()
+        self.mw.tabsBotLeft.adjustSize()
+
+
 
         self.set_charts(self.mw.cfg_manager.pair)
         self.mw.chart.show()
@@ -260,6 +266,9 @@ class GuiManager:
         """Update some values every second."""
 
         self.runtime += 1
+
+        # new table search bar width:
+        # self.mw.coinindex_filter.setL
 
         # charts_index = self.mw.ChartTabs.currentIndex()
 
@@ -448,6 +457,7 @@ class GuiManager:
         #     label_text = "<span style='color: " + "white" + "'>" + "{0:.2f}".format(volume_values[i]) + " BTC</span>"
         #     label.setText(label_text)
 
+    # Modified; New data
     def calc_total_btc(self):
         """Multiply holdings by their current price to get
         the total account value."""
@@ -457,10 +467,10 @@ class GuiManager:
             locked = self.mw.user_data.holdings[holding]["locked"]
             total = float(free) + float(locked)
 
-            if holding + "BTC" in self.mw.tickers:
-                if holding != "BTC" and total * float(self.mw.tickers[holding + "BTC"]["lastPrice"]) > 0.001:
+            if holding + "BTC" in self.mw.data.tickers:
+                if holding != "BTC" and total * float(self.mw.data.tickers[holding + "BTC"]["lastPrice"]) > 0.001:
 
-                    coin_total = total * float(self.mw.tickers[holding + "BTC"]["lastPrice"])
+                    coin_total = total * float(self.mw.data.tickers[holding + "BTC"]["lastPrice"])
                     total_btc_val += coin_total
 
             elif holding == "BTC":

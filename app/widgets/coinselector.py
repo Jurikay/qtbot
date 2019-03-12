@@ -52,6 +52,7 @@ class CoinSelector(QtWidgets.QComboBox):
         # emit the new signal
         # self.popupAboutToBeShown.emit()
         # call the base method now to display the popup
+
         super().showPopup()
 
     def select_coin(self, cindex):

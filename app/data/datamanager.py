@@ -91,7 +91,8 @@ class DataManager():
         # print(self.current.orderbook[side])
         # for side in sides:
         df = pd.DataFrame(self.current.orderbook[side])
-        df.columns = ["Price", "Amount", "Total"]
+        
+        df.columns = ["Price", "Amount"]
 
         # Convert to numerical values
         df = df.apply(pd.to_numeric, errors='coerce')
@@ -99,6 +100,7 @@ class DataManager():
         # Calculate total
         total = df.Price * df.Amount
         df["Total"] = total
+        
         df['#'] = df.index + 1
         df = df[["#", "Price", "Amount", "Total"]]
 

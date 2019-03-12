@@ -192,12 +192,11 @@ class LimitOrderPane(QtWidgets.QWidget):
             if sell_amount > free_amount or sell_amount * sell_price < 0.001:
                 self.mw.limit_sell_button.setStyleSheet("border: 2px solid transparent; background: #ff077a; color: #f3f3f3;")
                 self.mw.limit_sell_button.setCursor(QtGui.QCursor(QtCore.Qt.ForbiddenCursor))
-                # TODO: Reimplement order allowed check
-                # self.sell_allowed = False
+                self.sell_allowed = False
             else:
                 self.mw.limit_sell_button.setStyleSheet("border: 2px solid transparent;")
                 self.mw.limit_sell_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-                # self.sell_allowed = True
+                self.sell_allowed = True
 
         except ValueError:
             print("val error")

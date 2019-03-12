@@ -107,3 +107,8 @@ Bot logic/ Stratgies:
     * 
 
     * create delegate that colors first zeros of price grey
+
+    ---
+    possibility to add a custom msg on start during down time or after patch to the api
+    to indicate if something is broken
+    
