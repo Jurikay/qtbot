@@ -828,6 +828,24 @@ QPushButton#disabled_btn {
     color: #999;
     font-size: 18px;
 }
-/* QComboBox {
+QComboBox {
     combobox-popup: 0;
-} */
+}
+
+
+
+#coin_selector_view {
+    selection-background-color: transparent;
+
+}
+
+#coin_selector_view QHeaderView {
+    border: none;
+    height: 20px;
+}
+
+#coin_selector_view QHeaderView::section::horizontal {
+    background-color: #222;
+    border: 0px solid transparent;
+    margin: 0;
+}

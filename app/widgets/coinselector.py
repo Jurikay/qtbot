@@ -21,15 +21,16 @@ class CoinSelector(QtWidgets.QComboBox):
         self.completer = None
         self.activated.connect(self.select_coin)
         # self.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.setEditable(True)
+        self.setEditable(False)
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.setIconSize(QtCore.QSize(25, 25))
 
         self.model = SelectorModel()
         self.setModel(self.model)
-        self.setModelColumn(0)
 
-        self.lineEdit().setReadOnly(False)
+        self.setModelColumn(0)
+        self.setMouseTracking(False)
+        # self.lineEdit().setReadOnly(False)
 
 
     def paintEvent(self, event):
@@ -68,6 +69,7 @@ class CoinSelector(QtWidgets.QComboBox):
         # find = self.findText("ICX", flags=QtCore.Qt.MatchStartsWith)
         # print("FIND", find)
         # self.lineEdit().setText(pair)
+        self.mw.gui_manager.change_pair()
 
     def update(self):
         # print("TDF", self.mw.data.current.ticker_df)
@@ -87,6 +89,8 @@ class CoinSelector(QtWidgets.QComboBox):
 
         self.completer = MyCompleter()
         self.completer.setModel(self.model)
+
+
         self.completer.setCompletionColumn(0)
         self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         self.completer.setCompletionMode(0)
@@ -144,9 +148,9 @@ class SelectorModel(SortFilterModel):
 class SelectorView(QtWidgets.QTableView):
     def __init__(self, *args, **kwargs):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
-
+        self.setObjectName("coin_selector_view")
         # self.setUniformRowHeights(True)
-        self.mw = app.mw
+        # self.mw = app.mw
         # self.setItemDelegate(BasicDelegate(self))
         self.setItemDelegateForColumn(0, PairDelegate(self))
         self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
@@ -154,7 +158,7 @@ class SelectorView(QtWidgets.QTableView):
         self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 2, " BTC"))
         
         self.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
-        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.setAlternatingRowColors(True)
         self.setSortingEnabled(True)
         self.setMouseTracking(False)
