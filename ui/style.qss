@@ -833,19 +833,22 @@ QComboBox {
 }
 
 
-
 #coin_selector_view {
-    selection-background-color: transparent;
-
+    selection-background-color: #222;
+    /* selection-foreground-color: #FFF000; */
+    selection-color: #fff;
+    /* color: red; */
 }
 
 #coin_selector_view QHeaderView {
     border: none;
-    height: 20px;
+    font-weight: normal
 }
 
 #coin_selector_view QHeaderView::section::horizontal {
     background-color: #222;
     border: 0px solid transparent;
     margin: 0;
+    height: 25px;
+
 }

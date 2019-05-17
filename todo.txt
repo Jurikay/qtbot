@@ -112,3 +112,9 @@ Bot logic/ Stratgies:
     possibility to add a custom msg on start during down time or after patch to the api
     to indicate if something is broken
     
+    fix: orderbook amount spalte zu small
+        coin selector model index switcht
+
+
+calculate "turbulance" between daily low and high price
+100 - (low/high *100-1)

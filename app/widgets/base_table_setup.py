@@ -108,7 +108,7 @@ class BaseTableModel(QtCore.QAbstractTableModel):
             if orientation == QtCore.Qt.Horizontal:
                 return self.datatable.columns[section]
 
-
+    # TODO: verify
     def update(self, dataIn):
         # self.modelAboutToBeReset.emit()
         self.layoutAboutToBeChanged.emit()
@@ -200,17 +200,20 @@ class SortFilterModel(BaseTableModel):
         """Sort table by given column number.
         """
         if isinstance(self.datatable, pd.DataFrame):
-            self.modelAboutToBeReset.emit()
-            # self.layoutAboutToBeChanged.emit()
+            self.layoutAboutToBeChanged.emit()
             if len(self.datatable) > 0:
+                # Sort the table
                 self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
 
+                # Reindex the table; This is only needed for the coin selector model.
+                # TODO: Move to subclass/ Verify performance is ok
+                self.datatable = self.datatable.reset_index(drop=True)
+                
             # save order dir and order col
             self.order_col = Ncol
             self.order_dir = order
 
-            self.modelReset.emit()
-            # self.layoutChanged.emit()
+            self.layoutChanged.emit()
 
             if self.searchText:
                 self.setFilter(searchText=self.searchText)
@@ -374,7 +377,123 @@ class BuySellDelegete(BasicDelegate):
         else:
             self.fg_color = Colors.color_pink
 
+class NPriceDelegate(QtWidgets.QStyledItemDelegate):
+    """Delegate that colors satoshi in a BTC value."""  # TODO: Find better name
+    # def initStyleOption(self, option, index):
+    #     option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8)
 
+
+    def paint(self, painter, option, index):
+        option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8)
+
+        options = QtWidgets.QStyleOptionViewItem(option)
+
+        # print("OT", option.text)
+        # align_left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+        # font = QtGui.QFont()
+        font = app.mw.coin_selector.view.property("font")
+        # print("pfont", pfont)
+        # font = app.mw.f
+        # font.setPointSize(12)
+        metrics = QtGui.QFontMetrics(font)
+
+        # TODO: Find way to correctly center text horizontally
+        # Move delegates to separate file
+        x = option.rect.left() + option.rect.width() / 4
+        y = (option.rect.bottom() + option.rect.center().y() + option.rect.top()) / 3
+        painter.save()
+
+        color_text = False
+
+        for c in options.text:
+            if color_text is False and c == "0" or c == "." :
+                painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+                
+            else:
+                painter.setPen(QtGui.QColor(Colors.color_yellow))
+                color_text = True
+                
+            painter.drawText(x, y, c)
+            # x += metrics.width(c)
+            x += metrics.boundingRect(c).width()
+
+        x += metrics.boundingRect(c).width()
+        c = "btcp"
+        painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+
+        painter.drawText(x, y, c)
+
+        # else:
+        #     QtWidgets.QStyledItemDelegate.paint(self, painter, option, index)
+
+        # return
+
+        # painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+
+        # painter.drawText(option.rect, align_left, options.text)
+        painter.restore()
+
+# refactor (used by coin_selector view)
+class NCoinDelegate(QtWidgets.QStyledItemDelegate):
+
+    @staticmethod
+    def initStyleOption(option, index):
+        """Set style options based on index column."""
+
+        iconPath = "images/ico/" + index.data().replace("BTC", "") + ".svg"
+
+        if (os.path.isfile(iconPath)):
+            option.icon = QtGui.QIcon(iconPath)
+        else:
+            option.icon = QtGui.QIcon("images/ico/BTC.svg")
+
+
+        option.text = index.data().replace("BTC", "")
+
+    def paint(self, painter, option, index):
+        """Reimplemented custom paint method."""
+ 
+        # alignment = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        align_left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
+
+        painter.save()
+        options = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(options, index)
+        font = QtGui.QFont()
+
+
+        iconRect = QtCore.QRect(option.rect.left(),
+                                option.rect.top(),
+                                # icon is quadratic; set width to it's height.
+                                option.rect.height(),
+                                option.rect.height())
+
+        textRect = QtCore.QRect(option.rect.left() + iconRect.width() + 5,
+                                option.rect.top(),
+                                # subtract previously added icon width.
+                                option.rect.width() - iconRect.width(),
+                                option.rect.height())
+
+
+
+        if option.state & QtWidgets.QStyle.State_Selected:
+            painter.setPen(QtGui.QColor(Colors.color_yellow))
+            font.setBold(True)
+            painter.setFont(font)
+
+            # set cursor
+            if app.main_app.overrideCursor() != QtCore.Qt.PointingHandCursor:
+                app.main_app.setOverrideCursor(QtCore.Qt.PointingHandCursor)
+
+        else:
+            painter.setPen(QtGui.QColor(Colors.color_lightgrey))
+
+        icon = options.icon
+        icon.paint(painter, iconRect, QtCore.Qt.AlignLeft)
+        painter.drawText(textRect, align_left, options.text)
+        painter.restore()
+
+        
 
 
 

@@ -6,7 +6,7 @@
 import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
-from app.widgets.base_table_setup import BaseTableView, BasicDelegate, SortFilterModel, RoundFloatDelegate, PairDelegate, ChangePercentDelegate, BaseTableModel
+from app.widgets.base_table_setup import BaseTableView, BasicDelegate, SortFilterModel, RoundFloatDelegate, PairDelegate, ChangePercentDelegate, BaseTableModel, NCoinDelegate, NPriceDelegate
 
 import app
 import pandas as pd
@@ -22,7 +22,7 @@ class CoinSelector(QtWidgets.QComboBox):
         self.activated.connect(self.select_coin)
         # self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setEditable(False)
-        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setIconSize(QtCore.QSize(25, 25))
 
         self.model = SelectorModel()
@@ -32,6 +32,9 @@ class CoinSelector(QtWidgets.QComboBox):
         self.setMouseTracking(False)
         # self.lineEdit().setReadOnly(False)
 
+
+    # def debugModel(self):
+    #     self.setView(self.mw.debugTb)
 
     def paintEvent(self, event):
         """Reimplemented."""
@@ -47,71 +50,70 @@ class CoinSelector(QtWidgets.QComboBox):
 
         painter.drawControl(QtWidgets.QStyle.CE_ComboBoxLabel, option)
 
-    def showPopup(self):
-        """Reimplemented."""
-        print("SHOWING POPUP")
-        # emit the new signal
-        # self.popupAboutToBeShown.emit()
-        # call the base method now to display the popup
+    # def showPopup(self):
+    #     """Reimplemented."""
+    #     self.setCurrentIndex(-1)
 
-        super().showPopup()
+    #     print("SHOWING POPUP")
+    #     # self.setCurrentIndex(-1)
+    #     # self.setFocus(-1)
+    #     # self.setCurrentText("Lel")
+    #     # emit the new signal
+    #     # self.popupAboutToBeShown.emit()
+    #     # call the base method now to display the popup
+
+    #     super().showPopup()
+
+    # def hidePopup(self):
+    #     print("PAIR", self.mw.data.current.symbol)
+    #     find = self.findText(self.mw.data.current.symbol, flags=QtCore.Qt.MatchStartsWith)
+    #     self.setCurrentIndex(find)
+    #     return super().hidePopup()
 
     def select_coin(self, cindex):
-        # print("SC KW", kw)
-        print("select coin")
-        pair = self.model.index(cindex, 0).data()
-        print(pair)
-        # self.setCurrentText(pair)
-        # self.setCurrentIndex(cindex)
-        # self.update()
-        self.setEditText(pair)
-        print("INDEX:", self.currentIndex())
-        # find = self.findText("ICX", flags=QtCore.Qt.MatchStartsWith)
-        # print("FIND", find)
-        # self.lineEdit().setText(pair)
         self.mw.gui_manager.change_pair()
+        self.clearFocus()  # TODO: Verify
+        
 
     def update(self):
-        # print("TDF", self.mw.data.current.ticker_df)
         self.model.update(self.mw.data.current.ticker_df)
-        # self.completer.setModel(self.model)
-        # self.setCompleter(self.completer)
+        # TODO: clean up this mess
+        # This is a work around. Since the model of the coin
+        # selector qcombobox is sortable, the current selection
+        # is set again after each update to circumvent it changing.
+
+        # Maybe:
+        # change ticker dataframe to an int index.
+        # on sort, reset index; get row index w/o "idx" column
+
+        df = self.model.datatable
+        # if isinstance(df, pd.DataFrame):
+        #     pass
+        # else:
+        #     print("CANCEL")
+        #     return
+        pair = self.mw.data.current.pair
+
+        if not pair:
+            pair = "BNBBTC"
+
+        try: 
+            # row = df.loc[df['Coin'] == pair].index()
+            row = df.index[df["Coin"] == pair][0]
+            
+            # print("matching row:", self.model.datatable.iloc[row])
+            self.setCurrentIndex(row)
+        except Exception as e:
+            print("ERROR", e)
 
     def setup(self):
-        
-
-
         self.view = SelectorView()
         self.view.setFocusPolicy(QtCore.Qt.NoFocus)
-        
-        # self.view.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setView(self.view)
-
-        self.completer = MyCompleter()
-        self.completer.setModel(self.model)
-
-
-        self.completer.setCompletionColumn(0)
-        self.completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        self.completer.setCompletionMode(0)
-        
-        self.completer.setModelSorting(0)
-        self.completer.setMaxVisibleItems(10)
-        self.completer.setFilterMode(QtCore.Qt.MatchStartsWith)
-        # self.completer.popup().setItemDelegate(PairDelegate(self))
-        self.setCompleter(self.completer)
-        
-
 
         self.model.update(self.mw.data.current.ticker_df)
         self.setModelColumn(0)
         # self.view().window.setFixedWidth(1000)
-
-class MyCompleter(QtWidgets.QCompleter):
-    def __init__(self, parent=None):
-        super(MyCompleter, self).__init__(parent)
-        # self.delegate = PairDelegate(self)
-        # self.popup().setItemDelegate(self.delegate)
 
 
 class SelectorModel(SortFilterModel):
@@ -121,12 +123,6 @@ class SelectorModel(SortFilterModel):
         self.order_col = 0
         self.order_dir = 0
         self.searchText = ""
-
-    # def update(self, dataIn):
-    #     self.modelAboutToBeReset.emit()
-    #     self.datatable = dataIn
-    #     self.modelReset.emit()
-
     # def rowCount(self, parent=QtCore.QModelIndex()):
     #     if isinstance(self.df, pd.DataFrame):
     #         return len(self.df.index)
@@ -144,41 +140,38 @@ class SelectorModel(SortFilterModel):
     #     elif role == QtCore.Qt.UserRole:
     #         return "asdasd"
 
+    def data(self, index, role):
+        if role == QtCore.Qt.DisplayRole:
+            return str(self.datatable.iloc[index.row(), index.column()])
 
 class SelectorView(QtWidgets.QTableView):
     def __init__(self, *args, **kwargs):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
         self.setObjectName("coin_selector_view")
-        # self.setUniformRowHeights(True)
-        # self.mw = app.mw
-        # self.setItemDelegate(BasicDelegate(self))
-        self.setItemDelegateForColumn(0, PairDelegate(self))
-        self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
+        self.setItemDelegateForColumn(0, NCoinDelegate(self))
+        
+        self.setItemDelegateForColumn(1, NPriceDelegate(self))
+        # self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
         self.setItemDelegateForColumn(2, ChangePercentDelegate(self))
         self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 2, " BTC"))
         
         self.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.setAlternatingRowColors(True)
         self.setSortingEnabled(True)
         self.setMouseTracking(False)
         self.setTabletTracking(False)
         self.viewport().setMouseTracking(False)
-
-
         self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
-        # setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred)
-        ld_width = self.width() * 2
-        
-        print("LD W", ld_width)
-        # print(self.parent)
         self.setMinimumWidth(500)
         self.set_widths()
         self.setShowGrid(False)
-        # self.setFocusPolicy(QtCore.Qt.NoFocus)
-        # self.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
 
 
     def set_widths(self):
-        self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
-        self.horizontalHeader().setDefaultSectionSize(100)
+        # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        # self.horizontalHeader().setDefaultSectionSize(100)
+        # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        self.setColumnWidth(0, 50)
+        self.setColumnWidth(1, 200)
+        self.setColumnWidth(2, 0)
+        self.setColumnWidth(3, 400)

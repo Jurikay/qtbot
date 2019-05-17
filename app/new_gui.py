@@ -19,7 +19,6 @@ class GuiMgr:
 
         self.mw.coin_selector.update()
 
-
     def set_timer(self):
         self.timer= QtCore.QTimer(self.mw)
         self.timer.setInterval(250)          # Throw event timeout with an interval of 1000 milliseconds

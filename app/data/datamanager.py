@@ -37,7 +37,7 @@ class DataManager():
         # Iterate over list of tickers
         for info in ticker:
             # Filter only BTC pairs; TODO: Evaluate other currency pairs too
-            if info["symbol"][-3:] == "BTC":
+            if info["symbol"][-3:] == "BTC" and float(info["lastPrice"]) > 0.00000000:
                 # coin = info["symbol"][:-3]
                 pair = info["symbol"]
 
@@ -124,10 +124,22 @@ class DataManager():
         df = pd.DataFrame(self.tickers)
         # df = df[["price", "quantity", "time"]]
         df = df.transpose()
-        df = df[["symbol", "bidPrice", "priceChangePercent", "quoteVolume"]]
-        # print(df)
+        # df = df[["symbol", "bidPrice", "priceChangePercent", "quoteVolume"]]
+        
+        df = df[["bidPrice", "priceChangePercent", "quoteVolume"]]
+        df = df.reset_index()
+        df = df.rename(columns={"index": "Coin", "bidPrice": "Price", "priceChangePercent": "Change", "quoteVolume": "Volume"})
+        df.index.name = "index"
         df = df.apply(pd.to_numeric, errors="ignore")
-        df = df.rename(columns={"symbol": "Pair", "bidPrice": "Price", "priceChangePercent": "Chnage", "quoteVolume": "Volume"})
+
+        # print(df)
+        # df = df.apply(pd.to_numeric, errors="ignore")
+        # df = df.rename(columns={"symbol": "Coin", "bidPrice": "Price", "priceChangePercent": "Change", "quoteVolume": "Volume"})
+        
+        df = df.reset_index(drop=True)
+        
+        # print(df)
+        # Add a numerical index
         self.current.ticker_df = df
         # print(df)
         return df
