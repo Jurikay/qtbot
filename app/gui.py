@@ -41,6 +41,8 @@ from app.api.new_api_data import ApiManager
 from app.new_gui import GuiMgr
 
 import platform
+import os
+from pathlib import Path
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 # from app.data.index_data import IndexData
 
@@ -96,10 +98,15 @@ class beeserBot(QtWidgets.QMainWindow):
         self.assetDecimals = 0
 
         # load QtDesigner UI file
-        loadUi("ui/MainWindow.ui", self)
 
-        # set external stylesheet
-        with open("ui/style.qss", "r") as fh:
+        uifile_path = Path("ui/MainWindow.ui")
+        uistyle_path = Path("ui/style.qss")
+        
+        # Load ui file
+        loadUi(str(uifile_path), self)
+
+        # Set external stylesheet
+        with open(str(uistyle_path), "r") as fh:
             self.setStyleSheet(fh.read())
 
         # instantiate various helper classes
