@@ -616,7 +616,7 @@
             <bool>true</bool>
            </property>
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
              <verstretch>2</verstretch>
             </sizepolicy>
@@ -732,7 +732,7 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>946</width>
+                  <width>981</width>
                   <height>485</height>
                  </rect>
                 </property>
@@ -2385,15 +2385,21 @@
                    <item>
                     <widget class="QWidget" name="spread_area" native="true">
                      <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
                        <horstretch>0</horstretch>
                        <verstretch>0</verstretch>
                       </sizepolicy>
                      </property>
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>49</height>
+                      </size>
+                     </property>
                      <property name="maximumSize">
                       <size>
                        <width>16777215</width>
-                       <height>40</height>
+                       <height>16777215</height>
                       </size>
                      </property>
                      <property name="baseSize">
@@ -2404,10 +2410,10 @@
                      </property>
                      <layout class="QHBoxLayout" name="horizontalLayout_10">
                       <property name="spacing">
-                       <number>5</number>
+                       <number>1</number>
                       </property>
                       <property name="leftMargin">
-                       <number>0</number>
+                       <number>5</number>
                       </property>
                       <property name="topMargin">
                        <number>0</number>
@@ -2421,7 +2427,7 @@
                       <item>
                        <widget class="QLabel" name="last_price">
                         <property name="sizePolicy">
-                         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                           <horstretch>0</horstretch>
                           <verstretch>0</verstretch>
                          </sizepolicy>
@@ -2442,14 +2448,14 @@
                          <string>-</string>
                         </property>
                         <property name="alignment">
-                         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                         </property>
                        </widget>
                       </item>
                       <item>
                        <widget class="QLabel" name="price_arrow">
                         <property name="sizePolicy">
-                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                           <horstretch>0</horstretch>
                           <verstretch>0</verstretch>
                          </sizepolicy>
@@ -2471,7 +2477,7 @@
                       <item>
                        <widget class="QLabel" name="spread_label">
                         <property name="sizePolicy">
-                         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                           <horstretch>0</horstretch>
                           <verstretch>0</verstretch>
                          </sizepolicy>
@@ -2480,7 +2486,10 @@
                          <string>Spread</string>
                         </property>
                         <property name="text">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; color:#a8a8a8;&quot;&gt;-&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                         <string>-</string>
+                        </property>
+                        <property name="scaledContents">
+                         <bool>true</bool>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignCenter</set>
@@ -2499,7 +2508,7 @@
                          <string/>
                         </property>
                         <property name="alignment">
-                         <set>Qt::AlignCenter</set>
+                         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                         </property>
                        </widget>
                       </item>
@@ -2746,10 +2755,10 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="elideMode">
-           <enum>Qt::ElideRight</enum>
+           <enum>Qt::ElideLeft</enum>
           </property>
           <property name="usesScrollButtons">
            <bool>false</bool>
@@ -2873,7 +2882,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14px;&quot;&gt;0.00000000 BTC &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>0.00000000 BTC</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
@@ -3493,7 +3502,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14px;&quot;&gt;0.00000000 BTC&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>0.00000000 BTC </string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
@@ -3958,65 +3967,6 @@
               <property name="spacing">
                <number>0</number>
               </property>
-              <item row="2" column="1">
-               <widget class="QSlider" name="spread_min_slider">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1">
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <item>
-                 <widget class="QCheckBox" name="spread_halt_buys">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Halt buying</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="spread_halt_sells">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Halt selling</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="5" column="1">
-               <widget class="QSlider" name="spread_amount_slider">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="0">
                <widget class="QLabel" name="label_17">
                 <property name="sizePolicy">
@@ -4027,57 +3977,6 @@
                 </property>
                 <property name="text">
                  <string>Min Spread:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="label_18">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>If Spread is smaller:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_16">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Amount:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1" alignment="Qt::AlignBottom">
-               <widget class="QLineEdit" name="spread_amount_input">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>21</height>
-                 </size>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
@@ -4116,42 +4015,68 @@
                 </item>
                </layout>
               </item>
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="spread_min_input">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="placeholderText">
-                 <string/>
-                </property>
-               </widget>
+              <item row="6" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QCheckBox" name="spread_halt_buys">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Halt buying</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="spread_halt_sells">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>Halt selling</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
-              <item row="1" column="2">
-               <widget class="QLabel" name="label_25">
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_18">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>%</string>
+                 <string>If Spread is smaller:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
                 </property>
                </widget>
               </item>
-              <item row="3" column="2">
-               <widget class="QLabel" name="label_26">
+              <item row="3" column="1" alignment="Qt::AlignBottom">
+               <widget class="QLineEdit" name="spread_amount_input">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
-                <property name="text">
-                 <string>BNB</string>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>21</height>
+                 </size>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
@@ -4160,6 +4085,9 @@
               </item>
               <item row="0" column="0" colspan="2">
                <layout class="QHBoxLayout" name="horizontalLayout_45">
+                <property name="spacing">
+                 <number>12</number>
+                </property>
                 <item>
                  <widget class="QLabel" name="label_31">
                   <property name="sizePolicy">
@@ -4228,6 +4156,90 @@
                  </spacer>
                 </item>
                </layout>
+              </item>
+              <item row="2" column="1">
+               <widget class="QSlider" name="spread_min_slider">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="spread_min_input">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="placeholderText">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QSlider" name="spread_amount_slider">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QLabel" name="label_25">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>%</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_16">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Amount:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QLabel" name="label_26">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>BNB</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -5416,7 +5428,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>649</width>
+                 <width>614</width>
                  <height>482</height>
                 </rect>
                </property>
