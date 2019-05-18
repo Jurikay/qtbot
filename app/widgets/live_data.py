@@ -50,9 +50,9 @@ class LiveData(QtWidgets.QWidget):
 
         formatted_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
         self.mw.price_arrow.setPixmap(arrow)
-        self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
+        self.mw.last_price.setText("<span style='font-size: 20px; color:" + color + "'>" + formatted_price + "</span>")
         usd_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
-        self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
+        self.mw.usd_value.setText("<span style='font-size: 18px; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
     def set_last_price(self):
 

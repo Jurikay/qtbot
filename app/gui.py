@@ -55,32 +55,28 @@ class beeserBot(QtWidgets.QMainWindow):
 
     def __init__(self):
         
-        # env = QtCore.QProcessEnvironment.systemEnvironment()
-        # env.insert("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-logging")
-        # env.insert("QT_SCALE_FACTOR", "0.8")
-        # self.process.setProcessEnvironment(env)
+        # Move out as much as possible. Init gui first, load data later.
 
-        self.data = DataManager()
+        # self.data = DataManager()
         """Main gui init method."""
 
         super(beeserBot, self).__init__()
 
-        # Set System Time
-        if platform.system() == "Windows":
-            from app.elements.timescript import set_system_time
-            set_system_time()
+        
 
         # Set application icon; TODO: Change to minimalistic version
-        self.setWindowIcon(QtGui.QIcon(resource_path("images/assets/ico.ico")))
 
+        self.data = None
+        app.mw = self
         self.version = "alpha 0.1"
 
         self.client = app.client
-        self.threadpool = QtCore.QThreadPool()
-        self.mutex = QtCore.QMutex()
-        app.threadpool = self.threadpool
-        app.mw = self
-        app.mutex = self.mutex
+        # self.threadpool = QtCore.QThreadPool()
+        # self.mutex = QtCore.QMutex()
+        # app.threadpool = self.threadpool
+        
+        
+        # app.mutex = self.mutex
 
         self.error = None
         self.index_data = None
@@ -103,12 +99,34 @@ class beeserBot(QtWidgets.QMainWindow):
         self.decimals = 0
         self.assetDecimals = 0
 
-        # load QtDesigner UI file
+
+        self.load_ui_files()
+        print("### END GUI INIT ###")
+
+
+    def load_fonts(self):
+        name = "SourceSansPro-"
+        variations = ["Black", "Bold", "Light", "Regular", "Semibold"]
+
+        for v in variations:
+            path = resource_path("ui/" + name + v + ".ttf")
+            QtGui.QFontDatabase.addApplicationFont(path)
+
+    def load_ui_files(self):
+        """Load ui files/ stylesheet."""
+
+        self.setWindowIcon(QtGui.QIcon(resource_path("images/assets/ico.ico")))
 
         # Load external ui files in such a way that they are expected next to the executable if bundled.
         uifile_path = resource_path("ui/MainWindow.ui")
         uistyle_path = resource_path("ui/style.qss")
+        # uifont_path = resource_path("ui/SourceSansPro-Regular.ttf")
         
+        # Add external font
+        # QtGui.QFontDatabase.addApplicationFont(uifont_path)
+        self.load_fonts()
+
+
         # Load ui file
         loadUi(uifile_path, self)
 
@@ -116,40 +134,49 @@ class beeserBot(QtWidgets.QMainWindow):
         with open(uistyle_path, "r") as fh:
             self.setStyleSheet(fh.read())
 
+        self.set_corner_widgets()
+
+
+    def set_corner_widgets(self):
+        self.tabsBotLeft.setCornerWidget(self.coin_index_filter)
+        self.tabsBotLeft.adjustSize()
+
+        self.coin_index_filter.adjustSize()
+
+        self.ChartTabs.setCornerWidget(self.volume_widget)
+        self.ChartTabs.adjustSize()
+
+    def setup(self):
+        """One time ui setup after load. Moved out of __init__ to display
+        UI asap."""
+
+        print("### BEGIN SETUP")
+
+        # Set System Time
+        if platform.system() == "Windows":
+            from app.elements.timescript import set_system_time
+            set_system_time()
+        
+        self.threadpool = QtCore.QThreadPool()
+        self.mutex = QtCore.QMutex()
+        app.threadpool = self.threadpool
+        app.mutex = self.mutex
+
+        print("I AM SELF", self)
+
+        self.data = DataManager()
+
         # instantiate various helper classes
         self.init_basics()
 
+        self.init_api_classes()
+
         self.centerOnScreen()
 
-        # initialize limit order signals and slots
         self.limit_pane.initialize()
 
-        # self.fishbot_table.initialize()
+        print("### END SETUP")
 
-        # connect elements to functions
-        # self.chart.inject_script()
-
-        # self.debug2_button.clicked.connect(self.limit_pane.test_func)
-        # self.wavg_button.clicked.connect(calc_wavg)
-        # self.calc_all_wavg_button.clicked.connect(calc_all_wavgs)
-        self.btn_reload_api.clicked.connect(self.init_basics)
-
-        # Fix a linter error...
-        # self.linterfix = QWebEngineView()
-
-        self.test_slider.valueChanged.connect(self.spinbox_value)
-        self.test_slider_value.valueChanged.connect(self.slider_value)
-        self.btn_my_trades.clicked.connect(
-            partial(self.api_manager.api_my_trades, self.cfg_manager.pair))
-        # connect filter
-        # self.coinindex_filter.textChanged.connect(self.open_orders_view.my_model.setFilter)
-
-        # self.table_view_btn.clicked.connect(self.test_table_view.setup)
-        # self.add_btn.clicked.connect(self.historical.test_all)
-        # self.jirrik_search.textEdited.connect(self.test_table_view.search_edited)
-        # self.btn_init_new.clicked.connect(self.newer_index.setup)
-        # self.test_ud_btn.clicked.connect(self.dict_index.update_model_data)
-        # self.btn_init_pd.clicked.connect(self.user_data.initial_history)
 
     def init_basics(self):
         self.log_manager = BotLogger(self)
@@ -161,7 +188,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.hotkey_manager = HotKeys(self)
         # self.hotkey_manager.init_hotkeys()
 
-        self.init_api_classes()
+        
 
     def init_api_classes(self):
 

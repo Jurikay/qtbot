@@ -30,7 +30,7 @@ class ChartPage(QtWebEngineWidgets.QWebEngineView):
         # self.page().JavaScriptConsoleMessageLevel(2)
 
         self.setPage(page)
-        print("CHART JESCHISCHTEN")
+        # print("CHART JESCHISCHTEN")
 
 
     # def inject_script(self):

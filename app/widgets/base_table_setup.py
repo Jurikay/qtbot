@@ -412,12 +412,12 @@ class NPriceDelegate(QtWidgets.QStyledItemDelegate):
                 painter.setPen(QtGui.QColor(Colors.color_lightgrey))
                 
             else:
-                painter.setPen(QtGui.QColor(Colors.color_yellow))
+                painter.setPen(QtGui.QColor(Colors.white))
                 color_text = True
                 
             painter.drawText(x, y, c)
             # x += metrics.width(c)
-            x += metrics.boundingRect(c).width()
+            x += metrics.horizontalAdvance(c)
 
         x += metrics.boundingRect(c).width()
         c = "btcp"

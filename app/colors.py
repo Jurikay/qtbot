@@ -15,3 +15,5 @@ class Colors:
     color_green = "#94c940"
     color_lightgrey = "#cdcdcd"
     color_grey = "#999"
+
+    white = "#fff"

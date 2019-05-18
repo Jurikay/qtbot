@@ -33,7 +33,6 @@ class CoinSelector(QtWidgets.QComboBox):
         self.setMouseTracking(False)
         # self.lineEdit().setReadOnly(False)
 
-
     # def debugModel(self):
     #     self.setView(self.mw.debugTb)
 
@@ -104,6 +103,8 @@ class CoinSelector(QtWidgets.QComboBox):
             
             # print("matching row:", self.model.datatable.iloc[row])
             self.setCurrentIndex(row)
+            self.view.set_widths()
+
         except Exception as e:
             print("ERROR", e)
 
@@ -114,6 +115,7 @@ class CoinSelector(QtWidgets.QComboBox):
 
         self.model.update(self.mw.data.current.ticker_df)
         self.setModelColumn(0)
+
         # self.view().window.setFixedWidth(1000)
 
 
@@ -162,17 +164,26 @@ class SelectorView(QtWidgets.QTableView):
         self.setMouseTracking(False)
         self.setTabletTracking(False)
         self.viewport().setMouseTracking(False)
-        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
+        # self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
         self.setMinimumWidth(500)
-        self.set_widths()
         self.setShowGrid(False)
+
+        # Disable displaying header text in bold
+        self.horizontalHeader().setHighlightSections(False)
 
 
     def set_widths(self):
+        # for i in range(4):
+        #     self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Fixed)
         # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         # self.horizontalHeader().setDefaultSectionSize(100)
         # self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
-        self.setColumnWidth(0, 50)
+
+        self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
+        self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        # self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        # self.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Fixed)
+        self.setColumnWidth(0, 350)
         self.setColumnWidth(1, 200)
         self.setColumnWidth(2, 0)
         self.setColumnWidth(3, 400)

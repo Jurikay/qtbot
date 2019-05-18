@@ -30,6 +30,10 @@ if __name__ == "__main__":
     main_app.setStyle(QStyleFactory.create('Fusion'))
     main_app.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
+    # Disable popup menu animations since they appear glitchy in Qt < 5.12.3
+    # TODO: Remove when fixed.
+    main_app.setEffectEnabled(QtCore.Qt.UI_AnimateCombo, False)
+
     if hasattr(QStyleFactory, 'AA_UseHighDpiPixmaps'):
         main_app.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps)
 
@@ -40,5 +44,6 @@ if __name__ == "__main__":
     app.main_app = main_app
 
 
+    widget.setup()
 
     sys.exit(main_app.exec_())

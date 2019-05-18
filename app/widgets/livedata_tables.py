@@ -37,7 +37,7 @@ class BackgroundTable(QtWidgets.QTableView):
         self.has_data = False
         self.compare_col = 3
         self.get_color = False
-        self.rowH = 18
+        # self.rowH = 18
 
 
     # def paintEfent(self, event):
@@ -98,10 +98,10 @@ class BackgroundTable(QtWidgets.QTableView):
                         self.bg_color = "#3b4c37"
 
                 rowY = self.rowViewportPosition(row)
-                # rowH = self.rowHeight(row)
-                # if not self.rowH:
-                #     self.rowH = self.rowHeight(row)
-                # print(row, rowY, rowH)
+
+                self.rowH = self.rowHeight(row)
+                if not self.rowH:
+                    self.rowH = self.rowHeight(row)
 
                 # Create the painter
                 value = self.df.iloc[row, self.compare_col]

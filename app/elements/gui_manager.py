@@ -53,27 +53,13 @@ class GuiManager:
         self.initial_values()
         self.api_init()
 
-        # for coin in self.mw.tickers:
-        #     if "USDT" not in coin:
-
-        #         iconPath = "images/ico/" + coin[:-3] + ".svg"
-        #         if(os.path.isfile(iconPath)):
-        #             icon = QtGui.QIcon(iconPath)
-        #         else:
-        #             icon = QtGui.QIcon("images/ico/BTC.svg")
-
-                # self.mw.coin_selector.addItem(icon, coin[:-3])
         self.mw.coin_selector.setup()
-        # self.mw.coin_selector.model().sort(0)
-        # self.mw.coin_selector.setIconSize(QtCore.QSize(25, 25))
 
-        # coinIndex = self.mw.coin_selector.findText(str(self.mw.cfg_manager.coin))
-
-        # self.mw.coin_selector.setCurrentIndex(coinIndex)
 
 
     # Refactor
     def initial_last_price(self):
+        return
         # init last_price
         arrow = QtGui.QPixmap("images/assets/2arrow.png")
         formatted_price = '{number:.{digits}f}'.format(number=float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
@@ -125,29 +111,10 @@ class GuiManager:
     def api_init(self):
         """One-time gui initialization."""
         self.mw.api_manager.api_calls()
-
-
-
         self.mw.websocket_manager.schedule_websockets()
-        # self.mw.websocket_manager.start_sockets()
-
-
-
         self.mw.gui_manager.schedule_work()
 
-        # self.mw.user_data.holdings_table.initialize()
-
-        # self.mw.coin_index.build_coinindex()
-        print("SET CORNER WIDGETS")
-        self.mw.ChartTabs.setCornerWidget(self.mw.volume_widget)
-        self.mw.ChartTabs.adjustSize()
-
-        self.mw.tabsBotLeft.setCornerWidget(self.mw.coin_index_filter)
-        self.mw.coin_index_filter.adjustSize()
-        self.mw.tabsBotLeft.adjustSize()
-
-
-
+        # CMC Chart:
         self.set_charts(self.mw.cfg_manager.pair)
         self.mw.chart.show()
 
@@ -165,15 +132,16 @@ class GuiManager:
         self.mw.timer.start()
 
     # TODO: Implement FPS Counter
-    def fps_counter(self):
-        """Initializes fps counter. Spawns a qthread with an endless loop."""
+    # def fps_counter(self):
+    #     """Initializes fps counter. Spawns a qthread with an endless loop."""
 
 
-    def fps_loop(self):
-        while True:
-            pass
+    # def fps_loop(self):
+    #     while True:
+    #         pass
 
     def set_charts(self, pair):
+        # This is different from the call that sets up the charts; TODO: Unify
         self.mw.chart.setHtml(Webpages.build_chart2(pair, self.mw.cfg_manager.defaultTimeframe))
 
         url = Webpages.build_cmc(self)
@@ -216,33 +184,21 @@ class GuiManager:
 
             logging.info('Switching to %s' % newcoin)
 
-            # self.mw.api_manager.set_pair_values()
 
             self.initial_values()
 
             # new 'initial data'
-            # self.mw.new_api.store_pair_data(newcoin)
             self.mw.new_api.threaded_pair_update()
-
             self.mw.websocket_manager.websockets_symbol()
-
-            # self.mw.history_table.setRowCount(0)
-
             self.mw.api_manager.api_calls()
 
-            # self.mw.table_manager.init_filter()
 
             # new
-            # self.mw.user_data.initial_history()
             self.mw.trade_history_view.update()
 
 
     def change_to(self, coin):
         print("Chnage_to:", coin)
-        # coinIndex = self.mw.coin_selector.findText(coin)
-        # coinData = self.mw.coin_selector.findData(coin)
-        # ind = self.mw.coin_selector.model()
-        # print("INDEX", ind)
 
         find = self.mw.coin_selector.findText(coin, flags=QtCore.Qt.MatchStartsWith)
         self.mw.coin_selector.setCurrentIndex(find)
@@ -270,42 +226,16 @@ class GuiManager:
 
         self.runtime += 1
 
-        # new table search bar width:
-        # self.mw.coinindex_filter.setL
 
-        # charts_index = self.mw.ChartTabs.currentIndex()
-
-        # data_index = self.mw.tabsBotLeft.currentIndex()
-
-        # if self.mw.pd_update is True:
-        #     self.mw.pd_table.update_model_data()
-
-        # if self.mw.dict_update is True:
-        #     self.mw.dict_index.update_model_data()
-
-
-        # if self.mw.historical.timeout > 0:
-        #     self.mw.historical.timeout -= 1
-        #     print("TIMEOUT", self.mw.historical.timeout)
-
-
-        # if self.mw.new_coin_table is True and data_index == 0:
-        #     # print("update")
-        #     self.mw.test_table_view.coin_update()
         self.mw.index_view.websocket_update()
 
-        # if self.mw.new_coin_table is True:
-        # worker = Worker(self.mw.test_table_view.coin_update)
-        # self.threadpool.start(worker)
 
 
 
         total_btc_value = self.calc_total_btc()
-
         self.mw.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
 
         total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2) + "$"
-
         self.mw.total_usd_label.setText("<span style='font-size: 14px; color: white; font-family: Arial Black;'>" + total_usd_value + "</span>")
 
         last_btc_price = float(self.mw.tickers["BTCUSDT"]["lastPrice"])
@@ -346,32 +276,10 @@ class GuiManager:
         self.mw.btc_vol_label.setText("<span style='color: " + Colors.color_lightgrey + "'>" + vol_formatted + "</span>")
 
 
-        # self.mw.debug.setText(str(val["volDirection"]))
-
-        # self.mw.debug.setText('{number:.{digits}f}'.format(number=float(val["volDirection"]), digits=4) + "BTC")
-
         self.percent_changes()
-        # self.volume_values()
-
         self.check_websocket()
-
         self.update_stats()
-        # only update the currently active table
-        # tab_index_botLeft = self.mw.tabsBotLeft.currentIndex()
 
-        # if tab_index_botLeft == 3:
-        #     self.mw.user_data.holdings_table.update_holding_prices()
-        #     val["indexTabOpen"] = False
-        # elif tab_index_botLeft == 0:
-        #     self.mw.coin_index.update_coin_index_prices()
-
-        # decouple eventually
-        # val["indexTabOpen"] = True
-        # self.start_kline_iterator()
-        # else:
-        #     val["indexTabOpen"] = False
-
-        # self.mw.coin_index.start_kline_iterator()
 
     def update_stats(self):
         session_time = str(timedelta(seconds=self.runtime))
@@ -387,7 +295,7 @@ class GuiManager:
 
 
 
-    # global ui / logic
+    # global ui / logic REFACTOR
     def check_websocket(self):
         """Check if websocket updates stop occuring."""
         if self.update_count == int(self.mw.websocket_manager.api_updates):
@@ -445,20 +353,6 @@ class GuiManager:
 
                 # print(str(change))
                 change.setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
-
-
-    # refactor: rather get this from kline websocket for current coin
-    # def volume_values(self):
-    #     volume_labels = [self.mw.volume_1m, self.mw.volume_5m, self.mw.volume_15m, self.mw.volume_1h]
-
-        # volume_values = [self.mw.coin_index.new_volume_1m_value,
-        #                  self.mw.coin_index.new_volume_5m_value,
-        #                  self.mw.coin_index.new_volume_15m_value,
-        #                  self.mw.coin_index.new_volume_1h_value]
-
-        # for i, label in enumerate(volume_labels):
-        #     label_text = "<span style='color: " + "white" + "'>" + "{0:.2f}".format(volume_values[i]) + " BTC</span>"
-        #     label.setText(label_text)
 
     # Modified; New data
     def calc_total_btc(self):
