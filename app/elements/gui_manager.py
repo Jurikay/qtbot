@@ -11,6 +11,8 @@ from app.gui import logging
 from app.workers import Worker
 from app.charts import Webpages
 
+from app.helpers import resource_path
+
 class ExamplePopup(QtWidgets.QDialog):
     
     def __init__(self, name, parent=None):
@@ -51,14 +53,14 @@ class GuiManager:
         self.initial_values()
         self.api_init()
 
-        for coin in self.mw.tickers:
-            if "USDT" not in coin:
+        # for coin in self.mw.tickers:
+        #     if "USDT" not in coin:
 
-                iconPath = "images/ico/" + coin[:-3] + ".svg"
-                if(os.path.isfile(iconPath)):
-                    icon = QtGui.QIcon(iconPath)
-                else:
-                    icon = QtGui.QIcon("images/ico/BTC.svg")
+        #         iconPath = "images/ico/" + coin[:-3] + ".svg"
+        #         if(os.path.isfile(iconPath)):
+        #             icon = QtGui.QIcon(iconPath)
+        #         else:
+        #             icon = QtGui.QIcon("images/ico/BTC.svg")
 
                 # self.mw.coin_selector.addItem(icon, coin[:-3])
         self.mw.coin_selector.setup()
@@ -150,7 +152,8 @@ class GuiManager:
         self.mw.chart.show()
 
 
-        icon = QtGui.QIcon("images/ico/" + "BTC" + ".svg")
+        icon = QtGui.QIcon(resource_path("images/ico/" + "BTC" + ".svg"))
+
         self.mw.quote_asset_box.addItem(icon, "BTC")
         self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
         self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))

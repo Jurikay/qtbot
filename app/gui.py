@@ -9,7 +9,7 @@ from datetime import datetime
 from functools import partial
 
 import PyQt5.QtCore as QtCore
-# import PyQt5.QtGui as QtGui
+import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 import yappi
 from PyQt5.QtWebEngineWidgets import QWebEngineView  # QWebEnginePage
@@ -43,6 +43,9 @@ from app.new_gui import GuiMgr
 import platform
 import os
 from pathlib import Path
+
+from app.helpers import resource_path
+
 # from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
 # from app.data.index_data import IndexData
 
@@ -66,6 +69,9 @@ class beeserBot(QtWidgets.QMainWindow):
         if platform.system() == "Windows":
             from app.elements.timescript import set_system_time
             set_system_time()
+
+        # Set application icon; TODO: Change to minimalistic version
+        self.setWindowIcon(QtGui.QIcon(resource_path("images/assets/ico.ico")))
 
         self.version = "alpha 0.1"
 
@@ -97,15 +103,17 @@ class beeserBot(QtWidgets.QMainWindow):
         self.decimals = 0
         self.assetDecimals = 0
 
-        
-        uifile_path = Path("ui/MainWindow.ui")
-        uistyle_path = Path("ui/style.qss")
+        # load QtDesigner UI file
+
+        # Load external ui files in such a way that they are expected next to the executable if bundled.
+        uifile_path = resource_path("ui/MainWindow.ui")
+        uistyle_path = resource_path("ui/style.qss")
         
         # Load ui file
-        loadUi(str(uifile_path), self)
+        loadUi(uifile_path, self)
 
         # Set external stylesheet
-        with open(str(uistyle_path), "r") as fh:
+        with open(uistyle_path, "r") as fh:
             self.setStyleSheet(fh.read())
 
         # instantiate various helper classes

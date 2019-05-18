@@ -11,3 +11,5 @@
  Todo:  
   Use main.spec to gather required files to run exe
   Test in VM
+
+  https://www.mfitzp.com/article/packaging-pyqt5-apps-with-fbs/

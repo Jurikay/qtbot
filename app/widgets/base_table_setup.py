@@ -15,7 +15,9 @@ import pandas as pd
 from datetime import datetime
 from app.colors import Colors
 
-
+from app.helpers import resource_path
+# from pathlib import Path
+# import sys
 #################################################################
 # BaseTableView
 #################################################################
@@ -433,19 +435,23 @@ class NPriceDelegate(QtWidgets.QStyledItemDelegate):
         # painter.drawText(option.rect, align_left, options.text)
         painter.restore()
 
+
+
+
 # refactor (used by coin_selector view)
 class NCoinDelegate(QtWidgets.QStyledItemDelegate):
 
+    
     @staticmethod
     def initStyleOption(option, index):
         """Set style options based on index column."""
 
         iconPath = "images/ico/" + index.data().replace("BTC", "") + ".svg"
-
-        if (os.path.isfile(iconPath)):
-            option.icon = QtGui.QIcon(iconPath)
+        rp = resource_path(iconPath)
+        if (os.path.isfile(rp)):
+            option.icon = QtGui.QIcon(rp)
         else:
-            option.icon = QtGui.QIcon("images/ico/BTC.svg")
+            option.icon = QtGui.QIcon(resource_path("images/ico/BTC.svg"))
 
 
         option.text = index.data().replace("BTC", "")
@@ -505,11 +511,11 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
         """Set style options based on index column."""
 
         iconPath = "images/ico/" + index.data().replace("BTC", "") + ".svg"
-
-        if (os.path.isfile(iconPath)):
-            option.icon = QtGui.QIcon(iconPath)
+        rp = resource_path(iconPath)
+        if (os.path.isfile(rp)):
+            option.icon = QtGui.QIcon(rp)
         else:
-            option.icon = QtGui.QIcon("images/ico/BTC.svg")
+            option.icon = QtGui.QIcon(resource_path("images/ico/BTC.svg"))
 
 
         option.text = index.data().replace("BTC", "") + " / BTC"
@@ -563,7 +569,8 @@ class CoinDelegate(PairDelegate):
     def initStyleOption(self, option, index):
         option.text = index.data()
         # print("INDEX DATA", index.data())
-        option.icon = QtGui.QIcon("images/ico/" + index.data() + ".svg")
+
+        option.icon = QtGui.QIcon(resource_path("images/ico/" + index.data() + ".svg"))
 
 
 #################################################################

@@ -11,6 +11,7 @@ from app.widgets.base_table_setup import BaseTableView, BasicDelegate, SortFilte
 import app
 import pandas as pd
 
+from app.helpers import resource_path
 
 class CoinSelector(QtWidgets.QComboBox):
     def __init__(self, *args, **kwargs):
@@ -45,7 +46,7 @@ class CoinSelector(QtWidgets.QComboBox):
         ctext = option.currentText[:-3]
         
         option.currentText = ctext
-        option.currentIcon = QtGui.QIcon("images/ico/" + ctext + ".svg")
+        option.currentIcon = QtGui.QIcon(resource_path("images/ico/" + ctext + ".svg"))
         painter.drawComplexControl(QtWidgets.QStyle.CC_ComboBox, option)
 
         painter.drawControl(QtWidgets.QStyle.CE_ComboBoxLabel, option)
