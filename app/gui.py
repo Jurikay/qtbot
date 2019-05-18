@@ -97,8 +97,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.decimals = 0
         self.assetDecimals = 0
 
-        # load QtDesigner UI file
-
+        
         uifile_path = Path("ui/MainWindow.ui")
         uistyle_path = Path("ui/style.qss")
         
