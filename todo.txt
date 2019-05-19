@@ -118,3 +118,9 @@ Bot logic/ Stratgies:
 
 calculate "turbulance" between daily low and high price
 100 - (low/high *100-1)
+
+Reconnect after computer sleep. make it so client is reassignable
+
+## generate pylintrc file: pylint --generate-rcfile > pylintrc 
+
+in the beginning: read config, switch to defined pair
