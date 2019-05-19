@@ -122,6 +122,11 @@ QLabel {
   color: white;
 }
 
+#limit_buy_label, #limit_sell_label {
+    font-weight: bold;
+    /* font-size: 15px; */
+}
+
 /* QDoubleSpinBox { border: 3px outset grey;padding-right: 40px;}
 
 QDoubleSpinBox::up-button { subcontrol-position: right; right: 40px; width: 40px; height: 35px;}
