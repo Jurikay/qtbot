@@ -75,14 +75,8 @@ class WebsocketManager:
 
     def websockets_symbol(self):
         """Symbol specific websockets. This gets called on pair change."""
-        self.depthSocket = self.socket_mgr.start_depth_socket(self.mw.cfg_manager.pair, self.depth_callback, depth=20)
-        self.aggTradeSocket = self.socket_mgr.start_aggtrade_socket(self.mw.cfg_manager.pair, self.trade_callback)
-
-        # print("depth socket", self.depthSocket)
-        # self.klineSocket1 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="1m")
-        # self.klineSocket5 = self.socket_mgr.start_kline_socket(self.mw.cfg_manager.pair, self.kline_callback, interval="5m")
-        # logging.info('Starting websockets for %s' % str(self.mw.cfg_manager.pair))
-
+        self.depthSocket = self.socket_mgr.start_depth_socket(self.mw.data.current.pair, self.depth_callback, depth=20)
+        self.aggTradeSocket = self.socket_mgr.start_aggtrade_socket(self.mw.data.current.pair, self.trade_callback)
 
 
     ###########################
@@ -242,7 +236,7 @@ class WebsocketManager:
             # print("value: " + str(value))
             # print("ticker: " + str(ticker))
             
-            if value["s"][-3:] == "BTC":
+            if value["s"][-3:] == "BTC" or value["s"] == "BTCUSDT":
                 # print ("value", value)
                 ticker_data = {'symbol': value["s"],
                                'priceChange': value["p"],
@@ -275,7 +269,6 @@ class WebsocketManager:
                 #         self.mutex.lock()
                 #         self.mw.tickers[value["s"]][item] = item_value
                 #         self.mutex.unlock()
-
                 # df_data[value["s"]] = ticker_data
         # print("ALL TICKERS", all_tickers)
         # print("TICKER DICT", ticker_dict)
@@ -319,7 +312,7 @@ class WebsocketManager:
         # print(msg)
 
         if msg["k"]["i"] == "1m":
-            old_klines = self.mw.klines["1m"].get(self.mw.cfg_manager.pair)
+            old_klines = self.mw.klines["1m"].get(self.mw.data.current.pair)
             if isinstance(old_klines, list):
 
                 old_klines.pop()

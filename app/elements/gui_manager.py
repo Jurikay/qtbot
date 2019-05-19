@@ -50,7 +50,8 @@ class GuiManager:
     # Refactor
     def initialize(self):
         self.initial_last_price()
-        self.initial_values()
+        # self.initial_values()
+        
         self.api_init()
 
         self.mw.coin_selector.setup()
@@ -69,43 +70,6 @@ class GuiManager:
         self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
 
-    def initial_values(self):
-        """Set various values needed for further tasks. Gets called when the pair
-        is changed."""
-
-        coin = self.mw.cfg_manager.coin
-        pair = self.mw.cfg_manager.pair
-
-        holdings = self.mw.user_data.holdings
-        tickers = self.mw.tickers
-
-
-        self.mw.buy_asset.setText(coin)
-        self.mw.sell_asset.setText(coin)
-
-        self.mw.limit_total_btc.setText(str(holdings["BTC"]["free"]) + " BTC")
-        self.mw.limit_total_coin.setText(str(holdings[coin]["free"]) + " " + coin)
-
-        self.mw.limit_buy_label.setText("<span style='font-weight: bold; font-size: 12px;'>Buy " + coin + "</span>")
-        self.mw.limit_sell_label.setText("<span style='font-weight: bold; font-size: 12px;'>Sell " + coin + "</span>")
-
-        # self.mw.limit_coin_label_buy.setText("<span style='font-weight: bold; color: white;'>" + coin + "</span>")
-        # self.mw.limit_coin_label_sell.setText("<span style='font-weight: bold; color: white;'>" + coin + "</span>")
-
-        # self.mw.limit_buy_input.setText("kernoschmaus")
-        self.mw.limit_buy_input.setDecimals(tickers[pair]["decimals"])
-        self.mw.limit_buy_input.setSingleStep(float(tickers[pair]["tickSize"]))
-
-        self.mw.limit_sell_input.setDecimals(tickers[pair]["decimals"])
-        self.mw.limit_sell_input.setSingleStep(float(tickers[pair]["tickSize"]))
-
-        self.mw.limit_buy_amount.setDecimals(tickers[pair]["assetDecimals"])
-        self.mw.limit_buy_amount.setSingleStep(float(tickers[pair]["minTrade"]))
-
-        self.mw.limit_sell_amount.setDecimals(tickers[pair]["assetDecimals"])
-        self.mw.limit_sell_amount.setSingleStep(float(tickers[pair]["minTrade"]))
-
-
 
     # gui init
     def api_init(self):
@@ -115,7 +79,8 @@ class GuiManager:
         self.mw.gui_manager.schedule_work()
 
         # CMC Chart:
-        self.set_charts(self.mw.cfg_manager.pair)
+        # TODO: Reenable
+        # self.set_charts(self.mw.cfg_manager.pair)
         self.mw.chart.show()
 
 
@@ -130,22 +95,6 @@ class GuiManager:
         self.mw.timer.setInterval(200)
         self.mw.timer.timeout.connect(self.mw.delayed_stuff)
         self.mw.timer.start()
-
-    # TODO: Implement FPS Counter
-    # def fps_counter(self):
-    #     """Initializes fps counter. Spawns a qthread with an endless loop."""
-
-
-    # def fps_loop(self):
-    #     while True:
-    #         pass
-
-    def set_charts(self, pair):
-        # This is different from the call that sets up the charts; TODO: Unify
-        self.mw.chart.setHtml(Webpages.build_chart2(pair, self.mw.cfg_manager.defaultTimeframe))
-
-        url = Webpages.build_cmc(self)
-        self.mw.cmc_chart.load(QtCore.QUrl(url))
 
     # refactor
     # global ui
@@ -162,49 +111,6 @@ class GuiManager:
 
             # self.mw.fishbot_table.check_fish_bot()
             time.sleep(1)
-
-    # main gui
-    def change_pair(self):
-        print("Change_pair")
-        """Change the active pair and call symbol specific functions."""
-        newcoin = self.mw.coin_selector.currentText()
-        print("CHANGEPAIR newcoin", newcoin)
-        # table_sel = self.mw.coin_selector.model
-
-        if any(newcoin in s for s in self.mw.tickers) and newcoin != self.mw.cfg_manager.coin:
-            print("inside if", newcoin)
-            self.mw.cfg_manager.coin = newcoin[:-3]
-            self.mw.cfg_manager.pair = newcoin
-            self.mw.data.current.pair = newcoin
-            self.mw.data.current.coin = newcoin[:-3]
-
-            self.set_charts(self.mw.cfg_manager.pair)
-
-            self.mw.websocket_manager.stop_sockets()
-
-            logging.info('Switching to %s' % newcoin)
-
-
-            self.initial_values()
-
-            # new 'initial data'
-            self.mw.new_api.threaded_pair_update()
-            self.mw.websocket_manager.websockets_symbol()
-            self.mw.api_manager.api_calls()
-
-
-            # new
-            self.mw.trade_history_view.update()
-
-
-    def change_to(self, coin):
-        print("Chnage_to:", coin)
-
-        find = self.mw.coin_selector.findText(coin, flags=QtCore.Qt.MatchStartsWith)
-        self.mw.coin_selector.setCurrentIndex(find)
-
-        self.change_pair()
-
 
     # refactor
     def tick(self, payload):

@@ -37,7 +37,7 @@ class BackgroundTable(QtWidgets.QTableView):
         self.has_data = False
         self.compare_col = 3
         self.get_color = False
-        # self.rowH = 18
+        self.rowH = 18
 
 
     # def paintEfent(self, event):
@@ -75,7 +75,7 @@ class BackgroundTable(QtWidgets.QTableView):
             firstVisualRow = max([vh.visualIndexAt(0), 0])
             lastVisualRow = vh.visualIndexAt(vh.viewport().height())
             if lastVisualRow == -1:
-                lastVisualRow = self.model().rowCount(self.rootIndex()) - 1
+                lastVisualRow = self.model().rowCount(self.rootIndex()) - 1  # 19
             # print("first/last:", firstVisualRow, lastVisualRow)
 
             # for vrow in range(firstVisualRow, lastVisualRow + 1):
@@ -251,10 +251,10 @@ class BackgroundTable(QtWidgets.QTableView):
 #             option.text = str(index.data()).zfill(2)
 
 #         elif index.column() == 1:
-#             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
+#             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.data.pairs[self.mw.data.current.pair]["decimals"])
 
 #         elif index.column() == 2:
-#             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"])
+#             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"])
 
 #         elif index.column() == 3:
 #             option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=3) + " BTC"
@@ -299,9 +299,11 @@ class BackgroundTable(QtWidgets.QTableView):
 
 
 class HistPriceDelegate(BasicDelegate):
+
+    
     def initStyleOption(self, option, index):
 
-        decimals = self.mw.tickers[self.mw.cfg_manager.pair]["decimals"]
+        decimals = self.mw.data.pairs[self.mw.data.current.pair]["decimals"]
         option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=decimals)
 
         if self.mw.trade_history[index.row()]["maker"] is True:
@@ -330,14 +332,14 @@ class OrderbookCountDelegate(BasicDelegate):
 class OrderbookPriceDelegate(HoverDelegate):
     def initStyleOption(self, option, index):
         super(OrderbookPriceDelegate, self).initStyleOption(option, index)
-        decimals = self.mw.tickers[self.mw.cfg_manager.pair]["decimals"]
+        decimals = self.mw.data.pairs[self.mw.data.current.pair]["decimals"]
         option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=decimals)
 
 
 class OrderbookQtyDelegate(HoverDelegate):
     def initStyleOption(self, option, index):
         super(OrderbookQtyDelegate, self).initStyleOption(option, index)
-        assetDecimals = self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"]
+        assetDecimals = self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"]
         option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=assetDecimals)
         self.align = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
 
@@ -394,7 +396,20 @@ class BidsView(BackgroundTable):
     def set_df(self):
         # return self.create_dataframe(self.data)
         # return self.mw.data.current.history_df[self.data]
-        return self.mw.data.current.depth_df[self.data]
+        df = self.mw.data.current.depth_df[self.data]
+        # print("DEPTH #######")
+        # df2 = df.append(pd.DataFrame([[0,0,0,0]], columns=df.columns))
+        # df = df.append(s)
+        # print(df2)
+        row_count = df.shape[0]
+
+        # empty = pd.Series([0,0,0,0])
+
+        for i in range(20 - row_count):
+            df = df.append(pd.DataFrame([[str(row_count + i + 1), 0, 0, 0]], columns=df.columns))
+        #     df.append(pd.Series().transpose(), ignore_index=True)
+        #     print("DF has not enough rows", i)
+        return df
 
 
 

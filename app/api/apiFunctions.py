@@ -6,16 +6,20 @@
 """A collection of methods that rely on the Python-Binance API
 implementation to communicate with Binance."""
 
+# methods should conform to this:
+# - interact with binance api
+# - return a value
+# - do not store data
+# - do not interact with the gui
+
 from functools import partial
+import time
 
 from binance.exceptions import BinanceAPIException
-# from requests.exceptions import InvalidHeader
-import app
-from app.workers import Worker
-# from app.initApi import set_pair_values
 from binance.client import Client
 from requests.exceptions import ReadTimeout
-import time
+import app
+from app.workers import Worker
 
 
 class ApiCalls:
@@ -30,13 +34,15 @@ class ApiCalls:
         app.client = self.client
 
         self.counter = 0
-        self.api_calls_counter = 0
+        # self.api_calls_counter = 0
 
+    # Either move out or at least improve drastically
     def init_client(self):
         try:
             api_key = self.mw.cfg_manager.api_key
             api_secret = self.mw.cfg_manager.api_secret
             return Client(api_key, api_secret, {"verify": True, "timeout": 10})
+        
         except BinanceAPIException as e:
             if "IP banned until" in str(e):
                 self.banned_until = str(self.get_ban_duration(e))
@@ -50,6 +56,7 @@ class ApiCalls:
         return int(banned_until)
 
 
+    # TODO: Rebuild
     def initialize(self):
 
         if self.client:
@@ -65,7 +72,7 @@ class ApiCalls:
 
                 # val["tickers"] = self.getTickers()
 
-                self.api_calls_counter += 3
+                # self.api_calls_counter += 3
                 # userMsg = dict()
                 # accHoldings = dict()
 
@@ -93,23 +100,6 @@ class ApiCalls:
         else:
             print("CLIENT NOT DEFINED! BANNED!")
             self.error = "banned"
-    # def get_tether(client):
-    #     tether_info = client.get_ticker(symbol="BTCUSDT")
-    #     return tether_info
-
-
-    # TODO remove val references
-    # def set_pair_values(self):
-    #     """Set various values based on the chosen pair."""
-    #     pair = self.mw.cfg_manager.pair
-    #     val["decimals"] = len(str(val["coins"][pair]["tickSize"])) - 2
-    #     self.mw.tickers[self.mw.cfg_manager.pair]["decimals"] = len(str(val["coins"][pair]["tickSize"])) - 2
-    #     if int(val["coins"][pair]["minTrade"]) == 1:
-    #         val["assetDecimals"] = 0
-    #         self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"] = 0
-    #     else:
-    #         val["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
-    #         self.mw.tickers[self.mw.cfg_manager.pair]["assetDecimals"] = len(str(val["coins"][pair]["minTrade"])) - 2
 
 
     # TODO: replace; get_products is depreciated.
@@ -216,7 +206,7 @@ class ApiCalls:
 
 
 
-    def api_cancel_order(self, client, order_id, symbol, progress_callback):
+    def api_cancel_order(self, order_id, symbol, progress_callback):
         print("cancel order " + str(symbol) + " " + str(order_id))
         try:
             self.client.cancel_order(symbol=symbol, orderId=order_id)
@@ -227,7 +217,7 @@ class ApiCalls:
     # def api_order_history(self, pair, progress_callback):
     #     orders = self.client.get_all_orders(symbol=pair)
     #     progress_callback.emit(orders)
-    #     self.api_calls_counter += 1
+        # self.api_calls_counter += 1
 
     def api_my_trades(self, pair, progress_callback=None):
         my_trades = self.client.get_my_trades(symbol=pair)
@@ -237,13 +227,13 @@ class ApiCalls:
             return my_trades
 
     def api_history(self, progress_callback):
-        trade_history = self.getTradehistory(self.mw.cfg_manager.pair)
+        trade_history = self.getTradehistory(self.mw.data.current.pair)
         progress_callback.emit({"history": list(reversed(trade_history))})
-        self.api_calls_counter += 1
+        # self.api_calls_counter += 1
 
 
     def api_depth(self, progress_callback):
-        depth = self.getDepth(self.mw.cfg_manager.pair)
+        depth = self.getDepth(self.mw.data.current.pair)
         progress_callback.emit(depth)
 
 
@@ -262,6 +252,7 @@ class ApiCalls:
     # Initial api calls old data;
     # TODO: Fully replace
     def api_calls(self):
+        print("apiFunctions api_calls")
         """Initial and coin specific api calls"""
         worker = Worker(self.api_history)
         worker.signals.progress.connect(self.mw.live_data.batch_history)
@@ -274,13 +265,13 @@ class ApiCalls:
         # worker.signals.finished.connect(self.mw.limit_pane.t_complete)
         self.threadpool.start(worker)
 
-        # TODO: COme back to
+        # TODO: COme back to 
         worker = Worker(self.mw.user_data.initial_history)
         worker.signals.progress.connect(self.updateHistTable)
         self.threadpool.start(worker)
 
 
-        # self.get_trade_history(self.mw.cfg_manager.pair)
+        # self.get_trade_history(self.mw.data.current.pair)
 
 
     # Websocket history table update
@@ -291,7 +282,9 @@ class ApiCalls:
 
     def save_depth(self, depth):
         # print("save depth", depth)
-        self.mw.orderbook = depth
+        self.mw.data.set_depth(depth)
+        # self.mw.orderbook = depth
+
         self.mw.new_asks.setup()
         self.mw.new_bids.setup()
 
@@ -306,7 +299,7 @@ class ApiCalls:
     def get_kline(self, pair, progress_callback):
         """Make an API call to get historical data of a coin pair."""
         interval = "1m"
-        self.api_calls_counter += 1
+        # self.api_calls_counter += 1
         try:  # try since this is used heavily
             klines = self.client.get_klines(symbol=pair, interval=interval)
             progress_callback.emit([klines, pair, interval])
@@ -316,7 +309,7 @@ class ApiCalls:
 
     def cancel_order_byId(self, order_id, symbol):
         """Cancel an order by id from within a separate thread."""
-        worker = Worker(partial(self.mw.api_manager.api_cancel_order, app.client, order_id, symbol))
+        worker = Worker(partial(self.mw.api_manager.api_cancel_order, order_id, symbol))
         worker.signals.progress.connect(self.cancel_callback)
         self.threadpool.start(worker)
 
@@ -329,12 +322,13 @@ class ApiCalls:
 
     def new_api(self):
         print("NEW API CALLS")
-        api_calls = 1
+        # api_calls = 1
         btc_pairs = self.get_btc_pairs()
 
         tickers = self.add_ticker_data(btc_pairs)
+
         self.mw.tickers = tickers
-        api_calls += (self.all_pairs / 2)
+        # api_calls += (self.all_pairs / 2)
 
 
 
@@ -371,7 +365,7 @@ class ApiCalls:
                 coin_dict[pair]["tickSize"] = tickSize.rstrip("0")
                 coin_dict[pair]["minTrade"] = minTrade
 
-        self.all_pairs = all_pairs
+        # self.all_pairs = all_pairs
         return coin_dict
 
 

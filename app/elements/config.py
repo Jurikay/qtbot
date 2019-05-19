@@ -313,7 +313,7 @@ class ConfigManager:
 
 
     def update_btc_chart(self):
-        self.mw.btc_chart.setHtml(Webpages.build_chart_btc("BTCUSD", self.mw.cfg_manager.btcTimeframe, self.mw.btc_exchange_selector.currentText()))
+        self.mw.btc_chart.setHtml(Webpages.build_chart_btc(self, "BTCUSD", self.mw.cfg_manager.btcTimeframe, self.mw.btc_exchange_selector.currentText()))
 
     def update_chart(self):
         self.mw.chart.setHtml(Webpages.build_chart2(self.pair, self.defaultTimeframe))

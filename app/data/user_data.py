@@ -33,6 +33,9 @@ class UserData(QtCore.QObject):
 
     def initialize(self):
         print("INIT USER DATA")
+
+        # self.mw.new_api.initial_tickers()
+
         self.initial_open_orders()
         self.initial_history()
         self.initial_holdings()
@@ -195,8 +198,8 @@ class UserData(QtCore.QObject):
 
 
     def initial_history(self, progress_callback=None):
-
-        pair = self.mw.cfg_manager.pair
+        print("INITAL HISTOIRY!!!", progress_callback)
+        pair = self.mw.data.current.pair
         # print("Initial history", pair)
         history = self.mw.api_manager.api_my_trades(pair)
 
@@ -304,9 +307,10 @@ class UserData(QtCore.QObject):
     def get_holdings_array(self, coin, free, locked):
         total = float(free) + float(locked)
         if coin != "BTC":
-            coin_price = float(self.mw.tickers.get(coin + "BTC", dict()).get("lastPrice", 0))
+            # TODO: Fix race condition! This needs current btc price
+            coin_price = float(self.mw.data.tickers.get(coin + "BTC", dict()).get("lastPrice", 0))
             total_btc = total * coin_price
-            name = coin_price = str(self.mw.tickers.get(coin + "BTC", dict()).get("baseAssetName", 0))
+            name = str(self.mw.data.tickers.get(coin + "BTC", dict()).get("baseAssetName", 0))
             # print("name", name)
         elif coin == "BTC":
             total_btc = total
@@ -333,15 +337,18 @@ class UserData(QtCore.QObject):
 
     def create_holdings_df(self):
         if self.holdings:
+            print("Creating holdings df:", self.holdings)
             df = pd.DataFrame.from_dict(self.holdings, orient='index')
 
             df = df[["coin", "name", "free", "locked", "total", "total_btc"]]
             df.columns = ["Asset", "Name", "Free", "Locked", "Total", "Total BTC"]
             df = df.apply(pd.to_numeric, errors='ignore')
-
+            print("DF", df)
             # Filter dataframe by total_btc column
             mask = df["Total BTC"].values >= 0.001
+            print("returning holding df:", df[mask])
             return df[mask]
 
         else:
+            print("No holdings")
             return pd.DataFrame()

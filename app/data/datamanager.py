@@ -19,8 +19,9 @@ class DataManager():
         self.tickers = dict()
         self.pairs = dict()
 
+        self.btc_price = dict()
         # Hardcoded default
-        self.current.symbol = "ETHBTC"
+        self.set_current_pair("ETHBTC")
         self.current.tickers = dict()
 
     def set_thread(self, callback):
@@ -44,6 +45,8 @@ class DataManager():
                 # Store tickers by pair
                 # temp_tickers[pair] = info
                 self.tickers[pair] = info
+            elif info["symbol"] == "BTCUSDT":
+                self.btc_price = info
     
     @staticmethod
     def set_trades(trades):
@@ -66,7 +69,7 @@ class DataManager():
         
         self.history_df()
 
-    def set_info(self, info, products):
+    def set_info(self, products, info):
     
         pair_info = Dict()
 
@@ -84,6 +87,10 @@ class DataManager():
 
         # Store 'static' info in self.pairs
         self.pairs = pair_info
+
+    def set_current_pair(self, pair):
+        self.current.pair = pair
+        self.current.coin = pair[:-3]
 
     # ############### DATAFRAMES ######################
     def depth_df(self, side):

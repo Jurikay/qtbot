@@ -23,7 +23,7 @@ class ApiManager:
         self.client = client
         self.mw = mw
         self.data = mw.data
-
+        print("NEW API MGR")
         self.store_initial_data()
         # return super().__init__(*args, **kwargs)
 
@@ -31,14 +31,20 @@ class ApiManager:
         """Makes inital api calls and stores received data in data class."""
         # Move to threads maybe
         self.data.set_tickers(self.get_tickers())
-        self.get_acc_info()
+        # self.get_acc_info()
 
+        print("PRODUCT INFO#######")
+        products = self.products_info()
+        pair_info = self.pair_info()
         
+
+        self.data.set_info(products, pair_info)
+        # self.data.set
         self.store_pair_data()
 
     def store_pair_data(self, progress_callback=None):
         """This is called whenever the current pair is changed."""
-        symbol = self.data.current.symbol
+        symbol = self.data.current.pair
 
         print("store_pair_data:", symbol)
 
@@ -72,6 +78,7 @@ class ApiManager:
         print()
 
     def get_tickers(self):
+        print("new api get_tickers")
         """Make an initial API call to get ticker data."""
 
         ticker = self.client.get_ticker()  # API call
@@ -144,3 +151,12 @@ class ApiManager:
             coin_dict[pair]["minTrade"] = minTrade
 
         return coin_dict
+    
+    # Currently unused
+    def initial_tickers(self):
+        """This is a temporary method that is used to fix a race condition.
+        Get btc price data before ticker websocket data arrives."""
+        tickers = self.get_tickers()
+
+        self.data.set_tickers(tickers)
+

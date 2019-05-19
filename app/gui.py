@@ -62,7 +62,6 @@ class beeserBot(QtWidgets.QMainWindow):
 
         super(beeserBot, self).__init__()
 
-        
 
         # Set application icon; TODO: Change to minimalistic version
 
@@ -71,12 +70,12 @@ class beeserBot(QtWidgets.QMainWindow):
         self.version = "alpha 0.1"
 
         self.client = app.client
-        # self.threadpool = QtCore.QThreadPool()
-        # self.mutex = QtCore.QMutex()
-        # app.threadpool = self.threadpool
         
-        
-        # app.mutex = self.mutex
+        # has to be defined in init
+        self.threadpool = QtCore.QThreadPool()
+        self.mutex = QtCore.QMutex()
+        app.threadpool = self.threadpool
+        app.mutex = self.mutex
 
         self.error = None
         self.index_data = None
@@ -157,14 +156,12 @@ class beeserBot(QtWidgets.QMainWindow):
             from app.elements.timescript import set_system_time
             set_system_time()
         
-        self.threadpool = QtCore.QThreadPool()
-        self.mutex = QtCore.QMutex()
-        app.threadpool = self.threadpool
-        app.mutex = self.mutex
+        
 
         print("I AM SELF", self)
 
         self.data = DataManager()
+
 
         # instantiate various helper classes
         self.init_basics()
@@ -173,17 +170,26 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.centerOnScreen()
 
-        self.limit_pane.initialize()
+        # connect limit pane ui elements to functions
+        # this is done outside __init__ since not all ui elements are loaded then
+        self.limit_pane.connect_elements()
+
 
         print("### END SETUP")
 
 
     def init_basics(self):
+        """General stuff that has to be initialized,
+        that does not rely on the gui nor is api related."""
+        
+        # Todo: Refactor
         self.log_manager = BotLogger(self)
         self.log_manager.init_logging()
 
         self.cfg_manager = ConfigManager(self)
         self.cfg_manager.initialize()
+
+        # TODO: Add sound manager / data manager
 
         # self.hotkey_manager = HotKeys(self)
         # self.hotkey_manager.init_hotkeys()
@@ -191,24 +197,31 @@ class beeserBot(QtWidgets.QMainWindow):
         
 
     def init_api_classes(self):
+        # TODO: Refactor whacky order
 
         self.api_manager = ApiCalls(self, self.threadpool)        
         self.api_manager.initialize()
+        self.api_manager.new_api()
 
         self.new_api = ApiManager(self, self.api_manager.client)
 
 
+        self.initialize_user_data()
+
+        self.check_connection()
+
+
+
         # newer not newest
-        self.api_manager.new_api()
+
 
         # self.init_manager = InitManager(self)
         # self.init_manager.initialize()
 
-        self.check_connection()
-
+        
+    # TODO: Refactor; 4 states: offline, binance unreachable, banned, authenticated
     def check_connection(self):
         if self.is_connected is True:
-            self.initialize_data()
             self.instantiate_api_managers()
             # self.coin_selector.activated.connect(self.gui_manager.change_pair)
             self.initialize_tables()
@@ -278,7 +291,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # self.new_asks.setup()
 
-    def initialize_data(self):
+    def initialize_user_data(self):
         # TEST/REFACTOR
         # self.index_data = IndexData(self, self.threadpool)
         # self.historical = HistoricalData(self, app.client, self.threadpool)
@@ -289,7 +302,6 @@ class beeserBot(QtWidgets.QMainWindow):
         # if not val["jirrik"]:
         # self.user_data.initial_open_orders()
 
-        self.create_df_btn.clicked.connect(self.user_data.create_history_df)
 
     # refactor: move; global ui
 

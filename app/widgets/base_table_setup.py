@@ -233,6 +233,8 @@ class SortFilterModel(BaseTableModel):
 class BasicDelegate(QtWidgets.QStyledItemDelegate):
     """Basic StyledItemDelegate implementation"""
     center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+    left = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignLeft)
+    right = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignRight)
 
     def __init__(self, parent, text_color=Colors.color_lightgrey, align=center):
         super(BasicDelegate, self).__init__(parent)
@@ -328,8 +330,9 @@ class DateDelegate(BasicDelegate):
 class RoundFloatDelegate(BasicDelegate):
     """Delegate that rounds a float to the given decimal place.
         Defaults to 8."""
+    center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
 
-    def __init__(self, parent, round_to=8, suffix="", text_color=Colors.color_lightgrey):
+    def __init__(self, parent, round_to=8, suffix="", text_color=Colors.color_lightgrey, align=center):
         super(RoundFloatDelegate, self).__init__(parent)
         self.round_to = round_to
         self.mw = app.mw
@@ -356,13 +359,19 @@ class RoundAssetDelegate(RoundFloatDelegate):
         pair_index = model.index(index.row(), self.asset_column)
         pair = model.data(pair_index, QtCore.Qt.DisplayRole)
         # try:
-        if pair != "BTC":
-            assetDecimals = self.mw.tickers[pair + self.pairing]["assetDecimals"]
+        if pair != "BTC" and pair != "SBTC":
+            try:
+                assetDecimals = self.mw.data.pairs[pair + self.pairing]["assetDecimals"]
+            except TypeError as e:
+                print(e)
+                print("Pair has no asset decimals", pair)
+                assetDecimals = 8
         else:
             assetDecimals = 8
-        # except KeyError as e:
-            # print("init key error", e)
-        #     assetDecimals = 8
+
+        if not isinstance(assetDecimals, int):
+            assetDecimals = 8
+        
         self.round_to = int(assetDecimals)
         # print(index.row(), pair, assetDecimals)
         option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=self.round_to) + str(self.suffix)
@@ -378,130 +387,6 @@ class BuySellDelegete(BasicDelegate):
             self.fg_color = Colors.color_green
         else:
             self.fg_color = Colors.color_pink
-
-class NPriceDelegate(QtWidgets.QStyledItemDelegate):
-    """Delegate that colors satoshi in a BTC value."""  # TODO: Find better name
-    # def initStyleOption(self, option, index):
-    #     option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8)
-
-
-    def paint(self, painter, option, index):
-        option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8)
-
-        options = QtWidgets.QStyleOptionViewItem(option)
-
-        # print("OT", option.text)
-        # align_left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-        # font = QtGui.QFont()
-        font = app.mw.coin_selector.view.property("font")
-        # print("pfont", pfont)
-        # font = app.mw.f
-        # font.setPointSize(12)
-        metrics = QtGui.QFontMetrics(font)
-
-        # TODO: Find way to correctly center text horizontally
-        # Move delegates to separate file
-        x = option.rect.left() + option.rect.width() / 4
-        y = (option.rect.bottom() + option.rect.center().y() + option.rect.top()) / 3
-        painter.save()
-
-        color_text = False
-
-        for c in options.text:
-            if color_text is False and c == "0" or c == "." :
-                painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-                
-            else:
-                painter.setPen(QtGui.QColor(Colors.white))
-                color_text = True
-                
-            painter.drawText(x, y, c)
-            # x += metrics.width(c)
-            x += metrics.horizontalAdvance(c)
-
-        x += metrics.boundingRect(c).width()
-        c = "btcp"
-        painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-
-        painter.drawText(x, y, c)
-
-        # else:
-        #     QtWidgets.QStyledItemDelegate.paint(self, painter, option, index)
-
-        # return
-
-        # painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-
-        # painter.drawText(option.rect, align_left, options.text)
-        painter.restore()
-
-
-
-
-# refactor (used by coin_selector view)
-class NCoinDelegate(QtWidgets.QStyledItemDelegate):
-
-    
-    @staticmethod
-    def initStyleOption(option, index):
-        """Set style options based on index column."""
-
-        iconPath = "images/ico/" + index.data().replace("BTC", "") + ".svg"
-        rp = resource_path(iconPath)
-        if (os.path.isfile(rp)):
-            option.icon = QtGui.QIcon(rp)
-        else:
-            option.icon = QtGui.QIcon(resource_path("images/ico/BTC.svg"))
-
-
-        option.text = index.data().replace("BTC", "")
-
-    def paint(self, painter, option, index):
-        """Reimplemented custom paint method."""
- 
-        # alignment = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-        align_left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-
-        painter.save()
-        options = QtWidgets.QStyleOptionViewItem(option)
-        self.initStyleOption(options, index)
-        font = QtGui.QFont()
-
-
-        iconRect = QtCore.QRect(option.rect.left(),
-                                option.rect.top(),
-                                # icon is quadratic; set width to it's height.
-                                option.rect.height(),
-                                option.rect.height())
-
-        textRect = QtCore.QRect(option.rect.left() + iconRect.width() + 5,
-                                option.rect.top(),
-                                # subtract previously added icon width.
-                                option.rect.width() - iconRect.width(),
-                                option.rect.height())
-
-
-
-        if option.state & QtWidgets.QStyle.State_Selected:
-            painter.setPen(QtGui.QColor(Colors.color_yellow))
-            font.setBold(True)
-            painter.setFont(font)
-
-            # set cursor
-            if app.main_app.overrideCursor() != QtCore.Qt.PointingHandCursor:
-                app.main_app.setOverrideCursor(QtCore.Qt.PointingHandCursor)
-
-        else:
-            painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-
-        icon = options.icon
-        icon.paint(painter, iconRect, QtCore.Qt.AlignLeft)
-        painter.drawText(textRect, align_left, options.text)
-        painter.restore()
-
-        
-
-
 
 class PairDelegate(QtWidgets.QStyledItemDelegate):
     """Delegate that adds an icon + hover effect to a pair."""
@@ -619,7 +504,7 @@ class OpenOrders(BaseTableView):
         elif index.column() == 1:
             pair = index.data()
             coin = pair.replace("BTC", "")
-            self.mw.gui_manager.change_to(coin)
+            self.mw.gui_mgr.change_to(coin)
 
     def set_widths(self):
         for i in range(4):
@@ -654,7 +539,7 @@ class History(BaseTableView):
         if index.column() == 1:
             pair = index.data()
             coin = pair.replace("BTC", "")
-            self.mw.gui_manager.change_to(coin)
+            self.mw.gui_mgr.change_to(coin)
 
 
 class Holdings(BaseTableView):
@@ -669,13 +554,15 @@ class Holdings(BaseTableView):
 
 
     def set_df(self):
-        return self.mw.user_data.create_holdings_df()
+        df = self.mw.user_data.create_holdings_df()
+        print("CREATE HOLDINGS DF", df)
+        return df
 
     def cell_clicked(self, index):
         if index.column() == 0:
             pair = index.data()
             if pair != "BTC":
-                self.mw.gui_manager.change_to(pair)
+                self.mw.gui_mgr.change_to(pair)
 
     def set_widths(self):
         self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
@@ -714,4 +601,4 @@ class Index(BaseTableView):
         if index.column() == 0:
             pair = index.data()
             coin = pair.replace("BTC", "")
-            self.mw.gui_manager.change_to(coin)
+            self.mw.gui_mgr.change_to(coin)

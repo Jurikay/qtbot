@@ -237,7 +237,7 @@ class Webpages():
         return chart
 
 
-    def build_chart_btc(pair, timeframe, exchange):
+    def build_chart_btc(self, pair, timeframe, exchange):
     	chart = """
 		<!-- TradingView Widget BEGIN --> <style> * {
 			background: black;
@@ -479,7 +479,7 @@ class Webpages():
         print("cfg mgr pair: ", self.mw.cfg_manager.pair)
 
 
-        coin_name = self.mw.tickers[self.mw.cfg_manager.pair]["baseAssetName"]
+        coin_name = self.mw.data.pairs[self.mw.data.current.pair]["baseAssetName"]
 
         print("coin name: ", coin_name)
 
