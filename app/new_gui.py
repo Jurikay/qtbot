@@ -22,6 +22,7 @@ class GuiMgr:
         self.timer_count = 0
 
         self.mw.coin_selector.update()
+        self.set_default_tabs()
 
     def set_timer(self):
         self.timer= QtCore.QTimer(self.mw)
@@ -29,19 +30,21 @@ class GuiMgr:
         self.timer.timeout.connect(self.blink)
         self.timer.start()
 
+    # Refactor
     def blink(self):
         # try:
         self.timer_count += 1
         df1 = self.mw.tradeTable.df
         df2 = self.mw.data.current.history_df
         if isinstance(df1, pd.DataFrame) and isinstance(df2, pd.DataFrame):
-            if not np.allclose(df1,df2): 
+            if not np.allclose(df1, df2):
                 self.mw.tradeTable.update()
                 self.mw.live_data.new_last_price()
         
         if self.timer_count >= 4:
-            self.mw.data.ticker_df()
-            self.mw.coin_selector.update()
+            if self.mw.is_connected:
+                self.mw.data.ticker_df()
+                self.mw.coin_selector.update()
             self.timer_count = 0
             # if df1 != df2:
             #     print("UNEQ DF")
@@ -109,6 +112,33 @@ class GuiMgr:
 
         url = Webpages.build_cmc(self)
         self.mw.cmc_chart.load(QtCore.QUrl(url))
+
+
+    def set_default_tabs(self):
+        """Set tabbed ui elements to default pages."""
+
+        self.mw.ChartTabs.setCurrentIndex(0)
+        self.mw.tabsBotLeft.setCurrentIndex(4)
+        self.mw.bot_tabs.setCurrentIndex(0)
+
+    def disable_ui(self):
+        """Disable api dependant ui elements."""
+        print("DISABLE UI!!")
+        # self.mw.bot_tabs.setEnabled(1, False)
+        self.mw.limit_pane.setEnabled(False)
+        self.mw.websocket_area.setEnabled(False)
+        
+        self.mw.last_price.setText("")
+        self.mw.price_arrow.setText("")
+        self.mw.spread_label.setText("")
+
+        self.mw.percent_frame.setVisible(False)
+        self.mw.volume_widget.setVisible(False)
+        self.mw.volumes_widget.setVisible(False)
+
+        # Fully expand chart
+        self.mw.splitter_v.setSizes([0, 0])
+        self.mw.splitter_h.setSizes([0, 0])
 
     # Maybe move this into limit order pane
     def limit_pane_current_values(self):

@@ -30,17 +30,40 @@ class ApiCalls:
         self.threadpool = tp
         self.banned_until = None
         self.error = None
-        self.client = self.init_client()
+        self.client = self.authenticate_client()
         app.client = self.client
+
+        self.initialize()
+
 
         self.counter = 0
         # self.api_calls_counter = 0
+
+
+    def authenticate_client(self):
+        print("Authenticate client")
+        try:
+            api_key = self.mw.cfg_manager.api_key
+            api_secret = self.mw.cfg_manager.api_secret
+        except Exception as e:
+            print("api key/secret not found!")
+            print(e)
+            return
+        
+        try:
+            return Client(api_key, api_secret, {"verify": True, "timeout": 10})
+        except BinanceAPIException as e:
+            if "IP banned until" in str(e):
+                self.banned_until = str(self.get_ban_duration(e))
+        
+
 
     # Either move out or at least improve drastically
     def init_client(self):
         try:
             api_key = self.mw.cfg_manager.api_key
             api_secret = self.mw.cfg_manager.api_secret
+            print("CREATE CLIENT")
             return Client(api_key, api_secret, {"verify": True, "timeout": 10})
         
         except BinanceAPIException as e:
@@ -61,24 +84,8 @@ class ApiCalls:
 
         if self.client:
             try:
-                # print("get account:", self.client.get_account())
-                # print("get account status:", self.client.get_account_status())
-
-
-
-                # val["coins"] = self.availablePairs()
-
-                # val["accHoldings"] = self.getHoldings()
-
-                # val["tickers"] = self.getTickers()
-
-                # self.api_calls_counter += 3
-                # userMsg = dict()
-                # accHoldings = dict()
-
-                # self.set_pair_values()
+                self.account_info()
                 self.mw.is_connected = True
-
             except (BinanceAPIException, NameError, AttributeError) as e:
                 print("API ERROR")
                 print(str(e))
@@ -96,6 +103,7 @@ class ApiCalls:
                 elif "code=-1021" in str(e):
                     print("ZEITFUCK")
                     self.error = "time"
+            
 
         else:
             print("CLIENT NOT DEFINED! BANNED!")
@@ -335,6 +343,10 @@ class ApiCalls:
     def exchange_info(self):
         info = self.client.get_exchange_info()
         return info
+
+    def account_info(self):
+        account_info = self.client.get_account()
+        return account_info
 
 
     def get_btc_pairs(self):

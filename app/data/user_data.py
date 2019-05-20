@@ -310,7 +310,7 @@ class UserData(QtCore.QObject):
             # TODO: Fix race condition! This needs current btc price
             coin_price = float(self.mw.data.tickers.get(coin + "BTC", dict()).get("lastPrice", 0))
             total_btc = total * coin_price
-            name = str(self.mw.data.tickers.get(coin + "BTC", dict()).get("baseAssetName", 0))
+            name = str(self.mw.data.pairs.get(coin + "BTC", dict()).get("baseAssetName", 0))
             # print("name", name)
         elif coin == "BTC":
             total_btc = total

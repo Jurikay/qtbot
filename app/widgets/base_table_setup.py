@@ -164,7 +164,7 @@ class SortFilterModel(BaseTableModel):
         print("state", state)
         if state == 2:
             self.old_search_text = self.mw.coinindex_filter.text()
-            self.searchText = self.mw.cfg_manager.coin
+            self.searchText = self.mw.data.current.coin
             self.setFilter(self.searchText)
             self.mw.coinindex_filter.setText(self.searchText)
             self.mw.coinindex_filter.setEnabled(False)
@@ -178,13 +178,10 @@ class SortFilterModel(BaseTableModel):
 
 
     def setFilter(self, searchText=None):
-        # print("setfilter", searchText)
-
         self.searchText = searchText
         if searchText:
             for row in range(self.rowCount()):
                 self.parent.setRowHidden(row, False)
-
 
                 current_coin = str(self.datatable.iloc[row, self.filter_col]).replace("BTC", "")
 
@@ -192,7 +189,6 @@ class SortFilterModel(BaseTableModel):
                     self.parent.setRowHidden(row, False)
                 else:
                     self.parent.setRowHidden(row, True)
-
         else:
             for row in range(self.rowCount()):
                 self.parent.setRowHidden(row, False)
@@ -282,10 +278,6 @@ class HoverDelegate(BasicDelegate):
             self.font.setBold(False)
 
         option.text = index.data()
-
-
-
-
 
 
 class ChangePercentDelegate(BasicDelegate):

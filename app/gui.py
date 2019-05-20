@@ -15,6 +15,7 @@ import yappi
 from PyQt5.QtWebEngineWidgets import QWebEngineView  # QWebEnginePage
 from PyQt5.uic import loadUi
 from twisted.internet import reactor
+from twisted.internet.error import ReactorNotRunning
 
 # from app.charts import Webpages as Webpages
 # from app.gui_functions import (calc_wavg, calc_all_wavgs)
@@ -189,6 +190,11 @@ class beeserBot(QtWidgets.QMainWindow):
         self.cfg_manager = ConfigManager(self)
         self.cfg_manager.initialize()
 
+
+        # new gui
+        self.gui_mgr = GuiMgr(self)
+        self.gui_mgr.set_api_dependant()
+
         # TODO: Add sound manager / data manager
 
         # self.hotkey_manager = HotKeys(self)
@@ -199,17 +205,15 @@ class beeserBot(QtWidgets.QMainWindow):
     def init_api_classes(self):
         # TODO: Refactor whacky order
 
-        self.api_manager = ApiCalls(self, self.threadpool)        
-        self.api_manager.initialize()
+        self.api_manager = ApiCalls(self, self.threadpool)
+        # self.api_manager.initialize()
+
         self.api_manager.new_api()
 
         self.new_api = ApiManager(self, self.api_manager.client)
 
 
-        self.initialize_user_data()
-
         self.check_connection()
-
 
 
         # newer not newest
@@ -221,20 +225,26 @@ class beeserBot(QtWidgets.QMainWindow):
         
     # TODO: Refactor; 4 states: offline, binance unreachable, banned, authenticated
     def check_connection(self):
-        if self.is_connected is True:
+        """Check if an api connection has been established. If so, initialize
+        several helper classes."""
+        if self.is_connected:
+            self.initialize_user_data()
             self.instantiate_api_managers()
             # self.coin_selector.activated.connect(self.gui_manager.change_pair)
             self.initialize_tables()
 
         else:
-            if self.api_manager.error == "banned":
-                self.init_manager.show_banned_page()
+            self.gui_mgr.disable_ui()
 
-            elif self.api_manager.error == "time":
-                self.init_manager.show_time_error_page()
+            # TODO: Implement error pages
+            # if self.api_manager.error == "banned":
+            #     self.init_manager.show_banned_page()
 
-            else:
-                self.init_manager.show_error_page()
+            # elif self.api_manager.error == "time":
+            #     self.init_manager.show_time_error_page()
+
+            # else:
+                # self.init_manager.show_error_page()
 
     def instantiate_api_managers(self):
         self.websocket_manager = WebsocketManager(
@@ -247,10 +257,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.gui_manager.initialize()
 
 
-        # new gui
-        self.gui_mgr = GuiMgr(self)
-        self.gui_mgr.set_api_dependant()
+        
 
+        
     def initialize_tables(self):
         # self.coin_index.initialize()
         # self.open_orders.initialize()
@@ -336,12 +345,16 @@ class beeserBot(QtWidgets.QMainWindow):
         self.cfg_manager.write_stats()
         self.cfg_manager.write_config()
         # api error workaround
-        self.websocket_manager.socket_mgr.close()
-
+        try:
+            self.websocket_manager.socket_mgr.close()
+        except AttributeError:
+            pass
         # self.chart.stop()
         # self.btc_chart.stop()
-
-        reactor.stop()
+        try:
+            reactor.stop()
+        except ReactorNotRunning:
+            pass
 
     def slider_value(self):
         # self.setProperty("value", value)
