@@ -38,12 +38,13 @@ class UserData(QtCore.QObject):
 
         self.initial_open_orders()
         self.initial_history()
-        self.initial_holdings()
-
         # self.mw.print_btn.clicked.connect(self.print_dicts)
 
 
-
+    def change_pair(self):
+        """This is called when the pair is changed.
+        All pair dependant user_data functions are called from here."""
+        self.initial_history()
 
     def set_save(self, storage, index, value):
         """Use mutex to savely set dictionary values."""
@@ -74,6 +75,8 @@ class UserData(QtCore.QObject):
     #################################################################
 
     def add_to_open_orders(self, order):
+        """Store order in open orders dictionary.
+        Update concerned ui elements."""
         order_id = order["orderId"]
         run_setup = False
 
@@ -85,17 +88,14 @@ class UserData(QtCore.QObject):
         # if clientOrderId is not present, order information comes
         # from websocket therefore open_orders_table should be updated.
         if not order.get("clientOrderId"):
-            # print(order)
             order["price"] = order["orderPrice"]
 
             # if this is the first open order, run setup.
             # else, update open orders table
+            # TODO: This logic should probably go to the model/view
             if run_setup:
-                # print("RUNNING SETUP")
                 self.mw.open_orders_view.setup()
 
-                # self.mw.data_open_orders_table.setup()
-                # self.mw.data_open_orders_table.set_data()
             self.mw.open_orders_view.websocket_update()
 
 
@@ -119,15 +119,10 @@ class UserData(QtCore.QObject):
             order_id = int(order["orderId"])
 
 
-            pair_price = float(self.mw.data.tickers[order["symbol"]]["lastPrice"])
+            # pair_price = float(self.mw.data.tickers[order["symbol"]]["lastPrice"])
             
-            perc = pair_price / 100
-            order_perc = float(order["price"]) / perc
-            print("PP", pair_price)
-            print("OP", order["price"])
-
-
-            order["filled_in_percent"] = order_perc
+        
+            order["filled_in_percent"] = float(order["price"])
 
             self.set_save(self.open_orders, order_id, order)
 
@@ -149,8 +144,12 @@ class UserData(QtCore.QObject):
         if not order.get("clientOrderId"):
             self.mw.open_orders_view.websocket_update()
 
+    # Maybe not needed TODO
+    def update_orders(self):
+        """Iterate over open orders and update"""
+        pass
 
-
+    # Currently unused
     def update_order(self, order):
         order_id = order["orderId"]
         self.set_save(self.open_orders, order_id, order)
@@ -174,7 +173,8 @@ class UserData(QtCore.QObject):
     #################################################################
 
     def add_to_history(self, order):
-        # print("ADD TO HISTORY ORDER", order)
+        """Called for every trade in user trade history."""
+        # print("ADD TO HISTORY ORDER", order, "\n")
 
         # Bugfix: Store historical orders in a dictionary where the key is
         # "id", which is unique, unlike orderId which is used to combine partial orders.
@@ -194,7 +194,9 @@ class UserData(QtCore.QObject):
         qty = 0
         if not self.trade_history.get(pair):
             self.trade_history[pair] = dict()
-        elif (self.trade_history[pair].get(order_id)):
+
+        elif (self.trade_history[pair].get("orderId")):
+            print("DEBUG IN ELIF!!!")
             oldOrder = self.trade_history[pair].get(order_id)
             print("OLD ORDER; ", oldOrder)
             print("COMPARE ORDERS: ", oldOrder["orderId"], order_id)
@@ -204,7 +206,7 @@ class UserData(QtCore.QObject):
             order["executedQty"] = float(order["executedQty"]) + float(qty)
             print("New qty is: ", order["executedQty"])
 
-
+        # print("ORDER DICT", self.trade_history[pair], "\n")
         self.set_save(self.trade_history[pair], order["orderId"], order)
 
 
@@ -335,20 +337,21 @@ class UserData(QtCore.QObject):
                   "total": total,
                   "total_btc": total_btc,
                   "name": name}
-
+        print("RETURN HOLDIGNS ARRAY", values)
         return values
 
 
 
     def initial_holdings(self):
+        print("INIT HOLDINGS:")
         holdings = self.mw.api_manager.getHoldings()
-
-
         self.set_accholdings(holdings)
 
 
     def create_holdings_df(self):
+        print("CREATE HOLDIGNS DF")
         if self.holdings:
+            print("SELF HOLDINGS", self.holdings)
             df = pd.DataFrame.from_dict(self.holdings, orient='index')
 
             df = df[["coin", "name", "free", "locked", "total", "total_btc"]]

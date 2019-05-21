@@ -211,6 +211,7 @@ class ApiCalls:
             return order
         except BinanceAPIException as e:
             print("create order failed: " + str(e))
+            print("side:", side, "symbol:", pair, "quantity", str(amount), "price", str(price))
 
 
 

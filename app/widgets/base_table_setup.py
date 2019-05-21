@@ -233,12 +233,13 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
     right = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignRight)
 
     def __init__(self, parent, text_color=Colors.color_lightgrey, align=center):
-        super(BasicDelegate, self).__init__(parent)
         self.parent = parent
         self.fg_color = text_color
         self.font = QtGui.QFont()
         self.mw = app.mw
         self.align = align
+        super(BasicDelegate, self).__init__(parent)
+
 
 
     def initStyleOption(self, option, index):
@@ -310,6 +311,28 @@ class FilledPercentDelegate(BasicDelegate):
 
         option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=2) + "%"
 
+
+class FillCalcDelegate(BasicDelegate):
+    """Delegate that calculates how much the current price has to change to reach the price of the respective order."""
+
+    def initStyleOption(self, option, index):
+        model = self.parent.model()
+        pair_index = model.index(index.row(), 1)
+        pair = model.data(pair_index, QtCore.Qt.DisplayRole)
+
+        difference = float(index.data()) / (float(self.mw.data.tickers[pair]["lastPrice"]) / 100) - 100
+
+
+        if abs(difference) == 0:
+            self.fg_color = Colors.white
+        elif abs(difference) <= 1:
+            self.fg_color = Colors.color_green
+        elif abs(difference) < 10:
+            self.fg_color = Colors.color_yellow
+        else:
+            self.fg_color = Colors.color_pink
+
+        option.text = '{number:.{digits}f}'.format(number=float(difference), digits=2) + "%"
 
 
 class DateDelegate(BasicDelegate):
@@ -469,6 +492,7 @@ class OpenOrders(BaseTableView):
         self.setItemDelegateForColumn(6, FilledPercentDelegate(self))
         self.setItemDelegateForColumn(7, RoundFloatDelegate(self, 8))
         self.setItemDelegateForColumn(9, HoverDelegate(self, Colors.color_pink, Colors.white))
+        self.setItemDelegateForColumn(10, FillCalcDelegate(self))
 
         self.parent = parent
 

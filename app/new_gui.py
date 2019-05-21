@@ -30,7 +30,9 @@ class GuiMgr:
         self.timer.timeout.connect(self.blink)
         self.timer.start()
 
-    # Refactor
+    # Refactor:
+    # Idea: Ticker websocket triggers this instead of QTimer.
+    # This would ensure that functions trigger directly after new ticker data has been received.
     def blink(self):
         # try:
         self.timer_count += 1
@@ -40,6 +42,9 @@ class GuiMgr:
             if not np.allclose(df1, df2):
                 self.mw.tradeTable.update()
                 self.mw.live_data.new_last_price()
+
+                # Update the open orders table to reflect changed filled in % values.
+                self.mw.open_orders_view.update()
         
         if self.timer_count >= 4:
             if self.mw.is_connected:
@@ -91,12 +96,12 @@ class GuiMgr:
             # new 'initial data'
             self.mw.new_api.threaded_pair_update()
             self.mw.websocket_manager.websockets_symbol()
-            
+        
             # self.mw.api_manager.api_calls()
 
 
             # new
-            self.mw.trade_history_view.update()
+            # self.mw.trade_history_view.update()
 
     # TODO: Call this after loading default pair from config
     def change_to(self, coin):
@@ -173,5 +178,5 @@ class GuiMgr:
         self.mw.limit_buy_amount.setDecimals(tickers[pair]["assetDecimals"])
         self.mw.limit_buy_amount.setSingleStep(float(tickers[pair]["minTrade"]))
 
-        self.mw.limit_sell_amount.setDecimals(tickers[pair]["assetDecimals"]+1)
-        self.mw.limit_sell_amount.setSingleStep(float(tickers[pair]["minTrade"])/100)
+        self.mw.limit_sell_amount.setDecimals(tickers[pair]["assetDecimals"])
+        self.mw.limit_sell_amount.setSingleStep(float(tickers[pair]["minTrade"]))

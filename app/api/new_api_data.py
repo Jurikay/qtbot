@@ -54,6 +54,11 @@ class ApiManager:
 
         self.data.set_depth(self.getDepth(symbol))
 
+        # !new trade history update
+        self.mw.user_data.initial_history()
+        self.mw.user_data.initial_holdings()
+        
+
         if progress_callback:
             progress_callback.emit(1)
 
@@ -71,6 +76,9 @@ class ApiManager:
         self.mw.new_asks.update()
         self.mw.new_bids.update()
 
+        # !new update
+        self.mw.trade_history_view.update()
+        self.mw.holdings_view.update()
 
 
     # Debug; Testing only, TODO: Replace
