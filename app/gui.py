@@ -41,6 +41,8 @@ from app.api.new_api_data import ApiManager
 
 from app.new_gui import GuiMgr
 
+from app.sounds import Sounds
+
 import platform
 import os
 from pathlib import Path
@@ -101,6 +103,8 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.load_ui_files()
+        
+        self.sound_manager = None
         print("### END GUI INIT ###")
 
 
@@ -195,6 +199,10 @@ class beeserBot(QtWidgets.QMainWindow):
         self.gui_mgr = GuiMgr(self)
         self.gui_mgr.set_api_dependant()
 
+
+
+        self.sound_manager = Sounds(self)
+
         # TODO: Add sound manager / data manager
 
         # self.hotkey_manager = HotKeys(self)
@@ -210,6 +218,8 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.api_manager.new_api()
 
+
+        self.initialize_user_data()
         self.new_api = ApiManager(self, self.api_manager.client, self.threadpool)
 
 
@@ -229,7 +239,6 @@ class beeserBot(QtWidgets.QMainWindow):
         """Check if an api connection has been established. If so, initialize
         several helper classes."""
         if self.is_connected:
-            self.initialize_user_data()
             self.instantiate_api_managers()
             # self.coin_selector.activated.connect(self.gui_manager.change_pair)
             self.initialize_tables()
@@ -292,25 +301,12 @@ class beeserBot(QtWidgets.QMainWindow):
             self.index_view.my_model.set_current_coin)
         self.cancel_all.clicked.connect(self.user_data.cancel_all)
 
-        # self.init_asks_btn.clicked.connect(self.asks_view.setup)
-        # self.init_asks_btn.clicked.connect(self.bids_rebuild.setup)
-        # self.btn_ud.clicked.connect(self.bids_rebuild.update)
-        # self.asks_view.setup()
-        # self.new_asks.setup()
-        # self.new_bids.setup()
 
-        # self.new_asks.setup()
 
     def initialize_user_data(self):
-        # TEST/REFACTOR
-        # self.index_data = IndexData(self, self.threadpool)
-        # self.historical = HistoricalData(self, app.client, self.threadpool)
-
         self.user_data = UserData(self, self.mutex)
         self.user_data.initialize()
-        # INITITALIZE API HEAVY STUFF TODO refactor; skip api parameter
-        # if not val["jirrik"]:
-        # self.user_data.initial_open_orders()
+
 
 
     # refactor: move; global ui

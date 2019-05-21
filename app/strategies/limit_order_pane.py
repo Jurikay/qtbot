@@ -7,7 +7,6 @@ import logging
 import app
 from app.helpers import round2precision
 from app.workers import Worker
-
 # TODO: Refactor; replace val references
 
 
@@ -39,6 +38,8 @@ class LimitOrderPane(QtWidgets.QWidget):
 
 
     def buy_slider_move(self):
+        self.mw.sound_manager.ps2()
+
         buy_percent_val = str(self.mw.limit_buy_slider.value())
         self.mw.buy_slider_label.setText(buy_percent_val + "%")
 
@@ -50,27 +51,18 @@ class LimitOrderPane(QtWidgets.QWidget):
         self.mw.limit_buy_total_usd.setText(' {number:,.{digits}f}'.format(number=order_cost * btc_usd, digits=0) + " $")
 
     def sell_slider_move(self):
-        # Text to value
-        print("ich slide")
-        # print(self.mw.user_data.holdings[val["coin"]]["free"])
+        """Called when the sell slider is moved. Sets sell valued based on percentage."""
+        self.mw.sound_manager.ps2()
+
         sell_percent = str(self.mw.limit_sell_slider.value())
-
         sell_size = self.round_sell_amount(sell_percent)
-
-        assetDecimals = int(self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"])
-        sizeRounded = round2precision(sell_size, assetDecimals, "down")
-
-        final = int(sell_size * 10**assetDecimals) / (10.0**assetDecimals)
-        print("FINAL", float(final))
-
-        self.mw.limit_sell_amount.setValue(float(final))
-
-
-        # self.mw.sell_slider_label.setText(sell_percent + "%")
+        self.mw.limit_sell_amount.setValue(sell_size)
+        self.mw.sell_slider_label.setText(sell_percent + "%")
 
 
 
     def limit_percentage(self):
+        self.mw.sound_manager.ps2()
         button_number = int(self.mw.sender().objectName()[-1:])
         value = self.percentage_amount(self.mw.user_data.holdings["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.cfg_manager.buttonPercentage[button_number]), self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"])
 
@@ -85,7 +77,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         print("sell btn", value, self.mw.cfg_manager.buttonPercentage[button_number])
         # print(self.mw.user_data.holdings[val["coin"]]["free"])
         self.mw.limit_sell_slider.setValue(int(self.mw.cfg_manager.buttonPercentage[button_number]))
-        self.mw.limit_sell_amount.setValue(float(value))
+        # self.mw.limit_sell_amount.setValue(float(value))
 
     def calc_total_buy(self):
         try:
@@ -113,14 +105,21 @@ class LimitOrderPane(QtWidgets.QWidget):
 
 
     def round_sell_amount(self, percent_val):
-        holding = float(self.mw.user_data.holdings[self.mw.data.current.coin]["free"]) * (float(percent_val) / 100)
+        holding = float(self.mw.user_data.holdings[self.mw.data.current.coin]["free"]) * float(percent_val) / 100
         if self.mw.data.pairs[self.mw.data.current.pair]["minTrade"] == 1:
             sizeRounded = int(holding)
         else:
             assetDecimals = int(self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"])
-            sizeRounded = int(holding * 10**assetDecimals) / 10.0**assetDecimals
-            # sizeRounded = round2precision(holding, assetDecimals, "down")
-            print("round down", holding, "r:", sizeRounded)
+
+            integer_part = str(holding).split(".", 1)[0]
+            decimal_part = str(holding).split(".", 1)[1]
+
+            # Strip unneded decimals from string. This is done to avoid rounding errors.
+            round_decimals = decimal_part[:assetDecimals]
+
+            final_str = integer_part + "." + round_decimals
+            sizeRounded = float(final_str)
+
         return sizeRounded
 
 
@@ -225,7 +224,7 @@ class LimitOrderPane(QtWidgets.QWidget):
 
     def create_sell_order(self):
         if self.sell_allowed is True:
-            pair = self.mw.cfg_manager.pair
+            pair = self.mw.data.current.pair
             price = '{number:.{digits}f}'.format(number=self.mw.limit_sell_input.value(), digits=self.mw.data.pairs[self.mw.data.current.pair]["decimals"])
 
             amount = '{number:.{digits}f}'.format(number=self.mw.limit_sell_amount.value(), digits=self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"])
