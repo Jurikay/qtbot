@@ -1,10 +1,11 @@
+import math
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtGui as QtGui
 import PyQt5.QtCore as QtCore
 from functools import partial
 import logging
 import app
-
+from app.helpers import round2precision
 from app.workers import Worker
 
 # TODO: Refactor; replace val references
@@ -56,10 +57,16 @@ class LimitOrderPane(QtWidgets.QWidget):
 
         sell_size = self.round_sell_amount(sell_percent)
 
-        self.mw.limit_sell_amount.setValue(sell_size)
+        assetDecimals = int(self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"])
+        sizeRounded = round2precision(sell_size, assetDecimals, "down")
+
+        final = int(sell_size * 10**assetDecimals) / (10.0**assetDecimals)
+        print("FINAL", float(final))
+
+        self.mw.limit_sell_amount.setValue(float(final))
 
 
-        self.mw.sell_slider_label.setText(sell_percent + "%")
+        # self.mw.sell_slider_label.setText(sell_percent + "%")
 
 
 
@@ -77,9 +84,8 @@ class LimitOrderPane(QtWidgets.QWidget):
         value = float(self.mw.user_data.holdings[coin]["free"]) * (float(self.mw.cfg_manager.buttonPercentage[button_number]) / 100)
         print("sell btn", value, self.mw.cfg_manager.buttonPercentage[button_number])
         # print(self.mw.user_data.holdings[val["coin"]]["free"])
-        self.mw.limit_sell_amount.setValue(float(value))
         self.mw.limit_sell_slider.setValue(int(self.mw.cfg_manager.buttonPercentage[button_number]))
-
+        self.mw.limit_sell_amount.setValue(float(value))
 
     def calc_total_buy(self):
         try:
@@ -111,10 +117,10 @@ class LimitOrderPane(QtWidgets.QWidget):
         if self.mw.data.pairs[self.mw.data.current.pair]["minTrade"] == 1:
             sizeRounded = int(holding)
         else:
-            print(self.mw.data.pairs[self.mw.data.current.pair])
-            print("BE3:", self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"])
-            assetDecimals = self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"]
+            assetDecimals = int(self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"])
             sizeRounded = int(holding * 10**assetDecimals) / 10.0**assetDecimals
+            # sizeRounded = round2precision(holding, assetDecimals, "down")
+            print("round down", holding, "r:", sizeRounded)
         return sizeRounded
 
 

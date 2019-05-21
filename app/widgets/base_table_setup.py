@@ -468,7 +468,7 @@ class OpenOrders(BaseTableView):
         self.setItemDelegateForColumn(5, RoundAssetDelegate(self, 1))
         self.setItemDelegateForColumn(6, FilledPercentDelegate(self))
         self.setItemDelegateForColumn(7, RoundFloatDelegate(self, 8))
-        self.setItemDelegateForColumn(9, HoverDelegate(self, Colors.color_pink, Colors.color_lightgrey))
+        self.setItemDelegateForColumn(9, HoverDelegate(self, Colors.color_pink, Colors.white))
 
         self.parent = parent
 

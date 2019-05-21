@@ -18,13 +18,15 @@ class ApiManager:
 
     """Api related methods."""
 
-    def __init__(self, mw, client):
+    def __init__(self, mw, client, tp):
 
         self.client = client
         self.mw = mw
         self.data = mw.data
         print("NEW API MGR")
         self.store_initial_data()
+        self.threadpool = tp
+
         # return super().__init__(*args, **kwargs)
 
     def store_initial_data(self):
@@ -49,6 +51,7 @@ class ApiManager:
         print("store_pair_data:", symbol)
 
         self.data.set_hist(self.getTradehistory(symbol))
+
         self.data.set_depth(self.getDepth(symbol))
 
         if progress_callback:
@@ -58,7 +61,16 @@ class ApiManager:
     def threaded_pair_update(self):
         print("Threaded pair update:")
         worker = Worker(self.store_pair_data)
-        worker.signals.progress.connect(self.data.set_thread)
+        worker.signals.progress.connect(self.set_thread)
+        self.threadpool.start(worker)
+
+
+    def set_thread(self, callback):
+        print("CALLBACK:", callback)
+        self.mw.tradeTable.update()
+        self.mw.new_asks.update()
+        self.mw.new_bids.update()
+
 
 
     # Debug; Testing only, TODO: Replace

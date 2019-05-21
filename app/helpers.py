@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, math
 
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -15,3 +15,14 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
+def round2precision(val, precision: int = 0, which: str = ''):
+    """Round float to specified position. Round up or down."""
+    assert precision >= 0
+    val *= 10 ** precision
+    round_callback = round
+    if which.lower() == 'up':
+        round_callback = math.ceil
+    if which.lower() == 'down':
+        round_callback = math.floor
+    return '{1:.{0}f}'.format(precision, round_callback(val) / 10 ** precision)

@@ -23,7 +23,8 @@ if __name__ == "__main__":
     os.environ["QT_SCALE_FACTOR"] = "1"
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     main_app = QApplication(sys.argv)
-    
+    main_app.setApplicationName("Doug's Application")
+
     # Supposedly fixes QWebengineprocess orphans
     main_app.setAttribute(QtCore.Qt.AA_UseOpenGLES)
 

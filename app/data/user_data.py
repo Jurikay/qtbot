@@ -117,17 +117,29 @@ class UserData(QtCore.QObject):
             order["cancel"] = "cancel"
 
             order_id = int(order["orderId"])
+
+
+            pair_price = float(self.mw.data.tickers[order["symbol"]]["lastPrice"])
+            
+            perc = pair_price / 100
+            order_perc = float(order["price"]) / perc
+            print("PP", pair_price)
+            print("OP", order["price"])
+
+
+            order["filled_in_percent"] = order_perc
+
             self.set_save(self.open_orders, order_id, order)
 
         if self.open_orders:
             df = pd.DataFrame.from_dict(self.open_orders, orient='index')
-            df = df[["time", "symbol", "type", "side", "price", "origQty", "filled_percent", "total_btc", "orderId", "cancel"]]
-            df.columns = ["Date & Time", "Pair", "Type", "Side", "Price", "Quantity", "Filled %", "Total", "id", "cancel"]
+            df = df[["time", "symbol", "type", "side", "price", "origQty", "filled_percent", "total_btc", "orderId", "cancel", "filled_in_percent"]]
+            df.columns = ["Date & Time", "Pair", "Type", "Side", "Price", "Quantity", "Filled %", "Total", "id", "cancel", "Filled in %"]
             df = df.apply(pd.to_numeric, errors='ignore')
             return df
-        else:
-            # return an empty dataframe if no orders are open.
-            return pd.DataFrame()
+        
+        # return an empty dataframe if no orders are open.
+        return pd.DataFrame()
 
 
     def remove_from_open_orders(self, order):
@@ -337,16 +349,13 @@ class UserData(QtCore.QObject):
 
     def create_holdings_df(self):
         if self.holdings:
-            print("Creating holdings df:", self.holdings)
             df = pd.DataFrame.from_dict(self.holdings, orient='index')
 
             df = df[["coin", "name", "free", "locked", "total", "total_btc"]]
             df.columns = ["Asset", "Name", "Free", "Locked", "Total", "Total BTC"]
             df = df.apply(pd.to_numeric, errors='ignore')
-            print("DF", df)
             # Filter dataframe by total_btc column
             mask = df["Total BTC"].values >= 0.001
-            print("returning holding df:", df[mask])
             return df[mask]
 
         else:

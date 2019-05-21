@@ -91,7 +91,8 @@ class GuiMgr:
             # new 'initial data'
             self.mw.new_api.threaded_pair_update()
             self.mw.websocket_manager.websockets_symbol()
-            self.mw.api_manager.api_calls()
+            
+            # self.mw.api_manager.api_calls()
 
 
             # new
@@ -172,5 +173,5 @@ class GuiMgr:
         self.mw.limit_buy_amount.setDecimals(tickers[pair]["assetDecimals"])
         self.mw.limit_buy_amount.setSingleStep(float(tickers[pair]["minTrade"]))
 
-        self.mw.limit_sell_amount.setDecimals(tickers[pair]["assetDecimals"])
-        self.mw.limit_sell_amount.setSingleStep(float(tickers[pair]["minTrade"]))
+        self.mw.limit_sell_amount.setDecimals(tickers[pair]["assetDecimals"]+1)
+        self.mw.limit_sell_amount.setSingleStep(float(tickers[pair]["minTrade"])/100)

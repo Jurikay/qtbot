@@ -24,9 +24,6 @@ class DataManager():
         self.set_current_pair("ETHBTC")
         self.current.tickers = dict()
 
-    def set_thread(self, callback):
-        print("CALLBACK:", callback)
-
     def set_depth(self, depth):
         """Receives current bids and asks of selected pair."""
         self.current["orderbook"] = Dict(depth)
@@ -65,6 +62,7 @@ class DataManager():
 
         # Api call: Receive complete list of history entries; Store reversed list
         elif isinstance(history, list):
+            print("STORE LIST HISTORY")
             self.current["history"] = list(reversed(history))
         
         self.history_df()

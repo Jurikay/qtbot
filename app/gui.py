@@ -210,7 +210,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.api_manager.new_api()
 
-        self.new_api = ApiManager(self, self.api_manager.client)
+        self.new_api = ApiManager(self, self.api_manager.client, self.threadpool)
 
 
         self.check_connection()
@@ -224,6 +224,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         
     # TODO: Refactor; 4 states: offline, binance unreachable, banned, authenticated
+    # move to different file
     def check_connection(self):
         """Check if an api connection has been established. If so, initialize
         several helper classes."""
