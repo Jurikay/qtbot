@@ -22,6 +22,7 @@ class GuiMgr:
         self.timer_count = 0
 
         self.mw.coin_selector.update()
+        self.hide_tabs()
         self.set_default_tabs()
 
     def set_timer(self):
@@ -126,6 +127,22 @@ class GuiMgr:
         self.mw.ChartTabs.setCurrentIndex(0)
         self.mw.tabsBotLeft.setCurrentIndex(4)
         self.mw.bot_tabs.setCurrentIndex(0)
+
+    def hide_tabs(self):
+        """Hide disable tabs not ready/suitable for the user."""
+        self.mw.tabsBotLeft.removeTab(1)
+        self.mw.tabsBotLeft.removeTab(0)
+
+        self.mw.ChartTabs.removeTab(8)
+        self.mw.ChartTabs.removeTab(7)
+        self.mw.ChartTabs.removeTab(4)
+        self.mw.ChartTabs.removeTab(3)
+        self.mw.ChartTabs.removeTab(1)
+
+        self.mw.bot_tabs.setTabEnabled(1, False)
+        self.mw.bot_tabs.setTabEnabled(2, False)
+        self.mw.bot_tabs.setTabEnabled(3, False)
+
 
     def disable_ui(self):
         """Disable api dependant ui elements."""
