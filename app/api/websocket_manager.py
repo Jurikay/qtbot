@@ -228,14 +228,9 @@ class WebsocketManager:
         self.api_updates += 1
         df_data = dict()
         all_tickers = list()
-        ticker_dict = dict()
-        
+
         for value in msg:
-            # ticker[key] = value
-            # print("key: " + str(key))
-            # print("value: " + str(value))
-            # print("ticker: " + str(ticker))
-            
+
             if value["s"][-3:] == "BTC" or value["s"] == "BTCUSDT":
                 # print ("value", value)
                 ticker_data = {'symbol': value["s"],
@@ -321,7 +316,7 @@ class WebsocketManager:
                 old_klines.append(new_entry)
 
 
-                self.mw.klines["1m"][self.mw.cfg_manager.pair] = old_klines
+                self.mw.klines["1m"][self.mw.data.current.pair] = old_klines
         elif msg["k"]["i"] == "5m":
             # print("5m kline update")
             pass
