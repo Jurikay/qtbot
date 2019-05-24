@@ -142,9 +142,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
     def set_corner_widgets(self):
-        self.tabsBotLeft.tabBar().setExpanding(False)
         self.tabsBotLeft.setCornerWidget(self.coin_index_filter)
-        self.coin_index_filter.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.ChartTabs.setCornerWidget(self.volume_widget)
         # self.ChartTabs.adjustSize()
 
@@ -285,8 +283,6 @@ class beeserBot(QtWidgets.QMainWindow):
         self.holdings_view.setup()
 
         self.trade_history_view.setup()
-
-
         # Bottom table filtering
         self.coinindex_filter.textChanged.connect(
             self.open_orders_view.my_model.setFilter)
