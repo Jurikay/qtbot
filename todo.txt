@@ -126,3 +126,6 @@ Reconnect after computer sleep. make it so client is reassignable
 in the beginning: read config, switch to defined pair
 
 custom amount btn
+
+build pipeline
+https://github.com/cdrx/docker-pyinstaller
