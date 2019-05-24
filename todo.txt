@@ -124,3 +124,5 @@ Reconnect after computer sleep. make it so client is reassignable
 ## generate pylintrc file: pylint --generate-rcfile > pylintrc 
 
 in the beginning: read config, switch to defined pair
+
+validate config: https://gist.github.com/tsuriga/5bc5bbfaf21c6a51cda7
