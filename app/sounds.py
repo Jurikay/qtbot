@@ -1,3 +1,4 @@
+
 import PyQt5.QtMultimedia as QtMultimedia
 import PyQt5.QtCore as QtCore
 from app.helpers import resource_path
@@ -5,6 +6,11 @@ from app.helpers import resource_path
 # -*- coding: utf-8 -*-
 import app
 # made by Jirrik
+
+# implement config check:
+# assignments
+# global volume
+# global on off
 
 class Sounds:
 

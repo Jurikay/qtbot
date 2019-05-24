@@ -129,3 +129,5 @@ custom amount btn
 
 build pipeline
 https://github.com/cdrx/docker-pyinstaller
+validate config: https://gist.github.com/tsuriga/5bc5bbfaf21c6a51cda7
+custom amount btn
