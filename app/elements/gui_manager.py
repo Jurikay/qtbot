@@ -35,17 +35,14 @@ class GuiManager:
         self.runtime = 0
         self.buildExamplePopup("name")
         
-
-
     def buildExamplePopup(self, name):
         self.exPopup = ExamplePopup(name, self.mw)
         self.exPopup.setGeometry(100, 200, 100, 100)
         self.exPopup.show()
 
     def show_tooltip(self):
-        point = QtCore.QPoint(100,100)
+        point = QtCore.QPoint(100, 100)
         QtWidgets.QToolTip.showText(point, "LELLO SCHMELLO", self.mw.top_groupBox)
-
 
     # Refactor
     def initialize(self):
@@ -55,8 +52,6 @@ class GuiManager:
         self.api_init()
 
         self.mw.coin_selector.setup()
-
-
 
     # Refactor
     def initial_last_price(self):
@@ -68,8 +63,6 @@ class GuiManager:
         self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + Colors.color_yellow + "'>" + formatted_price + "</span>")
         usd_price = '{number:.{digits}f}'.format(number=float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
         self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
-
-
 
     # gui init
     def api_init(self):
@@ -83,11 +76,8 @@ class GuiManager:
         # self.set_charts(self.mw.cfg_manager.pair)
         self.mw.chart.show()
 
-
         icon = QtGui.QIcon(resource_path("images/ico/" + "BTC" + ".svg"))
-
         self.mw.quote_asset_box.addItem(icon, "BTC")
-        self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
         self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
 
         # delayed stuff; TODO: Refactor
@@ -123,7 +113,6 @@ class GuiManager:
             self.mw.new_asks.scrollToTop()
             self.mw.new_asks.scrollToBottom()
 
-
     # TODO refactor
     # global ui
     def one_second_update(self):
@@ -132,11 +121,11 @@ class GuiManager:
 
         self.runtime += 1
 
-
         self.mw.index_view.websocket_update()
 
-
-
+        # test
+        # self.mw.tabsBotLeft.adjustSize()
+        # self.mw.coin_index_filter.adjustSize()
 
         total_btc_value = self.calc_total_btc()
         self.mw.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
@@ -146,7 +135,6 @@ class GuiManager:
 
         last_btc_price = float(self.mw.tickers["BTCUSDT"]["lastPrice"])
         last_btc_price_formatted = '{number:,.{digits}f}'.format(number=last_btc_price, digits=2) + "$"
-
 
         if last_btc_price > self.last_btc_price:
             last_color = Colors.color_green
@@ -181,11 +169,9 @@ class GuiManager:
         self.mw.btc_low_label.setText("<span style='color: " + Colors.color_pink + "'>" + low_formatted + "</span>")
         self.mw.btc_vol_label.setText("<span style='color: " + Colors.color_lightgrey + "'>" + vol_formatted + "</span>")
 
-
         self.percent_changes()
         self.check_websocket()
         self.update_stats()
-
 
     def update_stats(self):
         session_time = str(timedelta(seconds=self.runtime))
@@ -198,8 +184,6 @@ class GuiManager:
 
         # self.mw.explicit_api_calls_label.setText(str(val["apiCalls"]))
         self.mw.explicit_api_updates.setText(str(self.mw.websocket_manager.api_updates))
-
-
 
     # global ui / logic REFACTOR
     def check_websocket(self):
@@ -241,7 +225,6 @@ class GuiManager:
             change_4h_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_4h)) - 1) * 100
 
             change_1d_value = float(self.mw.tickers[self.mw.cfg_manager.pair]["priceChangePercent"])
-
 
             changes = [self.mw.change_5m, self.mw.change_15m, self.mw.change_1h, self.mw.change_4h, self.mw.change_1d]
             change_values = [change_5m_value, change_15m_value, change_1h_value, change_4h_value, change_1d_value]

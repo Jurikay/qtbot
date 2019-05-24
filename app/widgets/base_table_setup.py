@@ -6,6 +6,8 @@
 """Base implementations of QTableView, QAbstractTableModel and
 QStyledItemDelegate that serve as a starting point for all tableviews."""
 
+from datetime import datetime
+import time
 import os
 import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
@@ -16,6 +18,10 @@ from datetime import datetime
 from app.colors import Colors
 
 from app.helpers import resource_path
+
+
+def df_exists(df):
+    return len(df.index) > 0
 # from pathlib import Path
 # import sys
 #################################################################
@@ -98,10 +104,15 @@ class BaseTableView(QtWidgets.QTableView):
 
 class BaseTableModel(QtCore.QAbstractTableModel):
     """TableModel that receives it's data from a pandas DataFrame."""
-    def __init__(self, parent=None, *args):
-        super(BaseTableModel, self).__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
         self.mw = app.mw
         self.datatable = None
+
+    # def __init__(self, parent=None, *args):
+    #     super(BaseTableModel, self).__init__()
+    #     self.mw = app.mw
+    #     self.datatable = None
 
 
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
@@ -112,10 +123,8 @@ class BaseTableModel(QtCore.QAbstractTableModel):
 
     # TODO: verify
     def update(self, dataIn):
-        # self.modelAboutToBeReset.emit()
         self.layoutAboutToBeChanged.emit()
         self.datatable = dataIn
-        # self.modelReset.emit()
         self.layoutChanged.emit()
 
 
@@ -144,6 +153,48 @@ class BaseTableModel(QtCore.QAbstractTableModel):
     #     pass
 
 
+class SortModel(BaseTableModel):
+    """Sortable BaseTableModel."""
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.order_col = 0
+        self.order_dir = True
+
+    def sort(self, Ncol, order):
+        """Sort table by given column number Ncol in the given direction order"""
+
+        if isinstance(self.datatable, pd.DataFrame):
+            
+            self.layoutAboutToBeChanged.emit()
+            # Sort the table
+            self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
+
+            # Reindex the table; This is only needed for the coin selector model.
+            # TODO: Move to subclass/ Verify performance is ok
+            self.datatable = self.datatable.reset_index(drop=True)
+            
+            # save order dir and order col
+            self.order_col = Ncol
+            self.order_dir = order
+
+            self.layoutChanged.emit()
+        else:
+            print("NO INSTANCE!!!!")
+
+    def update(self, dataIn):
+        self.datatable = dataIn
+        self.sort(self.order_col, self.order_dir)
+        
+class FilterModel(SortModel):
+    def __init__(self, parent=None):
+        return super().__init__(parent=parent)
+    
+    def sort(self):
+        super(FilterModel, self).sort()
+        print("after super")
+
+
+
 class SortFilterModel(BaseTableModel):
     """SortFilterModel extends BaseTableModel and adds sort
     and filter functionality."""
@@ -158,27 +209,44 @@ class SortFilterModel(BaseTableModel):
         self.current_coin = None
         self.old_search_text = None
 
-
     def set_current_coin(self, state):
         print("SET CURRENT COIN")
-        print("state", state)
+        # Save manually entered search text
+        
+
         if state == 2:
-            self.old_search_text = self.mw.coinindex_filter.text()
-            self.searchText = self.mw.data.current.coin
-            self.setFilter(self.searchText)
-            self.mw.coinindex_filter.setText(self.searchText)
-            self.mw.coinindex_filter.setEnabled(False)
+            self.old_search_text = app.mw.coinindex_filter.text()
+            app.mw.coinindex_filter.setText(app.mw.data.current.coin)
+            app.mw.coinindex_filter.setEnabled(False)
             self.mw.coinindex_filter.setStyleSheet("color: grey")
-        else:
-            self.searchText = self.old_search_text
-            self.setFilter(self.searchText)
-            self.mw.coinindex_filter.setText(self.old_search_text)
-            self.mw.coinindex_filter.setEnabled(True)
+
+        elif state == 0:
+            app.mw.coinindex_filter.setText(self.old_search_text)
+            app.mw.coinindex_filter.setEnabled(True)
             self.mw.coinindex_filter.setStyleSheet("color: white")
 
+    # def set_current_coin(self, state):
+    #     print("SET CURRENT COIN")
+    #     print("state", state)
+    #     if state == 2:
+    #         self.old_search_text = self.mw.coinindex_filter.text()
+    #         self.searchText = self.mw.data.current.coin
+    #         self.setFilter(self.searchText)
+    #         self.mw.coinindex_filter.setText(self.searchText)
+    #         self.mw.coinindex_filter.setEnabled(False)
+    #         self.mw.coinindex_filter.setStyleSheet("color: grey")
+    #     elif state == 0:
+    #         self.searchText = self.old_search_text
+    #         self.setFilter(self.searchText)
+    #         self.mw.coinindex_filter.setText(self.old_search_text)
+    #         self.mw.coinindex_filter.setEnabled(True)
+    #         self.mw.coinindex_filter.setStyleSheet("color: white")
 
-    def setFilter(self, searchText=None):
+    # TODO: Debug setFilter is set unconditionally.
+    def setFilter(self, *args):
+        searchText = app.mw.coinindex_filter.text()
         self.searchText = searchText
+        # print("SEARCH TEXT:", searchText)
         if searchText:
             for row in range(self.rowCount()):
                 self.parent.setRowHidden(row, False)
@@ -190,9 +258,13 @@ class SortFilterModel(BaseTableModel):
                 else:
                     self.parent.setRowHidden(row, True)
         else:
+            # print("parent:", self.parent)
             for row in range(self.rowCount()):
                 self.parent.setRowHidden(row, False)
-
+                # try:
+                    
+                # except Exception as e:
+                #     print("setrowhidden error:", e)
 
     def sort(self, Ncol, order):
         """Sort table by given column number.
@@ -213,14 +285,146 @@ class SortFilterModel(BaseTableModel):
 
             self.layoutChanged.emit()
 
-            if self.searchText:
-                self.setFilter(searchText=self.searchText)
+            # if self.searchText:
+            self.setFilter()
 
     def update(self, dataIn):
         # print("SortFilter update", self.datatable)
         self.datatable = dataIn
         self.sort(self.order_col, self.order_dir)
 
+class HistoryModel(SortFilterModel):
+    """The HistoryModel extends SortFilterModel and adds additional filter
+    capabilities to filter trades by date."""
+    # def __init__(self, *args, **kwargs):
+    #     print("INIT HISTORY5")
+    #     super().__init__(*args, **kwargs)
+    #     print("INIT HISTORY6")
+
+    def time_in_ms(self):
+        hour = 60 * 60000
+        # return {"1 Day": 24 * hour, "1 Week": 168 * hour, "1 Month": 720 * hour, "3 Months": 2160 * hour, "1 Year": 8640 * hour}
+        return {1: 24 * hour, 2: 168 * hour, 3: 720 * hour, 4: 2160 * hour, 5: 8640 * hour}
+
+    def set_time_frame(self, cb_index):
+        print("SET TIME FRRAME:", cb_index)
+        # print("ST:", searchText)
+        # print("cbi", cb_index)
+        idx = int(cb_index)
+        text = app.mw.coinindex_filter.text()
+        if idx > 0:
+            desired_time = self.time_in_ms()[cb_index]
+            print("DESIRED TIME", desired_time)
+        elif idx == 0:
+            self.setFilter(text)
+        # print("FILTER TEXT", text)
+        # for arg in args:
+        #     print("ARG", arg)
+        # if cb_index == 0:
+
+
+
+    def setFilter(self, *args):
+
+        searchText = app.mw.coinindex_filter.text()
+        timeframe = app.mw.cb_history_time.currentText()
+
+        cb_index = app.mw.cb_history_time.currentIndex()
+        print("searchtext after:", searchText)
+        print("timeframe:", timeframe)
+        print("tf index", cb_index)
+        
+        if timeframe == "All trades":
+            consider_timeframes = False
+            ms_time_period = 0
+        else:
+            consider_timeframes = True
+            ms_time_period = self.time_in_ms()[cb_index]
+        # print("SET FILTERRRR")
+        # one_minute = 60000
+        # hour = 60 * one_minute
+        # day = 24 * hour
+        # week = 7 * day
+        # month = 4 * week + 2 * day
+        # # current_time = int(time.gmtime())
+        # dts = datetime.utcnow()
+        # print("DTS", dts)
+        # epochtime = round(time.mktime(dts.timetuple()) + dts.microsecond/1e6)
+        # print("EPOCHTIME", epochtime)        # print("Current time")
+        # desired_time = (epochtime - 2629743)
+        # print("DESIRED", desired_time)
+        now = datetime.utcnow()
+
+        final_time = int((now - datetime(1970, 1, 1)).total_seconds() * 1000) - ms_time_period
+        print("FINAL TIME", final_time)
+
+
+        if searchText:
+            for row in range(self.rowCount()):
+                correct_coin = False
+                correct_date = False
+                self.parent.setRowHidden(row, False)
+
+                current_coin = str(self.datatable.iloc[row, self.filter_col]).replace("BTC", "")
+                current_date = int(self.datatable.iloc[row, 0])
+
+                # print("curr_date", current_date, "desired", final_time)
+                # print(current_date)
+                # print(final_time)
+                
+
+                if str(searchText.upper()) in current_coin:
+                    correct_coin = True
+                    # self.parent.setRowHidden(row, False)
+
+                if final_time < current_date or not consider_timeframes:
+                    correct_date = True
+
+                if correct_coin and correct_date:
+                    self.parent.setRowHidden(row, False)
+                else:
+                    self.parent.setRowHidden(row, True)
+
+        elif consider_timeframes:
+            for row in range(self.rowCount()):
+                current_date = int(self.datatable.iloc[row, 0])
+                
+                if final_time > current_date:
+                    self.parent.setRowHidden(row, True)
+                else:
+                    self.parent.setRowHidden(row, False)
+
+        else:
+            for row in range(self.rowCount()):
+                self.parent.setRowHidden(row, False)
+
+
+    # def sort(self, Ncol, order):
+    #     """Sort table by given column number.
+    #     """
+    #     if isinstance(self.datatable, pd.DataFrame):
+    #         self.layoutAboutToBeChanged.emit()
+    #         if len(self.datatable) > 0:
+    #             # Sort the table
+    #             self.datatable = self.datatable.sort_values(self.datatable.columns[Ncol], ascending=not order)
+
+    #             # Reindex the table; This is only needed for the coin selector model.
+    #             # TODO: Move to subclass/ Verify performance is ok
+    #             self.datatable = self.datatable.reset_index(drop=True)
+                
+    #         # save order dir and order col
+    #         self.order_col = Ncol
+    #         self.order_dir = order
+
+    #         self.layoutChanged.emit()
+
+    #         if self.searchText:
+    #             self.setFilter(searchText=self.searchText)
+
+    # def update(self, dataIn):
+    #     # print("SortFilter update", self.datatable)
+    #     self.datatable = dataIn
+    #     self.sort(self.order_col, self.order_dir)
 #################################################################
 # Custom Delegates
 #################################################################
@@ -468,10 +672,14 @@ class PairDelegate(QtWidgets.QStyledItemDelegate):
 class CoinDelegate(PairDelegate):
     def initStyleOption(self, option, index):
         option.text = index.data()
-        # print("INDEX DATA", index.data())
+        # TODO: Replace with coin missing icon
+        icon_path = resource_path("images/ico/" + index.data() + ".svg")
+        if not os.path.isfile(icon_path):
+            icon_path = resource_path("images/ico/BTC.svg")
+        
+        option.icon = QtGui.QIcon(icon_path)
 
-        option.icon = QtGui.QIcon(resource_path("images/ico/" + index.data() + ".svg"))
-
+            
 
 #################################################################
 # Implementations
@@ -533,9 +741,11 @@ class OpenOrders(BaseTableView):
 
 
 class History(BaseTableView):
-    def __init__(self, parent=None, *args):
+    def __init__(self, parent=None):
         super(History, self).__init__()
-        self.my_model = SortFilterModel(self, 1)
+        self.my_model = HistoryModel(self, 1)
+        
+
         self.setItemDelegateForColumn(0, DateDelegate(self))
         self.setItemDelegateForColumn(1, PairDelegate(self))
         self.setItemDelegateForColumn(2, BuySellDelegete(self))

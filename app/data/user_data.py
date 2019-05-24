@@ -163,9 +163,9 @@ class UserData(QtCore.QObject):
             if not self.mw.open_orders_view.isRowHidden(i):
                 order_id = self.mw.open_orders_view.model().index(i, 8).data(QtCore.Qt.DisplayRole)
                 pair = self.mw.open_orders_view.model().index(i, 1).data(QtCore.Qt.DisplayRole)
-                logging.info("Cancel " + str(pair) + " Order: " + str(order_id))
-
+                
                 self.mw.api_manager.cancel_order_byId(order_id, pair)
+                logging.info("Cancel " + str(pair) + " Order: " + str(order_id))
 
 
     #################################################################
@@ -337,7 +337,6 @@ class UserData(QtCore.QObject):
                   "total": total,
                   "total_btc": total_btc,
                   "name": name}
-        print("RETURN HOLDIGNS ARRAY", values)
         return values
 
 

@@ -142,13 +142,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
     def set_corner_widgets(self):
+        self.tabsBotLeft.tabBar().setExpanding(False)
         self.tabsBotLeft.setCornerWidget(self.coin_index_filter)
-        self.tabsBotLeft.adjustSize()
-
-        self.coin_index_filter.adjustSize()
-
+        self.coin_index_filter.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.ChartTabs.setCornerWidget(self.volume_widget)
-        self.ChartTabs.adjustSize()
+        # self.ChartTabs.adjustSize()
 
     def setup(self):
         """One time ui setup after load. Moved out of __init__ to display
@@ -283,9 +281,11 @@ class beeserBot(QtWidgets.QMainWindow):
 
         # This is used
         self.open_orders_view.setup()
-        self.trade_history_view.setup()
         # self.index_view.setup()
         self.holdings_view.setup()
+
+        self.trade_history_view.setup()
+
 
         # Bottom table filtering
         self.coinindex_filter.textChanged.connect(
@@ -297,9 +297,16 @@ class beeserBot(QtWidgets.QMainWindow):
         self.coinindex_filter.textChanged.connect(
             self.index_view.my_model.setFilter)
 
+
+        search_text = self.coinindex_filter.text()
+        print("search_text:", search_text)
+        self.cb_history_time.currentIndexChanged.connect(self.trade_history_view.my_model.setFilter)
+
+
         self.hide_pairs.stateChanged.connect(
-            self.index_view.my_model.set_current_coin)
-        self.cancel_all.clicked.connect(self.user_data.cancel_all)
+            self.holdings_view.my_model.set_current_coin)
+
+        self.btn_cancel_all.clicked.connect(self.user_data.cancel_all)
 
 
 

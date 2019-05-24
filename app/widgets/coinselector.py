@@ -6,7 +6,7 @@
 import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
-from app.widgets.base_table_setup import SortFilterModel, RoundFloatDelegate, ChangePercentDelegate
+from app.widgets.base_table_setup import SortModel, SortFilterModel, RoundFloatDelegate, ChangePercentDelegate
 from app.colors import Colors
 
 import os
@@ -50,7 +50,11 @@ class CoinSelector(QtWidgets.QComboBox):
         ctext = option.currentText[:-3]
 
         option.currentText = ctext
-        option.currentIcon = QtGui.QIcon(resource_path("images/ico/" + ctext + ".svg"))
+        icon_path = resource_path("images/ico/" + ctext + ".svg")
+        if not os.path.isfile(icon_path):
+            icon_path = resource_path("images/ico/BTC.svg")
+
+        option.currentIcon = QtGui.QIcon(icon_path)
         painter.drawComplexControl(QtWidgets.QStyle.CC_ComboBox, option)
 
         painter.drawControl(QtWidgets.QStyle.CE_ComboBoxLabel, option)
@@ -124,7 +128,7 @@ class CoinSelector(QtWidgets.QComboBox):
         # self.view().window.setFixedWidth(1000)
 
 
-class SelectorModel(SortFilterModel):
+class SelectorModel(SortModel):
     def __init__(self, *args, **kwargs):
         QtCore.QAbstractTableModel.__init__(self, *args, **kwargs)
         self.datatable = None
@@ -197,13 +201,19 @@ class NPriceDelegate(QtWidgets.QStyledItemDelegate):
     """Delegate that colors satoshi in a BTC value."""  # TODO: Find better name
     # def initStyleOption(self, option, index):
     #     option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8)
-
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.old_price = None
 
     def paint(self, painter, option, index):
+        if self.old_price:
+            print("OLD PRICE", self.old_price)
+
         option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8)
 
         options = QtWidgets.QStyleOptionViewItem(option)
-
+        if self.old_price != options.text:
+            print("different price:", options.text, self.old_price)
         # print("OT", option.text)
         # align_left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         # font = QtGui.QFont()
@@ -221,19 +231,23 @@ class NPriceDelegate(QtWidgets.QStyledItemDelegate):
 
         color_text = False
 
+        char = None
+
         for char in options.text:
             if color_text is False and char == "0" or char == "." :
                 painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-                
+
             else:
                 painter.setPen(QtGui.QColor(Colors.white))
                 color_text = True
-                
+
             painter.drawText(x, y, char)
             # x += metrics.width(c)
             x += metrics.horizontalAdvance(char)
 
-        x += metrics.horizontalAdvance(char)
+        if char:
+            x += metrics.horizontalAdvance(char)
+
         dollar_value = round(float(options.text) * float(app.mw.data.btc_price["lastPrice"]), 2)
         # TODO: Verify hardcoded value
         if dollar_value < 0.02:
@@ -252,6 +266,7 @@ class NPriceDelegate(QtWidgets.QStyledItemDelegate):
 
         # painter.drawText(option.rect, align_left, options.text)
         painter.restore()
+        self.old_price = options.text
 
 
 

@@ -22,8 +22,10 @@ class GuiMgr:
         self.timer_count = 0
 
         self.mw.coin_selector.update()
+
+        # tab stuff
         self.hide_tabs()
-        self.set_default_tabs()
+        self.setup_tabs()
 
     def set_timer(self):
         self.timer= QtCore.QTimer(self.mw)
@@ -99,7 +101,7 @@ class GuiMgr:
             self.mw.websocket_manager.websockets_symbol()
         
             # self.mw.api_manager.api_calls()
-
+            self.update_hide_other_filter()
 
             # new
             # self.mw.trade_history_view.update()
@@ -113,6 +115,11 @@ class GuiMgr:
 
         self.change_pair()
 
+    def update_hide_other_filter(self):
+        """Set the coinindex_filter QLineEdit to the currently selected pair."""
+        if self.mw.hide_pairs.checkState() == 2:
+            self.mw.coinindex_filter.setText(self.mw.data.current.coin)
+
     def set_charts(self, pair):
         # This is different from the call that sets up the charts; TODO: Unify
         self.mw.chart.setHtml(Webpages.build_chart2(pair, self.mw.cfg_manager.defaultTimeframe))
@@ -121,12 +128,36 @@ class GuiMgr:
         self.mw.cmc_chart.load(QtCore.QUrl(url))
 
 
-    def set_default_tabs(self):
+    def tab_change(self, index):
+        """Only show time frame combobox in corner widget when the correct tab
+        page is active. (Trade History)."""
+        tabname = self.mw.tabsBotLeft.tabText(index)
+
+        if tabname == "Trade History":
+            self.mw.cb_history_time.setVisible(True)
+        else:
+            self.mw.cb_history_time.setVisible(False)
+
+        if tabname == "Open Orders":
+            self.mw.btn_cancel_all.setVisible(True)
+        else:
+            self.mw.btn_cancel_all.setVisible(False)
+
+    def setup_tabs(self):
         """Set tabbed ui elements to default pages."""
+
+        self.mw.ChartTabs.tabBar().setExpanding(False)
 
         self.mw.ChartTabs.setCurrentIndex(0)
         self.mw.tabsBotLeft.setCurrentIndex(4)
         self.mw.bot_tabs.setCurrentIndex(0)
+
+        self.mw.tabsBotLeft.currentChanged.connect(self.tab_change)
+        self.mw.tabsBotLeft.tabBar().setExpanding(False)
+        # self.mw.tabsBotLeft.setCornerWidget(self.mw.coin_index_filter)
+        # self.mw.ChartTabs.setCornerWidget(self.mw.volume_widget)
+        # self.mw.ChartTabs.adjustSize()
+
 
     def hide_tabs(self):
         """Hide disable tabs not ready/suitable for the user."""
