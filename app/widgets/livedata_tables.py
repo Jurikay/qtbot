@@ -362,14 +362,18 @@ class AsksView(BackgroundTable):
         self.highlight = "#ff58a8"
         self.data = "asks"
         self.has_data = False
+        self.set_delegates()
+
+    # def get_max_value(self, df):
+    #     max_val = df["Total"].max()
+    #     return max_val
+
+    def set_delegates(self):
         self.setItemDelegateForColumn(0, OrderbookCountDelegate(self))
         self.setItemDelegateForColumn(1, OrderbookPriceDelegate(self, "#ff58a8", Colors.color_pink))
         self.setItemDelegateForColumn(2, OrderbookQtyDelegate(self, "#fff"))
         self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, " BTC"))
 
-    # def get_max_value(self, df):
-    #     max_val = df["Total"].max()
-    #     return max_val
 
     def set_df(self):
 
@@ -387,6 +391,9 @@ class BidsView(BackgroundTable):
         self.highlight = "#aaff00"
         self.data = "bids"
         self.has_data = False
+        self.set_delegates()
+
+    def set_delegates(self):
         self.setItemDelegateForColumn(0, OrderbookCountDelegate(self))
         self.setItemDelegateForColumn(1, OrderbookPriceDelegate(self, "#aaff00", Colors.color_green))
         self.setItemDelegateForColumn(2, OrderbookQtyDelegate(self, "#fff"))
@@ -415,12 +422,16 @@ class HistView(BackgroundTable):
         self.data = None
         # self.setItemDelegate(HistoryDelegate(self))
         self.get_color = True
+        self.set_delegates()
+
+    def set_delegates(self):
         self.setItemDelegateForColumn(0, HistPriceDelegate(self))
         self.setItemDelegateForColumn(1, OrderbookQtyDelegate(self, "#fff"))
         self.setItemDelegateForColumn(2, TimeDelegate(self, Colors.color_grey))
 
     def set_df(self):
-        return self.mw.data.current.history_df
+        df = self.mw.data.current.history_df
+        return df
 
 
     def set_widths(self):

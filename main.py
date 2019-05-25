@@ -14,13 +14,20 @@ import app
 from datetime import datetime
 import os
 
+# Verify usefulness
+if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
+    QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
+
+if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
+    QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
+
 
 if __name__ == "__main__":
 
     # os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-logging"
     os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-gpu"
     os.environ["QTWEBENGINE_REMOTE_DEBUGGING"] = "13337"
-    os.environ["QT_SCALE_FACTOR"] = "0.8"
+    os.environ["QT_SCALE_FACTOR"] = "1"
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     main_app = QApplication(sys.argv)
 

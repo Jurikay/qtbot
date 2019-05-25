@@ -30,11 +30,14 @@ class BaseTableView(QtWidgets.QTableView):
 
     def setup(self):
         self.update()
-        df_rows = len(self.df)
-        if df_rows > 0:
-            self.setModel(self.my_model)
-            self.set_default_widths()
-            self.sortByColumn(0, QtCore.Qt.DescendingOrder)
+
+        # TODO: Improve
+        if self.df.index[0]:
+            df_rows = len(self.df)
+            if df_rows > 0:
+                self.setModel(self.my_model)
+                self.set_default_widths()
+                self.sortByColumn(0, QtCore.Qt.DescendingOrder)
 
     def update(self):
         # self.my_model.layoutAboutToBeChanged.emit()
@@ -64,6 +67,7 @@ class BaseTableView(QtWidgets.QTableView):
         return NotImplementedError
 
     def set_delegates(self):
+        return
         self.setItemDelegate(BasicDelegate(self))
 
     # def cell_clicked(self, index):
@@ -132,7 +136,7 @@ class SortModel(BaseTableModel):
     def sort(self, sort_col, sort_order):
         """Sort table by given column number sort_col in the given direction sort_order"""
 
-        if isinstance(self.datatable, pd.DataFrame):
+        if isinstance(self.datatable, pd.DataFrame) and len(self.datatable.index) > 0:
 
             self.layoutAboutToBeChanged.emit()
             # Sort the table

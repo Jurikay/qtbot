@@ -45,17 +45,20 @@ class GuiMgr:
         # acc holdings recalc
         # btc stats
         # websocket reconnect logic
-
+        
         df1 = self.mw.tradeTable.df
         df2 = self.mw.data.current.history_df
         if isinstance(df1, pd.DataFrame) and isinstance(df2, pd.DataFrame):
-            # if not np.allclose(df1, df2):
-            self.mw.tradeTable.update()
+            if not np.allclose(df1, df2):
+                self.mw.tradeTable.update()
             self.mw.live_data.set_history_values()
 
-            # Update the open orders table to reflect changed filled in % values.
+                # Update the open orders table to reflect changed filled in % values.
             self.mw.open_orders_view.redraw()
-        
+        else:
+            print("DATAFRAMES NOT PRESENT!!!")
+
+
         if self.timer_count >= 4:
             if self.mw.is_connected:
                 self.mw.data.ticker_df()
@@ -73,13 +76,16 @@ class GuiMgr:
     # ######## Setup ##########
     def set_tooltips(self):
         print("Setting tooltips")
+        # TODO: implement/remove
         # self.mw.limit_buy_input.setStatusTip("BUY TOOLTIP")
         # self.mw.limit_buy_input.setWhatsThis("WHAT TEH FUG")
-        print("INPUT:", self.mw.limit_buy_input.value())
+        # print("INPUT:", self.mw.limit_buy_input.value())
     
     def set_api_dependant(self):
+        return
         print("Setting api dependant gui values")
-        self.mw.coin_selector.update()
+        # TODO: this is currently called too early to have an effect
+        # self.mw.coin_selector.update()
 
 
 ############################

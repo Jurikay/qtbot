@@ -38,21 +38,22 @@ class LiveData(QtWidgets.QWidget):
 
     def new_last_price(self):
         history = self.mw.data.current.history
-        if float(history[0]["price"]) > float(history[1]["price"]):
-            arrow = self.arrow_up
-            color = Colors.color_green
-        elif float(history[0]["price"]) < float(history[1]["price"]):
-            arrow = self.arrow_down
-            color = Colors.color_pink
-        else:
-            arrow = self.arrow
-            color = Colors.color_yellow
+        if history:
+            if float(history[0]["price"]) > float(history[1]["price"]):
+                arrow = self.arrow_up
+                color = Colors.color_green
+            elif float(history[0]["price"]) < float(history[1]["price"]):
+                arrow = self.arrow_down
+                color = Colors.color_pink
+            else:
+                arrow = self.arrow
+                color = Colors.color_yellow
 
-        formatted_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
-        self.mw.price_arrow.setPixmap(arrow)
-        self.mw.last_price.setText("<span style='font-size: 20px; color:" + color + "'>" + formatted_price + "</span>")
-        usd_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
-        self.mw.usd_value.setText("<span style='font-size: 18px; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
+            formatted_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
+            self.mw.price_arrow.setPixmap(arrow)
+            self.mw.last_price.setText("<span style='font-size: 20px; color:" + color + "'>" + formatted_price + "</span>")
+            usd_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
+            self.mw.usd_value.setText("<span style='font-size: 18px; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
     # def set_last_price(self):
 
@@ -105,4 +106,4 @@ class LiveData(QtWidgets.QWidget):
         self.history_progressed = True
         self.new_last_price()
 
-        self.mw.tradeTable.setup()
+        #self.mw.tradeTable.setup()

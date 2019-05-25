@@ -263,6 +263,8 @@ class ApiCalls:
     def api_calls(self):
         print("apiFunctions api_calls")
         """Initial and coin specific api calls"""
+        
+
         worker = Worker(self.api_history)
         worker.signals.progress.connect(self.mw.live_data.batch_history)
         self.threadpool.start(worker)
@@ -287,7 +289,7 @@ class ApiCalls:
     # TODO: Move out of apiFunctions
     def updateHistTable(self):
         print("apiFunctions update histTable")
-        self.mw.trade_history_view.websocket_update()
+        # self.mw.trade_history_view.websocket_update()
 
     def save_depth(self, depth):
         # print("save depth", depth)
@@ -330,12 +332,10 @@ class ApiCalls:
 #############################################################
 
     def new_api(self):
-        print("NEW API CALLS")
-        # api_calls = 1
+        print("NEW API CALLS <- blocking")
+        # TODO Move to thread
         btc_pairs = self.get_btc_pairs()
-
         tickers = self.add_ticker_data(btc_pairs)
-
         self.mw.tickers = tickers
         # api_calls += (self.all_pairs / 2)
 
@@ -354,7 +354,7 @@ class ApiCalls:
         """Return a dictionary containing all BTC trade pairs.
         Calculate decimal values for every pair."""
 
-        print("NEW API")
+        print("get_btc_pairs")
         coin_dict = dict()
         all_pairs = 0
         btc_pairs = 0

@@ -84,6 +84,7 @@ class DataManager():
                     pair_info[key][sfilter] = filterval
 
         # Store 'static' info in self.pairs
+        print("SETTING PAIR INFO")
         self.pairs = pair_info
 
     def set_current_pair(self, pair):
@@ -126,25 +127,26 @@ class DataManager():
         return df
     
     def ticker_df(self):
-        df = pd.DataFrame(self.tickers)
-        # df = df[["price", "quantity", "time"]]
-        df = df.transpose()
-        # df = df[["symbol", "bidPrice", "priceChangePercent", "quoteVolume"]]
-        
-        df = df[["bidPrice", "priceChangePercent", "quoteVolume"]]
-        df = df.reset_index()
-        df = df.rename(columns={"index": "Coin", "bidPrice": "Price", "priceChangePercent": "Change", "quoteVolume": "Volume"})
-        df.index.name = "index"
-        df = df.apply(pd.to_numeric, errors="ignore")
+        if self.tickers:
+            df = pd.DataFrame(self.tickers)
+            # df = df[["price", "quantity", "time"]]
+            df = df.transpose()
+            # df = df[["symbol", "bidPrice", "priceChangePercent", "quoteVolume"]]
+            
+            df = df[["bidPrice", "priceChangePercent", "quoteVolume"]]
+            df = df.reset_index()
+            df = df.rename(columns={"index": "Coin", "bidPrice": "Price", "priceChangePercent": "Change", "quoteVolume": "Volume"})
+            df.index.name = "index"
+            df = df.apply(pd.to_numeric, errors="ignore")
 
-        # print(df)
-        # df = df.apply(pd.to_numeric, errors="ignore")
-        # df = df.rename(columns={"symbol": "Coin", "bidPrice": "Price", "priceChangePercent": "Change", "quoteVolume": "Volume"})
-        
-        df = df.reset_index(drop=True)
-        
-        # print(df)
-        # Add a numerical index
-        self.current.ticker_df = df
-        # print(df)
-        return df
+            # print(df)
+            # df = df.apply(pd.to_numeric, errors="ignore")
+            # df = df.rename(columns={"symbol": "Coin", "bidPrice": "Price", "priceChangePercent": "Change", "quoteVolume": "Volume"})
+            
+            df = df.reset_index(drop=True)
+            
+            # print(df)
+            # Add a numerical index
+            self.current.ticker_df = df
+            # print(df)
+            return df

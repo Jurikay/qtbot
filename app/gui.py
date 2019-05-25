@@ -216,6 +216,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.initialize_user_data()
+        
         self.new_api = ApiManager(self, self.api_manager.client, self.threadpool)
 
 
@@ -237,7 +238,8 @@ class beeserBot(QtWidgets.QMainWindow):
         if self.is_connected:
             self.instantiate_api_managers()
             # self.coin_selector.activated.connect(self.gui_manager.change_pair)
-            self.initialize_tables()
+            
+            # self.initialize_tables()
 
         else:
             self.gui_mgr.disable_ui()

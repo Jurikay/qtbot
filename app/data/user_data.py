@@ -253,15 +253,18 @@ class UserData(QtCore.QObject):
             # print("#############")
 
         if self.trade_history:
+            print("CREATE HISTORY DF")
             df = pd.DataFrame.from_dict(history, orient='index')
 
             df = df[["time", "symbol", "side", "price", "executedQty", "total", "orderId"]]
             df.columns = ["Date & Time", "Pair", "Side", "Price", "Quantity", "Total", "id"]
             final_df = df.apply(pd.to_numeric, errors='ignore')
             # final_df = df
+            # print(final_df)
             return final_df
-        else:
-            return pd.DataFrame()
+
+        print("NO TRADE HIST!new")
+        return pd.DataFrame()
 
         #     order["filled_percent"] = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float((order["origQty"])) * 100), digits=2) + "%"
         #     order["total_btc"] = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"
@@ -287,8 +290,9 @@ class UserData(QtCore.QObject):
     def set_accholdings(self, holdings):
         """Receives a dict of holdings.
         Stores values in dictionary self.holdings."""
-
+        print("set_accholdings")
         for holding in holdings.items():
+            print("HOLDING", holding)
             coin = holding[0]
             free = holding[1]["free"]
             locked = holding[1]["locked"]
@@ -318,6 +322,8 @@ class UserData(QtCore.QObject):
 
 
     def get_holdings_array(self, coin, free, locked):
+        print("get_holdings_array")
+        # print("TICKERS", self.mw.data.tickers)
         total = float(free) + float(locked)
         if coin != "BTC":
             # TODO: Fix race condition! This needs current btc price
@@ -343,6 +349,7 @@ class UserData(QtCore.QObject):
     def initial_holdings(self):
         print("INIT HOLDINGS:")
         holdings = self.mw.api_manager.getHoldings()
+        print("got holdings: ", holdings)
         self.set_accholdings(holdings)
 
 
@@ -358,6 +365,6 @@ class UserData(QtCore.QObject):
             mask = df["Total BTC"].values >= 0.001
             return df[mask]
 
-        else:
-            print("No holdings")
-            return pd.DataFrame()
+        # else:
+        #     print("No holdings")
+        #     return pd.DataFrame()

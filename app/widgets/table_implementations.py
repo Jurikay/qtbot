@@ -157,7 +157,7 @@ class History(BaseTableView):
             self.mw.gui_mgr.change_to(coin)
 
     def set_delegates(self):
-        super().set_delegates()
+        # super().set_delegates()
         self.setItemDelegateForColumn(0, DateDelegate(self))
         self.setItemDelegateForColumn(1, PairDelegate(self))
         self.setItemDelegateForColumn(2, BuySellDelegete(self))
@@ -239,12 +239,13 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
     right = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignRight)
 
     def __init__(self, parent, text_color=Colors.color_lightgrey, align=center):
+        super(BasicDelegate, self).__init__(parent)
         self.parent = parent
         self.fg_color = text_color
         self.font = QtGui.QFont()
         self.mw = app.mw
         self.align = align
-        super(BasicDelegate, self).__init__(parent)
+        
 
 
 
@@ -254,19 +255,22 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
 
 
     def paint(self, painter, option, index):
-        painter.save()
-        if option.state & QtWidgets.QStyle.State_MouseOver:
-            app.main_app.restoreOverrideCursor()
+        try:
+            painter.save()
+            if option.state & QtWidgets.QStyle.State_MouseOver:
+                app.main_app.restoreOverrideCursor()
 
-        options = QtWidgets.QStyleOptionViewItem(option)
-        self.initStyleOption(options, index)
+            options = QtWidgets.QStyleOptionViewItem(option)
+            self.initStyleOption(options, index)
 
-        painter.setFont(self.font)
-        painter.setPen(QtGui.QColor(self.fg_color))
+            painter.setFont(self.font)
+            painter.setPen(QtGui.QColor(self.fg_color))
 
-        painter.drawText(option.rect, self.align, options.text)
-        painter.restore()
-
+            painter.drawText(option.rect, self.align, options.text)
+            painter.restore()
+        except Exception as e:
+            print("base delegate paint exception:", e)
+            print(self.parent.objectName)
 
 class HoverDelegate(BasicDelegate):
     def __init__(self, parent, hover_color=Colors.color_yellow, text_color=Colors.color_lightgrey):

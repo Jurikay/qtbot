@@ -23,30 +23,87 @@ class ApiManager:
         self.client = client
         self.mw = mw
         self.data = mw.data
-        print("NEW API MGR")
-        self.store_initial_data()
+        print("NEW API MGR <- blocking")
+        
         self.threadpool = tp
+        self.data_setup()
+        # self.store_initial_data()
 
-        # return super().__init__(*args, **kwargs)
+    def data_setup(self):
+        """Make all necessary api calls."""
+        worker = Worker(self.store_initial_data)
+        worker.signals.progress.connect(self.ui_setup)
+        print("EXEC SETUP")
+        self.threadpool.start(worker)
+        # self.store_pair_data()
+        print("Starting worker2")
+        worker2 = Worker(self.new_pair_data)
+        worker2.signals.progress.connect(self.process_pair_data)
+        self.threadpool.start(worker2)
 
-    def store_initial_data(self):
+
+    def ui_setup(self, callback):
+        """Callback from api setup; Everything that needs to be set in main thread goes here."""
+        print("UI SETUP callback:")
+
+        self.data.set_info(callback["products"], callback["pair_info"])
+        print("ui_setup set tickers")
+        self.data.set_tickers(callback["tickers"])
+        
+        # self.store_pair_data()
+        self.mw.initialize_tables()
+        self.mw.coin_selector.setup()
+        
+        # self.mw.new_asks.update()
+        # self.mw.new_bids.update()
+
+    def store_initial_data(self, progress_callback=None):
         """Makes inital api calls and stores received data in data class."""
+        print("store_initial_data <- blocking")
         # Move to threads maybe
-        self.data.set_tickers(self.get_tickers())
+        # self.data.set_tickers(self.get_tickers())
         # self.get_acc_info()
 
         print("PRODUCT INFO#######")
+        tickers = self.get_tickers()
         products = self.products_info()
         pair_info = self.pair_info()
-        
 
-        self.data.set_info(products, pair_info)
-        # self.data.set
-        self.store_pair_data()
+        
+        if progress_callback:
+            progress_callback.emit({"tickers": tickers, "products": products, "pair_info": pair_info})
+        else:
+            print("DIRECTLY CALLED")
+            self.data.set_info(products, pair_info)
+            self.data.set_tickers(tickers)
+            self.store_pair_data()
+
+    def new_pair_data(self, progress_callback=None):
+        print("new pair data")
+        symbol = self.data.current.pair
+        history = self.getTradehistory(symbol)
+        depth = self.getDepth(symbol)
+        if progress_callback:
+            progress_callback.emit({"history": history, "depth": depth})
+
+
+    def process_pair_data(self, callback):
+        history = callback["history"]
+        depth = callback["depth"]
+        self.data.set_hist(history)
+        self.data.set_depth(depth)
+        self.mw.user_data.initial_history()
+        self.mw.user_data.initial_holdings()
+
+        self.mw.tradeTable.setup()
+        # self.mw.tradeTable.update()
+
 
     def store_pair_data(self, progress_callback=None):
+        print("STORE PAIR DATA")
         """This is called whenever the current pair is changed."""
         symbol = self.data.current.pair
+        print("symbol: debug", symbol)
 
         print("store_pair_data:", symbol)
 
@@ -72,7 +129,7 @@ class ApiManager:
 
     def set_thread(self, callback):
         print("CALLBACK:", callback)
-        self.mw.tradeTable.update()
+        # self.mw.tradeTable.update()
         self.mw.new_asks.update()
         self.mw.new_bids.update()
 

@@ -51,7 +51,7 @@ class GuiManager:
         
         self.api_init()
 
-        self.mw.coin_selector.setup()
+        # self.mw.coin_selector.setup()
 
     # Refactor
     def initial_last_price(self):
