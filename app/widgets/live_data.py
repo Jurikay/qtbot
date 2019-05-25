@@ -54,28 +54,28 @@ class LiveData(QtWidgets.QWidget):
         usd_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
         self.mw.usd_value.setText("<span style='font-size: 18px; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
-    def set_last_price(self):
+    # def set_last_price(self):
 
-        history = self.mw.trade_history
+    #     history = self.mw.trade_history
 
-        if history == "debug":
-            # set color and arrow based on the last two trades
-            if float(history[0][0]) > float(history[1][0]):
-                arrow = QtGui.QPixmap("images/assets/2arrow_up.png")
-                color = Colors.color_green
-            elif float(history[0][0]) == float(history[1][0]):
-                arrow = QtGui.QPixmap("images/assets/2arrow.png")
-                color = Colors.color_yellow
-            else:
-                arrow = QtGui.QPixmap("images/assets/2arrow_down.png")
-                color = Colors.color_pink
+    #     if history == "debug":
+    #         # set color and arrow based on the last two trades
+    #         if float(history[0][0]) > float(history[1][0]):
+    #             arrow = QtGui.QPixmap("images/assets/2arrow_up.png")
+    #             color = Colors.color_green
+    #         elif float(history[0][0]) == float(history[1][0]):
+    #             arrow = QtGui.QPixmap("images/assets/2arrow.png")
+    #             color = Colors.color_yellow
+    #         else:
+    #             arrow = QtGui.QPixmap("images/assets/2arrow_down.png")
+    #             color = Colors.color_pink
 
 
-            formatted_price = '{number:.{digits}f}'.format(number=float(history[0][0]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
-            self.mw.price_arrow.setPixmap(arrow)
-            self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
-            usd_price = '{number:.{digits}f}'.format(number=float(history[0][0]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
-            self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
+    #         formatted_price = '{number:.{digits}f}'.format(number=float(history[0][0]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
+    #         self.mw.price_arrow.setPixmap(arrow)
+    #         self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
+    #         usd_price = '{number:.{digits}f}'.format(number=float(history[0][0]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
+    #         self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
 
 
@@ -83,10 +83,12 @@ class LiveData(QtWidgets.QWidget):
     # live data
     def set_spread(self):
         """Calclulate and set the percentual difference between the best bid and ask."""
-        if self.mw.orderbook:
+        if self.mw.data.current.orderbook:
             spread = ((float(self.mw.data.current.orderbook["asks"][0][0]) / float(self.mw.data.current.orderbook["bids"][0][0])) - 1) * 100
             spread_formatted = '{number:.{digits}f}'.format(number=spread, digits=2) + "%"
             self.mw.spread_label.setText(spread_formatted)
+        else:
+            print("NO ORDER BOOK")
 
 
 
@@ -101,6 +103,6 @@ class LiveData(QtWidgets.QWidget):
         #     histDict = {"price": trade["p"], "quantity": trade["q"], "maker": bool(trade["m"]), "time": trade["T"]}
         #     self.mw.trade_history.append(histDict)
         self.history_progressed = True
-        self.set_last_price()
+        self.new_last_price()
 
         self.mw.tradeTable.setup()

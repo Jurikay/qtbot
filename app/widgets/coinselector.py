@@ -1,3 +1,5 @@
+# pylint: disable=unsubscriptable-object
+
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -6,7 +8,10 @@
 import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
-from app.widgets.base_table_setup import SortModel, SortFilterModel, RoundFloatDelegate, ChangePercentDelegate
+from app.widgets.table_implementations import RoundFloatDelegate, ChangePercentDelegate
+
+
+from app.widgets.base_table import SortModel
 from app.colors import Colors
 
 import os
@@ -21,25 +26,19 @@ class CoinSelector(QtWidgets.QComboBox):
         QtWidgets.QComboBox.__init__(self, *args, **kwargs)
 
         self.mw = app.mw
-        self.model = None
-        self.completer = None
+        self.model = SortModel()
+        self.setModel(self.model)
+        self.completed_setup = False
+        self.basic_setup()
+
+    def basic_setup(self):
         self.activated.connect(self.select_coin)
-        # self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setEditable(False)
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setIconSize(QtCore.QSize(25, 25))
-
-        self.model = SelectorModel()
-        self.setModel(self.model)
-
         self.setModelColumn(0)
         self.setMouseTracking(False)
 
-        self.completed_setup = False
-        # self.lineEdit().setReadOnly(False)
-
-    # def debugModel(self):
-    #     self.setView(self.mw.debugTb)
 
     def paintEvent(self, event):
         """Reimplemented."""
@@ -83,7 +82,7 @@ class CoinSelector(QtWidgets.QComboBox):
         self.mw.gui_mgr.change_pair()
 
         # self.clearFocus()  # TODO: Verify
-        
+
 
     def update(self):
         self.model.update(self.mw.data.current.ticker_df)
@@ -96,21 +95,21 @@ class CoinSelector(QtWidgets.QComboBox):
         # change ticker dataframe to an int index.
         # on sort, reset index; get row index w/o "idx" column
 
-        df = self.model.datatable
+        df: pd.DataFrame = self.model.datatable
         if isinstance(df, pd.DataFrame):
             pass
         else:
             print("CANCEL")
             return
 
-        
+
         pair = self.mw.data.current.pair
 
         if not pair:
             pair = "BNBBTC"
-        row = df.index[df["Coin"] == pair][0]            
+        row = df.index[df["Coin"] == pair][0]
         self.setCurrentIndex(row)
-        
+
         # This has to be done once but after the model received it's data.
         if not self.completed_setup:
             self.view.set_widths()
@@ -125,52 +124,12 @@ class CoinSelector(QtWidgets.QComboBox):
         self.setModelColumn(0)
         self.update()
 
-        # self.view().window.setFixedWidth(1000)
-
-
-class SelectorModel(SortModel):
-    def __init__(self, *args, **kwargs):
-        QtCore.QAbstractTableModel.__init__(self, *args, **kwargs)
-        self.datatable = None
-        self.order_col = 0
-        self.order_dir = 0
-        self.searchText = ""
-        filter_col = 0
-        parent = self
-        # super().__init__(parent=parent, filter_col=filter_col, *args, **kwargs)
-    # def rowCount(self, parent=QtCore.QModelIndex()):
-    #     if isinstance(self.df, pd.DataFrame):
-    #         return len(self.df.index)
-    #     return 0
-
-    # def columnCount(self, parent=QtCore.QModelIndex()):
-    #     if isinstance(self.df, pd.DataFrame):
-    #         return len(self.df.columns.values)
-    #     return 0
-
-    # def data(self, index, role):
-    #     if role == QtCore.Qt.DisplayRole:
-    #         if index.isValid():
-    #             return str(self.datatable.iloc[index.row(), index.column()])
-    #     elif role == QtCore.Qt.UserRole:
-    #         return "asdasd"
-
-    def data(self, index, role):
-        if role == QtCore.Qt.DisplayRole:
-            return str(self.datatable.iloc[index.row(), index.column()])
-
 class SelectorView(QtWidgets.QTableView):
     def __init__(self, *args, **kwargs):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
         self.setObjectName("coin_selector_view")
-        self.setItemDelegateForColumn(0, NCoinDelegate(self))
-        
-        self.setItemDelegateForColumn(1, NPriceDelegate(self))
-        # self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
-        self.setItemDelegateForColumn(2, ChangePercentDelegate(self))
-        self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 2, " BTC", int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignRight)))
-        
-        self.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.set_delegates()
+        self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.setSortingEnabled(True)
         self.setMouseTracking(False)
@@ -184,17 +143,24 @@ class SelectorView(QtWidgets.QTableView):
         self.horizontalHeader().setHighlightSections(False)
 
 
+    def set_delegates(self):
+        self.setItemDelegateForColumn(0, NCoinDelegate(self))
+        self.setItemDelegateForColumn(1, NPriceDelegate(self))
+        self.setItemDelegateForColumn(2, ChangePercentDelegate(self))
+        self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 2, " BTC", int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignRight)))
+
     def set_widths(self):
         print("COIN SELECTOR SET WIDTHS")
 
         self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
         self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        self.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)
         # self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
         # self.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Fixed)
         self.setColumnWidth(0, 100)
-        self.setColumnWidth(1, 185)
+        self.setColumnWidth(1, 165)
         self.setColumnWidth(2, 100)
-        self.setColumnWidth(3, 100)
+        self.setColumnWidth(3, 120)
 
 
 class NPriceDelegate(QtWidgets.QStyledItemDelegate):
@@ -274,14 +240,13 @@ class NPriceDelegate(QtWidgets.QStyledItemDelegate):
 # refactor (used by coin_selector view)
 class NCoinDelegate(QtWidgets.QStyledItemDelegate):
 
-    
     @staticmethod
     def initStyleOption(option, index):
         """Set style options based on index column."""
 
         iconPath = "images/ico/" + index.data().replace("BTC", "") + ".svg"
         rp = resource_path(iconPath)
-        if (os.path.isfile(rp)):
+        if os.path.isfile(rp):
             option.icon = QtGui.QIcon(rp)
         else:
             option.icon = QtGui.QIcon(resource_path("images/ico/BTC.svg"))

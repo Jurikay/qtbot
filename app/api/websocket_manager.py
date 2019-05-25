@@ -51,20 +51,27 @@ class WebsocketManager:
         # print("SCHEDULE SOCKETS!!!!")
         # Pass the function to execute
         worker = Worker(self.start_sockets)
-
+        worker.signals.finished.connect(self.sockets_connected)
 
         # Execute
         self.threadpool.start(worker)
 
 
+    def sockets_connected(self):
+        print("SOCKET CONNECTED")
+
 
     # sockets
     def start_sockets(self, progress_callback):
+        """Called once in the beginning to initiate all websockets.
+        Later only pair specific sockets will be changed. User and ticker stay open."""
         print("Start sockets")
         self.websockets_symbol()
         self.userWebsocket = self.socket_mgr.start_user_socket(self.user_callback)
         self.tickerWebsocket = self.socket_mgr.start_ticker_socket(self.ticker_callback)
         self.socket_mgr.start()
+
+        progress_callback.emit("sockets started")
 
     def stop_sockets(self):
         self.socket_mgr.stop_socket(self.aggTradeSocket)
@@ -95,31 +102,31 @@ class WebsocketManager:
         self.mw.data.set_hist(msg)
 
         worker = Worker(self.socket_history)
-        worker.signals.progress.connect(self.mw.live_data.set_history_values)
+        worker.signals.progress.connect(self.mw.live_data.new_last_price)
         self.threadpool.start(worker)
 
 
     def depth_callback(self, msg):
 
-        self.mw.mutex.lock()
-        self.mw.orderbook["bids"] = msg["bids"]
-        self.mw.orderbook["asks"] = msg["asks"]
-        self.mw.mutex.unlock()
+        # self.mw.mutex.lock()
+        # self.mw.orderbook["bids"] = msg["bids"]
+        # self.mw.orderbook["asks"] = msg["asks"]
+        # self.mw.mutex.unlock()
 
         # NEW DATA
-        self.mw.data.set_depth(msg)
 
+        # worker = Worker(self.socket_orderbook)
         worker = Worker(partial(self.socket_orderbook, msg))
-        # worker.signals.progress.connect(self.mw.live_data.progress_orderbook)
-
-        worker.signals.progress.connect(self.mw.new_asks.update)
-        worker.signals.progress.connect(self.mw.new_bids.update)
+        worker.signals.finished.connect(self.mw.live_data.set_spread)
+        # worker.signals.finished.connect(partial(self.mw.data.set_depth, msg))
+        worker.signals.finished.connect(self.mw.new_asks.update)
+        worker.signals.finished.connect(self.mw.new_bids.update)
 
         # worker.signals.progress.connect(self.mw.asks_view.update)
 
 
-        self.threadpool.tryStart(worker)
-        self.api_updates += 1
+        self.threadpool.start(worker)
+        # self.api_updates += 1
 
 
     def user_callback(self, msg):
@@ -283,8 +290,8 @@ class WebsocketManager:
 
 
         # Workaround to fix random crashes; TODO: refactor
-        if self.mw.index_data is not None:
-            self.mw.index_data.merge_df(df_data)
+        # if self.mw.index_data is not None:
+        #     self.mw.index_data.merge_df(df_data)
 
 
 
@@ -325,8 +332,8 @@ class WebsocketManager:
     def socket_history(progress_callback):
         progress_callback.emit(1)
 
-    @staticmethod
-    def socket_orderbook(depth, progress_callback):
+    def socket_orderbook(self, depth, progress_callback):
+        self.mw.data.set_depth(depth)
         if depth.get("asks"):
             progress_callback.emit([depth["asks"], "asks"])
         if depth.get("bids"):

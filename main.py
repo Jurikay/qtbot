@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-logging"
     os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-gpu"
     os.environ["QTWEBENGINE_REMOTE_DEBUGGING"] = "13337"
-    os.environ["QT_SCALE_FACTOR"] = "1"
+    os.environ["QT_SCALE_FACTOR"] = "0.8"
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     main_app = QApplication(sys.argv)
 
@@ -42,11 +42,12 @@ if __name__ == "__main__":
 
     widget = beeserBot()
     widget.show()
+    widget.setup()
     main_app.aboutToQuit.connect(widget.shutdown_bot)
 
     app.main_app = main_app
 
 
-    widget.setup()
+    
 
     sys.exit(main_app.exec_())

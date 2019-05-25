@@ -21,7 +21,7 @@ class GuiMgr:
         self.set_timer()
         self.timer_count = 0
 
-        self.mw.coin_selector.update()
+        # self.mw.coin_selector.update()
 
         # tab stuff
         self.hide_tabs()
@@ -39,20 +39,28 @@ class GuiMgr:
     def blink(self):
         # try:
         self.timer_count += 1
+
+        # TODO: implement the following:
+        # stats_mgr.one_second
+        # acc holdings recalc
+        # btc stats
+        # websocket reconnect logic
+
         df1 = self.mw.tradeTable.df
         df2 = self.mw.data.current.history_df
         if isinstance(df1, pd.DataFrame) and isinstance(df2, pd.DataFrame):
-            if not np.allclose(df1, df2):
-                self.mw.tradeTable.update()
-                self.mw.live_data.new_last_price()
+            # if not np.allclose(df1, df2):
+            self.mw.tradeTable.update()
+            self.mw.live_data.set_history_values()
 
-                # Update the open orders table to reflect changed filled in % values.
-                self.mw.open_orders_view.update()
+            # Update the open orders table to reflect changed filled in % values.
+            self.mw.open_orders_view.redraw()
         
         if self.timer_count >= 4:
             if self.mw.is_connected:
                 self.mw.data.ticker_df()
-                self.mw.coin_selector.update()
+
+                # self.mw.coin_selector.update()
             self.timer_count = 0
             # if df1 != df2:
             #     print("UNEQ DF")
@@ -83,6 +91,7 @@ class GuiMgr:
         current_pair = data.current.pair
         new_pair = self.mw.coin_selector.currentText()
 
+        
         if any(new_pair in s for s in self.mw.tickers) and new_pair != current_pair:
             print("inside if", new_pair)
 
@@ -109,7 +118,7 @@ class GuiMgr:
     # TODO: Call this after loading default pair from config
     def change_to(self, coin):
         print("Change_to:", coin)
-
+        self.mw.coin_selector.update()
         find = self.mw.coin_selector.findText(coin, flags=QtCore.Qt.MatchStartsWith)
         self.mw.coin_selector.setCurrentIndex(find)
 

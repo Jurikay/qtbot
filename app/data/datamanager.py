@@ -24,7 +24,7 @@ class DataManager():
         self.set_current_pair("ETHBTC")
         self.current.tickers = dict()
 
-    def set_depth(self, depth):
+    def set_depth(self, depth, progress_callback=None):
         """Receives current bids and asks of selected pair."""
         self.current["orderbook"] = Dict(depth)
         self.depth_df("bids")

@@ -10,16 +10,15 @@ QStyledItemDelegate that serve as a starting point for all tableviews."""
 import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
-import app
 import pandas as pd
 from datetime import datetime
+import app
 from app.colors import Colors
-# import time
-from app.widgets.base_table_setup import BaseTableModel, BasicDelegate, HoverDelegate, RoundFloatDelegate
-# from app.data.new_orderbook_table import OrderbookTable
-
+from app.widgets.base_table import BaseTableModel
+from app.widgets.table_implementations import BasicDelegate, HoverDelegate, RoundFloatDelegate
 # debug
-from pprint import pprint
+# from pprint import pprint
+
 
 class BackgroundTable(QtWidgets.QTableView):
     def __init__(self, *args, **kwargs):
@@ -147,7 +146,7 @@ class BackgroundTable(QtWidgets.QTableView):
 
         self.my_model.update(self.df)
 
-        self.my_model.modelReset.emit()
+        # self.my_model.modelReset.emit()
         self.my_model.layoutChanged.emit()
         
         # self.drawBg()
@@ -394,21 +393,13 @@ class BidsView(BackgroundTable):
         self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, " BTC"))
 
     def set_df(self):
-        # return self.create_dataframe(self.data)
-        # return self.mw.data.current.history_df[self.data]
         df = self.mw.data.current.depth_df[self.data]
-        # print("DEPTH #######")
-        # df2 = df.append(pd.DataFrame([[0,0,0,0]], columns=df.columns))
-        # df = df.append(s)
-        # print(df2)
         row_count = df.shape[0]
 
-        # empty = pd.Series([0,0,0,0])
-
+        # Fill df with empty data if it contains less than 20 values, to
+        # avoid ui issues.
         for i in range(20 - row_count):
             df = df.append(pd.DataFrame([[str(row_count + i + 1), 0, 0, 0]], columns=df.columns))
-        #     df.append(pd.Series().transpose(), ignore_index=True)
-        #     print("DF has not enough rows", i)
         return df
 
 
@@ -429,7 +420,6 @@ class HistView(BackgroundTable):
         self.setItemDelegateForColumn(2, TimeDelegate(self, Colors.color_grey))
 
     def set_df(self):
-        # 
         return self.mw.data.current.history_df
 
 

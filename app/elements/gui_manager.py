@@ -121,7 +121,7 @@ class GuiManager:
 
         self.runtime += 1
 
-        self.mw.index_view.websocket_update()
+        # self.mw.index_view.websocket_update()
 
         # test
         # self.mw.tabsBotLeft.adjustSize()

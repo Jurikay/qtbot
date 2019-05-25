@@ -285,18 +285,18 @@ class beeserBot(QtWidgets.QMainWindow):
         self.trade_history_view.setup()
         # Bottom table filtering
         self.coinindex_filter.textChanged.connect(
-            self.open_orders_view.my_model.setFilter)
+            self.open_orders_view.my_model.set_filter)
         self.coinindex_filter.textChanged.connect(
-            self.trade_history_view.my_model.setFilter)
+            self.trade_history_view.my_model.set_filter)
         self.coinindex_filter.textChanged.connect(
-            self.holdings_view.my_model.setFilter)
+            self.holdings_view.my_model.set_filter)
         self.coinindex_filter.textChanged.connect(
-            self.index_view.my_model.setFilter)
+            self.index_view.my_model.set_filter)
 
 
         search_text = self.coinindex_filter.text()
         print("search_text:", search_text)
-        self.cb_history_time.currentIndexChanged.connect(self.trade_history_view.my_model.setFilter)
+        self.cb_history_time.currentIndexChanged.connect(self.trade_history_view.my_model.set_filter)
 
 
         self.hide_pairs.stateChanged.connect(

@@ -111,6 +111,7 @@ class UserData(QtCore.QObject):
 
     def create_open_orders_df(self):
         """Create a pandas dataframe suitable for displaying open orders."""
+        print("create open orders df")
         for _, order in self.open_orders.items():
             order["filled_percent"] = float(order["executedQty"]) / float((order["origQty"])) * 100
             order["total_btc"] = float(order["origQty"]) * float(order["price"])
@@ -118,10 +119,8 @@ class UserData(QtCore.QObject):
 
             order_id = int(order["orderId"])
 
-
-            # pair_price = float(self.mw.data.tickers[order["symbol"]]["lastPrice"])
-            
-        
+            # Filled in percent value is calculated by a custom item delegate.
+            # The price is used as a sort off dummy.
             order["filled_in_percent"] = float(order["price"])
 
             self.set_save(self.open_orders, order_id, order)
@@ -350,7 +349,6 @@ class UserData(QtCore.QObject):
     def create_holdings_df(self):
         print("CREATE HOLDIGNS DF")
         if self.holdings:
-            print("SELF HOLDINGS", self.holdings)
             df = pd.DataFrame.from_dict(self.holdings, orient='index')
 
             df = df[["coin", "name", "free", "locked", "total", "total_btc"]]
