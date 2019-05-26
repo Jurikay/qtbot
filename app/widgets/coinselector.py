@@ -116,6 +116,7 @@ class CoinSelector(QtWidgets.QComboBox):
             self.completed_setup = True
 
     def setup(self):
+        print("selector setup")
         self.view = SelectorView()
         self.view.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setView(self.view)
@@ -169,24 +170,13 @@ class NPriceDelegate(QtWidgets.QStyledItemDelegate):
     #     option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8)
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.old_price = None
 
     def paint(self, painter, option, index):
-        if self.old_price:
-            print("OLD PRICE", self.old_price)
 
         option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=8)
-
         options = QtWidgets.QStyleOptionViewItem(option)
-        if self.old_price != options.text:
-            print("different price:", options.text, self.old_price)
-        # print("OT", option.text)
-        # align_left = int(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-        # font = QtGui.QFont()
+
         font = app.mw.coin_selector.view.property("font")
-        # print("pfont", pfont)
-        # font = app.mw.f
-        # font.setPointSize(12)
         metrics = QtGui.QFontMetrics(font)
 
         # TODO: Find way to correctly center text horizontally
@@ -214,27 +204,17 @@ class NPriceDelegate(QtWidgets.QStyledItemDelegate):
         if char:
             x += metrics.horizontalAdvance(char)
 
+        # Display dollar value with two decimal places
         dollar_value = round(float(options.text) * float(app.mw.data.btc_price["lastPrice"]), 2)
+        
         # TODO: Verify hardcoded value
+        # If dollar value is below 0.02, display 4 decimal places
         if dollar_value < 0.02:
             dollar_value = round(float(options.text) * float(app.mw.data.btc_price["lastPrice"]), 4)
 
         painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-
         painter.drawText(x, y, str(dollar_value) + "$")
-
-        # else:
-        #     QtWidgets.QStyledItemDelegate.paint(self, painter, option, index)
-
-        # return
-
-        # painter.setPen(QtGui.QColor(Colors.color_lightgrey))
-
-        # painter.drawText(option.rect, align_left, options.text)
         painter.restore()
-        self.old_price = options.text
-
-
 
 
 # refactor (used by coin_selector view)

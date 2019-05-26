@@ -63,63 +63,64 @@ class BackgroundTable(QtWidgets.QTableView):
 
     def paintEvent(self, event):
         if self.df is not None and isinstance(self.df, pd.DataFrame) and not self.df.empty:
-            # print("paintEV:", dir(self))
-            # print(self.SelectRows)
+            if self.model():
+                # print("paintEV:", dir(self))
+                # print(self.SelectRows)
 
-            # Shortcuts to vertical and horizontal headers
-            vh = self.verticalHeader()
-    
-            # Get the first and last rows that are visible in the view and if the 
-            # last visiable row returns -1 set it to the row count
-            firstVisualRow = max([vh.visualIndexAt(0), 0])
-            lastVisualRow = vh.visualIndexAt(vh.viewport().height())
-            if lastVisualRow == -1:
-                lastVisualRow = self.model().rowCount(self.rootIndex()) - 1  # 19
-            # print("first/last:", firstVisualRow, lastVisualRow)
+                # Shortcuts to vertical and horizontal headers
+                vh = self.verticalHeader()
+        
+                # Get the first and last rows that are visible in the view and if the 
+                # last visiable row returns -1 set it to the row count
+                firstVisualRow = max([vh.visualIndexAt(0), 0])
+                lastVisualRow = vh.visualIndexAt(vh.viewport().height())
+                if lastVisualRow == -1:
+                    lastVisualRow = self.model().rowCount(self.rootIndex()) - 1  # 19
+                # print("first/last:", firstVisualRow, lastVisualRow)
 
-            # for vrow in range(firstVisualRow, lastVisualRow + 1):
-            #     row = vh.logicalIndex(vrow)
-            #     FirstRow = (vrow == 0)
-            #     if vh.isSectionHidden(row):
-            #         continue
+                # for vrow in range(firstVisualRow, lastVisualRow + 1):
+                #     row = vh.logicalIndex(vrow)
+                #     FirstRow = (vrow == 0)
+                #     if vh.isSectionHidden(row):
+                #         continue
 
-            total_width = self.horizontalHeader().width()
-            painter = QtGui.QPainter(self.viewport())
-            # print(dir(event.region().RegionType))
-            # print(event.rect())
-            for row in range(firstVisualRow, lastVisualRow + 1):
+                total_width = self.horizontalHeader().width()
+                painter = QtGui.QPainter(self.viewport())
+                # print(dir(event.region().RegionType))
+                # print(event.rect())
+                for row in range(firstVisualRow, lastVisualRow + 1):
 
-                # get row color:
-                if self.get_color is True:
-                    if self.mw.trade_history[row]["maker"] is True:
-                        self.bg_color = "#473043"
-                    else:
-                        self.bg_color = "#3b4c37"
+                    # get row color:
+                    if self.get_color is True:
+                        if self.mw.trade_history[row]["maker"] is True:
+                            self.bg_color = "#473043"
+                        else:
+                            self.bg_color = "#3b4c37"
 
-                rowY = self.rowViewportPosition(row)
+                    rowY = self.rowViewportPosition(row)
 
-                self.rowH = self.rowHeight(row)
-                if not self.rowH:
                     self.rowH = self.rowHeight(row)
+                    if not self.rowH:
+                        self.rowH = self.rowHeight(row)
 
-                # Create the painter
-                value = self.df.iloc[row, self.compare_col]
+                    # Create the painter
+                    value = self.df.iloc[row, self.compare_col]
 
-                if self.data:
-                    maxval = self.df["Total"].max()
-                else:
-                    maxval = self.df["quantity"].max()
+                    if self.data:
+                        maxval = self.df["Total"].max()
+                    else:
+                        maxval = self.df["quantity"].max()
 
-                percentage = value / maxval
+                    percentage = value / maxval
 
-                my_rect = QtCore.QRect(0, rowY, (percentage * total_width), self.rowH)
+                    my_rect = QtCore.QRect(0, rowY, (percentage * total_width), self.rowH)
 
-                painter.save()
-                painter.setBrush(QtGui.QColor(self.bg_color))
-                painter.setPen(QtGui.QColor("transparent"))
+                    painter.save()
+                    painter.setBrush(QtGui.QColor(self.bg_color))
+                    painter.setPen(QtGui.QColor("transparent"))
 
-                painter.drawRect(my_rect)
-                painter.restore()
+                    painter.drawRect(my_rect)
+                    painter.restore()
 
         super(BackgroundTable, self).paintEvent(event)
 
@@ -128,13 +129,13 @@ class BackgroundTable(QtWidgets.QTableView):
 
     def setup(self):
         self.update()
-
         self.setModel(self.my_model)
         # self.proxy_model.setSourceModel(self.my_model)
-
+        
         self.set_widths()
-
+        self.set_delegates()
         self.sortByColumn(0, QtCore.Qt.DescendingOrder)
+        
 
 
     def update(self, payload=None):
@@ -180,7 +181,7 @@ class BackgroundTable(QtWidgets.QTableView):
         # return df
 
     # def create_history_df(self):
-    #     df = pd.DataFrame(self.mw.trade_history)
+    #     df = pd.DataFrame(self.mw.data.current.history_df)
 
     #     df.columns = ["maker", "price", "quantity", "time"]
     #     df = df.apply(pd.to_numeric, errors="ignore")
@@ -391,7 +392,7 @@ class BidsView(BackgroundTable):
         self.highlight = "#aaff00"
         self.data = "bids"
         self.has_data = False
-        self.set_delegates()
+
 
     def set_delegates(self):
         self.setItemDelegateForColumn(0, OrderbookCountDelegate(self))
@@ -422,6 +423,7 @@ class HistView(BackgroundTable):
         self.data = None
         # self.setItemDelegate(HistoryDelegate(self))
         self.get_color = True
+        print("hist view get color:", self.get_color)
         self.set_delegates()
 
     def set_delegates(self):

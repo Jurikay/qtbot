@@ -255,6 +255,7 @@ class ApiCalls:
         if progress_callback:
             progress_callback.emit(orders)
         else:
+            print("api_all_orders blocking")
             return orders
 
 
@@ -268,18 +269,18 @@ class ApiCalls:
         worker = Worker(self.api_history)
         worker.signals.progress.connect(self.mw.live_data.batch_history)
         self.threadpool.start(worker)
-
+        
         worker = Worker(self.api_depth)
         worker.signals.progress.connect(self.save_depth)
 
         # worker.signals.progress.connect(self.mw.live_data.batch_orderbook)
         # worker.signals.finished.connect(self.mw.limit_pane.t_complete)
         self.threadpool.start(worker)
-
+        return
         # TODO: COme back to 
-        worker = Worker(self.mw.user_data.initial_history)
-        worker.signals.progress.connect(self.updateHistTable)
-        self.threadpool.start(worker)
+        # worker = Worker(self.mw.user_data.initial_history)
+        # worker.signals.progress.connect(self.updateHistTable)
+        # self.threadpool.start(worker)
 
 
         # self.get_trade_history(self.mw.data.current.pair)
@@ -292,12 +293,13 @@ class ApiCalls:
         # self.mw.trade_history_view.websocket_update()
 
     def save_depth(self, depth):
+        print("SET DEPTH")
         # print("save depth", depth)
         self.mw.data.set_depth(depth)
         # self.mw.orderbook = depth
 
-        self.mw.new_asks.setup()
-        self.mw.new_bids.setup()
+        # self.mw.new_asks.setup()
+        # self.mw.new_bids.setup()
 
         # self.mw.asks_view.setup()
 
@@ -334,9 +336,15 @@ class ApiCalls:
     def new_api(self):
         print("NEW API CALLS <- blocking")
         # TODO Move to thread
-        btc_pairs = self.get_btc_pairs()
-        tickers = self.add_ticker_data(btc_pairs)
-        self.mw.tickers = tickers
+        # btc_pairs = self.get_btc_pairs()
+        # tickers = self.add_ticker_data(btc_pairs)
+
+
+        # self.mw.data.set_tickers(tickers)
+
+
+
+        # self.mw.tickers = tickers
         # api_calls += (self.all_pairs / 2)
 
 

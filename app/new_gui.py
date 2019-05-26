@@ -28,10 +28,10 @@ class GuiMgr:
         self.setup_tabs()
 
     def set_timer(self):
-        self.timer= QtCore.QTimer(self.mw)
+        self.timer = QtCore.QTimer(self.mw)
         self.timer.setInterval(250)          # Throw event timeout with an interval of 1000 milliseconds
         self.timer.timeout.connect(self.blink)
-        self.timer.start()
+        self.timer.start(1000)
 
     # Refactor:
     # Idea: Ticker websocket triggers this instead of QTimer.
@@ -46,24 +46,31 @@ class GuiMgr:
         # btc stats
         # websocket reconnect logic
         
-        df1 = self.mw.tradeTable.df
-        df2 = self.mw.data.current.history_df
-        if isinstance(df1, pd.DataFrame) and isinstance(df2, pd.DataFrame):
-            if not np.allclose(df1, df2):
-                self.mw.tradeTable.update()
-            self.mw.live_data.set_history_values()
+        # df1 = self.mw.tradeTable.df
+        # df2 = self.mw.data.current.history_df
+        # if isinstance(df1, pd.DataFrame) and isinstance(df2, pd.DataFrame):
+        #     if not np.allclose(df1, df2):
+        
+        # crashes: TODO: Think of race conditions
+        self.mw.tradeTable.update()
 
-                # Update the open orders table to reflect changed filled in % values.
-            self.mw.open_orders_view.redraw()
+        if self.mw.coin_selector.completed_setup:
+            self.mw.coin_selector.update()
         else:
-            print("DATAFRAMES NOT PRESENT!!!")
+            print("Coin selector setup not complete.")
+
+        self.mw.live_data.set_history_values()
+
+        # Redraw open orders since dynamic data is displayed
+        # by delegates.
+        self.mw.open_orders_view.redraw()
 
 
         if self.timer_count >= 4:
             if self.mw.is_connected:
                 self.mw.data.ticker_df()
 
-                # self.mw.coin_selector.update()
+                self.mw.coin_selector.update()
             self.timer_count = 0
             # if df1 != df2:
             #     print("UNEQ DF")
@@ -97,9 +104,10 @@ class GuiMgr:
         current_pair = data.current.pair
         new_pair = self.mw.coin_selector.currentText()
 
+        print("CHANGE_PAIR: from:", current_pair, "to:", new_pair)
         
-        if any(new_pair in s for s in self.mw.tickers) and new_pair != current_pair:
-            print("inside if", new_pair)
+        if any(new_pair in s for s in self.mw.data.tickers) and new_pair != current_pair:
+            print("change pair to:", new_pair)
 
             data.set_current_pair(new_pair)
 
@@ -109,6 +117,7 @@ class GuiMgr:
 
             logging.info('Switching to %s' % new_pair)
 
+            print("LIMIT PANE VALUES")
             self.limit_pane_current_values()
 
             # new 'initial data'
@@ -136,12 +145,14 @@ class GuiMgr:
             self.mw.coinindex_filter.setText(self.mw.data.current.coin)
 
     def set_charts(self, pair):
-        # This is different from the call that sets up the charts; TODO: Unify
-        self.mw.chart.setHtml(Webpages.build_chart2(pair, self.mw.cfg_manager.defaultTimeframe))
+        try:
+            # This is different from the call that sets up the charts; TODO: Unify
+            self.mw.chart.setHtml(Webpages.build_chart2(pair, self.mw.cfg_manager.defaultTimeframe))
 
-        url = Webpages.build_cmc(self)
-        self.mw.cmc_chart.load(QtCore.QUrl(url))
-
+            url = Webpages.build_cmc(self)
+            self.mw.cmc_chart.load(QtCore.QUrl(url))
+        except TypeError as e:
+            print("DEBUG: chart failed", e)
 
     def tab_change(self, index):
         """Only show time frame combobox in corner widget when the correct tab
@@ -223,23 +234,26 @@ class GuiMgr:
         holdings = self.mw.user_data.holdings
         tickers = self.mw.data.pairs
 
-        self.mw.buy_asset.setText(coin)
-        self.mw.sell_asset.setText(coin)
+        try:
+            self.mw.buy_asset.setText(coin)
+            self.mw.sell_asset.setText(coin)
 
-        self.mw.limit_total_btc.setText(str(holdings["BTC"]["free"]) + " BTC")
-        self.mw.limit_total_coin.setText(str(holdings[coin]["free"]) + " " + coin)
+            self.mw.limit_total_btc.setText(str(holdings["BTC"]["free"]) + " BTC")
+            self.mw.limit_total_coin.setText(str(holdings[coin]["free"]) + " " + coin)
 
-        self.mw.limit_buy_label.setText("Buy " + coin)
-        self.mw.limit_sell_label.setText("Sell " + coin)
+            self.mw.limit_buy_label.setText("Buy " + coin)
+            self.mw.limit_sell_label.setText("Sell " + coin)
 
-        self.mw.limit_buy_input.setDecimals(tickers[pair]["decimals"])
-        self.mw.limit_buy_input.setSingleStep(float(tickers[pair]["tickSize"]))
+            self.mw.limit_buy_input.setDecimals(tickers[pair]["decimals"])
+            self.mw.limit_buy_input.setSingleStep(float(tickers[pair]["tickSize"]))
 
-        self.mw.limit_sell_input.setDecimals(tickers[pair]["decimals"])
-        self.mw.limit_sell_input.setSingleStep(float(tickers[pair]["tickSize"]))
+            self.mw.limit_sell_input.setDecimals(tickers[pair]["decimals"])
+            self.mw.limit_sell_input.setSingleStep(float(tickers[pair]["tickSize"]))
 
-        self.mw.limit_buy_amount.setDecimals(tickers[pair]["assetDecimals"])
-        self.mw.limit_buy_amount.setSingleStep(float(tickers[pair]["minTrade"]))
+            self.mw.limit_buy_amount.setDecimals(tickers[pair]["assetDecimals"])
+            self.mw.limit_buy_amount.setSingleStep(float(tickers[pair]["minTrade"]))
 
-        self.mw.limit_sell_amount.setDecimals(tickers[pair]["assetDecimals"])
-        self.mw.limit_sell_amount.setSingleStep(float(tickers[pair]["minTrade"]))
+            self.mw.limit_sell_amount.setDecimals(tickers[pair]["assetDecimals"])
+            self.mw.limit_sell_amount.setSingleStep(float(tickers[pair]["minTrade"]))
+        except KeyError as e:
+            print("livedata values key error", e)

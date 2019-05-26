@@ -209,15 +209,17 @@ class beeserBot(QtWidgets.QMainWindow):
     def init_api_classes(self):
         # TODO: Refactor whacky order
 
+
+
         self.api_manager = ApiCalls(self, self.threadpool)
         # self.api_manager.initialize()
 
-        self.api_manager.new_api()
-
-
-        self.initialize_user_data()
-        
         self.new_api = ApiManager(self, self.api_manager.client, self.threadpool)
+
+
+
+        
+        
 
 
         self.check_connection()
@@ -236,10 +238,11 @@ class beeserBot(QtWidgets.QMainWindow):
         """Check if an api connection has been established. If so, initialize
         several helper classes."""
         if self.is_connected:
+            print("is_connected: TRUE")
+            self.initialize_user_data()
             self.instantiate_api_managers()
-            # self.coin_selector.activated.connect(self.gui_manager.change_pair)
             
-            # self.initialize_tables()
+            
 
         else:
             self.gui_mgr.disable_ui()
@@ -258,33 +261,20 @@ class beeserBot(QtWidgets.QMainWindow):
         self.websocket_manager = WebsocketManager(
             self, self.threadpool, app.client, self.mutex)
 
-        # self.table_manager = TableManager(self)
-        # self.table_manager.init_filter()
-
         self.gui_manager = GuiManager(self, self.threadpool)
         self.gui_manager.initialize()
 
-
+        self.new_api.data_setup()
         
 
         
     def initialize_tables(self):
-        # self.coin_index.initialize()
-        # self.open_orders.initialize()
-        # self.history_table.initialize()
-        # self.holdings_table.initialize()
-
-        # new:
-        # self.test_table_view.setup()
-
-        # self.test_table_view_2.setup()
-
-        # This is used
         self.open_orders_view.setup()
         # self.index_view.setup()
         self.holdings_view.setup()
-
         self.trade_history_view.setup()
+
+
         # Bottom table filtering
         self.coinindex_filter.textChanged.connect(
             self.open_orders_view.my_model.set_filter)
@@ -309,7 +299,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
     def initialize_user_data(self):
-        self.user_data = UserData(self, self.mutex)
+        self.user_data = UserData(self, self.mutex, self.threadpool)
         self.user_data.initialize()
 
 
@@ -358,39 +348,12 @@ class beeserBot(QtWidgets.QMainWindow):
         except ReactorNotRunning:
             pass
 
-    def slider_value(self):
-        # self.setProperty("value", value)
-        value = self.test_slider_value.value()
-        self.test_slider.setSliderPosition(value)
-        self.test_slider_label.setText(str(int(value)))
+    # def slider_value(self):
+    #     # self.setProperty("value", value)
+    #     value = self.test_slider_value.value()
+    #     self.test_slider.setSliderPosition(value)
+    #     self.test_slider_label.setText(str(int(value)))
 
-    def spinbox_value(self, value):
-        self.test_slider_value.setValue(float(value))
+    # def spinbox_value(self, value):
+    #     self.test_slider_value.setValue(float(value))
 
-
-# class DataManager:
-#     """Class to hold and manage api and websocket data."""
-
-#     def __init__(self, mw):
-#         """Initialize storage variables."""
-
-#         self.mw = mw
-
-#         self.coins = dict()
-
-#         self.trade_history = list()
-#         self.tickers = dict()
-#         self.klines = dict()
-#         self.bids = list()
-#         self.asks = list()
-
-#         self.my_trades = list()
-#         self.open_orders = list()
-
-#         self.account_holdings = dict()
-
-#         self.decimals = 0
-#         self.assetDecimals = 0
-
-#     def get_specific(self, kind, coin):
-#         pass

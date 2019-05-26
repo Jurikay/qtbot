@@ -19,10 +19,15 @@ class DataManager():
         self.tickers = dict()
         self.pairs = dict()
 
+
+
         self.btc_price = dict()
         # Hardcoded default
         self.set_current_pair("ETHBTC")
         self.current.tickers = dict()
+
+        # todo: load from cfg
+
 
     def set_depth(self, depth, progress_callback=None):
         """Receives current bids and asks of selected pair."""
@@ -88,6 +93,7 @@ class DataManager():
         self.pairs = pair_info
 
     def set_current_pair(self, pair):
+        print("DATA: SETTING CURERNT PAIR", pair)
         self.current.pair = pair
         self.current.coin = pair[:-3]
 

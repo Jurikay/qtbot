@@ -20,7 +20,7 @@ class BaseTableView(QtWidgets.QTableView):
         self.df = None
         # self.setSortingEnabled(True)
         self.clicked.connect(self.cell_clicked)
-        self.set_delegates()
+        # self.set_delegates()
 
     def websocket_update(self):
         if self.my_model.rowCount() == 0:
@@ -32,12 +32,14 @@ class BaseTableView(QtWidgets.QTableView):
         self.update()
 
         # TODO: Improve
-        if self.df.index[0]:
-            df_rows = len(self.df)
-            if df_rows > 0:
-                self.setModel(self.my_model)
-                self.set_default_widths()
-                self.sortByColumn(0, QtCore.Qt.DescendingOrder)
+        if isinstance(self.df, pd.DataFrame):
+            if len(self.df) != 0:
+                df_rows = len(self.df)
+                if df_rows > 0:
+                    self.setModel(self.my_model)
+                    self.set_default_widths()
+                    self.set_delegates()
+                    self.sortByColumn(0, QtCore.Qt.DescendingOrder)
 
     def update(self):
         # self.my_model.layoutAboutToBeChanged.emit()

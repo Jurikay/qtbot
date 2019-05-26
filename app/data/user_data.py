@@ -11,7 +11,7 @@ import PyQt5.QtCore as QtCore
 # from datetime import datetime
 from binance.exceptions import BinanceAPIException
 import logging
-
+from app.workers import Worker
 # Todo: Think of location; Move into dataclass; Verify necessity of QObject
 # inheritence and 
 
@@ -19,12 +19,12 @@ class UserData(QtCore.QObject):
     """QObject that holds various dicts of user data like
     open orders, trade history and current holdings."""
 
-    def __init__(self, mw, mutex, parent=None):
+    def __init__(self, mw, mutex, tp, parent=None):
         super(UserData, self).__init__(parent)
         print("INIT UserData")
         self.mw = mw
         self.mutex = mutex
-
+        self.threadpool = tp
         self.open_orders = dict()
         self.trade_history = dict()
         self.holdings = dict()
@@ -32,13 +32,27 @@ class UserData(QtCore.QObject):
 
 
     def initialize(self):
-        print("INIT USER DATA")
+        """Spawn workers in a separate thread to fetch
+        user data initially."""
+        
+        
+        worker = Worker(self.get_initial_data)
+        worker.signals.progress.connect(self.process_initial_data)
+        self.threadpool.start(worker)
 
-        # self.mw.new_api.initial_tickers()
 
+    def get_initial_data(self, progress_callback):
+        """Fetch user data."""
         self.initial_open_orders()
-        self.initial_history()
-        # self.mw.print_btn.clicked.connect(self.print_dicts)
+        # self.initial_history()
+        self.initial_holdings()
+
+        progress_callback.emit("1")
+
+    # currently not needed
+    def process_initial_data(self, callback):
+        """process user data."""
+        print("init data callback", callback)
 
 
     def change_pair(self):
@@ -211,9 +225,7 @@ class UserData(QtCore.QObject):
 
 
     def initial_history(self, progress_callback=None):
-        print("INITAL HISTOIRY!!!", progress_callback)
         pair = self.mw.data.current.pair
-        # print("Initial history", pair)
         history = self.mw.api_manager.api_my_trades(pair)
 
         for entry in history:
@@ -292,7 +304,6 @@ class UserData(QtCore.QObject):
         Stores values in dictionary self.holdings."""
         print("set_accholdings")
         for holding in holdings.items():
-            print("HOLDING", holding)
             coin = holding[0]
             free = holding[1]["free"]
             locked = holding[1]["locked"]
@@ -322,7 +333,6 @@ class UserData(QtCore.QObject):
 
 
     def get_holdings_array(self, coin, free, locked):
-        print("get_holdings_array")
         # print("TICKERS", self.mw.data.tickers)
         total = float(free) + float(locked)
         if coin != "BTC":
@@ -349,7 +359,6 @@ class UserData(QtCore.QObject):
     def initial_holdings(self):
         print("INIT HOLDINGS:")
         holdings = self.mw.api_manager.getHoldings()
-        print("got holdings: ", holdings)
         self.set_accholdings(holdings)
 
 

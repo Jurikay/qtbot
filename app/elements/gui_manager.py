@@ -58,16 +58,17 @@ class GuiManager:
         return
         # init last_price
         arrow = QtGui.QPixmap("images/assets/2arrow.png")
-        formatted_price = '{number:.{digits}f}'.format(number=float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
+        formatted_price = '{number:.{digits}f}'.format(number=float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]), digits=self.mw.data.tickers[self.mw.cfg_manager.pair]["decimals"])
         self.mw.price_arrow.setPixmap(arrow)
         self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + Colors.color_yellow + "'>" + formatted_price + "</span>")
-        usd_price = '{number:.{digits}f}'.format(number=float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
+        usd_price = '{number:.{digits}f}'.format(number=float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) * float(self.mw.data.btc_price["lastPrice"]), digits=2)
         self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
     # gui init
+    # refactor
     def api_init(self):
         """One-time gui initialization."""
-        self.mw.api_manager.api_calls()
+        self.mw.new_api.api_calls()
         self.mw.websocket_manager.schedule_websockets()
         self.mw.gui_manager.schedule_work()
 
@@ -120,58 +121,60 @@ class GuiManager:
         """Update some values every second."""
 
         self.runtime += 1
+        try:
+            # self.mw.index_view.websocket_update()
 
-        # self.mw.index_view.websocket_update()
+            # test
+            # self.mw.tabsBotLeft.adjustSize()
+            # self.mw.coin_index_filter.adjustSize()
 
-        # test
-        # self.mw.tabsBotLeft.adjustSize()
-        # self.mw.coin_index_filter.adjustSize()
+            total_btc_value = self.calc_total_btc()
+            self.mw.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
 
-        total_btc_value = self.calc_total_btc()
-        self.mw.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
+            total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(self.mw.data.btc_price["lastPrice"]), digits=2) + "$"
+            self.mw.total_usd_label.setText("<span style='font-size: 14px; color: white; font-family: Arial Black;'>" + total_usd_value + "</span>")
 
-        total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2) + "$"
-        self.mw.total_usd_label.setText("<span style='font-size: 14px; color: white; font-family: Arial Black;'>" + total_usd_value + "</span>")
+            last_btc_price = float(self.mw.data.btc_price["lastPrice"])
+            last_btc_price_formatted = '{number:,.{digits}f}'.format(number=last_btc_price, digits=2) + "$"
 
-        last_btc_price = float(self.mw.tickers["BTCUSDT"]["lastPrice"])
-        last_btc_price_formatted = '{number:,.{digits}f}'.format(number=last_btc_price, digits=2) + "$"
+            if last_btc_price > self.last_btc_price:
+                last_color = Colors.color_green
+            elif last_btc_price == self.last_btc_price:
+                last_color = Colors.color_lightgrey
+            else:
+                last_color = Colors.color_pink
 
-        if last_btc_price > self.last_btc_price:
-            last_color = Colors.color_green
-        elif last_btc_price == self.last_btc_price:
-            last_color = Colors.color_lightgrey
-        else:
-            last_color = Colors.color_pink
+            self.mw.btc_price_label.setText("<span style='color: " + last_color + "'>" + last_btc_price_formatted + "</span>")
+            self.last_btc_price = last_btc_price
 
-        self.mw.btc_price_label.setText("<span style='color: " + last_color + "'>" + last_btc_price_formatted + "</span>")
-        self.last_btc_price = last_btc_price
+            operator = ""
+            percent_change = float(self.mw.data.btc_price["priceChangePercent"])
+            if percent_change > 0:
+                operator = "+"
+                percent_color = Colors.color_green
+            else:
+                percent_color = Colors.color_pink
 
-        operator = ""
-        percent_change = float(self.mw.tickers["BTCUSDT"]["priceChangePercent"])
-        if percent_change > 0:
-            operator = "+"
-            percent_color = Colors.color_green
-        else:
-            percent_color = Colors.color_pink
+            btc_percent = operator + '{number:,.{digits}f}'.format(number=percent_change, digits=2) + "%"
+            self.mw.btc_percent_label.setText("<span style='color: " + percent_color + "'>" + btc_percent + "</span>")
 
-        btc_percent = operator + '{number:,.{digits}f}'.format(number=percent_change, digits=2) + "%"
-        self.mw.btc_percent_label.setText("<span style='color: " + percent_color + "'>" + btc_percent + "</span>")
+            high = float(self.mw.data.btc_price["highPrice"])
+            low = float(self.mw.data.btc_price["lowPrice"])
+            vol = float(self.mw.data.btc_price["volume"])
 
-        high = float(self.mw.tickers["BTCUSDT"]["highPrice"])
-        low = float(self.mw.tickers["BTCUSDT"]["lowPrice"])
-        vol = float(self.mw.tickers["BTCUSDT"]["volume"])
+            high_formatted = '{number:,.{digits}f}'.format(number=high, digits=2) + "$"
+            low_formatted = '{number:,.{digits}f}'.format(number=low, digits=2) + "$"
+            vol_formatted = '{number:,.{digits}f}'.format(number=vol, digits=2) + " BTC"
 
-        high_formatted = '{number:,.{digits}f}'.format(number=high, digits=2) + "$"
-        low_formatted = '{number:,.{digits}f}'.format(number=low, digits=2) + "$"
-        vol_formatted = '{number:,.{digits}f}'.format(number=vol, digits=2) + " BTC"
+            self.mw.btc_high_label.setText("<span style='color: " + Colors.color_green + "'>" + high_formatted + "</span>")
+            self.mw.btc_low_label.setText("<span style='color: " + Colors.color_pink + "'>" + low_formatted + "</span>")
+            self.mw.btc_vol_label.setText("<span style='color: " + Colors.color_lightgrey + "'>" + vol_formatted + "</span>")
 
-        self.mw.btc_high_label.setText("<span style='color: " + Colors.color_green + "'>" + high_formatted + "</span>")
-        self.mw.btc_low_label.setText("<span style='color: " + Colors.color_pink + "'>" + low_formatted + "</span>")
-        self.mw.btc_vol_label.setText("<span style='color: " + Colors.color_lightgrey + "'>" + vol_formatted + "</span>")
-
-        self.percent_changes()
-        self.check_websocket()
-        self.update_stats()
+            self.percent_changes()
+            self.check_websocket()
+            self.update_stats()
+        except KeyError as e:
+            print("1 sec update error:", e)
 
     def update_stats(self):
         session_time = str(timedelta(seconds=self.runtime))
@@ -187,7 +190,7 @@ class GuiManager:
 
     # global ui / logic REFACTOR
     def check_websocket(self):
-        """Check if websocket updates stop occuring."""
+        """Check if websocket updates have stopped."""
         if self.update_count == int(self.mw.websocket_manager.api_updates):
             self.no_updates += 1
         else:
@@ -218,13 +221,13 @@ class GuiManager:
             close_1h = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-60][4])
             close_4h = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-240][4])
 
-            change_5m_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_5m)) - 1) * 100
-            change_15m_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_15m)) - 1) * 100
-            # change_30m_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_30m)) - 1) * 100
-            change_1h_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_1h)) - 1) * 100
-            change_4h_value = ((float(self.mw.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_4h)) - 1) * 100
+            change_5m_value = ((float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_5m)) - 1) * 100
+            change_15m_value = ((float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_15m)) - 1) * 100
+            # change_30m_value = ((float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_30m)) - 1) * 100
+            change_1h_value = ((float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_1h)) - 1) * 100
+            change_4h_value = ((float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_4h)) - 1) * 100
 
-            change_1d_value = float(self.mw.tickers[self.mw.cfg_manager.pair]["priceChangePercent"])
+            change_1d_value = float(self.mw.data.tickers[self.mw.cfg_manager.pair]["priceChangePercent"])
 
             changes = [self.mw.change_5m, self.mw.change_15m, self.mw.change_1h, self.mw.change_4h, self.mw.change_1d]
             change_values = [change_5m_value, change_15m_value, change_1h_value, change_4h_value, change_1d_value]

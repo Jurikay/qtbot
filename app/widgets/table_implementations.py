@@ -255,22 +255,22 @@ class BasicDelegate(QtWidgets.QStyledItemDelegate):
 
 
     def paint(self, painter, option, index):
-        try:
-            painter.save()
-            if option.state & QtWidgets.QStyle.State_MouseOver:
-                app.main_app.restoreOverrideCursor()
+    
+        
+        painter.save()
+        if option.state & QtWidgets.QStyle.State_MouseOver:
+            app.main_app.restoreOverrideCursor()
 
-            options = QtWidgets.QStyleOptionViewItem(option)
-            self.initStyleOption(options, index)
+        options = QtWidgets.QStyleOptionViewItem(option)
+        self.initStyleOption(options, index)
 
-            painter.setFont(self.font)
-            painter.setPen(QtGui.QColor(self.fg_color))
+        painter.setFont(self.font)
+        painter.setPen(QtGui.QColor(self.fg_color))
 
-            painter.drawText(option.rect, self.align, options.text)
-            painter.restore()
-        except Exception as e:
-            print("base delegate paint exception:", e)
-            print(self.parent.objectName)
+        painter.drawText(option.rect, self.align, options.text)
+        painter.restore()
+
+
 
 class HoverDelegate(BasicDelegate):
     def __init__(self, parent, hover_color=Colors.color_yellow, text_color=Colors.color_lightgrey):

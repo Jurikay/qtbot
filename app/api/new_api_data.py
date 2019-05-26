@@ -23,79 +23,102 @@ class ApiManager:
         self.client = client
         self.mw = mw
         self.data = mw.data
-        print("NEW API MGR <- blocking")
         
         self.threadpool = tp
-        self.data_setup()
+
+        # self.data_setup()
         # self.store_initial_data()
 
+    # Moved call out of init
     def data_setup(self):
         """Make all necessary api calls."""
         worker = Worker(self.store_initial_data)
-        worker.signals.progress.connect(self.ui_setup)
-        print("EXEC SETUP")
+        worker.signals.finished.connect(self.ui_setup)
         self.threadpool.start(worker)
         # self.store_pair_data()
         print("Starting worker2")
+
         worker2 = Worker(self.new_pair_data)
         worker2.signals.progress.connect(self.process_pair_data)
         self.threadpool.start(worker2)
 
 
-    def ui_setup(self, callback):
+    def ui_setup(self):
         """Callback from api setup; Everything that needs to be set in main thread goes here."""
         print("UI SETUP callback:")
+        # print(self.mw.data.tickers)
+        self.mw.data.ticker_df()
+        # self.data.set_info(callback["products"], callback["pair_info"])        
+        # self.data.set_tickers(callback["tickers"])
+        # self.mw.data.set_current_pair("NEOBTC")
 
-        self.data.set_info(callback["products"], callback["pair_info"])
-        print("ui_setup set tickers")
-        self.data.set_tickers(callback["tickers"])
-        
         # self.store_pair_data()
         self.mw.initialize_tables()
         self.mw.coin_selector.setup()
+
+        worker = Worker(self.pair_gui)
+        worker.signals.finished.connect(self.process_pair_gui)
+        self.threadpool.start(worker)
+        # TODO read pair from config and set here
+        # self.mw.gui_mgr.change_to("NEOBTC")
         
+
         # self.mw.new_asks.update()
         # self.mw.new_bids.update()
 
+    def pair_gui(self, progress_callback):
+        # self.mw.data.set_current_pair("BNBBTC")
+        progress_callback.emit("done")
+
+    def process_pair_gui(self):
+        self.mw.gui_mgr.change_to("NEOBTC")
+
     def store_initial_data(self, progress_callback=None):
         """Makes inital api calls and stores received data in data class."""
-        print("store_initial_data <- blocking")
-        # Move to threads maybe
-        # self.data.set_tickers(self.get_tickers())
-        # self.get_acc_info()
-
-        print("PRODUCT INFO#######")
+        
         tickers = self.get_tickers()
+
         products = self.products_info()
         pair_info = self.pair_info()
 
         
-        if progress_callback:
-            progress_callback.emit({"tickers": tickers, "products": products, "pair_info": pair_info})
-        else:
-            print("DIRECTLY CALLED")
-            self.data.set_info(products, pair_info)
-            self.data.set_tickers(tickers)
-            self.store_pair_data()
+        self.data.set_info(products, pair_info)
+        self.data.set_tickers(tickers)
+        
+
+        progress_callback.emit("done")
 
     def new_pair_data(self, progress_callback=None):
         print("new pair data")
         symbol = self.data.current.pair
         history = self.getTradehistory(symbol)
         depth = self.getDepth(symbol)
+
+        self.data.set_hist(history)
+        self.data.set_depth(depth)
+
         if progress_callback:
             progress_callback.emit({"history": history, "depth": depth})
 
 
     def process_pair_data(self, callback):
+        print("PROCESS PAIR DATA")
         history = callback["history"]
         depth = callback["depth"]
-        self.data.set_hist(history)
-        self.data.set_depth(depth)
+
+        # self.data.set_hist(history)
+        # self.data.set_depth(depth)
+
         self.mw.user_data.initial_history()
         self.mw.user_data.initial_holdings()
 
+        self.mw.new_asks.setup()
+        self.mw.new_bids.setup()
         self.mw.tradeTable.setup()
+
+        # self.mw.tradeTable.setup()
+
+
         # self.mw.tradeTable.update()
 
 
@@ -110,6 +133,9 @@ class ApiManager:
         self.data.set_hist(self.getTradehistory(symbol))
 
         self.data.set_depth(self.getDepth(symbol))
+
+
+
 
         # !new trade history update
         self.mw.user_data.initial_history()
@@ -137,6 +163,22 @@ class ApiManager:
         self.mw.trade_history_view.update()
         self.mw.holdings_view.update()
 
+    def api_calls(self):
+        print("apiFunctions api_calls")
+        """Initial and coin specific api calls"""
+        
+
+        worker = Worker(self.mw.api_manager.api_history)
+        worker.signals.progress.connect(self.mw.live_data.batch_history)
+        self.threadpool.start(worker)
+        
+        worker = Worker(self.mw.api_manager.api_depth)
+        worker.signals.progress.connect(self.mw.api_manager.save_depth)
+
+        # worker.signals.progress.connect(self.mw.live_data.batch_orderbook)
+        # worker.signals.finished.connect(self.mw.limit_pane.t_complete)
+        self.threadpool.start(worker)
+        return
 
     # Debug; Testing only, TODO: Replace
     def get_acc_info(self):
@@ -157,7 +199,6 @@ class ApiManager:
     def get_tickers(self):
         print("new api get_tickers")
         """Make an initial API call to get ticker data."""
-
         ticker = self.client.get_ticker()  # API call
         return ticker
 
@@ -228,12 +269,3 @@ class ApiManager:
             coin_dict[pair]["minTrade"] = minTrade
 
         return coin_dict
-    
-    # Currently unused
-    def initial_tickers(self):
-        """This is a temporary method that is used to fix a race condition.
-        Get btc price data before ticker websocket data arrives."""
-        tickers = self.get_tickers()
-
-        self.data.set_tickers(tickers)
-

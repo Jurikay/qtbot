@@ -476,7 +476,7 @@ class Webpages():
     def build_cmc(self):
         """Make coin names coinmarketcap conform."""
         print("BUILD CMC")
-        print("cfg mgr pair: ", self.mw.cfg_manager.pair)
+        print("current pair: ", self.mw.data.current.pair)
 
 
         coin_name = self.mw.data.pairs[self.mw.data.current.pair]["baseAssetName"]
@@ -516,7 +516,7 @@ class Webpages():
         return url
 
     def build_binance_info(self):
-        coin_name = self.mw.tickers[self.mw.cfg_manager.pair]["baseAssetName"]
+        coin_name = self.mw.data.tickers[self.mw.cfg_manager.pair]["baseAssetName"]
         url = "https://info.binance.com/currencies/" + coin_name.replace(" ", "-").replace(".", "") + "/"
         return url
 

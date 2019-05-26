@@ -48,13 +48,14 @@ class LiveData(QtWidgets.QWidget):
             else:
                 arrow = self.arrow
                 color = Colors.color_yellow
-
-            formatted_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
-            self.mw.price_arrow.setPixmap(arrow)
-            self.mw.last_price.setText("<span style='font-size: 20px; color:" + color + "'>" + formatted_price + "</span>")
-            usd_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
-            self.mw.usd_value.setText("<span style='font-size: 18px; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
-
+            try:
+                formatted_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]), digits=self.mw.data.pairs[self.mw.data.current.pair]["decimals"])
+                self.mw.price_arrow.setPixmap(arrow)
+                self.mw.last_price.setText("<span style='font-size: 20px; color:" + color + "'>" + formatted_price + "</span>")
+                usd_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]) * float(self.mw.data.btc_price["lastPrice"]), digits=2)
+                self.mw.usd_value.setText("<span style='font-size: 18px; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
+            except (TypeError, KeyError, ValueError) as e:
+                print("new last price type error:", e)
     # def set_last_price(self):
 
     #     history = self.mw.trade_history
@@ -72,10 +73,10 @@ class LiveData(QtWidgets.QWidget):
     #             color = Colors.color_pink
 
 
-    #         formatted_price = '{number:.{digits}f}'.format(number=float(history[0][0]), digits=self.mw.tickers[self.mw.cfg_manager.pair]["decimals"])
+    #         formatted_price = '{number:.{digits}f}'.format(number=float(history[0][0]), digits=self.mw.data.tickers[self.mw.data.current.pair]["decimals"])
     #         self.mw.price_arrow.setPixmap(arrow)
     #         self.mw.last_price.setText("<span style='font-size: 20px; font-family: Arial Black; color:" + color + "'>" + formatted_price + "</span>")
-    #         usd_price = '{number:.{digits}f}'.format(number=float(history[0][0]) * float(self.mw.tickers["BTCUSDT"]["lastPrice"]), digits=2)
+    #         usd_price = '{number:.{digits}f}'.format(number=float(history[0][0]) * float(self.mw.data.tickers["BTCUSDT"]["lastPrice"]), digits=2)
     #         self.mw.usd_value.setText("<span style='font-size: 18px; font-family: Arial Black; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
 
 
