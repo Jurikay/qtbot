@@ -131,3 +131,16 @@ build pipeline
 https://github.com/cdrx/docker-pyinstaller
 validate config: https://gist.github.com/tsuriga/5bc5bbfaf21c6a51cda7
 custom amount btn
+
+
+user_data refactoring
+create lagging (user) websocket detection.
+
+
+Develop a small k8s application that periodically checks websocket response time.
+This application is queried when the bot starts.
+
+table recent market activity:
+configurable thresholds
+activities pop up
+can connect 
