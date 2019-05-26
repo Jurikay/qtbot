@@ -157,9 +157,9 @@ class BackgroundTable(QtWidgets.QTableView):
 
     # def create_dataframe(self, side):
     #     if side == "asks":
-    #         df = pd.DataFrame(self.mw.orderbook["asks"])
+    #         df = pd.DataFrame(self.mw.data.current.orderbook["asks"])
     #     elif side == "bids":
-    #         df = pd.DataFrame(self.mw.orderbook["bids"])
+    #         df = pd.DataFrame(self.mw.data.current.orderbook["bids"])
 
 
         # df.columns = ["Price", "Amount", "Total"]
@@ -220,12 +220,12 @@ class BackgroundTable(QtWidgets.QTableView):
                 row = 20 - row - 1
 
             if col == 1:
-                self.mw.limit_buy_input.setValue(float(self.mw.orderbook[self.data][row][0]))
-                self.mw.limit_sell_input.setValue(float(self.mw.orderbook[self.data][row][0]))
+                self.mw.limit_buy_input.setValue(float(self.mw.data.current.orderbook[self.data][row][0]))
+                self.mw.limit_sell_input.setValue(float(self.mw.data.current.orderbook[self.data][row][0]))
             # copy quantity
             elif col == 2:
-                self.mw.limit_buy_amount.setValue(float(self.mw.orderbook[self.data][row][1]))
-                self.mw.limit_sell_amount.setValue(float(self.mw.orderbook[self.data][row][1]))
+                self.mw.limit_buy_amount.setValue(float(self.mw.data.current.orderbook[self.data][row][1]))
+                self.mw.limit_sell_amount.setValue(float(self.mw.data.current.orderbook[self.data][row][1]))
         except IndexError as e:
             print("CELL CLICK ERROR: " + str(e))
 
@@ -332,6 +332,7 @@ class OrderbookCountDelegate(BasicDelegate):
 class OrderbookPriceDelegate(HoverDelegate):
     def initStyleOption(self, option, index):
         super(OrderbookPriceDelegate, self).initStyleOption(option, index)
+
         decimals = self.mw.data.pairs[self.mw.data.current.pair]["decimals"]
         option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=decimals)
 
@@ -342,7 +343,6 @@ class OrderbookQtyDelegate(HoverDelegate):
         assetDecimals = self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"]
         option.text = '{number:,.{digits}f}'.format(number=float(index.data()), digits=assetDecimals)
         self.align = int(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
-
 
 
 class TimeDelegate(BasicDelegate):

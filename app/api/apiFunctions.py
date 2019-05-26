@@ -214,13 +214,18 @@ class ApiCalls:
             print("side:", side, "symbol:", pair, "quantity", str(amount), "price", str(price))
 
 
-
+    # TODO: This is work in progress;
+    # Think of ways to verify websocket response time
     def api_cancel_order(self, order_id, symbol, progress_callback):
         print("cancel order " + str(symbol) + " " + str(order_id))
         try:
             self.client.cancel_order(symbol=symbol, orderId=order_id)
-        except BinanceAPIException:
-            print("cancel failed")
+        except BinanceAPIException as e:
+            print("cancel order failed:", e)
+            if "APIError(code=-2011)" in str(e):
+                print("orders seem out of sync, manually querying...")
+                
+                progress_callback.emit("query")
 
 
     # def api_order_history(self, pair, progress_callback):
@@ -328,6 +333,11 @@ class ApiCalls:
 
 
     def cancel_callback(self, order="empty"):
+        if order == "query":
+            print("CANCEL FAILED, doing manually")
+            self.mw.open_orders_view.query_update()
+        
+        return
         print("SUCCESSFULLY CANCELLED ORDER: ", order)
 
 

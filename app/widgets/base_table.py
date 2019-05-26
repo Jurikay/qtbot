@@ -94,8 +94,12 @@ class BaseTableModel(QtCore.QAbstractTableModel):
         """Return header data based on Qt.DisplayRole"""
         if role == QtCore.Qt.DisplayRole:
             if orientation == QtCore.Qt.Horizontal:
-                return self.datatable.columns[section]
-
+                # TODO: Verify try except here
+                try:
+                    return self.datatable.columns[section]
+                except (IndexError, AttributeError) as e:
+                    print("HEADERDATA ERROR:", e)
+                    return
 
     def update(self, dataIn):
         """Update modeldata and redraw view."""

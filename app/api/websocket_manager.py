@@ -48,7 +48,6 @@ class WebsocketManager:
 
     # websockets
     def schedule_websockets(self):
-        # print("SCHEDULE SOCKETS!!!!")
         # Pass the function to execute
         worker = Worker(self.start_sockets)
         worker.signals.finished.connect(self.sockets_connected)
@@ -161,6 +160,7 @@ class WebsocketManager:
 
 
         elif userMsg["e"] == "executionReport":
+            print("WSS: usermsg")
             # print(str(userMsg))
             # prepare order dictionary
             order = dict()
@@ -173,7 +173,6 @@ class WebsocketManager:
 
             if userMsg["X"] == "NEW":
                 # add a new order to open orders table
-
                 # old
                 # worker.signals.progress.connect(self.mw.open_orders.add_to_open_orders)
 
@@ -189,7 +188,6 @@ class WebsocketManager:
             elif userMsg["X"] == "CANCELED":
                 # remove a cancelled order from open orders table
                 # worker.signals.progress.connect(self.mw.open_orders.remove_from_open_orders)
-
                 worker.signals.progress.connect(self.mw.user_data.remove_from_open_orders)
 
 

@@ -20,6 +20,7 @@ class ExamplePopup(QtWidgets.QDialog):
         self.name = name
         self.label = QtWidgets.QLabel(self.name, self)
 
+
 class GuiManager:
 
     """Methods concerning the global UI."""
@@ -44,18 +45,9 @@ class GuiManager:
         point = QtCore.QPoint(100, 100)
         QtWidgets.QToolTip.showText(point, "LELLO SCHMELLO", self.mw.top_groupBox)
 
-    # Refactor
-    def initialize(self):
-        self.initial_last_price()
-        # self.initial_values()
-        
-        self.api_init()
-
-        # self.mw.coin_selector.setup()
 
     # Refactor
     def initial_last_price(self):
-        return
         # init last_price
         arrow = QtGui.QPixmap("images/assets/2arrow.png")
         formatted_price = '{number:.{digits}f}'.format(number=float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]), digits=self.mw.data.tickers[self.mw.cfg_manager.pair]["decimals"])
@@ -68,6 +60,7 @@ class GuiManager:
     # refactor
     def api_init(self):
         """One-time gui initialization."""
+        print("GUI_MANAGER: api_inits")
         self.mw.new_api.api_calls()
         self.mw.websocket_manager.schedule_websockets()
         self.mw.gui_manager.schedule_work()

@@ -26,6 +26,7 @@ def iterate_df_rows(df):
     traded_pairs = set()
     trade_list = list()
 
+    # TODO: Improve performance of iterrows
     for _, row in df.iterrows():
 
         trade = parse_excel_row(row)

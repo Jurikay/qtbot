@@ -62,7 +62,7 @@ class ApiManager:
         # TODO read pair from config and set here
         # self.mw.gui_mgr.change_to("NEOBTC")
         
-
+        
         # self.mw.new_asks.update()
         # self.mw.new_bids.update()
 
@@ -112,9 +112,9 @@ class ApiManager:
         self.mw.user_data.initial_history()
         self.mw.user_data.initial_holdings()
 
-        self.mw.new_asks.setup()
-        self.mw.new_bids.setup()
-        self.mw.tradeTable.setup()
+        # self.mw.new_asks.setup()
+        # self.mw.new_bids.setup()
+        # self.mw.tradeTable.setup()
 
         # self.mw.tradeTable.setup()
 

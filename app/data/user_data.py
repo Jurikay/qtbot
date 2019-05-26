@@ -35,7 +35,7 @@ class UserData(QtCore.QObject):
         """Spawn workers in a separate thread to fetch
         user data initially."""
         
-        
+        # return
         worker = Worker(self.get_initial_data)
         worker.signals.progress.connect(self.process_initial_data)
         self.threadpool.start(worker)
@@ -44,8 +44,7 @@ class UserData(QtCore.QObject):
     def get_initial_data(self, progress_callback):
         """Fetch user data."""
         self.initial_open_orders()
-        # self.initial_history()
-        self.initial_holdings()
+        # self.initial_holdings()
 
         progress_callback.emit("1")
 
@@ -87,6 +86,10 @@ class UserData(QtCore.QObject):
     #################################################################
     # OPEN ORDERS
     #################################################################
+    # Refactor user data storage:
+    # Fetch data initially; build dataframes
+    # websocket updates do not trigger the creation of a new dataframe
+    # but the update of the existing ones
 
     def add_to_open_orders(self, order):
         """Store order in open orders dictionary.
@@ -115,14 +118,24 @@ class UserData(QtCore.QObject):
 
 
     def initial_open_orders(self):
+
+        # reset open orders in case this has to be run again
+        self.open_orders = dict()
+
+
         try:
             orders = self.mw.api_manager.api_all_orders()
             for order in orders:
                 self.add_to_open_orders(order)
         except BinanceAPIException:
             print("OPEN ORDERS COULD NOT BE FETCHED!!")
+            
 
 
+
+    # TODO: Refactor; This is called whenever an order is updated and might be too expansive for that.
+    # It would be better to store the dataframe as attribute and and only update rows instead of rebuilding it new
+    # every time.s
     def create_open_orders_df(self):
         """Create a pandas dataframe suitable for displaying open orders."""
         print("create open orders df")
@@ -147,7 +160,7 @@ class UserData(QtCore.QObject):
             return df
         
         # return an empty dataframe if no orders are open.
-        return pd.DataFrame()
+        return #pd.DataFrame()
 
 
     def remove_from_open_orders(self, order):
@@ -275,8 +288,11 @@ class UserData(QtCore.QObject):
             # print(final_df)
             return final_df
 
+        # TODO: Investigate: This seems to be a race condition
+        # where the program just closes without error.
         print("NO TRADE HIST!new")
-        return pd.DataFrame()
+        return
+        # return pd.DataFrame()
 
         #     order["filled_percent"] = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float((order["origQty"])) * 100), digits=2) + "%"
         #     order["total_btc"] = '{number:.{digits}f}'.format(number=float(order["origQty"]) * float(order["price"]), digits=8) + " BTC"

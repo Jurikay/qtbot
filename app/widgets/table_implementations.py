@@ -9,7 +9,7 @@ import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 import app
-from app.widgets.base_table import FilterModel, BaseTableView
+from app.widgets.base_table import FilterModel, BaseTableView, BasicDelegate
 from app.helpers import resource_path
 from app.colors import Colors
 
@@ -33,6 +33,16 @@ class OpenOrders(BaseTableView):
     def set_df(self):
         return app.mw.user_data.create_open_orders_df()
 
+
+    # TODO: This should be done somewhere else. Think of this when refactoring user_data
+    def query_update(self):
+        """Update the model by querying the api. This is done in situations where the websocket
+        is not working properly."""
+        print("OPEN ORDERS QUERY UPDATE")
+        app.mw.user_data.initial_open_orders()
+
+        self.my_model.update(self.set_df())
+        # self.update()
 
     def cell_clicked(self, index):
         """Change pair or cancel order"""
@@ -230,45 +240,6 @@ class Index(BaseTableView):
             self.mw.gui_mgr.change_to(coin)
 
 ###########################
-
-
-class BasicDelegate(QtWidgets.QStyledItemDelegate):
-    """Basic StyledItemDelegate implementation"""
-    center = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
-    left = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignLeft)
-    right = int(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignRight)
-
-    def __init__(self, parent, text_color=Colors.color_lightgrey, align=center):
-        super(BasicDelegate, self).__init__(parent)
-        self.parent = parent
-        self.fg_color = text_color
-        self.font = QtGui.QFont()
-        self.mw = app.mw
-        self.align = align
-        
-
-
-
-    def initStyleOption(self, option, index):
-        option.text = index.data()
-        self.font = QtGui.QFont()
-
-
-    def paint(self, painter, option, index):
-    
-        
-        painter.save()
-        if option.state & QtWidgets.QStyle.State_MouseOver:
-            app.main_app.restoreOverrideCursor()
-
-        options = QtWidgets.QStyleOptionViewItem(option)
-        self.initStyleOption(options, index)
-
-        painter.setFont(self.font)
-        painter.setPen(QtGui.QColor(self.fg_color))
-
-        painter.drawText(option.rect, self.align, options.text)
-        painter.restore()
 
 
 

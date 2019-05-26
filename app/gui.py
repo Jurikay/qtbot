@@ -245,6 +245,7 @@ class beeserBot(QtWidgets.QMainWindow):
             
 
         else:
+            print("NOT CONNECTED!")
             self.gui_mgr.disable_ui()
 
             # TODO: Implement error pages
@@ -262,7 +263,8 @@ class beeserBot(QtWidgets.QMainWindow):
             self, self.threadpool, app.client, self.mutex)
 
         self.gui_manager = GuiManager(self, self.threadpool)
-        self.gui_manager.initialize()
+        
+        self.gui_manager.api_init()
 
         self.new_api.data_setup()
         
@@ -274,6 +276,10 @@ class beeserBot(QtWidgets.QMainWindow):
         self.holdings_view.setup()
         self.trade_history_view.setup()
 
+
+        self.new_asks.setup()
+        self.new_bids.setup()
+        self.tradeTable.setup()
 
         # Bottom table filtering
         self.coinindex_filter.textChanged.connect(
