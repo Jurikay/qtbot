@@ -24,7 +24,7 @@ class BackgroundTable(QtWidgets.QTableView):
     def __init__(self, *args, **kwargs):
         QtWidgets.QTableView.__init__(self, *args, **kwargs)
         self.my_model = BaseTableModel(self)
-        self.data_dict = None
+        self.side_dict = None
         self.df = None
         self.mw = app.mw
 
@@ -32,42 +32,18 @@ class BackgroundTable(QtWidgets.QTableView):
         self.setSortingEnabled(True)
         self.clicked.connect(self.cell_clicked)
         self.max_order = 0
-        self.data = None
+        self.side = None
         self.has_data = False
         self.compare_col = 3
         self.get_color = False
+        self.bg_color = None
         self.rowH = 18
-
-
-    # def paintEfent(self, event):
-    #     if self.has_data is True:
-    #         print(dir(self))
-    #         # row_count = self.my_model.rowCount()
-    #         total_width = self.horizontalHeader().width()
-    #         painter = QtGui.QPainter(self.viewport())
-
-    #         value = self.df.iloc[row, self.compare_col]
-
-    #         percentage = value / self.max_order
-
-    #         my_rect = QtCore.QRect(0, rowY, (percentage * total_width), self.rowH)
-
-    #         painter.save()
-    #         painter.setBrush(QtGui.QColor(self.bg_color))
-    #         painter.setPen(QtGui.QColor("#20262b"))
-
-    #         painter.drawRect(my_rect)
-    #         painter.restore()
-    #         super(BackgroundTable, self).paintEvent(event)
 
 
     def paintEvent(self, event):
         if self.df is not None and isinstance(self.df, pd.DataFrame) and not self.df.empty:
             if self.model():
-                # print("paintEV:", dir(self))
-                # print(self.SelectRows)
-
-                # Shortcuts to vertical and horizontal headers
+                
                 vh = self.verticalHeader()
         
                 # Get the first and last rows that are visible in the view and if the 
@@ -76,23 +52,15 @@ class BackgroundTable(QtWidgets.QTableView):
                 lastVisualRow = vh.visualIndexAt(vh.viewport().height())
                 if lastVisualRow == -1:
                     lastVisualRow = self.model().rowCount(self.rootIndex()) - 1  # 19
-                # print("first/last:", firstVisualRow, lastVisualRow)
-
-                # for vrow in range(firstVisualRow, lastVisualRow + 1):
-                #     row = vh.logicalIndex(vrow)
-                #     FirstRow = (vrow == 0)
-                #     if vh.isSectionHidden(row):
-                #         continue
 
                 total_width = self.horizontalHeader().width()
                 painter = QtGui.QPainter(self.viewport())
-                # print(dir(event.region().RegionType))
-                # print(event.rect())
                 for row in range(firstVisualRow, lastVisualRow + 1):
 
                     # get row color:
                     if self.get_color is True:
-                        if self.mw.trade_history[row]["maker"] is True:
+                        
+                        if self.mw.data.current["history"][row]["maker"] is True:
                             self.bg_color = "#473043"
                         else:
                             self.bg_color = "#3b4c37"
@@ -100,13 +68,16 @@ class BackgroundTable(QtWidgets.QTableView):
                     rowY = self.rowViewportPosition(row)
 
                     self.rowH = self.rowHeight(row)
-                    if not self.rowH:
-                        self.rowH = self.rowHeight(row)
+                    # if not self.rowH:
+                    #     self.rowH = self.rowHeight(row)
 
                     # Create the painter
                     value = self.df.iloc[row, self.compare_col]
 
-                    if self.data:
+                    # Set the dataframe dependant on if self.side is present.
+                    # If so, it is a bids or asks table and the max value is the total
+                    # amount. For the trade history table, the order quantity is used as max value.
+                    if self.side:
                         maxval = self.df["Total"].max()
                     else:
                         maxval = self.df["quantity"].max()
@@ -125,35 +96,23 @@ class BackgroundTable(QtWidgets.QTableView):
         super(BackgroundTable, self).paintEvent(event)
 
 
-
-
     def setup(self):
         self.update()
         self.setModel(self.my_model)
-        # self.proxy_model.setSourceModel(self.my_model)
         
         self.set_widths()
         self.set_delegates()
         self.sortByColumn(0, QtCore.Qt.DescendingOrder)
         
 
-
     def update(self, payload=None):
-        # print("asks update")
-        # self.my_model.modelAboutToBeReset.emit()
-        self.my_model.layoutAboutToBeChanged.emit()
-
+        # self.my_model.layoutAboutToBeChanged.emit()
         self.df = self.set_df()
-
         self.my_model.update(self.df)
-
-        # self.my_model.modelReset.emit()
-        self.my_model.layoutChanged.emit()
-        
-        # self.drawBg()
+        # self.my_model.layoutChanged.emit()
 
     # def set_df(self):
-    #     return self.create_dataframe(self.data)
+    #     return self.create_dataframe(self.side)
 
     # def create_dataframe(self, side):
     #     if side == "asks":
@@ -216,16 +175,16 @@ class BackgroundTable(QtWidgets.QTableView):
             col = index.column()
             # copy price
 
-            if self.data == "asks":
+            if self.side == "asks":
                 row = 20 - row - 1
 
             if col == 1:
-                self.mw.limit_buy_input.setValue(float(self.mw.data.current.orderbook[self.data][row][0]))
-                self.mw.limit_sell_input.setValue(float(self.mw.data.current.orderbook[self.data][row][0]))
+                self.mw.limit_buy_input.setValue(float(self.mw.data.current.orderbook[self.side][row][0]))
+                self.mw.limit_sell_input.setValue(float(self.mw.data.current.orderbook[self.side][row][0]))
             # copy quantity
             elif col == 2:
-                self.mw.limit_buy_amount.setValue(float(self.mw.data.current.orderbook[self.data][row][1]))
-                self.mw.limit_sell_amount.setValue(float(self.mw.data.current.orderbook[self.data][row][1]))
+                self.mw.limit_buy_amount.setValue(float(self.mw.data.current.orderbook[self.side][row][1]))
+                self.mw.limit_sell_amount.setValue(float(self.mw.data.current.orderbook[self.side][row][1]))
         except IndexError as e:
             print("CELL CLICK ERROR: " + str(e))
 
@@ -306,7 +265,7 @@ class HistPriceDelegate(BasicDelegate):
         decimals = self.mw.data.pairs[self.mw.data.current.pair]["decimals"]
         option.text = '{number:.{digits}f}'.format(number=float(index.data()), digits=decimals)
 
-        if self.mw.trade_history[index.row()]["maker"] is True:
+        if self.mw.data.current["history"][index.row()]["maker"] is True:
             self.normal_color = Colors.color_pink
             self.hover_color = "#ff58a8"
 
@@ -361,13 +320,18 @@ class AsksView(BackgroundTable):
         self.color = Colors.color_pink
         self.bg_color = "#473043"
         self.highlight = "#ff58a8"
-        self.data = "asks"
+        self.side = "asks"
         self.has_data = False
         self.set_delegates()
 
     # def get_max_value(self, df):
     #     max_val = df["Total"].max()
     #     return max_val
+
+    def setup(self):
+        super().setup()
+        self.scrollToBottom()
+
 
     def set_delegates(self):
         self.setItemDelegateForColumn(0, OrderbookCountDelegate(self))
@@ -377,11 +341,7 @@ class AsksView(BackgroundTable):
 
 
     def set_df(self):
-
-        # print("SET DF", self.mw.data.current.history_df[self.data])
-        # if self.mw.data.current.history_df:
-        #     return self.mw.data.current.history_df[self.data]
-        return self.mw.data.current.depth_df[self.data]
+        return self.mw.data.current.depth_df[self.side]
 
 
 class BidsView(BackgroundTable):
@@ -390,7 +350,7 @@ class BidsView(BackgroundTable):
         self.color = Colors.color_green
         self.bg_color = "#3b4c37"
         self.highlight = "#aaff00"
-        self.data = "bids"
+        self.side = "bids"
         self.has_data = False
 
 
@@ -401,7 +361,7 @@ class BidsView(BackgroundTable):
         self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, " BTC"))
 
     def set_df(self):
-        df = self.mw.data.current.depth_df[self.data]
+        df = self.mw.data.current.depth_df[self.side]
         row_count = df.shape[0]
 
         # Fill df with empty data if it contains less than 20 values, to
@@ -420,7 +380,7 @@ class HistView(BackgroundTable):
         self.highlight = "#aaff00"
         self.has_data = False
         self.compare_col = 1
-        self.data = None
+        self.side = None
         # self.setItemDelegate(HistoryDelegate(self))
         self.get_color = True
         print("hist view get color:", self.get_color)

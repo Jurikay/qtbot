@@ -4,7 +4,7 @@
 # made by Jirrik
 import configparser
 import os
-
+import time
 from binance.exceptions import BinanceAPIException
 from binance.client import Client
 
@@ -26,43 +26,94 @@ class ApiManager:
         
         self.threadpool = tp
 
+        self.global_data = False
         # self.data_setup()
         # self.store_initial_data()
 
-    # Moved call out of init
-    def data_setup(self):
-        """Make all necessary api calls."""
+    def threaded_setup(self):
+        """Spawn threads for necessary api information.
+        Setup tables once required data has arrived."""
+        # new
+        # global_api
         worker = Worker(self.store_initial_data)
         worker.signals.finished.connect(self.ui_setup)
         self.threadpool.start(worker)
-        # self.store_pair_data()
-        print("Starting worker2")
 
-        worker2 = Worker(self.new_pair_data)
-        worker2.signals.progress.connect(self.process_pair_data)
-        self.threadpool.start(worker2)
+
+        
+
+    def store_user_data(self, progress_callback):
+        print("STORE USER DATA")
+        self.mw.user_data.initial_open_orders()
+        self.mw.user_data.initial_history()
+        self.mw.user_data.initial_holdings()
+
+        # while not self.mw.user_data.open_orders or not self.mw.user_data.trade_history or not self.mw.user_data.holdings:
+        #     print("data not yet stored, sleeping")
+        #     time.sleep(0.1)
+
+
+    def process_user_data(self):
+        print("SETUP USER TABLES")
+        # print("orders:", self.mw.user_data.open_orders)
+        # print("history:", self.mw.user_data.trade_history)
+        # print("holdings:", self.mw.user_data.holdings)
+        self.mw.open_orders_view.setup()
+        # self.mw.index_view.setup()
+        self.mw.holdings_view.setup()
+        self.mw.trade_history_view.setup()
+
+        self.mw.gui_mgr.limit_pane_current_values()
+
+        # self.mw.gui_mgr.change_to("NEOBTC")
+
+    # Moved call out of init
+    # def data_setup(self):
+    #     """Make all necessary api calls."""
+    #     worker = Worker(self.store_initial_data)
+    #     worker.signals.finished.connect(self.ui_setup)
+    #     self.threadpool.start(worker)
+    #     # self.store_pair_data()
+    #     print("Starting worker2")
+
+    #     worker2 = Worker(self.new_pair_data)
+    #     worker2.signals.progress.connect(self.process_pair_data)
+    #     self.threadpool.start(worker2)
 
 
     def ui_setup(self):
         """Callback from api setup; Everything that needs to be set in main thread goes here."""
         print("UI SETUP callback:")
+        
         # print(self.mw.data.tickers)
         self.mw.data.ticker_df()
         # self.data.set_info(callback["products"], callback["pair_info"])        
         # self.data.set_tickers(callback["tickers"])
         # self.mw.data.set_current_pair("NEOBTC")
-
         # self.store_pair_data()
-        self.mw.initialize_tables()
         self.mw.coin_selector.setup()
-
-        worker = Worker(self.pair_gui)
-        worker.signals.finished.connect(self.process_pair_gui)
-        self.threadpool.start(worker)
+        # worker = Worker(self.pair_gui)
+        # worker.signals.finished.connect(self.process_pair_gui)
+        # self.threadpool.start(worker)
         # TODO read pair from config and set here
         # self.mw.gui_mgr.change_to("NEOBTC")
         
-        
+        # Set flag to indicate global api data has been stored.
+        print("GLOBAL UI FINISHED")
+        self.global_data = True
+
+
+        # live_data
+        worker2 = Worker(self.new_pair_data)
+        worker2.signals.finished.connect(self.process_pair_data)
+        self.threadpool.start(worker2)
+
+
+        # user_data
+        worker3 = Worker(self.store_user_data)
+        worker3.signals.finished.connect(self.process_user_data)
+        self.threadpool.start(worker3)
+
         # self.mw.new_asks.update()
         # self.mw.new_bids.update()
 
@@ -72,12 +123,14 @@ class ApiManager:
 
     def process_pair_gui(self):
         self.mw.gui_mgr.change_to("NEOBTC")
+        # self.mw.initialize_tables()
+
 
     def store_initial_data(self, progress_callback=None):
-        """Makes inital api calls and stores received data in data class."""
+        """Makes inital api calls and stores received data in data class.
+        Executed in thread."""
         
         tickers = self.get_tickers()
-
         products = self.products_info()
         pair_info = self.pair_info()
 
@@ -101,20 +154,30 @@ class ApiManager:
             progress_callback.emit({"history": history, "depth": depth})
 
 
-    def process_pair_data(self, callback):
+    def process_pair_data(self):
         print("PROCESS PAIR DATA")
-        history = callback["history"]
-        depth = callback["depth"]
+        
+        # history = callback["history"]
+        # depth = callback["depth"]
 
+
+        # if self.global_data:
+        #     self.mw.initialize_tables()
+        # else:
+        #     print("TABLES NOT SETUP SINCE DATA NOT RECEIVED!!!")
+
+            
+        print("PROCCESS PAIR DATA DONE")
+        self.mw.initialize_tables()
         # self.data.set_hist(history)
         # self.data.set_depth(depth)
 
-        self.mw.user_data.initial_history()
-        self.mw.user_data.initial_holdings()
+        # self.mw.user_data.initial_history()
+        # self.mw.user_data.initial_holdings()
 
-        # self.mw.new_asks.setup()
-        # self.mw.new_bids.setup()
-        # self.mw.tradeTable.setup()
+        self.mw.new_asks.setup()
+        self.mw.new_bids.setup()
+        self.mw.tradeTable.setup()
 
         # self.mw.tradeTable.setup()
 
@@ -165,13 +228,13 @@ class ApiManager:
 
     def api_calls(self):
         print("apiFunctions api_calls")
-        """Initial and coin specific api calls"""
-        
+        """Initital livedata values"""
+        return
 
         worker = Worker(self.mw.api_manager.api_history)
         worker.signals.progress.connect(self.mw.live_data.batch_history)
         self.threadpool.start(worker)
-        
+
         worker = Worker(self.mw.api_manager.api_depth)
         worker.signals.progress.connect(self.mw.api_manager.save_depth)
 

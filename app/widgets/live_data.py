@@ -51,9 +51,9 @@ class LiveData(QtWidgets.QWidget):
             try:
                 formatted_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]), digits=self.mw.data.pairs[self.mw.data.current.pair]["decimals"])
                 self.mw.price_arrow.setPixmap(arrow)
-                self.mw.last_price.setText("<span style='font-size: 20px; color:" + color + "'>" + formatted_price + "</span>")
+                self.mw.last_price.setText("<span style='color:" + color + "'>" + formatted_price + "</span>")
                 usd_price = '{number:.{digits}f}'.format(number=float(history[0]["price"]) * float(self.mw.data.btc_price["lastPrice"]), digits=2)
-                self.mw.usd_value.setText("<span style='font-size: 18px; color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
+                self.mw.usd_value.setText("<span style='color: " + Colors.color_yellow + "'>$" + usd_price + "</span>")
             except (TypeError, KeyError, ValueError) as e:
                 print("new last price type error:", e)
     # def set_last_price(self):

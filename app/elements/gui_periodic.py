@@ -1,138 +1,71 @@
-# from app.workers import Worker
-import os
-import PyQt5.QtWidgets as QtWidgets
-import PyQt5.QtGui as QtGui
-import PyQt5.QtCore as QtCore
+# !/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-from app.colors import Colors
-from datetime import timedelta
+# made by Jirrik
 import time
-from app.gui import logging
-from app.workers import Worker
-from app.charts import Webpages
-
-from app.helpers import resource_path
-
-class ExamplePopup(QtWidgets.QDialog):
-    
-    def __init__(self, name, parent=None):
-        super().__init__(parent)
-        self.name = name
-        self.label = QtWidgets.QLabel(self.name, self)
+from datetime import timedelta
+from app.colors import Colors
 
 
-class GuiManager:
 
-    """Methods concerning the global UI."""
+"""Collection of methods that are called periodically
+to update gui values."""
 
-    def __init__(self, mw, tp):
+
+class GuiScheduler:
+
+    def __init__(self, mw):
         self.mw = mw
+        # self.threadpool = tp
+
+        self.runtime = 0
+        self.timer_count = 0
+        self.last_btc_price = 0
         self.update_count = 0
         self.no_updates = 0
-        self.threadpool = tp
-        # mw.popup_btn.clicked.connect(self.show_notification)
 
-        self.last_btc_price = 0
-        self.runtime = 0
-        # self.buildExamplePopup("name")
-        
-    # def buildExamplePopup(self, name):
-    #     self.exPopup = ExamplePopup(name, self.mw)
-    #     self.exPopup.setGeometry(100, 200, 100, 100)
-    #     self.exPopup.show()
+    def update(self):
+        """Main public method; Is called periodically;
+        Calls all other methods."""
+        self.runtime += 1
+        self.one_second_update()
 
-    # def show_tooltip(self):
-    #     point = QtCore.QPoint(100, 100)
-    #     QtWidgets.QToolTip.showText(point, "LELLO SCHMELLO", self.mw.top_groupBox)
+        self.percent_changes()
+        self.check_websocket()
+        self.update_stats()
+        self.new_gui_blink()
 
-    def relevant_setup(self):
-        """Condensed setup methods required."""
-        # call these from api setup or gui
-        self.mw.new_api.api_calls()
-        self.mw.websocket_manager.schedule_websockets()
-        self.mw.gui_manager.schedule_work()
+    def new_gui_blink(self):
+        self.mw.tradeTable.update()
 
-        # move somewhere else as well
-        self.mw.chart.show()
+        if self.mw.coin_selector.completed_setup:
+            self.mw.coin_selector.update()
+        else:
+            print("Coin selector setup not complete.")
 
-        # setup quote asset box
-        icon = QtGui.QIcon(resource_path("images/ico/" + "BTC" + ".svg"))
-        self.mw.quote_asset_box.addItem(icon, "BTC")
-        self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
+        self.mw.live_data.set_history_values()
 
-        # window height update check (check_for_update)
+        # Redraw open orders since dynamic data is displayed
+        # by delegates.
+        self.mw.open_orders_view.redraw()
 
-    # gui init
-    # refactor
-    def api_init(self):
-        """One-time gui initialization."""
-        print("GUI_MANAGER: api_inits")
-        self.mw.new_api.api_calls()  # should not be called from here
-        self.mw.websocket_manager.schedule_websockets()
-        self.mw.gui_manager.schedule_work()
 
-        # CMC Chart:
-        # TODO: Reenable
-        # self.set_charts(self.mw.cfg_manager.pair)
-        # self.mw.chart.show()
+        if self.timer_count >= 4:
+            if self.mw.is_connected:
+                self.mw.data.ticker_df()
 
-        icon = QtGui.QIcon(resource_path("images/ico/" + "BTC" + ".svg"))
-        self.mw.quote_asset_box.addItem(icon, "BTC")
-        self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
+                self.mw.coin_selector.update()
+            self.timer_count = 0
 
-        # delayed stuff; TODO: Refactor
-        self.mw.timer = QtCore.QTimer()
-        self.mw.timer.setInterval(200)
-        self.mw.timer.timeout.connect(self.mw.delayed_stuff)
-        self.mw.timer.start()
-
-    # refactor
-    # global ui
-    def check_for_update(self, progress_callback):
-        """Check if main window height has changed. If so,
-        scroll asks to bottom."""
-        current_height = self.mw.frameGeometry().height()
-        while True:
-            if current_height != self.mw.frameGeometry().height():
-                progress_callback.emit(15)
-
-            current_height = self.mw.frameGeometry().height()
-            progress_callback.emit(1)
-
-            # self.mw.fishbot_table.check_fish_bot()
-            time.sleep(1)
-
-    # refactor
-    def tick(self, payload):
-        """Callback function of check_for_update."""
-        if payload == 1:
-            self.one_second_update()
-
-        elif payload == 15:
-            print("scroll to bottom")
-            # self.mw.asks_table.scrollToBottom()
-            self.mw.new_asks.scrollToTop()
-            self.mw.new_asks.scrollToBottom()
-
-    # TODO refactor
-    # global ui
     def one_second_update(self):
-        return
         """Update some values every second."""
 
-        self.runtime += 1
         try:
-            # self.mw.index_view.websocket_update()
-
-            # test
-            # self.mw.tabsBotLeft.adjustSize()
-            # self.mw.coin_index_filter.adjustSize()
-
             total_btc_value = self.calc_total_btc()
-            self.mw.total_btc_label.setText("<span style='color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
+            self.mw.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
 
             total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(self.mw.data.btc_price["lastPrice"]), digits=2) + "$"
-            self.mw.total_usd_label.setText("<span style='color: white; font-family: Arial Black;'>" + total_usd_value + "</span>")
+            self.mw.total_usd_label.setText("<span style='font-size: 14px; color: white; font-family: Arial Black;'>" + total_usd_value + "</span>")
 
             last_btc_price = float(self.mw.data.btc_price["lastPrice"])
             last_btc_price_formatted = '{number:,.{digits}f}'.format(number=last_btc_price, digits=2) + "$"
@@ -169,10 +102,6 @@ class GuiManager:
             self.mw.btc_high_label.setText("<span style='color: " + Colors.color_green + "'>" + high_formatted + "</span>")
             self.mw.btc_low_label.setText("<span style='color: " + Colors.color_pink + "'>" + low_formatted + "</span>")
             self.mw.btc_vol_label.setText("<span style='color: " + Colors.color_lightgrey + "'>" + vol_formatted + "</span>")
-
-            self.percent_changes()
-            self.check_websocket()
-            self.update_stats()
         except KeyError as e:
             print("1 sec update error:", e)
 
@@ -188,7 +117,6 @@ class GuiManager:
         # self.mw.explicit_api_calls_label.setText(str(val["apiCalls"]))
         self.mw.explicit_api_updates.setText(str(self.mw.websocket_manager.api_updates))
 
-    # global ui / logic REFACTOR
     def check_websocket(self):
         """Check if websocket updates have stopped."""
         if self.update_count == int(self.mw.websocket_manager.api_updates):
@@ -205,7 +133,7 @@ class GuiManager:
         else:
             self.mw.status_label.setText("<span style='color:" + Colors.color_green + "'>connected</span>")
 
-    # global ui # todo: refactor
+
     def percent_changes(self):
 
         """Calculate and display price change values."""
@@ -246,7 +174,6 @@ class GuiManager:
                 # print(str(change))
                 change.setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
 
-    # Modified; New data
     def calc_total_btc(self):
         """Multiply holdings by their current price to get
         the total account value."""
@@ -268,28 +195,3 @@ class GuiManager:
         total_formatted = '{number:.{digits}f}'.format(number=float(total_btc_val), digits=8) + " BTC"
         # print("total: " + total_formatted)
         return total_formatted
-
-    # global ui
-    def schedule_work(self):
-
-        # Pass the function to execute
-        worker = Worker(self.check_for_update)
-
-        # Any other args, kwargs are passed to the run function
-        # worker.signals.result.connect(self.print_output)
-        worker.signals.progress.connect(self.tick)
-
-        # start thread
-        self.threadpool.start(worker)
-
-    # def show_notification(self):
-    #     print("SHOW NOTIF")
-    #     icon = QtGui.QIcon("images/assets/icon.png")
-    #     menu = QtWidgets.QMenu()
-    #     self.tray = QtWidgets.QSystemTrayIcon()
-    #     self.tray.setIcon(icon)
-    #     self.tray.setContextMenu(menu)
-    #     self.tray.show()
-    #     self.tray.setToolTip("Beeser Binance Bot")
-    #     self.tray.showMessage("hoge", "moge")
-    #     self.tray.showMessage("fuga", "moge")

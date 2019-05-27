@@ -31,28 +31,33 @@ class UserData(QtCore.QObject):
         # self.initial_open_orders()
 
 
+    async def setup(self, progress_callback):
+        await self.get_initial_data(progress_callback)
+
+        # progress_callback.emit("")
+        
+
     def initialize(self):
         """Spawn workers in a separate thread to fetch
         user data initially."""
-        
         # return
         worker = Worker(self.get_initial_data)
-        worker.signals.progress.connect(self.process_initial_data)
+        worker.signals.finished.connect(self.process_initial_data)
         self.threadpool.start(worker)
 
 
     def get_initial_data(self, progress_callback):
         """Fetch user data."""
         self.initial_open_orders()
-        # self.initial_holdings()
-
+        self.change_pair()
         progress_callback.emit("1")
 
     # currently not needed
-    def process_initial_data(self, callback):
+    def process_initial_data(self):
         """process user data."""
-        print("init data callback", callback)
-
+        self.mw.open_orders_view.setup()
+        self.mw.holdings_view.setup()
+        self.mw.trade_history_view.setup()
 
     def change_pair(self):
         """This is called when the pair is changed.
@@ -240,7 +245,8 @@ class UserData(QtCore.QObject):
     def initial_history(self, progress_callback=None):
         pair = self.mw.data.current.pair
         history = self.mw.api_manager.api_my_trades(pair)
-
+        print("INITIAL_HISTORY")
+        print("length:", str(len(history)))
         for entry in history:
             entry["symbol"] = pair
             entry["executedQty"] = float(entry["qty"])

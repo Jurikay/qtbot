@@ -32,7 +32,7 @@ from app.elements.config import ConfigManager
 # from app.elements.test_class import TestKlasse
 # from app.elements.init_manager import InitManager
 from app.elements.custom_logger import BotLogger
-from app.elements.gui_manager import GuiManager
+# from app.elements.gui_manager import GuiManager
 # from app.tables.table_manager import TableManager
 from app.api.websocket_manager import WebsocketManager
 
@@ -81,30 +81,22 @@ class beeserBot(QtWidgets.QMainWindow):
         app.mutex = self.mutex
 
         self.error = None
-        self.index_data = None
 
         self.trade_history = list()
-
-        self.tickers = None
-
-
-        self.orderbook = dict()
-        self.klines = dict()
-        self.klines["1m"] = dict()
         self.is_connected = False
-        self.new_coin_table = False
 
-        self.dict_update = False
-        self.np_update = False
-        self.pd_update = False
-
-        self.decimals = 0
-        self.assetDecimals = 0
-
+        # self.dict_update = False
+        # self.np_update = False
+        # self.pd_update = False
 
         self.load_ui_files()
         
+        self.klines = dict()  # TODO: remove
+        self.klines["1m"] = dict()
+
         self.sound_manager = None
+        self.log_manager = None
+        self.user_data = None
         print("### END GUI INIT ###")
 
 
@@ -139,6 +131,7 @@ class beeserBot(QtWidgets.QMainWindow):
             self.setStyleSheet(fh.read())
 
         self.set_corner_widgets()
+        self.centerOnScreen()
 
 
     def set_corner_widgets(self):
@@ -158,9 +151,6 @@ class beeserBot(QtWidgets.QMainWindow):
             set_system_time()
         
         
-
-        print("I AM SELF", self)
-
         self.data = DataManager()
 
 
@@ -169,7 +159,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.init_api_classes()
 
-        self.centerOnScreen()
+        
 
         # connect limit pane ui elements to functions
         # this is done outside __init__ since not all ui elements are loaded then
@@ -239,10 +229,9 @@ class beeserBot(QtWidgets.QMainWindow):
         several helper classes."""
         if self.is_connected:
             print("is_connected: TRUE")
-            self.initialize_user_data()
+            
             self.instantiate_api_managers()
-            
-            
+            self.initialize_user_data()
 
         else:
             print("NOT CONNECTED!")
@@ -262,24 +251,31 @@ class beeserBot(QtWidgets.QMainWindow):
         self.websocket_manager = WebsocketManager(
             self, self.threadpool, app.client, self.mutex)
 
-        self.gui_manager = GuiManager(self, self.threadpool)
+        # self.gui_manager = GuiManager(self, self.threadpool)
         
-        self.gui_manager.api_init()
+        # self.gui_manager.api_init()
+        self.websocket_manager.schedule_websockets()
+        self.gui_mgr.setup()
 
-        self.new_api.data_setup()
-        
+        # TODO set worker thread for api data from here,
+        # on callback, get user_data
+        self.new_api.threaded_setup()
+        # self.new_api.data_setup()
+        # self.new_api.api_calls()
 
-        
+
     def initialize_tables(self):
-        self.open_orders_view.setup()
-        # self.index_view.setup()
-        self.holdings_view.setup()
-        self.trade_history_view.setup()
+        """The following is needed:
+        user_data, live_data"""
+        # self.open_orders_view.setup()
+        # # self.index_view.setup()
+        # self.holdings_view.setup()
+        # self.trade_history_view.setup()
 
 
-        self.new_asks.setup()
-        self.new_bids.setup()
-        self.tradeTable.setup()
+        # self.new_asks.setup()
+        # self.new_bids.setup()
+        # self.tradeTable.setup()
 
         # Bottom table filtering
         self.coinindex_filter.textChanged.connect(
@@ -306,7 +302,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
     def initialize_user_data(self):
         self.user_data = UserData(self, self.mutex, self.threadpool)
-        self.user_data.initialize()
+        # self.user_data.initialize()
 
 
 
@@ -314,19 +310,19 @@ class beeserBot(QtWidgets.QMainWindow):
 
     # refactor into tables, config etc
 
-    def delayed_stuff(self):
+    # def delayed_stuff(self):
 
-        print("delayed")
+    #     print("delayed")
 
-        # self.asks_table.scrollToBottom()
-        self.new_asks.scrollToBottom()
+    #     # self.asks_table.scrollToBottom()
+    #     self.new_asks.scrollToBottom()
 
-        # start periodic historical data loop # TODO FIX; REENABLE
-        # self.historical.get_kline_values()
-        self.gui_mgr.set_api_dependant()
+    #     # start periodic historical data loop # TODO FIX; REENABLE
+    #     # self.historical.get_kline_values()
+    #     self.gui_mgr.set_api_dependant()
 
-        self.timer.stop()
-        logging.info('Finishing setup...')
+        # self.timer.stop()
+        # logging.info('Finishing setup...')
 
     def centerOnScreen(self):
         """Centers the main window on the screen."""
@@ -335,31 +331,18 @@ class beeserBot(QtWidgets.QMainWindow):
                   (resolution.height() / 2) - (self.frameSize().height() / 2))
 
     def shutdown_bot(self):
-        # func_stats = yappi.get_func_stats()
-        # func_stats.save('callgrind.out.' +
-        #                 datetime.now().isoformat(), 'CALLGRIND')
-        # yappi.stop()
-        # yappi.clear_stats()
+        """Called immediately before the application terminates."""
+
         self.cfg_manager.write_stats()
         self.cfg_manager.write_config()
+
         # api error workaround
         try:
             self.websocket_manager.socket_mgr.close()
         except AttributeError:
             pass
-        # self.chart.stop()
-        # self.btc_chart.stop()
+
         try:
             reactor.stop()
         except ReactorNotRunning:
             pass
-
-    # def slider_value(self):
-    #     # self.setProperty("value", value)
-    #     value = self.test_slider_value.value()
-    #     self.test_slider.setSliderPosition(value)
-    #     self.test_slider_label.setText(str(int(value)))
-
-    # def spinbox_value(self, value):
-    #     self.test_slider_value.setValue(float(value))
-

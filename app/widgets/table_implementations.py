@@ -73,9 +73,9 @@ class OpenOrders(BaseTableView):
             self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Fixed)
 
         self.setColumnWidth(0, 130)
-        self.setColumnWidth(1, 120)
-        self.setColumnWidth(2, 60)
-        self.setColumnWidth(3, 60)
+        self.setColumnWidth(1, 130)
+        self.setColumnWidth(2, 55)
+        self.setColumnWidth(3, 55)
 
     def set_delegates(self):
         super().set_delegates()

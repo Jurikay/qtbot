@@ -3,12 +3,17 @@
 
 # made by Jirrik
 import PyQt5.QtCore as QtCore
+import PyQt5.QtGui as QtGui
+
+
 # from PyQt5.QtCore import pyqtSlot
 import numpy as np
 import pandas as pd
 
 from app.charts import Webpages
 from app.gui import logging
+from app.helpers import resource_path
+from app.elements.gui_periodic import GuiScheduler
 
 
 class GuiMgr:
@@ -21,11 +26,13 @@ class GuiMgr:
         self.set_timer()
         self.timer_count = 0
 
+        self.scheduler = GuiScheduler(mw)
         # self.mw.coin_selector.update()
 
         # tab stuff
         self.hide_tabs()
         self.setup_tabs()
+
 
     def set_timer(self):
         self.timer = QtCore.QTimer(self.mw)
@@ -37,47 +44,8 @@ class GuiMgr:
     # Idea: Ticker websocket triggers this instead of QTimer.
     # This would ensure that functions trigger directly after new ticker data has been received.
     def blink(self):
-        # try:
-        self.timer_count += 1
-
-        # TODO: implement the following:
-        # stats_mgr.one_second
-        # acc holdings recalc
-        # btc stats
-        # websocket reconnect logic
-        
-        # df1 = self.mw.tradeTable.df
-        # df2 = self.mw.data.current.history_df
-        # if isinstance(df1, pd.DataFrame) and isinstance(df2, pd.DataFrame):
-        #     if not np.allclose(df1, df2):
-        
-        # crashes: TODO: Think of race conditions
-        self.mw.tradeTable.update()
-
-        if self.mw.coin_selector.completed_setup:
-            self.mw.coin_selector.update()
-        else:
-            print("Coin selector setup not complete.")
-
-        self.mw.live_data.set_history_values()
-
-        # Redraw open orders since dynamic data is displayed
-        # by delegates.
-        self.mw.open_orders_view.redraw()
-
-
-        if self.timer_count >= 4:
-            if self.mw.is_connected:
-                self.mw.data.ticker_df()
-
-                self.mw.coin_selector.update()
-            self.timer_count = 0
-            # if df1 != df2:
-            #     print("UNEQ DF")
-            # else:
-            #     print("EQ DF")
-        # except Exception as e:
-        #     print("ERROR:", e)
+        """Call all periodic ui updates here."""
+        self.scheduler.update()
 
 
     # ######## Setup ##########
@@ -257,3 +225,21 @@ class GuiMgr:
             self.mw.limit_sell_amount.setSingleStep(float(tickers[pair]["minTrade"]))
         except KeyError as e:
             print("livedata values key error", e)
+
+    def setup(self):
+        print("NEWEST GUI SETUP")
+        # TODO: rename
+        """Condensed setup methods required."""
+        # call these from api setup or gui
+        # self.mw.new_api.api_calls()
+        # self.mw.websocket_manager.schedule_websockets()
+
+        # self.mw.gui_manager.schedule_work()
+
+        # move somewhere else as well
+        # self.mw.chart.show()
+
+        # setup quote asset box
+        icon = QtGui.QIcon(resource_path("images/ico/" + "BTC" + ".svg"))
+        self.mw.quote_asset_box.addItem(icon, "BTC")
+        self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))

@@ -19,13 +19,11 @@ class DataManager():
         self.tickers = dict()
         self.pairs = dict()
 
-
-
         self.btc_price = dict()
         # Hardcoded default
-        self.set_current_pair("ETHBTC")
-        self.current.tickers = dict()
+        self.set_current_pair("BNBBTC")
 
+        self.current.tickers = dict()
         # todo: load from cfg
 
 
