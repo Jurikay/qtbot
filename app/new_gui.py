@@ -13,7 +13,7 @@ import pandas as pd
 from app.charts import Webpages
 from app.gui import logging
 from app.helpers import resource_path
-from app.elements.gui_periodic import GuiScheduler
+from app.elements.gui_scheduler import GuiScheduler
 
 
 class GuiMgr:
@@ -21,24 +21,23 @@ class GuiMgr:
     def __init__(self, mw):
         self.mw = mw
         print("Init new gui mgr")
-        # super().__init__(mw)
         self.set_tooltips()
         self.set_timer()
         self.timer_count = 0
 
         self.scheduler = GuiScheduler(mw)
-        # self.mw.coin_selector.update()
 
         # tab stuff
         self.hide_tabs()
         self.setup_tabs()
 
 
+
     def set_timer(self):
         self.timer = QtCore.QTimer(self.mw)
         self.timer.setInterval(250)          # Throw event timeout with an interval of 1000 milliseconds
         self.timer.timeout.connect(self.blink)
-        self.timer.start(1000)
+        self.timer.start()
 
     # Refactor:
     # Idea: Ticker websocket triggers this instead of QTimer.
