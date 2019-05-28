@@ -14,7 +14,7 @@ import app
 from datetime import datetime
 import os
 from app.helpers import resource_path
-
+from app.elements.eastereggs import startup_sentence
 
 # Verify usefulness
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
@@ -45,7 +45,8 @@ if __name__ == "__main__":
     splash = QSplashScreen(pixmap)
     splash.show()
     splash.setFont(splashFont)
-    splash.showMessage("Establishing connection", alignment=QtCore.Qt.AlignHCenter, color=QtCore.Qt.white)
+    # splash.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
+    splash.showMessage(startup_sentence(), alignment=QtCore.Qt.AlignHCenter, color=QtCore.Qt.white)
 
 
     # Supposedly fixes QWebengineprocess orphans
