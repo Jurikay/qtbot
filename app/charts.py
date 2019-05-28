@@ -1,3 +1,4 @@
+from app.helpers import resource_path
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -9,6 +10,19 @@
 # Base chart class -> cmc and binance; BTC chart inherits from binance
 # with some fixed properties
 
+def welcome_page():
+      info_html = """To use this you have to generate an <span style="color: #f3f3f3">API Key</span>. <br>
+      Log into Binance and create API credentials <a href="https://www.binance.com/userCenter/createApi.html">here</a>."""
+      return info_page("Welcome", info_html)
+
+def info_page(headline, content):
+      """Return a html document with given headline and content."""
+      with open(resource_path("html/info.html"), "r") as file:
+        html = file.read().replace('\n', '')
+
+      html = html.replace("{HEADLINE}", headline)
+      html = html.replace("{CONTENT}", content)
+      return html
 
 
 class Webpages():
