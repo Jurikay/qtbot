@@ -5,10 +5,10 @@
 
 import pandas as pd
 from addict import Dict
-
+import app
 
 class DataManager():
-    """Stores and transforms data received from api calls and websockets
+    """Stores and transforms general api data received from api calls and websockets
 
     Uses addict dictionary data structure.
     https://github.com/mewwts/addict
@@ -21,7 +21,8 @@ class DataManager():
 
         self.btc_price = dict()
         # Hardcoded default
-        self.set_current_pair("BNBBTC")
+        cfg = app.mw.data
+        self.set_current_pair("GASBTC")
 
         self.current.tickers = dict()
         # todo: load from cfg
@@ -38,15 +39,18 @@ class DataManager():
         # Iterate over list of tickers
         for info in ticker:
             # Filter only BTC pairs; TODO: Evaluate other currency pairs too
-            if info["symbol"][-3:] == "BTC" and float(info["lastPrice"]) > 0.00000000:
+            if info["symbol"][-3:] == "BTC" and float(info["lastPrice"]) > 0.00000000 and not info["askPrice"] == "0.00000000":
                 # coin = info["symbol"][:-3]
                 pair = info["symbol"]
 
+                if info["symbol"] == "PHXBTC":
+                    print(info)
                 # Store tickers by pair
                 # temp_tickers[pair] = info
                 self.tickers[pair] = info
             elif info["symbol"] == "BTCUSDT":
                 self.btc_price = info
+        self.ticker_df()
     
     @staticmethod
     def set_trades(trades):

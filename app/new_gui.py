@@ -44,7 +44,8 @@ class GuiMgr:
     # This would ensure that functions trigger directly after new ticker data has been received.
     def blink(self):
         """Call all periodic ui updates here."""
-        self.scheduler.update()
+        if self.mw.is_connected:
+            self.scheduler.update()
 
 
     # ######## Setup ##########
@@ -66,6 +67,7 @@ class GuiMgr:
 
     def change_pair(self):
         """Change the active pair and call symbol specific methods."""
+        print("Change pair")
         data = self.mw.data
         
         current_pair = data.current.pair
@@ -82,7 +84,7 @@ class GuiMgr:
 
             self.mw.websocket_manager.stop_sockets()
 
-            logging.info('Switching to %s' % new_pair)
+            logging.info('Change active pair to %s' % new_pair)
 
             print("LIMIT PANE VALUES")
             self.limit_pane_current_values()
@@ -112,6 +114,7 @@ class GuiMgr:
             self.mw.coinindex_filter.setText(self.mw.data.current.coin)
 
     def set_charts(self, pair):
+        print("SET_CHARTS")
         try:
             # This is different from the call that sets up the charts; TODO: Unify
             self.mw.chart.setHtml(Webpages.build_chart2(pair, self.mw.cfg_manager.defaultTimeframe))
@@ -237,7 +240,6 @@ class GuiMgr:
 
         # move somewhere else as well
         # self.mw.chart.show()
-
         # setup quote asset box
         icon = QtGui.QIcon(resource_path("images/ico/" + "BTC" + ".svg"))
         self.mw.quote_asset_box.addItem(icon, "BTC")

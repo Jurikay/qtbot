@@ -17,6 +17,7 @@ from PyQt5.uic import loadUi
 from twisted.internet import reactor
 from twisted.internet.error import ReactorNotRunning
 
+from app.charts import welcome_page
 # from app.charts import Webpages as Webpages
 # from app.gui_functions import (calc_wavg, calc_all_wavgs)
 # filter_coin_index, global_filter, filter_confirmed,
@@ -236,6 +237,7 @@ class beeserBot(QtWidgets.QMainWindow):
         else:
             print("NOT CONNECTED!")
             self.gui_mgr.disable_ui()
+            self.chart.setHtml(welcome_page())
 
             # TODO: Implement error pages
             # if self.api_manager.error == "banned":

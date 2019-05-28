@@ -14,6 +14,8 @@ import logging
 from app.workers import Worker
 # Todo: Think of location; Move into dataclass; Verify necessity of QObject
 # inheritence and 
+from datetime import datetime
+from collections import defaultdict
 
 class UserData(QtCore.QObject):
     """QObject that holds various dicts of user data like
@@ -139,8 +141,8 @@ class UserData(QtCore.QObject):
 
 
     # TODO: Refactor; This is called whenever an order is updated and might be too expansive for that.
-    # It would be better to store the dataframe as attribute and and only update rows instead of rebuilding it new
-    # every time.s
+    # It would be better to store the dataframe as attribute and only update rows instead of rebuilding it new
+    # every time.
     def create_open_orders_df(self):
         """Create a pandas dataframe suitable for displaying open orders."""
         print("create open orders df")
@@ -205,6 +207,7 @@ class UserData(QtCore.QObject):
 
     def add_to_history(self, order):
         """Called for every trade in user trade history."""
+
         # print("ADD TO HISTORY ORDER", order, "\n")
 
         # Bugfix: Store historical orders in a dictionary where the key is
@@ -214,11 +217,11 @@ class UserData(QtCore.QObject):
         
         # Refactor: Rather than try/except handle like dataclass methods; isinstance() to
         # differentiate between api call and websocket.
-        try:
-            order_id = order["id"]
-        except KeyError:
-            print("Order filled: check id/orderId!")
-            order_id = order["orderId"]
+        # try:
+        #     order_id = order["id"]
+        # except KeyError:
+        #     print("Order filled: check id/orderId!")
+        #     order_id = order["orderId"]
 
         pair = order["symbol"]
         order["total"] = float(order["executedQty"]) * float(order["price"])
@@ -226,35 +229,65 @@ class UserData(QtCore.QObject):
         if not self.trade_history.get(pair):
             self.trade_history[pair] = dict()
 
-        elif (self.trade_history[pair].get("orderId")):
-            print("DEBUG IN ELIF!!!")
-            oldOrder = self.trade_history[pair].get(order_id)
-            print("OLD ORDER; ", oldOrder)
-            print("COMPARE ORDERS: ", oldOrder["orderId"], order_id)
-            print("die order: ", self.trade_history[pair][order_id])
-            qty = self.trade_history[pair][order_id]["executedQty"]
-            print("got quant! ", qty)
-            order["executedQty"] = float(order["executedQty"]) + float(qty)
-            print("New qty is: ", order["executedQty"])
+
+        self.set_save(self.trade_history[pair], order["id"], order)
+
+
+        # elif (self.trade_history[pair].get("orderId")):
+        #     print("DEBUG IN ELIF!!!")
+        #     oldOrder = self.trade_history[pair].get(order_id)
+        #     print("OLD ORDER; ", oldOrder)
+        #     print("COMPARE ORDERS: ", oldOrder["orderId"], order_id)
+        #     print("die order: ", self.trade_history[pair][order_id])
+        #     qty = self.trade_history[pair][order_id]["executedQty"]
+        #     print("got quant! ", qty)
+        #     order["executedQty"] = float(order["executedQty"]) + float(qty)
+        #     print("New qty is: ", order["executedQty"])
 
         # print("ORDER DICT", self.trade_history[pair], "\n")
-        self.set_save(self.trade_history[pair], order["orderId"], order)
 
 
 
     def initial_history(self, progress_callback=None):
         pair = self.mw.data.current.pair
         history = self.mw.api_manager.api_my_trades(pair)
+        df = pd.DataFrame.from_dict(history)
+        
+        df.to_csv("hist.csv", encoding='utf-8')
+
+        hist = defaultdict(dict)
+
+
+
+
         print("INITIAL_HISTORY")
         print("length:", str(len(history)))
         for entry in history:
             entry["symbol"] = pair
             entry["executedQty"] = float(entry["qty"])
-            self.add_to_history(entry)
+
+            # Combine orders of the same id (partial fills)
+            # TODO: Make this more clear
+            prev_id = hist[pair].get(str(entry["orderId"]))
+            if prev_id:
+                print("NEW QTY:", float(entry["qty"]) + float(prev_id["qty"]))
+                entry["qty"] = float(entry["qty"]) + float(prev_id["qty"])
+                entry["executedQty"] = float(entry["executedQty"]) + float(prev_id["executedQty"])
+                entry["id"] = prev_id["id"]
+                if entry["commissionAsset"] == prev_id["commissionAsset"]:
+                    entry["commission"] = float(entry["commission"]) + float(prev_id["commission"])
+
+            print(entry["orderId"])
+            print("prev id: ", prev_id)
+            # print(hist)
+
+            hist[pair][str(entry["orderId"])] = entry
             if entry["isBuyer"] is True:
                 entry["side"] = "BUY"
             else:
                 entry["side"] = "SELL"
+            self.add_to_history(entry)
+
 
         # TODO COME BACK
         if progress_callback:
@@ -355,18 +388,15 @@ class UserData(QtCore.QObject):
 
 
     def get_holdings_array(self, coin, free, locked):
-        # print("TICKERS", self.mw.data.tickers)
         total = float(free) + float(locked)
         if coin != "BTC":
-            # TODO: Fix race condition! This needs current btc price
             coin_price = float(self.mw.data.tickers.get(coin + "BTC", dict()).get("lastPrice", 0))
             total_btc = total * coin_price
             name = str(self.mw.data.pairs.get(coin + "BTC", dict()).get("baseAssetName", 0))
-            # print("name", name)
+
         elif coin == "BTC":
             total_btc = total
             name = "Bitcoin"
-
 
         values = {"coin": coin,
                   "free": free,

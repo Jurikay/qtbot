@@ -9,8 +9,9 @@ def exec_df():
     print("lul")
     df = parse_history_file("TradeHistory.xlsx")
     print("df", df)
-    iterate_df_rows(df)
-
+    # pairs = iterate_df_rows(df)
+    pairs = get_traded_pairs(df)
+    print("PAIRS", pairs)
 
 # class parser:
 def parse_history_file(filename="TradeHistory.xlsx"):
@@ -21,6 +22,26 @@ def parse_history_file(filename="TradeHistory.xlsx"):
     return xls.parse("sheet1")
     # print("returning df", df)
     # return df
+
+
+def get_traded_pairs(df):
+    """Extract an ordered set (a glorified dict really) of recently
+    traded pairs."""
+
+    test = df[df["Market"] == "BTC"]
+    print("TEST", test)
+    pair_list = list(df["Market"])
+    ordered_set = list(dict.fromkeys(pair_list).keys())
+
+    # debug
+    ordered_set.append("NEOETH")
+
+    for i, pair in enumerate(ordered_set):
+        print(pair)
+        if not pair[-3:] == "BTC":
+            print("REMOVING PAIR", pair)
+            ordered_set.pop(i)
+    return ordered_set
 
 def iterate_df_rows(df):
     traded_pairs = set()

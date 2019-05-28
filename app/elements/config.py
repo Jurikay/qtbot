@@ -16,11 +16,12 @@ class ConfigManager:
     def __init__(self, mw):
         self.mw = mw
 
+        # TODO: Move all chart related logic out of config
         mw.save_config.clicked.connect(self.write_config)
         mw.ui_updates_box.valueChanged.connect(self.ui_value_text)
-        mw.default_timeframe_selector.currentIndexChanged.connect(self.update_chart)
+        # mw.default_timeframe_selector.currentIndexChanged.connect(self.update_chart)
         mw.btc_timeframe_selector.currentIndexChanged.connect(self.update_btc_chart)
-        mw.btc_exchange_selector.currentIndexChanged.connect(self.update_btc_chart)
+        # mw.btc_exchange_selector.currentIndexChanged.connect(self.update_btc_chart)
 
 
         self.pair = ""
@@ -316,4 +317,5 @@ class ConfigManager:
         self.mw.btc_chart.setHtml(Webpages.build_chart_btc(self, "BTCUSD", self.mw.cfg_manager.btcTimeframe, self.mw.btc_exchange_selector.currentText()))
 
     def update_chart(self):
+        print("cfg update chart")
         self.mw.chart.setHtml(Webpages.build_chart2(self.pair, self.defaultTimeframe))

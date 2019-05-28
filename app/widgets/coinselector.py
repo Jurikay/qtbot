@@ -105,8 +105,9 @@ class CoinSelector(QtWidgets.QComboBox):
 
         pair = self.mw.data.current.pair
 
-        if not pair:
-            pair = "BNBBTC"
+        # if not pair:
+        #     pair = "BNBBTC"
+
         row = df.index[df["Coin"] == pair][0]
         self.setCurrentIndex(row)
 

@@ -64,9 +64,13 @@ class ApiManager:
 
 
     def ui_setup(self):
-        """Callback from api setup; Everything that needs to be set in main thread goes here."""
+        """Callback from basic api setup; Everything that needs
+        ticker or pair values and set in main thread goes here."""
         print("UI SETUP callback:")
         
+        self.mw.gui_mgr.set_charts(self.mw.data.current.pair)
+
+
         self.mw.data.ticker_df()
         self.mw.coin_selector.setup()
         

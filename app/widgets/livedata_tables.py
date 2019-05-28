@@ -156,13 +156,14 @@ class BackgroundTable(QtWidgets.QTableView):
         self.horizontalHeader().setDefaultSectionSize(100)
 
         self.setColumnWidth(0, 24)
-        self.setColumnWidth(2, 56)
+        self.setColumnWidth(2, 60)
 
         self.horizontalHeader().setSortIndicatorShown(False)
         self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self.verticalHeader().setDefaultSectionSize(16)
         self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
-        self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        # self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
+        self.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
         # for i in range(1, 4):
         #     self.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Stretch)
         self.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
