@@ -15,6 +15,7 @@ from datetime import datetime
 import os
 from app.helpers import resource_path
 from app.elements.eastereggs import startup_sentence
+from app.elements.configmanager import ConfiManager
 
 # Verify usefulness
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
@@ -26,6 +27,7 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
 
 if __name__ == "__main__":
 
+    cfg_manager = ConfiManager()
     # os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-logging"
     os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-gpu"
     os.environ["QTWEBENGINE_REMOTE_DEBUGGING"] = "13337"
@@ -70,9 +72,9 @@ if __name__ == "__main__":
     
 
 
-    widget = beeserBot()
+    widget = beeserBot(cfg_manager)
     widget.show()
-    widget.setup()
+    # widget.setup()
 
     main_app.aboutToQuit.connect(widget.shutdown_bot)
 

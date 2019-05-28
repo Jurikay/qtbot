@@ -20,7 +20,7 @@ from binance.client import Client
 from requests.exceptions import ReadTimeout
 import app
 from app.workers import Worker
-
+from app.charts import welcome_page, time_error_page, Webpages
 
 class ApiCalls:
     """Collection of api related methods."""
@@ -30,13 +30,20 @@ class ApiCalls:
         self.threadpool = tp
         self.banned_until = None
         self.error = None
-        self.client = self.authenticate_client()
-        app.client = self.client
+        self.client = None
+        self.init_authentication()
+        # app.client = self.client
 
-        self.initialize()
+        # self.initialize()
 
         self.counter = 0
 
+
+    def init_authentication(self):
+        self.client = self.authenticate_client()
+        app.client = self.client
+        self.initialize()
+        self.parse_error()
 
     def authenticate_client(self):
         print("Authenticate client")
@@ -44,6 +51,7 @@ class ApiCalls:
             api_key = self.mw.cfg_manager.api_key
             api_secret = self.mw.cfg_manager.api_secret
         except Exception as e:
+            self.error = "no-api-key"
             print("api key/secret not found!")
             print(e)
             return
@@ -75,7 +83,13 @@ class ApiCalls:
                     self.banned_until = self.get_ban_duration(e)
                     self.error = "banned"
                 elif "code=-2014" in str(e):
+
                     print("API KEY INVALID")
+                    api_key = self.mw.cfg_manager.api_key
+                    api_secret = self.mw.cfg_manager.api_secret
+                    print("key:", api_key, "secret:", api_secret)
+                    if api_key == "" or api_secret == "" or api_key == "key" or api_secret == "secret":
+                        self.error = "no-api-key"
                 elif "code=0" in str(e):
                     print("BINANCE API DOWN!!!")
                 elif "get_products" in str(e):
@@ -85,8 +99,20 @@ class ApiCalls:
                     self.error = "time"
         else:
             print("CLIENT NOT DEFINED! BANNED!")
-            self.error = "banned"
+            if not self.error == "no-api-key":
+                self.error = "banned"
 
+    def parse_error(self):
+        if self.error == "time":
+            self.mw.chart.setHtml(time_error_page())
+        elif self.error == "no-api-key":
+            self.mw.chart.setHtml(welcome_page())
+            self.mw.gui_mgr.first_time_setup()
+        else:
+            # If there were no errors, display the chart of the current pair
+            pair = self.mw.data.current.pair
+            self.mw.chart.setHtml(Webpages.build_chart2(pair, self.mw.cfg_manager.defaultTimeframe))
+            
 
     def getHoldings(self):
         """Make an inital API call to get BTC and coin holdings."""

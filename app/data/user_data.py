@@ -270,16 +270,12 @@ class UserData(QtCore.QObject):
             # TODO: Make this more clear
             prev_id = hist[pair].get(str(entry["orderId"]))
             if prev_id:
-                print("NEW QTY:", float(entry["qty"]) + float(prev_id["qty"]))
                 entry["qty"] = float(entry["qty"]) + float(prev_id["qty"])
                 entry["executedQty"] = float(entry["executedQty"]) + float(prev_id["executedQty"])
                 entry["id"] = prev_id["id"]
                 if entry["commissionAsset"] == prev_id["commissionAsset"]:
                     entry["commission"] = float(entry["commission"]) + float(prev_id["commission"])
 
-            print(entry["orderId"])
-            print("prev id: ", prev_id)
-            # print(hist)
 
             hist[pair][str(entry["orderId"])] = entry
             if entry["isBuyer"] is True:
@@ -348,7 +344,6 @@ class UserData(QtCore.QObject):
         # else:
         #     # return an empty dataframe if no orders are open.
         #     return pd.DataFrame()
-
 
     #################################################################
     # ACCOUNT HOLDINGS

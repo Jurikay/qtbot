@@ -15,10 +15,16 @@ class BotLogger:
     def init_logging(self):
         qtLogger = QPlainTextEditLogger(self.mw)
         qtLogger.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-        logging.getLogger().addHandler(qtLogger)
+        logger = logging.getLogger()
+        logger.addHandler(qtLogger)
+
+        fh = logging.FileHandler('spam.log')
+        fh.setLevel(logging.INFO)
+        logger.addHandler(fh)
+
 
         # You can control the logging level
-        logging.getLogger().setLevel(logging.INFO)
+        logger.setLevel(logging.INFO)
 
         self.mw.widget_2.setWidget(qtLogger.widget)
 

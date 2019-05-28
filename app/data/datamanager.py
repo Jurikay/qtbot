@@ -16,13 +16,15 @@ class DataManager():
     def __init__(self):
         print("Init new datamanager")
         self.current = Dict()
+        self.user = Dict()
+
         self.tickers = dict()
         self.pairs = dict()
 
         self.btc_price = dict()
         # Hardcoded default
         cfg = app.mw.data
-        self.set_current_pair("GASBTC")
+        self.set_current_pair(app.mw.cfg_manager.pair)
 
         self.current.tickers = dict()
         # todo: load from cfg

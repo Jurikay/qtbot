@@ -17,7 +17,7 @@ class ConfigManager:
         self.mw = mw
 
         # TODO: Move all chart related logic out of config
-        mw.save_config.clicked.connect(self.write_config)
+        mw.save_config.clicked.connect(self.save_btn_clicked)
         mw.ui_updates_box.valueChanged.connect(self.ui_value_text)
         # mw.default_timeframe_selector.currentIndexChanged.connect(self.update_chart)
         mw.btc_timeframe_selector.currentIndexChanged.connect(self.update_btc_chart)
@@ -38,6 +38,19 @@ class ConfigManager:
         self.copy_qty = None
         self.ui_updates = 1
 
+
+    def save_btn_clicked(self, *args):
+        print("CFG saved!")
+        print(self.mw.is_connected)
+        self.write_config()
+        config = configparser.ConfigParser()
+        if os.path.isfile("config.ini"):
+            config.read('config.ini')
+
+        self.read_config(config)
+        if not self.mw.is_connected:
+            print("trying to authenticate")
+            self.mw.api_manager.init_authentication()
 
     def initialize(self):
         """Read config.ini or create a default file if it doesn't exist."""

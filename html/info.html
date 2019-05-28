@@ -5,12 +5,17 @@
     <style media="screen">
       body {
         background: #262d33;
-        font-family: arial;
+        font-family: Arial;
+        font-weight: 100;
         font-size: 24px;
-        color: #999;
+        color: #eff0f1;
+      }
+      p {
+        line-height: 2.5rem;
       }
       a {
-        color: #f3ba2e;
+        color: #ffce52;
+        text-decoration: none;
       }
       h1 {
         color: #f3ba2e;
@@ -25,11 +30,7 @@
         display: inline-block;
         margin-top: 10px;
       }
-      svg{
-        width: 275px;
-        height: auto;
-        margin-bottom: -10px;
-      }
+
 
     </style>
 
@@ -39,12 +40,11 @@
 
 
 
-
       <div id="container">
       <div id="welcome">
-        <h1>{HEADLINE}</h1>
+        <h1 id="btn0">{HEADLINE}</h1>
 
-        <p>{CONTENT}</p>
+        <p id="txt0">{CONTENT}</p>
 
         <!-- <p>To use this you have to generate an <span style="color: #f3f3f3">API Key</span>.</p>
         <p>Log into Binance and create API credentials <a href="https://www.binance.com/userCenter/createApi.html">here</a>.</p> -->
@@ -53,4 +53,31 @@
     </div>
 
   </body>
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+  <script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script>     
+  <script>
+      document.getElementById("link").addEventListener("click", function(event){
+        event.preventDefault()
+      });
+
+
+      document.addEventListener("DOMContentLoaded", function() {
+        console.log('Your document is ready!');
+        new QWebChannel(qt.webChannelTransport, function(channel) {
+          let my_object = channel.objects.MyObject;
+
+          let link = document.getElementById('link');
+          link.onclick = function() {
+            my_object.openLink(link.href);
+          }
+     });
+    });
+
+
+
+      
+</script>
 </html>

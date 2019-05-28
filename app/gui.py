@@ -57,7 +57,7 @@ from app.helpers import resource_path
 class beeserBot(QtWidgets.QMainWindow):
     """Main ui class."""
 
-    def __init__(self):
+    def __init__(self, cfg_manager):
         
         # Move out as much as possible. Init gui first, load data later.
 
@@ -71,6 +71,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
         self.data = None
         app.mw = self
+        self.cfg_manager = cfg_manager
         self.version = "alpha 0.1"
 
         self.client = app.client
@@ -99,6 +100,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.log_manager = None
         self.user_data = None
         print("### END GUI INIT ###")
+        self.setup()
 
 
     def load_fonts(self):
@@ -178,17 +180,18 @@ class beeserBot(QtWidgets.QMainWindow):
         self.log_manager = BotLogger(self)
         self.log_manager.init_logging()
 
-        self.cfg_manager = ConfigManager(self)
-        self.cfg_manager.initialize()
+        # self.cfg_manager = ConfigManager(self)
+        # self.cfg_manager.initialize()
 
 
         # new gui
         self.gui_mgr = GuiMgr(self)
-        self.gui_mgr.set_api_dependant()
+        self.gui_mgr.set_api_independant()
 
 
 
         self.sound_manager = Sounds(self)
+
 
         # TODO: Add sound manager / data manager
 
@@ -237,7 +240,7 @@ class beeserBot(QtWidgets.QMainWindow):
         else:
             print("NOT CONNECTED!")
             self.gui_mgr.disable_ui()
-            self.chart.setHtml(welcome_page())
+            # self.chart.setHtml(welcome_page())
 
             # TODO: Implement error pages
             # if self.api_manager.error == "banned":

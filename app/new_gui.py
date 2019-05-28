@@ -56,11 +56,9 @@ class GuiMgr:
         # self.mw.limit_buy_input.setWhatsThis("WHAT TEH FUG")
         # print("INPUT:", self.mw.limit_buy_input.value())
     
-    def set_api_dependant(self):
-        return
-        print("Setting api dependant gui values")
-        # TODO: this is currently called too early to have an effect
-        # self.mw.coin_selector.update()
+    def set_api_independant(self):
+        self.setup_config_ui()
+
 
 
 ############################
@@ -170,6 +168,14 @@ class GuiMgr:
         self.mw.bot_tabs.setTabEnabled(2, False)
         self.mw.bot_tabs.setTabEnabled(3, False)
 
+    def first_time_setup(self):
+        print("FIRST TIME SETUP")
+        # self.mw.splitter_h.setSizes([120, 124])
+        self.mw.splitter_h.setStretchFactor(1, 1)
+        self.mw.api_key_label.setStyleSheet("border: 2px solid #f3ba2e;")
+        self.mw.api_secret_label.setStyleSheet("border: 2px solid #f3ba2e;")
+        self.mw.bot_tabs.setCurrentIndex(4)
+        
 
     def disable_ui(self):
         """Disable api dependant ui elements."""
@@ -187,8 +193,10 @@ class GuiMgr:
         self.mw.volumes_widget.setVisible(False)
 
         # Fully expand chart
-        self.mw.splitter_v.setSizes([0, 0])
-        self.mw.splitter_h.setSizes([0, 0])
+        # self.mw.splitter_v.setSizes([0, 0])
+        # self.mw.splitter_h.setSizes([0, 0])
+        
+        # self.first_time_setup()
 
     # Maybe move this into limit order pane
     def limit_pane_current_values(self):
@@ -244,3 +252,55 @@ class GuiMgr:
         icon = QtGui.QIcon(resource_path("images/ico/" + "BTC" + ".svg"))
         self.mw.quote_asset_box.addItem(icon, "BTC")
         self.mw.quote_asset_box.setIconSize(QtCore.QSize(25, 25))
+        print("setup config ui")
+        
+    
+    ###################################
+    # CONFIG
+    ###################################
+    def setup_config_ui(self):
+        self.mw.save_config.clicked.connect(self.save_config)
+    
+
+    def save_config(self):
+        print("save_config")
+        config_dict = self.read_ui_config_values()
+        self.mw.cfg_manager.store_config(config_dict)
+
+
+
+        # self.write_config()
+        # config = configparser.ConfigParser()
+        # if os.path.isfile("config.ini"):
+        #     config.read('config.ini')
+
+        # self.read_config(config)
+        # if not self.mw.is_connected:
+        #     print("trying to authenticate")
+        #     self.mw.api_manager.in
+
+
+    def store_ui_config_values(self):
+        pass
+
+    def read_ui_config_values(self):
+        """Read values from config pane ui elements.
+        Returns a dict in the format configparser expects."""
+        api_key = self.mw.api_key_label.text()
+        api_secret = self.mw.api_secret_label.text()
+
+        remember_pair = self.mw.cfg_remember.isChecked()
+        defaultpair = self.mw.default_pair_label.text()
+        copy_price = self.mw.copy_price_box.isChecked()
+        copy_qty = self.mw.copy_qty_box.isChecked()
+        percent_texts = [self.mw.percent_1, self.mw.percent_2, self.mw.percent_3, self.mw.percent_4, self.mw.percent_5]
+        # percent = self.mw.buttonPercentage
+        default_timeframe = self.mw.default_timeframe_selector.currentText()
+        btctimeframe = self.mw.btc_timeframe_selector.currentText()
+        btcexchange = self.mw.btc_exchange_selector.currentText()
+        return {"CONFIG": {"defaultpair": defaultpair, "rememberdefault": remember_pair, "buttonpercentages": percent_texts, 
+                "defaulttimeframe": default_timeframe, "btctimeframe": btctimeframe, "btcexchange": btcexchange,
+                "copyprice": True, "copyquantity": False, "uiupdates": 1},
+                "API": {"key": api_key, "secret": api_secret}}  # remove these
+
+        

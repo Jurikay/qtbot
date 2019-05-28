@@ -6,53 +6,136 @@
 import configparser
 import os.path
 import logging
+import app
 from app.helpers import resource_path
 
 # initialize config manager in the very beginning:
 # check for cfg file: if found read, if not create default
 # ~~ cfg values loaded ~~
 
-# check config
+# check if config exists
 # read config
+# validate config
 # create config
 # write config to file
 # change config
+# get/ set config value
+
+
+
+##################
 
 class ConfiManager:
     """Config manager class that acts as an interface between
     the config file and values."""
-    def __init__(self, *args, **kwargs):
-        self.config_filename = resource_path("config.ini")
+
+    def __init__(self, cfg_path="config.ini"):
+        self.config_filename = resource_path(cfg_path)
+
         self.config = configparser.ConfigParser()
         self.initialize()
 
+        # config values as attributes for easy access
+        self.api_key = self.get_config_value("API", "key")
+        self.api_secret = self.get_config_value("API", "secret")
+        self.defaultTimeframe = self.get_config_value("CONFIG", "defaultTimeframe")
+        self.btcTimeframe = self.get_config_value("CONFIG", "btcTimeframe")
+        self.buttonPercentage = self.get_config_value("CONFIG", "buttonPercentages").split(", ")
+        self.pair = self.get_config_value("CONFIG", "defaultpair")
+
+
+
     def initialize(self):
         """Determine if a config file already exists. If so, read it.
-        If not, create a default config and load the default values."""
+        If not, create a default config and return that."""
         if os.path.isfile(self.config_filename):
+            print("read config file")
             self.config.read(self.config_filename)
-        else:
-            config = self.create_config()
-            self.config = config
-        
-        print("validating config...")
-        parsed = self.parse_config(self.config)
-        valid = self.validate_config(parsed)
+            if self.validate_config(self.config):
+                print("returning valid config from file")
+                return self.config
+        print("not valid")
+        print("Generating new config")
+        self.config = self.create_config()
         return self.config
-            
 
-    def validate_config(self, config_dict):
-        """Determine if a given config conforms to expected keys and values."""
-        clist = list(config_dict.keys())
-        for cle in clist:
-            print("CLE", cle)
-        return clist
+    def store_config(self, config_dict):
+        """Receives a dict of config values. Store values
+        as current config if validated."""
+        print("store_config")
+        config_obj = self.dict_to_config(config_dict)
+        if self.validate_config(config_obj):
+            print("Storing received config!")
+            self.config = config_obj
+
+    def get_config_value(self, key, section):
+        return self.config.get(key, section)
+
+
+
+    def dict_to_config(self, config_dict):
+        """Takes a dictionary and returns a config object."""
+        config = self.config
+        config["CONFIG"] = config_dict["CONFIG"]
+        config["API"] = config_dict["API"]
+        return config
+
+
+
+    def validate_config(self, config):
+        """Check if a given config has valid values."""
+        print("custom validate")
+        config_valid = True
+        non_valid_keys = list()
+        for section in config.sections():
+            for key, value in config.items(section):
+                # print("Config sec:", section, "key:", key, "value;", value)
+                try:
+                    if key == "defaultpair":
+                        assert "BTC" in value
+                    
+                    if key == "rememberdefault":
+                        assert value in ("False", "True")
+                    
+                    if key == "buttonpercentages":
+                        assert len(value.split(",")) == 5
+                        # for sub_value in value.split(","):
+                        #     assert int(sub_value) <= 100
+
+                    if key == "defaulttimeframe":
+                        assert value in ("1", "3", "5", "15", "30", "60")
+                    
+                    if key == "btctimeframe":
+                        assert value in ("1", "3", "5", "15", "30", "60")
+
+                    if key == "copyprice":
+                        assert value in ("False", "True")
+
+                    if key == "uiscale":
+                        assert float(value) >= 0.1 and float(value) <= 2
+
+                    if key == "key":
+                        assert value != "" and value is not None
+                    
+                    if key == "secret":
+                        assert value != "" and value is not None
+                    
+
+                except AssertionError:
+                    print("Error during config validation:")
+                    print("key:", key, "value:", value)
+                    non_valid_keys.append(key)
+                    config_valid = False
+
+        return config_valid
+
 
     def set_config_value(self, key, value):
         """Set a single config value. And write config to disk."""
         print("Setting config", key, "==", value)
         if self.config[key]:
             self.config[key] = value
+
 
     # not needed
     def read_config(self) -> dict():
@@ -71,21 +154,10 @@ class ConfiManager:
         return self.config
 
 
-    def parse_config(self, cfg) -> dict():
-        """Iterate over a config object and return it's values as dictionary."""
-        c_dict = dict()
-        for section in cfg:
-            for key in cfg[section]:
-                value = cfg[section][key]
-                c_dict[key] = value
-        return c_dict
-
-
-
 
     def create_config(self):
         """Create a config object with default values."""
-        percent = [10, 25, 33, 50, 100]
+        percent = ["10", "25", "33", "50", "100"]
         config = self.config
         config['CONFIG'] = {'DefaultPair': "BNBBTC",
                             'rememberDefault': True,
@@ -110,5 +182,17 @@ class ConfiManager:
         """Write a config object to disk."""
 
         with open(file, "w") as configfile:
-            config.write(configfile)
+            config.write(resource_path(configfile))
             logging.info("config file written.")
+    
+    def write_config(self):
+        # TODO: Implement
+        print("writing config")
+
+    ################################################
+    # STATS
+    ################################################
+    def write_stats(self):
+        # TODO: Implement
+        print("writing stats")
+        

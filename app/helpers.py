@@ -2,6 +2,7 @@ import os, sys, math
 from datetime import datetime
 import dateparser
 import pytz
+import os
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -53,3 +54,11 @@ def date_to_milliseconds(date_str):
 
     # return the difference in time
     return int((d - epoch).total_seconds() * 1000.0)
+
+def read_file(file_path):
+    """Read a text file and return it's contents as one single string."""
+    location = resource_path(file_path)
+    if os.path.isfile(location):
+        with open(resource_path(file_path), "r") as file:
+            content = file.read().replace('\n', '')
+        return content

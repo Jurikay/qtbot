@@ -138,24 +138,24 @@ class GuiScheduler:
 
         """Calculate and display price change values."""
 
-        # close_t = float(val["klines"]["1m"].get(self.mw.cfg_manager.pair, {})[-5][4])
+        # close_t = float(val["klines"]["1m"].get(self.mw.data.current.pair, {})[-5][4])
         klines_data = self.mw.klines.get("1m")
-        coin_data = klines_data.get(self.mw.cfg_manager.pair)
+        coin_data = klines_data.get(self.mw.data.current.pair)
 
         if isinstance(coin_data, list):
-            close_5m = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-5][4])
-            close_15m = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-15][4])
-            # close_30m = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-30][4])
-            close_1h = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-60][4])
-            close_4h = float(self.mw.klines["1m"][self.mw.cfg_manager.pair][-240][4])
+            close_5m = float(self.mw.klines["1m"][self.mw.data.current.pair][-5][4])
+            close_15m = float(self.mw.klines["1m"][self.mw.data.current.pair][-15][4])
+            # close_30m = float(self.mw.klines["1m"][self.mw.data.current.pair][-30][4])
+            close_1h = float(self.mw.klines["1m"][self.mw.data.current.pair][-60][4])
+            close_4h = float(self.mw.klines["1m"][self.mw.data.current.pair][-240][4])
 
-            change_5m_value = ((float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_5m)) - 1) * 100
-            change_15m_value = ((float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_15m)) - 1) * 100
-            # change_30m_value = ((float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_30m)) - 1) * 100
-            change_1h_value = ((float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_1h)) - 1) * 100
-            change_4h_value = ((float(self.mw.data.tickers[self.mw.cfg_manager.pair]["lastPrice"]) / float(close_4h)) - 1) * 100
+            change_5m_value = ((float(self.mw.data.tickers[self.mw.data.current.pair]["lastPrice"]) / float(close_5m)) - 1) * 100
+            change_15m_value = ((float(self.mw.data.tickers[self.mw.data.current.pair]["lastPrice"]) / float(close_15m)) - 1) * 100
+            # change_30m_value = ((float(self.mw.data.tickers[self.mw.data.current.pair]["lastPrice"]) / float(close_30m)) - 1) * 100
+            change_1h_value = ((float(self.mw.data.tickers[self.mw.data.current.pair]["lastPrice"]) / float(close_1h)) - 1) * 100
+            change_4h_value = ((float(self.mw.data.tickers[self.mw.data.current.pair]["lastPrice"]) / float(close_4h)) - 1) * 100
 
-            change_1d_value = float(self.mw.data.tickers[self.mw.cfg_manager.pair]["priceChangePercent"])
+            change_1d_value = float(self.mw.data.tickers[self.mw.data.current.pair]["priceChangePercent"])
 
             changes = [self.mw.change_5m, self.mw.change_15m, self.mw.change_1h, self.mw.change_4h, self.mw.change_1d]
             change_values = [change_5m_value, change_15m_value, change_1h_value, change_4h_value, change_1d_value]

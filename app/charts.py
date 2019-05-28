@@ -1,4 +1,4 @@
-from app.helpers import resource_path
+from app.helpers import resource_path, read_file
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
@@ -10,15 +10,25 @@ from app.helpers import resource_path
 # Base chart class -> cmc and binance; BTC chart inherits from binance
 # with some fixed properties
 
+def time_error_page():
+    title = "Error: 1021"
+    content = """Binance server time and local computer time are out of sync.<br>
+               To fix this error automatically, rerun the application as administrator<br>
+               so the system time can be set correctly on startup."""
+    return info_page(title, content)
+
+
 def welcome_page():
-      info_html = """To use this you have to generate an <span style="color: #f3f3f3">API Key</span>. <br>
-      Log into Binance and create API credentials <a href="https://www.binance.com/userCenter/createApi.html">here</a>."""
-      return info_page("Welcome", info_html)
+    title = "Welcome🔥"
+    content = """To use this application you have to generate an <span style="color: #f3f3f3">api-key</span>. <br>
+                 Log into Binance and create api credentials <a id="link" href="https://www.binance.com/userCenter/createApi.html">here</a>."""
+    return info_page(title, content)
+
 
 def info_page(headline, content):
       """Return a html document with given headline and content."""
-      with open(resource_path("html/info.html"), "r") as file:
-        html = file.read().replace('\n', '')
+
+      html = read_file("html/info.html")
 
       html = html.replace("{HEADLINE}", headline)
       html = html.replace("{CONTENT}", content)
