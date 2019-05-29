@@ -72,7 +72,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.data = None
         app.mw = self
         self.cfg_manager = cfg_manager
-        self.version = "alpha 0.1"
+        self.version = "beta 0.1"
 
         self.client = app.client
         

@@ -199,7 +199,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_50">
+           <widget class="QLabel" name="lbl_status_hl">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -207,7 +207,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#cdcdcd;&quot;&gt;Status:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Status:</string>
             </property>
             <property name="margin">
              <number>6</number>
@@ -252,13 +252,6 @@
               <number>5</number>
              </property>
              <item>
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>COIN</string>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QLabel" name="label_11">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -266,8 +259,20 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="maximumSize">
+                <size>
+                 <width>35</width>
+                 <height>35</height>
+                </size>
+               </property>
                <property name="text">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Arial Black'; color:#878787;&quot;&gt;BTC:  &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap>../images/assets/btc-512.png</pixmap>
+               </property>
+               <property name="scaledContents">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -499,7 +504,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Account: &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>Account: </string>
             </property>
            </widget>
           </item>
@@ -526,13 +531,6 @@
             </property>
             <property name="text">
              <string>-</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_fps">
-            <property name="text">
-             <string>fps</string>
             </property>
            </widget>
           </item>
@@ -2738,6 +2736,12 @@
                      <height>30</height>
                     </size>
                    </property>
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
+                   <property name="contextMenuPolicy">
+                    <enum>Qt::NoContextMenu</enum>
+                   </property>
                    <property name="styleSheet">
                     <string notr="true"/>
                    </property>
@@ -3462,7 +3466,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>0.00000000 BTC</string>
+                   <string>0.00000000 BTC </string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignRight|Qt::AlignTrailing</set>
@@ -3481,7 +3485,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>0 $</string>
+                   <string>$0.00</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
@@ -3991,7 +3995,7 @@
                    </sizepolicy>
                   </property>
                   <property name="text">
-                   <string>0 $</string>
+                   <string>$0.00</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
@@ -5348,11 +5352,6 @@
                 <item>
                  <property name="text">
                   <string>1w</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>1m</string>
                  </property>
                 </item>
                </widget>

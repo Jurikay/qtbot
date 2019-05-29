@@ -17,6 +17,11 @@ QWidget {
     color: #f3f3f3;
 }
 
+#acc_label {
+    font-weight: 700;
+    font-size: 17px;
+}
+
 #spread_area, #spread_area QLabel {
   background-color: #2e363d;
   font-family: "Source Sans Pro";
@@ -25,10 +30,6 @@ QWidget {
   color: #999;
 }
 
-#version_label{
-    font-size: 14px;
-    color: #f3f3f3;
-}
 
 #stats_grid QLineEdit, #stats_grid QLineEdit:hover {
   border: 2px solid transparent;
@@ -285,6 +286,9 @@ QPushButton#limit_sell_button::pressed {
  QLabel#SVGLogo {
     background-image: url('bender3.svg');
      border: none;
+}
+#lbl_status_hl, #version_label {
+    color: #cdcdcd
 }
 /* QSlider {
      margin-top: -5px;

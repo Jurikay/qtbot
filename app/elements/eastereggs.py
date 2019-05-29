@@ -6,24 +6,22 @@ def startup_sentence():
         "Booting up",
         "Kiss my shiny metal ass",
         "Calculating gainz",
-        "Ordering Lambo",
-        "beep boop",
-        "Throwing away money",
+        "Picking Lambo",
+        "Burning excessive money",
         "Running simulations",
-        "Calling the Bogdanoff's",
+        "Calling the Bogdanoffs",
         "BIIICOOONNEEEEEEC",
         "Boy, Sminem, Cool",
         "Funds are safu",
-        " B O G G E D",
-        ""
-
+        "B O G G E D",
+        "Was is bloß mit IOTA los",
+        "In for the technology",
+        "Buy high sell low",
+        "Whale sounds intensify",
+        "🚀🚀🚀"
     ]
-
-    sentence_count = len(sentences)
-
-    rand = random.randint(1, sentence_count)
-
-    return sentences[rand-1]
+    rand = random.randint(0, len(sentences)-1)
+    return sentences[rand]
 
 
 

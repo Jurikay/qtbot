@@ -28,12 +28,17 @@ class GuiScheduler:
         """Main public method; Is called periodically;
         Calls all other methods."""
         self.runtime += 1
-        self.one_second_update()
-
-        self.percent_changes()
-        self.check_websocket()
         self.update_stats()
-        self.new_gui_blink()
+
+        if self.mw.is_connected:
+            # debug
+            
+            self.one_second_update()
+
+            self.percent_changes()
+            self.check_websocket()
+            
+            self.new_gui_blink()
 
     def new_gui_blink(self):
         self.mw.tradeTable.update()
@@ -115,7 +120,10 @@ class GuiScheduler:
         self.mw.current_time.setText(str(time.strftime('%a, %d %b %Y %H:%M:%S')))
 
         # self.mw.explicit_api_calls_label.setText(str(val["apiCalls"]))
-        self.mw.explicit_api_updates.setText(str(self.mw.websocket_manager.api_updates))
+        try:
+            self.mw.explicit_api_updates.setText(str(self.mw.websocket_manager.api_updates))
+        except AttributeError:
+            pass
 
     def check_websocket(self):
         """Check if websocket updates have stopped."""

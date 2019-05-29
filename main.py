@@ -28,10 +28,13 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
 if __name__ == "__main__":
 
     cfg_manager = ConfiManager()
+
+    ui_scale = cfg_manager.config["CONFIG"]["uiscale"]
+    print("UI SCALE", ui_scale)
     # os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-logging"
     os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-gpu"
-    os.environ["QTWEBENGINE_REMOTE_DEBUGGING"] = "13337"
-    os.environ["QT_SCALE_FACTOR"] = "1"
+    # os.environ["QTWEBENGINE_REMOTE_DEBUGGING"] = "13337"
+    os.environ["QT_SCALE_FACTOR"] = ui_scale
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     main_app = QApplication(sys.argv)
 

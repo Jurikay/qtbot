@@ -162,15 +162,15 @@ class ConfiManager:
         config['CONFIG'] = {'DefaultPair': "BNBBTC",
                             'rememberDefault': True,
                             'ButtonPercentages': percent[0] + ", " + percent[1] + ", " + percent[2] + ", " + percent[3] + ", " + percent[4],
-                            'DefaultTimeframe': "15m",
-                            'BtcTimeframe': "1h",
+                            'DefaultTimeframe': "15",
+                            'BtcTimeframe': "60",
                             'BtcExchange': "COINBASE",
                             # 'CopyPrice': copy_price,
                             # 'CopyQuantity': copy_qty,
                             'UiUpdates': 1,
                             'UiScale': 1,
                             }
-        config["API"] = {"Key": "key", "Secret": "secret"}
+        config["API"] = {"Key": "", "Secret": ""}
         print("config obj:", config, "type:", type(config))
         return config
 

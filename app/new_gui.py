@@ -44,8 +44,7 @@ class GuiMgr:
     # This would ensure that functions trigger directly after new ticker data has been received.
     def blink(self):
         """Call all periodic ui updates here."""
-        if self.mw.is_connected:
-            self.scheduler.update()
+        self.scheduler.update()
 
 
     # ######## Setup ##########
@@ -57,10 +56,29 @@ class GuiMgr:
         # print("INPUT:", self.mw.limit_buy_input.value())
     
     def set_api_independant(self):
+        """Gui setup that does not rely on any api data."""
+        self.hide_placeholders()
+        self.mw.version_label.setText("Version: " + "<span style='color: #f3f3f3'>" + self.mw.version + "</span>")
+        self.mw.btc_timeframe_selector.currentIndexChanged.connect(self.update_btc_chart)
+        self.mw.cfg_remember.stateChanged.connect(self.disable_default_pair_selector)
         self.setup_config_ui()
+        self.store_ui_config_values()
 
+    def hide_placeholders(self):
+        """Hide ui text elements until their data arrives."""
+        self.mw.last_price.setText("")
+        self.mw.price_arrow.setText("")
+        self.mw.spread_label.setText("")
 
+        self.mw.btc_vol_label.setText("")
+        self.mw.btc_low_label.setText("")
+        self.mw.btc_high_label.setText("")
+        self.mw.btc_price_label.setText("")
+        self.mw.btc_percent_label.setText("")
 
+        self.mw.btn_cancel_all.setVisible(False)
+        self.mw.cb_history_time.setVisible(False)
+        
 ############################
 
     def change_pair(self):
@@ -82,9 +100,11 @@ class GuiMgr:
 
             self.mw.websocket_manager.stop_sockets()
 
+            if self.mw.cfg_remember.isChecked():
+                self.mw.default_pair_label.setText(new_pair)
+
             logging.info('Change active pair to %s' % new_pair)
 
-            print("LIMIT PANE VALUES")
             self.limit_pane_current_values()
 
             # new 'initial data'
@@ -142,12 +162,12 @@ class GuiMgr:
 
         self.mw.ChartTabs.tabBar().setExpanding(False)
 
-        self.mw.ChartTabs.setCurrentIndex(0)
-        self.mw.tabsBotLeft.setCurrentIndex(4)
-        self.mw.bot_tabs.setCurrentIndex(0)
-
         self.mw.tabsBotLeft.currentChanged.connect(self.tab_change)
         self.mw.tabsBotLeft.tabBar().setExpanding(False)
+
+        self.mw.ChartTabs.setCurrentIndex(0)
+        self.mw.tabsBotLeft.setCurrentIndex(2)
+        self.mw.bot_tabs.setCurrentIndex(0)
         # self.mw.tabsBotLeft.setCornerWidget(self.mw.coin_index_filter)
         # self.mw.ChartTabs.setCornerWidget(self.mw.volume_widget)
         # self.mw.ChartTabs.adjustSize()
@@ -258,6 +278,10 @@ class GuiMgr:
     ###################################
     # CONFIG
     ###################################
+    def update_btc_chart(self):
+        self.mw.btc_chart.setHtml(Webpages.build_chart_btc(self, "BTCUSD", self.mw.cfg_manager.btcTimeframe, self.mw.btc_exchange_selector.currentText()))
+
+
     def setup_config_ui(self):
         self.mw.save_config.clicked.connect(self.save_config)
     
@@ -280,9 +304,6 @@ class GuiMgr:
         #     self.mw.api_manager.in
 
 
-    def store_ui_config_values(self):
-        pass
-
     def read_ui_config_values(self):
         """Read values from config pane ui elements.
         Returns a dict in the format configparser expects."""
@@ -303,4 +324,38 @@ class GuiMgr:
                 "copyprice": True, "copyquantity": False, "uiupdates": 1},
                 "API": {"key": api_key, "secret": api_secret}}  # remove these
 
-        
+    def store_ui_config_values(self):
+        """Reflect loaded configuration values in the ui."""
+        config = self.mw.cfg_manager.config["CONFIG"]
+        api = self.mw.cfg_manager.config["API"]
+
+        check_state = {"True": 2, "False": 0}
+
+        self.mw.api_key_label.setText(api["key"])
+        self.mw.api_secret_label.setText(api["secret"])
+
+        self.mw.default_pair_label.setText(config["defaultpair"])
+        self.mw.cfg_remember.setCheckState(check_state[config["rememberdefault"]])
+
+        raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, 10080]
+        for i, tf in enumerate(raw_timeframes):
+            if tf == int(config["defaulttimeframe"]):
+                self.mw.default_timeframe_selector.setCurrentIndex(i)
+            if tf == int(config["btctimeframe"]):
+                self.mw.btc_timeframe_selector.setCurrentIndex(i)
+
+
+        btn_texts = config["buttonpercentages"].split(",")
+        percent_buttons = [self.mw.percent_1, self.mw.percent_2, self.mw.percent_3, self.mw.percent_4, self.mw.percent_5]
+        for i, btn in enumerate(percent_buttons):
+            btn.setText(btn_texts[i])
+
+    def disable_default_pair_selector(self, state):
+        if state == 2:
+            self.mw.default_pair_label.setEnabled(False)
+            self.mw.default_pair_label.setStyleSheet("color: #999;")
+            self.mw.default_pair_label.setText(self.mw.data.current.pair)
+        else:
+            self.mw.default_pair_label.setEnabled(True)
+            self.mw.default_pair_label.setStyleSheet("color: #f3f3f3;")
+
