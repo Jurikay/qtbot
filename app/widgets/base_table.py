@@ -44,7 +44,7 @@ class BaseTableView(QtWidgets.QTableView):
     def update(self):
         # self.my_model.layoutAboutToBeChanged.emit()
         self.df = self.set_df()
-        # if isinstance(self.df, pd.DataFrame):
+        # if isinstance(self.df,    pd.DataFrame):
         self.my_model.update(self.df)
         # self.my_model.layoutChanged.emit()
 

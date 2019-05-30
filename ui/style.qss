@@ -883,7 +883,7 @@ QHeaderView::section:hover
 
 QHeaderView::section:pressed
 {
-    background-color: #262d33;
+    background-color: #91a2b1;
     color: #f3ba2e;
 }
 

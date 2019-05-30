@@ -18,7 +18,9 @@ class DataManager():
         self.current = Dict()
         self.user = Dict()
         self.stats = Dict()
-        
+
+        self.user.start_btc = 0
+
         self.tickers = dict()
         self.pairs = dict()
 

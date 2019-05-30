@@ -16,7 +16,7 @@ class TelegramBot:
         msg = get_env_values()
         msg += " started"
         self.send_msg(msg)
-    
+
     def stop_message(self):
         msg = get_env_values()
         msg += " stopped"
@@ -24,7 +24,7 @@ class TelegramBot:
         start_btc = app.mw.data.user.start_btc
         total = app.mw.data.current.total_btc
 
-        btc_change_total = float(start_btc) - float(total)
+        btc_change_total = round(float(start_btc) - float(total), 8)
 
         msg += " " + str(total) + " change: " + str(btc_change_total)
         self.send_msg(msg)

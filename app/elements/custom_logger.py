@@ -11,16 +11,20 @@ class BotLogger:
 
     def __init__(self, mw):
         self.mw = mw
+        # TODO create log dir here
 
 
     def init_logging(self):
         qtLogger = QPlainTextEditLogger(self.mw)
         qtLogger.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
         logger = logging.getLogger()
+
         logger.addHandler(qtLogger)
 
         fh = RotatingFileHandler("log.txt", maxBytes=10000, backupCount=5)
         fh.setLevel(logging.INFO)
+        fh.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
         logger.addHandler(fh)
 
         error_handler = RotatingFileHandler("error.txt", maxBytes=10000, backupCount=5)

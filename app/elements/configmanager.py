@@ -202,8 +202,8 @@ class ConfiManager:
         """Write a config object to disk."""
 
         with open(file, "w") as configfile:
-            config.write(resource_path(configfile))
-            logging.info(configfile, " written.")
+            config.write(configfile)
+            # logging.info(configfile, " written.")
 
     def write_config(self):
         # TODO: Implement
@@ -214,5 +214,5 @@ class ConfiManager:
     ################################################
     def write_stats(self):
         self.write_config_to_file(self.stats, self.stats_filename)
-        print("writing", self.stats_filename)
+        print("writing", str(self.stats_filename))
         

@@ -5,7 +5,6 @@ import PyQt5.QtCore as QtCore
 from functools import partial
 import logging
 import app
-from app.helpers import round2precision
 from app.workers import Worker
 # TODO: Refactor; replace val references
 

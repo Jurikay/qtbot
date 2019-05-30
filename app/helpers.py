@@ -19,17 +19,6 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
-def round2precision(val, precision: int = 0, which: str = ''):
-    """Round float to specified position. Round up or down."""
-    assert precision >= 0
-    val *= 10 ** precision
-    round_callback = round
-    if which.lower() == 'up':
-        round_callback = math.ceil
-    if which.lower() == 'down':
-        round_callback = math.floor
-    return '{1:.{0}f}'.format(precision, round_callback(val) / 10 ** precision)
-
 
 def check_file_exists(file_path):
     """Return true if a file exists at the given path."""
@@ -62,3 +51,6 @@ def read_file(file_path):
         with open(resource_path(file_path), "r") as file:
             content = file.read().replace('\n', '')
         return content
+
+def round_decimals(number, digits):
+    return '{number:.{digits}f}'.format(number=float(number), digits=digits)

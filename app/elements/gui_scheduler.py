@@ -209,12 +209,12 @@ class GuiScheduler:
         self.mw.data.current.total_btc = '{number:.{digits}f}'.format(number=float(total_btc_val), digits=8)
         total_formatted = '{number:.{digits}f}'.format(number=float(total_btc_val), digits=8) + " BTC"
 
-        
+        # TODO: Verify
         # Set start btc if it has not been set yet
-        if not str(self.mw.data.user.start_btc) and float(total_btc_val) > 0.0001:
+        if self.mw.data.user["start_btc"] == 0 and float(total_btc_val) > 0.0001:
             
             logging.info("Setting start btc " + total_formatted)
-            self.mw.data.user.start_btc = total_formatted
-        else:
-            logging.info("ELSE" + self.mw.data.user.start_btc + " + " + total_btc_val)
+            self.mw.data.user.start_btc = self.mw.data.current.total_btc
+        # else:
+            # logging.info("ELSE" + self.mw.data.user["start_btc"] + " + " + total_btc_val)
         return total_formatted
