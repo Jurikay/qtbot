@@ -1,7 +1,7 @@
 import telegram
 from app.elements.statisticsmanager import get_env_values
 import app
-
+from app.helpers import round_decimals
 class TelegramBot:
 
     def __init__(self, telegram_token, chat_id):
