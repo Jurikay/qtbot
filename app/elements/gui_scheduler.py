@@ -5,7 +5,7 @@
 import time
 from datetime import timedelta
 from app.colors import Colors
-
+import logging
 
 
 """Collection of methods that are called periodically
@@ -28,6 +28,7 @@ class GuiScheduler:
         """Main public method; Is called periodically;
         Calls all other methods."""
         self.runtime += 1
+        self.mw.data.stats.runtime = self.runtime
         self.update_stats()
 
         if self.mw.is_connected:
@@ -67,10 +68,10 @@ class GuiScheduler:
 
         try:
             total_btc_value = self.calc_total_btc()
-            self.mw.total_btc_label.setText("<span style='font-size: 14px; color: #f3ba2e; font-family: Arial Black;'>" + total_btc_value + "</span>")
+            self.mw.total_btc_label.setText("<span style='color: #f3ba2e;'>" + total_btc_value + "</span>")
 
             total_usd_value = '{number:,.{digits}f}'.format(number=float(total_btc_value.replace(" BTC", "")) * float(self.mw.data.btc_price["lastPrice"]), digits=2) + "$"
-            self.mw.total_usd_label.setText("<span style='font-size: 14px; color: white; font-family: Arial Black;'>" + total_usd_value + "</span>")
+            self.mw.total_usd_label.setText(total_usd_value)
 
             last_btc_price = float(self.mw.data.btc_price["lastPrice"])
             last_btc_price_formatted = '{number:,.{digits}f}'.format(number=last_btc_price, digits=2) + "$"
@@ -111,6 +112,7 @@ class GuiScheduler:
             print("1 sec update error:", e)
 
     def update_stats(self):
+        """Reflect stats of the running application within the ui."""
         session_time = str(timedelta(seconds=self.runtime))
         # total_time = str(timedelta(seconds=self.runtime + int(val["stats"]["timeRunning"])))
 
@@ -182,9 +184,12 @@ class GuiScheduler:
                 # print(str(change))
                 change.setText("<span style='color: " + color + "'>" + operator + "{0:.2f}".format(change_values[i]) + "%</span")
 
+
+    # TODO: Make more generally available
     def calc_total_btc(self):
         """Multiply holdings by their current price to get
         the total account value."""
+        logging.info("Calc total btc")
         total_btc_val = 0
         for holding in self.mw.user_data.holdings:
             free = self.mw.user_data.holdings[holding]["free"]
@@ -200,6 +205,16 @@ class GuiScheduler:
             elif holding == "BTC":
                 total_btc_val += total
 
+        # save in data dict
+        self.mw.data.current.total_btc = '{number:.{digits}f}'.format(number=float(total_btc_val), digits=8)
         total_formatted = '{number:.{digits}f}'.format(number=float(total_btc_val), digits=8) + " BTC"
-        # print("total: " + total_formatted)
+
+        
+        # Set start btc if it has not been set yet
+        if not str(self.mw.data.user.start_btc) and float(total_btc_val) > 0.0001:
+            
+            logging.info("Setting start btc " + total_formatted)
+            self.mw.data.user.start_btc = total_formatted
+        else:
+            logging.info("ELSE" + self.mw.data.user.start_btc + " + " + total_btc_val)
         return total_formatted

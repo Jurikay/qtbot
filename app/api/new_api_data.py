@@ -47,6 +47,7 @@ class ApiManager:
         self.mw.user_data.initial_open_orders()
         self.mw.user_data.initial_history()
         self.mw.user_data.initial_holdings()
+        
 
         # while not self.mw.user_data.open_orders or not self.mw.user_data.trade_history or not self.mw.user_data.holdings:
         #     print("data not yet stored, sleeping")
@@ -68,6 +69,9 @@ class ApiManager:
         ticker or pair values and set in main thread goes here."""
         print("UI SETUP callback:")
         
+
+        
+
         self.mw.gui_mgr.set_charts(self.mw.data.current.pair)
 
 

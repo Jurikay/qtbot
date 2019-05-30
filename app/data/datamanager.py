@@ -17,7 +17,8 @@ class DataManager():
         print("Init new datamanager")
         self.current = Dict()
         self.user = Dict()
-
+        self.stats = Dict()
+        
         self.tickers = dict()
         self.pairs = dict()
 
@@ -53,11 +54,11 @@ class DataManager():
             elif info["symbol"] == "BTCUSDT":
                 self.btc_price = info
         self.ticker_df()
-    
+
     @staticmethod
     def set_trades(trades):
         pass
-    
+
     def set_hist(self, history):
         """Receives either a list of recent trades (dicts) or the most recent trade."""
         # TODO: Verify

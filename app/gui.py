@@ -4,9 +4,11 @@
 # made by Jirrik
 
 
-import logging
+import os
+import platform
 from datetime import datetime
 from functools import partial
+from pathlib import Path
 
 import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
@@ -17,41 +19,17 @@ from PyQt5.uic import loadUi
 from twisted.internet import reactor
 from twisted.internet.error import ReactorNotRunning
 
-from app.charts import welcome_page
-# from app.charts import Webpages as Webpages
-# from app.gui_functions import (calc_wavg, calc_all_wavgs)
-# filter_coin_index, global_filter, filter_confirmed,
-# from app.strategies.fishing_bot import FishingBot
-# from app.strategies.limit_order import LimitOrder
 import app
 from app.api.apiFunctions import ApiCalls
-# from app.data.historical_data import HistoricalData
-from app.data.user_data import UserData
-from app.elements.config import ConfigManager
-# from app.elements.hotkeys import HotKeys
-# from app.elements.kline_data import KlineManager
-# from app.elements.test_class import TestKlasse
-# from app.elements.init_manager import InitManager
-from app.elements.custom_logger import BotLogger
-# from app.elements.gui_manager import GuiManager
-# from app.tables.table_manager import TableManager
-from app.api.websocket_manager import WebsocketManager
-
-from app.data.datamanager import DataManager
 from app.api.new_api_data import ApiManager
-
-from app.new_gui import GuiMgr
-
-from app.sounds import Sounds
-
-import platform
-import os
-from pathlib import Path
-
+from app.api.websocket_manager import WebsocketManager
+from app.data.datamanager import DataManager
+from app.data.user_data import UserData
+from app.elements.telegram_bot import TelegramBot
+from app.elements.custom_logger import BotLogger
 from app.helpers import resource_path
-
-# from PyQt5.QtMultimedia import QSoundEffect, QMediaPlayer, QMediaContent, QSound
-# from app.data.index_data import IndexData
+from app.new_gui import GuiMgr
+from app.sounds import Sounds
 
 
 class beeserBot(QtWidgets.QMainWindow):
@@ -191,6 +169,8 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         self.sound_manager = Sounds(self)
+
+        self.telegram_bot = TelegramBot("845873423:AAE-w23y9a_BU4ARGwoQzCE-0RHOKaZa-5s", "97886168")
 
 
         # TODO: Add sound manager / data manager
@@ -337,7 +317,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
     def shutdown_bot(self):
         """Called immediately before the application terminates."""
-
+        self.telegram_bot.stop_message()
         self.cfg_manager.write_stats()
         self.cfg_manager.write_config()
 

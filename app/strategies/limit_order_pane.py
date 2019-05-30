@@ -134,7 +134,7 @@ class LimitOrderPane(QtWidgets.QWidget):
                 self.mw.limit_buy_input.setValue(float(self.mw.data.tickers[self.mw.data.current.pair]["lowPrice"]))
             elif self.mw.sender().text() == "daily high":
                 self.mw.limit_sell_input.setValue(float(self.mw.data.tickers[self.mw.data.current.pair]["highPrice"]))
-        except KeyError as e:
+        except (KeyError, TypeError) as e:
             print("overbid undercut error", e)
 ####################################
     #           VALIDATATION

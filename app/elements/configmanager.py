@@ -31,11 +31,14 @@ class ConfiManager:
 
     def __init__(self, cfg_path="config.ini"):
         self.config_filename = resource_path(cfg_path)
+        self.stats_filename = resource_path("stats.ini")
 
         self.config = configparser.ConfigParser()
+        self.stats = configparser.ConfigParser()
         self.initialize()
 
         # config values as attributes for easy access
+        # TODO: Probably fit to refactor
         self.api_key = self.get_config_value("API", "key")
         self.api_secret = self.get_config_value("API", "secret")
         self.defaultTimeframe = self.get_config_value("CONFIG", "defaultTimeframe")
@@ -58,6 +61,16 @@ class ConfiManager:
         print("Generating new config")
         self.config = self.create_config()
         return self.config
+
+
+    def init_stats(self):
+        if os.path.isfile(self.stats_filename):
+            self.stats.read(self.stats_filename)
+            
+        else:
+            self.stats = self.create_stats()
+        
+        return self.stats
 
     def store_config(self, config_dict):
         """Receives a dict of config values. Store values
@@ -89,7 +102,6 @@ class ConfiManager:
         non_valid_keys = list()
         for section in config.sections():
             for key, value in config.items(section):
-                # print("Config sec:", section, "key:", key, "value;", value)
                 try:
                     if key == "defaultpair":
                         assert "BTC" in value
@@ -153,7 +165,15 @@ class ConfiManager:
         
         return self.config
 
-
+    def create_stats(self):
+        stats = self.stats
+        stats["Stats"] = {
+            "timerunning": 0,
+            "exectrades": 0,
+            "apiupdates": 0,
+            "apicalls": 0
+        }
+        return stats
 
     def create_config(self):
         """Create a config object with default values."""
@@ -183,8 +203,8 @@ class ConfiManager:
 
         with open(file, "w") as configfile:
             config.write(resource_path(configfile))
-            logging.info("config file written.")
-    
+            logging.info(configfile, " written.")
+
     def write_config(self):
         # TODO: Implement
         print("writing config")
@@ -193,6 +213,6 @@ class ConfiManager:
     # STATS
     ################################################
     def write_stats(self):
-        # TODO: Implement
-        print("writing stats")
+        self.write_config_to_file(self.stats, self.stats_filename)
+        print("writing", self.stats_filename)
         

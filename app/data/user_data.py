@@ -217,11 +217,11 @@ class UserData(QtCore.QObject):
         
         # Refactor: Rather than try/except handle like dataclass methods; isinstance() to
         # differentiate between api call and websocket.
-        # try:
-        #     order_id = order["id"]
-        # except KeyError:
-        #     print("Order filled: check id/orderId!")
-        #     order_id = order["orderId"]
+        try:
+            order_id = order["id"]
+        except KeyError:
+            print("Order filled: check id/orderId!")
+            order_id = order["orderId"]
 
         pair = order["symbol"]
         order["total"] = float(order["executedQty"]) * float(order["price"])
@@ -230,7 +230,7 @@ class UserData(QtCore.QObject):
             self.trade_history[pair] = dict()
 
 
-        self.set_save(self.trade_history[pair], order["id"], order)
+        self.set_save(self.trade_history[pair], order_id, order)
 
 
         # elif (self.trade_history[pair].get("orderId")):

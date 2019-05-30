@@ -5,13 +5,12 @@
 import PyQt5.QtCore as QtCore
 import PyQt5.QtGui as QtGui
 
-
+import logging
 # from PyQt5.QtCore import pyqtSlot
 import numpy as np
 import pandas as pd
 
 from app.charts import Webpages
-from app.gui import logging
 from app.helpers import resource_path
 from app.elements.gui_scheduler import GuiScheduler
 
@@ -302,6 +301,32 @@ class GuiMgr:
         # if not self.mw.is_connected:
         #     print("trying to authenticate")
         #     self.mw.api_manager.in
+
+    def read_ui_stats_values(self):
+        """Read values from stats pane ui elements."""
+        session_time = self.mw.session_running.text()
+        total_time = self.mw.total_running.text()
+
+        session_trades = self.mw.session_trades.text()
+        total_trades = self.mw.total_trades.text()
+
+        session_bot_trades = self.mw.session_bot_trades.text()
+        total_bot_trades = self.mw.total_bot_trades.text()
+
+        session_api_updates = self.mw.session_api_updates.text()
+        total_api_updates = self.mw.total_api_updates.text()
+
+        session_explicit_updates = self.mw.session_explicit.text()
+        total_explicit_updates = self.mw.total_api_calls.text()
+        return {"Stats": {"timerunning": total_time, "exectrades": total_trades, "execbottrades": total_bot_trades, "apiupdates": total_api_updates, "apicalls": total_explicit_updates}}
+
+    def set_ui_stat_values(self):
+        stats = self.mw.cfg_manager.stats["Stats"]
+        self.mw.total_running.setText(stats["timerunning"])
+        self.mw.total_trades.setText(stats["exectrades"])
+        self.mw.total_bot_trades.setText(stats["execbottrades"])
+        self.mw.total_api_updates.setText(stats["apiupdates"])
+        self.mw.total_explicit_updates.setText(stats["apicalls"])
 
 
     def read_ui_config_values(self):

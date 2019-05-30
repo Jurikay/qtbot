@@ -1,8 +1,9 @@
 # from app.workers import Worker
-import PyQt5.QtWidgets as QtWidgets
 # import PyQt5.QtGui as QtGui
 # import PyQt5.QtCore as QtCore
-from app.gui import logging
+import logging
+from logging.handlers import RotatingFileHandler
+import PyQt5.QtWidgets as QtWidgets
 
 # TODO Revisit; add more logging entries
 
@@ -18,10 +19,13 @@ class BotLogger:
         logger = logging.getLogger()
         logger.addHandler(qtLogger)
 
-        fh = logging.FileHandler('spam.log')
+        fh = RotatingFileHandler("log.txt", maxBytes=10000, backupCount=5)
         fh.setLevel(logging.INFO)
         logger.addHandler(fh)
 
+        error_handler = RotatingFileHandler("error.txt", maxBytes=10000, backupCount=5)
+        error_handler.setLevel(logging.ERROR)
+        logger.addHandler(error_handler)
 
         # You can control the logging level
         logger.setLevel(logging.INFO)
