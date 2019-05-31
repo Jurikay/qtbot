@@ -1,0 +1,27 @@
+config##
+check exist
+load from file
+create default
+validate config
+set ui values
+load from ui
+write to file
+
+
+public methods:
+init_config()
+"""Load or create cfg, validate and apply values."""
+
+safe_config()
+"""Load ui config values, validate and store on disk."""
+
+
+## called in the beginning
+load from file
+validate
+set ui values
+
+# called on safe btn click and on shutdown
+load from ui
+(validate)
+write to file

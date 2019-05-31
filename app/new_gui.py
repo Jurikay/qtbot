@@ -330,6 +330,7 @@ class GuiMgr:
         return {"Stats": {"timerunning": total_time, "exectrades": total_trades, "execbottrades": total_bot_trades, "apiupdates": total_api_updates, "apicalls": total_explicit_updates}}
 
     def set_ui_stat_values(self):
+        """Apply stats values to ui elements."""
         stats = self.mw.cfg_manager.stats["Stats"]
         self.mw.total_running.setText(stats["timerunning"])
         self.mw.total_trades.setText(stats["exectrades"])
@@ -349,7 +350,7 @@ class GuiMgr:
         defaultpair = self.mw.default_pair_label.text()
         # copy_price = self.mw.copy_price_box.isChecked()
         # copy_qty = self.mw.copy_qty_box.isChecked()
-        percent_texts = int(self.mw.percent_1.text()), int(self.mw.percent_2.text()), int(self.mw.percent_3.text()), int(self.mw.percent_4.text()), int(self.mw.percent_5.text())
+        percent_texts = self.mw.percent_1.text() + ", " + self.mw.percent_2.text() + ", " + self.mw.percent_3.text() + ", " + self.mw.percent_4.text() + ", " + self.mw.percent_5.text()
         # percent = self.mw.buttonPercentage
         default_timeframe_index = self.mw.default_timeframe_selector.currentIndex()
         btctimeframe_index = self.mw.btc_timeframe_selector.currentIndex()
@@ -386,7 +387,7 @@ class GuiMgr:
                 self.mw.btc_timeframe_selector.setCurrentIndex(i)
 
 
-        btn_texts = config["buttonpercentages"].split(",")
+        btn_texts = config["buttonpercentages"].split(", ")
         percent_buttons = [self.mw.percent_1, self.mw.percent_2, self.mw.percent_3, self.mw.percent_4, self.mw.percent_5]
         for i, btn in enumerate(percent_buttons):
             btn.setText(btn_texts[i])
@@ -400,3 +401,4 @@ class GuiMgr:
             self.mw.default_pair_label.setEnabled(True)
             self.mw.default_pair_label.setStyleSheet("color: #f3f3f3;")
 
+    

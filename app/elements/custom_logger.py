@@ -1,10 +1,11 @@
 # from app.workers import Worker
 # import PyQt5.QtGui as QtGui
 # import PyQt5.QtCore as QtCore
+import os
 import logging
 from logging.handlers import RotatingFileHandler
 import PyQt5.QtWidgets as QtWidgets
-
+from app.helpers import resource_path
 # TODO Revisit; add more logging entries
 
 class BotLogger:
@@ -12,7 +13,12 @@ class BotLogger:
     def __init__(self, mw):
         self.mw = mw
         # TODO create log dir here
+        self.create_log_dir()
 
+    def create_log_dir(self):
+        log_dir = "logs"
+        if not os.path.isdir(log_dir):
+            os.makedirs(resource_path(log_dir))
 
     def init_logging(self):
         qtLogger = QPlainTextEditLogger(self.mw)

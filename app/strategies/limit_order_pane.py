@@ -15,6 +15,7 @@ class LimitOrderPane(QtWidgets.QWidget):
         self.mw = app.mw
         self.buy_allowed = False
         self.sell_allowed = False
+        
 
     # restructure
     def new_pair(self):
@@ -299,3 +300,20 @@ class LimitOrderPane(QtWidgets.QWidget):
 
         self.mw.limit_buy_button.clicked.connect(self.create_buy_order)
         self.mw.limit_sell_button.clicked.connect(self.create_sell_order)
+
+        self.set_button_text()
+    
+    def set_button_text(self):
+        """Called when button config values are changed."""
+        buttonPercentage = self.mw.cfg_manager.config["CONFIG"]["buttonpercentages"].split(", ")
+        self.mw.limit_button0.setText(str(buttonPercentage[0]) + "%")
+        self.mw.limit_button1.setText(str(buttonPercentage[1]) + "%")
+        self.mw.limit_button2.setText(str(buttonPercentage[2]) + "%")
+        self.mw.limit_button3.setText(str(buttonPercentage[3]) + "%")
+        self.mw.limit_button4.setText(str(buttonPercentage[4]) + "%")
+
+        self.mw.limit_sbutton0.setText(str(buttonPercentage[0]) + "%")
+        self.mw.limit_sbutton1.setText(str(buttonPercentage[1]) + "%")
+        self.mw.limit_sbutton2.setText(str(buttonPercentage[2]) + "%")
+        self.mw.limit_sbutton3.setText(str(buttonPercentage[3]) + "%")
+        self.mw.limit_sbutton4.setText(str(buttonPercentage[4]) + "%")
