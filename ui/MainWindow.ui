@@ -236,14 +236,14 @@
           <item>
            <widget class="QWidget" name="volumes_widget" native="true">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
               <horstretch>3</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_43">
              <property name="spacing">
-              <number>8</number>
+              <number>20</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -327,7 +327,7 @@
                 <number>0</number>
                </property>
                <property name="rightMargin">
-                <number>15</number>
+                <number>10</number>
                </property>
                <item>
                 <widget class="QLabel" name="label_42">
@@ -369,10 +369,10 @@
                 <number>2</number>
                </property>
                <property name="leftMargin">
-                <number>10</number>
+                <number>0</number>
                </property>
                <property name="rightMargin">
-                <number>15</number>
+                <number>10</number>
                </property>
                <item>
                 <widget class="QLabel" name="label_30">
@@ -414,7 +414,7 @@
                 <number>2</number>
                </property>
                <property name="rightMargin">
-                <number>15</number>
+                <number>10</number>
                </property>
                <item>
                 <widget class="QLabel" name="label_45">
@@ -456,7 +456,7 @@
                 <number>2</number>
                </property>
                <property name="rightMargin">
-                <number>15</number>
+                <number>10</number>
                </property>
                <item>
                 <widget class="QLabel" name="label_46">
@@ -730,8 +730,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>969</width>
-                  <height>521</height>
+                  <width>981</width>
+                  <height>485</height>
                  </rect>
                 </property>
                </widget>
@@ -2850,7 +2850,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>4</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -4997,11 +4997,8 @@
             </item>
             <item row="1" column="3">
              <widget class="QLineEdit" name="api_key_label">
-              <property name="inputMethodHints">
-               <set>Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
-              </property>
               <property name="echoMode">
-               <enum>QLineEdit::PasswordEchoOnEdit</enum>
+               <enum>QLineEdit::Normal</enum>
               </property>
              </widget>
             </item>
@@ -5081,44 +5078,30 @@
               </property>
              </widget>
             </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Copy on click:</string>
-              </property>
-             </widget>
-            </item>
             <item row="7" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_24">
               <property name="spacing">
                <number>10</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="copy_price_box">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+               <widget class="QDoubleSpinBox" name="sb_uiscale">
+                <property name="suffix">
+                 <string>x</string>
                 </property>
-                <property name="text">
-                 <string>Copy Price</string>
+                <property name="decimals">
+                 <number>1</number>
                 </property>
-                <property name="checked">
-                 <bool>true</bool>
+                <property name="minimum">
+                 <double>0.100000000000000</double>
                 </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="copy_qty_box">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+                <property name="maximum">
+                 <double>5.000000000000000</double>
                 </property>
-                <property name="text">
-                 <string>Copy Quantity</string>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="value">
+                 <double>0.100000000000000</double>
                 </property>
                </widget>
               </item>
@@ -5430,6 +5413,13 @@
               </property>
              </widget>
             </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>UI Scale</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="tab_4">
@@ -5490,7 +5480,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>614</width>
-                 <height>479</height>
+                 <height>482</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -5671,7 +5661,7 @@
                  </widget>
                 </item>
                 <item row="4" column="1">
-                 <widget class="QLineEdit" name="lineEdit_11">
+                 <widget class="QLineEdit" name="session_trades">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                     <horstretch>0</horstretch>
@@ -5732,7 +5722,7 @@
                  </widget>
                 </item>
                 <item row="11" column="1">
-                 <widget class="QLineEdit" name="explicit_api_updates">
+                 <widget class="QLineEdit" name="session_api_updates">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                     <horstretch>0</horstretch>
@@ -5742,7 +5732,7 @@
                  </widget>
                 </item>
                 <item row="7" column="1">
-                 <widget class="QLineEdit" name="lineEdit_5">
+                 <widget class="QLineEdit" name="session_bot_trades">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                     <horstretch>0</horstretch>
@@ -5778,7 +5768,7 @@
                  </widget>
                 </item>
                 <item row="15" column="1">
-                 <widget class="QLineEdit" name="explicit_api_calls_label">
+                 <widget class="QLineEdit" name="session_explicit">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
                     <horstretch>0</horstretch>
@@ -5840,7 +5830,7 @@
      <x>0</x>
      <y>0</y>
      <width>1686</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -5961,7 +5951,6 @@
   <tabstop>percent_3</tabstop>
   <tabstop>percent_4</tabstop>
   <tabstop>percent_5</tabstop>
-  <tabstop>copy_qty_box</tabstop>
   <tabstop>reset_vol_direct</tabstop>
   <tabstop>get_all_orders_button</tabstop>
   <tabstop>debug_corner</tabstop>
@@ -5977,7 +5966,6 @@
   <tabstop>go_fishing</tabstop>
   <tabstop>cfg_remember</tabstop>
   <tabstop>default_pair_label</tabstop>
-  <tabstop>copy_price_box</tabstop>
   <tabstop>default_timeframe_selector</tabstop>
   <tabstop>ui_updates_box</tabstop>
   <tabstop>save_config</tabstop>
@@ -5985,11 +5973,11 @@
   <tabstop>session_running</tabstop>
   <tabstop>total_trades</tabstop>
   <tabstop>total_bot_trades</tabstop>
-  <tabstop>lineEdit_11</tabstop>
+  <tabstop>session_trades</tabstop>
   <tabstop>total_running</tabstop>
-  <tabstop>explicit_api_updates</tabstop>
-  <tabstop>lineEdit_5</tabstop>
-  <tabstop>explicit_api_calls_label</tabstop>
+  <tabstop>session_api_updates</tabstop>
+  <tabstop>session_bot_trades</tabstop>
+  <tabstop>session_explicit</tabstop>
   <tabstop>total_api_updates</tabstop>
   <tabstop>total_api_calls</tabstop>
   <tabstop>widget_2</tabstop>

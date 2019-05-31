@@ -17,11 +17,14 @@ QWidget {
     color: #f3f3f3;
 }
 
-#acc_label {
+#acc_label, #total_usd_label, #total_btc_label {
     font-weight: 700;
-    font-size: 17px;
+    font-size: 17px
 }
 
+#total_usd_label {
+    color: #f3f3f3;
+}
 #spread_area, #spread_area QLabel {
   background-color: #2e363d;
   font-family: "Source Sans Pro";
@@ -29,7 +32,6 @@ QWidget {
   font-size: 22px;
   color: #999;
 }
-
 
 #stats_grid QLineEdit, #stats_grid QLineEdit:hover {
   border: 2px solid transparent;
@@ -883,7 +885,7 @@ QHeaderView::section:hover
 
 QHeaderView::section:pressed
 {
-    background-color: #91a2b1;
+    background-color: #262d33;
     color: #f3ba2e;
 }
 
