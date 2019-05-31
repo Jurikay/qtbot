@@ -10,7 +10,6 @@ import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 from app.widgets.table_implementations import RoundFloatDelegate, ChangePercentDelegate
 
-
 from app.widgets.base_table import SortModel
 from app.colors import Colors
 
@@ -38,7 +37,6 @@ class CoinSelector(QtWidgets.QComboBox):
         self.setIconSize(QtCore.QSize(25, 25))
         self.setModelColumn(0)
         self.setMouseTracking(False)
-
 
     def paintEvent(self, event):
         """Reimplemented."""
@@ -83,7 +81,6 @@ class CoinSelector(QtWidgets.QComboBox):
 
         # self.clearFocus()  # TODO: Verify
 
-
     def update(self):
         self.model.update(self.mw.data.current.ticker_df)
         # TODO: clean up this mess
@@ -102,11 +99,7 @@ class CoinSelector(QtWidgets.QComboBox):
             print("CANCEL")
             return
 
-
         pair = self.mw.data.current.pair
-
-        # if not pair:
-        #     pair = "BNBBTC"
 
         row = df.index[df["Coin"] == pair][0]
         self.setCurrentIndex(row)
@@ -144,7 +137,6 @@ class SelectorView(QtWidgets.QTableView):
         # Disable displaying header text in bold
         self.horizontalHeader().setHighlightSections(False)
 
-
     def set_delegates(self):
         self.setItemDelegateForColumn(0, NCoinDelegate(self))
         self.setItemDelegateForColumn(1, NPriceDelegate(self))
@@ -163,7 +155,6 @@ class SelectorView(QtWidgets.QTableView):
         self.setColumnWidth(1, 165)
         self.setColumnWidth(2, 100)
         self.setColumnWidth(3, 120)
-
 
 class NPriceDelegate(QtWidgets.QStyledItemDelegate):
     """Delegate that colors satoshi in a BTC value."""  # TODO: Find better name
@@ -217,7 +208,6 @@ class NPriceDelegate(QtWidgets.QStyledItemDelegate):
         painter.drawText(x, y, str(dollar_value) + "$")
         painter.restore()
 
-
 # refactor (used by coin_selector view)
 class NCoinDelegate(QtWidgets.QStyledItemDelegate):
 
@@ -232,7 +222,6 @@ class NCoinDelegate(QtWidgets.QStyledItemDelegate):
         else:
             option.icon = QtGui.QIcon(resource_path("images/ico/BTC.svg"))
 
-
         option.text = index.data().replace("BTC", "")
 
     def paint(self, painter, option, index):
@@ -246,7 +235,6 @@ class NCoinDelegate(QtWidgets.QStyledItemDelegate):
         self.initStyleOption(options, index)
         font = QtGui.QFont()
 
-
         iconRect = QtCore.QRect(option.rect.left() + 6,
                                 option.rect.top(),
                                 # icon is quadratic; set width to it's height.
@@ -258,8 +246,6 @@ class NCoinDelegate(QtWidgets.QStyledItemDelegate):
                                 # subtract previously added icon width.
                                 option.rect.width() - iconRect.width(),
                                 option.rect.height())
-
-
 
         if option.state & QtWidgets.QStyle.State_Selected:
             painter.setPen(QtGui.QColor(Colors.color_yellow))

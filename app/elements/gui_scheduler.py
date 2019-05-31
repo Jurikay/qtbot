@@ -114,10 +114,12 @@ class GuiScheduler:
     def update_stats(self):
         """Reflect stats of the running application within the ui."""
         session_time = str(timedelta(seconds=self.runtime))
-        # total_time = str(timedelta(seconds=self.runtime + int(val["stats"]["timeRunning"])))
+        total_time = str(timedelta(seconds=self.runtime + int(self.mw.cfg_manager.stats["Stats"]["timeRunning"])))
+
+
 
         self.mw.session_running.setText(session_time)
-        # self.mw.total_running.setText(total_time)
+        self.mw.total_running.setText(total_time)
 
         self.mw.current_time.setText(str(time.strftime('%a, %d %b %Y %H:%M:%S')))
 
@@ -189,7 +191,6 @@ class GuiScheduler:
     def calc_total_btc(self):
         """Multiply holdings by their current price to get
         the total account value."""
-        logging.info("Calc total btc")
         total_btc_val = 0
         for holding in self.mw.user_data.holdings:
             free = self.mw.user_data.holdings[holding]["free"]

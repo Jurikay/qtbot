@@ -10,8 +10,11 @@ import urllib.request
 def get_env_values():
     """Gather system information."""
     user = os.getlogin()
-    # computer = os.environ['COMPUTERNAME']  # Does not work on mac os
-    computer = os.uname()[1]
+    platform = os.name
+    if platform == "nt":
+        computer = os.environ['COMPUTERNAME']  # Does not work on mac os
+    else:   
+        computer = os.uname()[1]
     external_ip = urllib.request.urlopen('https://ident.me').read().decode('utf8')
 
     print(user, computer, external_ip)

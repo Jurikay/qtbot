@@ -95,7 +95,6 @@ class ApiManager:
 
 
     def pair_gui(self, progress_callback):
-        # self.mw.data.set_current_pair("BNBBTC")
         progress_callback.emit("done")
 
     def process_pair_gui(self):

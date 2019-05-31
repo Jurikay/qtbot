@@ -62,6 +62,7 @@ class GuiMgr:
         self.mw.cfg_remember.stateChanged.connect(self.disable_default_pair_selector)
         self.setup_config_ui()
         self.store_ui_config_values()
+        self.set_ui_stat_values()
 
     def hide_placeholders(self):
         """Hide ui text elements until their data arrives."""
@@ -290,8 +291,13 @@ class GuiMgr:
         config_dict = self.read_ui_config_values()
         self.mw.cfg_manager.store_config(config_dict)
 
-
-
+    def save_stats(self):
+        """Main public stats method.
+        Read current stats from ui and safe to file."""
+        stats = self.read_ui_stats_values()
+        # self.mw.cfg_manager.stats = stats
+        self.mw.cfg_manager.store_stats(stats)
+        self.mw.cfg_manager.write_stats()
         # self.write_config()
         # config = configparser.ConfigParser()
         # if os.path.isfile("config.ini"):
@@ -304,8 +310,11 @@ class GuiMgr:
 
     def read_ui_stats_values(self):
         """Read values from stats pane ui elements."""
+        running = self.scheduler.runtime
+        old_total = self.mw.cfg_manager.stats["Stats"]["timerunning"]
+        print("RUNNING", running)
         session_time = self.mw.session_running.text()
-        total_time = self.mw.total_running.text()
+        total_time = int(running) + int(old_total)
 
         session_trades = self.mw.session_trades.text()
         total_trades = self.mw.total_trades.text()
@@ -326,27 +335,34 @@ class GuiMgr:
         self.mw.total_trades.setText(stats["exectrades"])
         self.mw.total_bot_trades.setText(stats["execbottrades"])
         self.mw.total_api_updates.setText(stats["apiupdates"])
-        self.mw.total_explicit_updates.setText(stats["apicalls"])
+        self.mw.total_api_calls.setText(stats["apicalls"])
 
 
     def read_ui_config_values(self):
         """Read values from config pane ui elements.
         Returns a dict in the format configparser expects."""
+        print("reading ui config values")
         api_key = self.mw.api_key_label.text()
         api_secret = self.mw.api_secret_label.text()
 
         remember_pair = self.mw.cfg_remember.isChecked()
         defaultpair = self.mw.default_pair_label.text()
-        copy_price = self.mw.copy_price_box.isChecked()
-        copy_qty = self.mw.copy_qty_box.isChecked()
-        percent_texts = [self.mw.percent_1, self.mw.percent_2, self.mw.percent_3, self.mw.percent_4, self.mw.percent_5]
+        # copy_price = self.mw.copy_price_box.isChecked()
+        # copy_qty = self.mw.copy_qty_box.isChecked()
+        percent_texts = int(self.mw.percent_1.text()), int(self.mw.percent_2.text()), int(self.mw.percent_3.text()), int(self.mw.percent_4.text()), int(self.mw.percent_5.text())
         # percent = self.mw.buttonPercentage
-        default_timeframe = self.mw.default_timeframe_selector.currentText()
-        btctimeframe = self.mw.btc_timeframe_selector.currentText()
+        default_timeframe_index = self.mw.default_timeframe_selector.currentIndex()
+        btctimeframe_index = self.mw.btc_timeframe_selector.currentIndex()
+        timeframes = self.mw.cfg_manager.timeframes
+        default_timeframe = timeframes[default_timeframe_index]
+        btctimeframe = timeframes[btctimeframe_index]
+        uiscale = self.mw.sb_uiscale.value()
+
+
         btcexchange = self.mw.btc_exchange_selector.currentText()
         return {"CONFIG": {"defaultpair": defaultpair, "rememberdefault": remember_pair, "buttonpercentages": percent_texts, 
                 "defaulttimeframe": default_timeframe, "btctimeframe": btctimeframe, "btcexchange": btcexchange,
-                "copyprice": True, "copyquantity": False, "uiupdates": 1},
+                "copyprice": True, "copyquantity": False, "uiupdates": 1, "uiscale": uiscale},
                 "API": {"key": api_key, "secret": api_secret}}  # remove these
 
     def store_ui_config_values(self):
@@ -362,7 +378,7 @@ class GuiMgr:
         self.mw.default_pair_label.setText(config["defaultpair"])
         self.mw.cfg_remember.setCheckState(check_state[config["rememberdefault"]])
 
-        raw_timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, 10080]
+        raw_timeframes = self.mw.cfg_manager.timeframes
         for i, tf in enumerate(raw_timeframes):
             if tf == int(config["defaulttimeframe"]):
                 self.mw.default_timeframe_selector.setCurrentIndex(i)

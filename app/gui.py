@@ -205,7 +205,7 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.init_manager = InitManager(self)
         # self.init_manager.initialize()
 
-        
+
     # TODO: Refactor; 4 states: offline, binance unreachable, banned, authenticated
     # move to different file
     def check_connection(self):
@@ -213,7 +213,7 @@ class beeserBot(QtWidgets.QMainWindow):
         several helper classes."""
         if self.is_connected:
             print("is_connected: TRUE")
-            
+
             self.instantiate_api_managers()
             self.initialize_user_data()
 
@@ -318,8 +318,9 @@ class beeserBot(QtWidgets.QMainWindow):
     def shutdown_bot(self):
         """Called immediately before the application terminates."""
         self.telegram_bot.stop_message()
-        self.cfg_manager.write_stats()
-        self.cfg_manager.write_config()
+        # self.cfg_manager.write_stats()
+        self.gui_mgr.save_stats()
+        self.gui_mgr.save_config()
 
         # api error workaround
         try:

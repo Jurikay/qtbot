@@ -144,3 +144,12 @@ table recent market activity:
 configurable thresholds
 activities pop up
 can connect 
+
+0.1 release TODO:
+Add sound effects
+read and write config and stats
+send usage information
+update config and stats pages
+save config button
+first time login logic
+save logs to subdir

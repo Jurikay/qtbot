@@ -33,9 +33,13 @@ class ConfiManager:
         self.config_filename = resource_path(cfg_path)
         self.stats_filename = resource_path("stats.ini")
 
+        self.parser = configparser.ConfigParser()
         self.config = configparser.ConfigParser()
         self.stats = configparser.ConfigParser()
         self.initialize()
+        self.init_stats()
+
+        self.timeframes = [1, 3, 5, 15, 30, 45, 60, 120, 180, 240, 1440, 10080]
 
         # config values as attributes for easy access
         # TODO: Probably fit to refactor
@@ -80,6 +84,11 @@ class ConfiManager:
         if self.validate_config(config_obj):
             print("Storing received config!")
             self.config = config_obj
+            self.save_config()
+
+    def store_stats(self, stats_dict):
+        stats_obj = self.dict_to_config(stats_dict)
+        self.stats = stats_obj
 
     def get_config_value(self, key, section):
         return self.config.get(key, section)
@@ -88,9 +97,11 @@ class ConfiManager:
 
     def dict_to_config(self, config_dict):
         """Takes a dictionary and returns a config object."""
-        config = self.config
-        config["CONFIG"] = config_dict["CONFIG"]
-        config["API"] = config_dict["API"]
+        config = self.parser
+        for key in config_dict:
+            config[key] = config_dict[key]
+        # config["CONFIG"] = config_dict["CONFIG"]
+        # config["API"] = config_dict["API"]
         return config
 
 
@@ -170,6 +181,7 @@ class ConfiManager:
         stats["Stats"] = {
             "timerunning": 0,
             "exectrades": 0,
+            "execbottrades": 0,
             "apiupdates": 0,
             "apicalls": 0
         }
@@ -200,14 +212,14 @@ class ConfiManager:
 
     def write_config_to_file(self, config, file):
         """Write a config object to disk."""
-
+        print("Saving config to disk.")
         with open(file, "w") as configfile:
             config.write(configfile)
             # logging.info(configfile, " written.")
 
     def write_config(self):
-        # TODO: Implement
-        print("writing config")
+
+        print("writing config (uselss)")
 
     ################################################
     # STATS
