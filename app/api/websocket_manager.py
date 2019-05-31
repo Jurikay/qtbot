@@ -45,6 +45,8 @@ class WebsocketManager:
         self.index_df = None
         self.socket_mgr = BinanceSocketManager(self.client)
         self.mutex = mutex
+        self.kline_sockets = dict()
+
 
     # websockets
     def schedule_websockets(self):
@@ -68,6 +70,10 @@ class WebsocketManager:
         self.websockets_symbol()
         self.userWebsocket = self.socket_mgr.start_user_socket(self.user_callback)
         self.tickerWebsocket = self.socket_mgr.start_ticker_socket(self.ticker_callback)
+
+        # # testing multiplex kline socket:
+        # self.klineSocket = self.socket_mgr.start_multiplex_socket(['bnbbtc@kline_1m', 'neobtc@kline_1m'], self.kline_callback)
+
         self.socket_mgr.start()
 
         progress_callback.emit("sockets started")
@@ -75,6 +81,15 @@ class WebsocketManager:
     def stop_sockets(self):
         self.socket_mgr.stop_socket(self.aggTradeSocket)
         self.socket_mgr.stop_socket(self.depthSocket)
+
+        # self.socket_mgr.stop_socket(self.klineSocket_1m)
+        # self.socket_mgr.stop_socket(self.klineSocket_5m)
+        # self.socket_mgr.stop_socket(self.klineSocket_15m)
+        # self.socket_mgr.stop_socket(self.klineSocket_30m)
+
+
+
+
         # self.socket_mgr.stop_socket(self.klineSocket1)
         # self.socket_mgr.stop_socket(self.klineSocket5)
 
@@ -83,6 +98,32 @@ class WebsocketManager:
         """Symbol specific websockets. This gets called on pair change."""
         self.depthSocket = self.socket_mgr.start_depth_socket(self.mw.data.current.pair, self.depth_callback, depth=20)
         self.aggTradeSocket = self.socket_mgr.start_aggtrade_socket(self.mw.data.current.pair, self.trade_callback)
+
+    def start_kline_socket(self):
+        """This has to be called later since ticker data must be present."""
+        candle_timeframes = ["1m", "5m", "15m", "30m", "1h", "1d"]
+        pairs = self.mw.data.tickers.keys()
+
+        for tf in candle_timeframes:
+            ticker_array = [x.lower() + "@kline_" + tf for x in pairs]
+            self.kline_sockets[tf] = self.socket_mgr.start_multiplex_socket(ticker_array, self.kline_callback)
+        
+
+        # ticker_array_1m = [x.lower() + "@kline_1m" for x in pairs]
+        # ticker_array_5m = [x.lower() + "@kline_5m" for x in pairs]
+        # ticker_array_15m = [x.lower() + "@kline_15m" for x in pairs]
+        # ticker_array_30m = [x.lower() + "@kline_30m" for x in pairs]
+
+        # final_array = ticker_array_1m + ticker_array_5m + ticker_array_15m + ticker_array_30m
+        # print("FINAL ARRAY", final_array)
+        # self.klineSocket_1m = self.socket_mgr.start_multiplex_socket(ticker_array_1m, self.kline_callback)
+        # self.klineSocket_5m = self.socket_mgr.start_multiplex_socket(ticker_array_5m, self.kline_callback)
+        # self.klineSocket_15m = self.socket_mgr.start_multiplex_socket(ticker_array_15m, self.kline_callback)
+        # self.klineSocket_30m = self.socket_mgr.start_multiplex_socket(ticker_array_30m, self.kline_callback)
+
+
+
+
 
 
     ###########################
@@ -231,7 +272,6 @@ class WebsocketManager:
 
     def ticker_callback(self, msg):
         self.api_updates += 1
-        df_data = dict()
         all_tickers = list()
 
         for value in msg:
@@ -300,8 +340,15 @@ class WebsocketManager:
     #     print("DATAFRAME:", self.index_df)
     #     print("WS build index took", time.time() - start_time)
 
-
+    
     def kline_callback(self, msg):
+        relevant = msg["data"].get("k")
+        self.mw.historical_data.set_websocket_klines(relevant)
+        # pair = msg["data"]["s"]
+        # tf = msg["data"]["k"]["i"]
+        # self.mw.data.klines[pair][tf] = msg["data"]
+
+    def kline_callback_old(self, msg):
         kline_msg = dict()
         # New Data
         self.mw.data.set_klines(msg)

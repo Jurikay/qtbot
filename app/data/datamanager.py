@@ -19,6 +19,8 @@ class DataManager():
         self.user = Dict()
         self.stats = Dict()
 
+        self.klines = Dict()
+
         self.user.start_btc = 0
 
         self.tickers = dict()
@@ -48,10 +50,10 @@ class DataManager():
                 # coin = info["symbol"][:-3]
                 pair = info["symbol"]
 
-                if info["symbol"] == "PHXBTC":
-                    print(info)
+                # if info["symbol"]set_tickers IFNO == "BNBBTC":
+                #     print("", info)
+
                 # Store tickers by pair
-                # temp_tickers[pair] = info
                 self.tickers[pair] = info
             elif info["symbol"] == "BTCUSDT":
                 self.btc_price = info
@@ -142,24 +144,30 @@ class DataManager():
     def ticker_df(self):
         if self.tickers:
             df = pd.DataFrame(self.tickers)
+            # df2 = pd.DataFrame.from_dict(self.tickers)
+            # df2 = df2.transpose()
             # df = df[["price", "quantity", "time"]]
             df = df.transpose()
             # df = df[["symbol", "bidPrice", "priceChangePercent", "quoteVolume"]]
-            
-            df = df[["bidPrice", "priceChangePercent", "quoteVolume"]]
+            df.to_csv("tickers.csv")
+
+            # df = df[["bidPrice", "priceChangePercent", "quoteVolume"]]
             df = df.reset_index()
             df = df.rename(columns={"index": "Coin", "bidPrice": "Price", "priceChangePercent": "Change", "quoteVolume": "Volume"})
-            df.index.name = "index"
+            # df.index.name = "index"
             df = df.apply(pd.to_numeric, errors="ignore")
 
+            # Drop symbol column since it is used as index already
+            df = df.drop(['symbol'], axis=1)
             # print(df)
             # df = df.apply(pd.to_numeric, errors="ignore")
             # df = df.rename(columns={"symbol": "Coin", "bidPrice": "Price", "priceChangePercent": "Change", "quoteVolume": "Volume"})
             
-            df = df.reset_index(drop=True)
+            # df = df.reset_index(drop=True)
             
             # print(df)
             # Add a numerical index
             self.current.ticker_df = df
             # print(df)
+            # df.to_csv("tickers.csv")
             return df

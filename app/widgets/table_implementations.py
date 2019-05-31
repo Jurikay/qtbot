@@ -119,8 +119,8 @@ class HistoryModel(FilterModel):
                 correct_date = False
                 self.parent.setRowHidden(row, False)
 
-                current_coin = str(self.datatable.iloc[row, self.filter_col]).replace("BTC", "")
-                current_date = int(self.datatable.iloc[row, 0])
+                current_coin = str(self.datatable.iat[row, self.filter_col]).replace("BTC", "")
+                current_date = int(self.datatable.iat[row, 0])
 
                 if str(searchText.upper()) in current_coin:
                     correct_coin = True
@@ -135,7 +135,7 @@ class HistoryModel(FilterModel):
 
         elif consider_timeframes:
             for row in range(self.rowCount()):
-                current_date = int(self.datatable.iloc[row, 0])
+                current_date = int(self.datatable.iat[row, 0])
 
                 if final_time > current_date:
                     self.parent.setRowHidden(row, True)
@@ -208,7 +208,7 @@ class Holdings(BaseTableView):
 class Index(BaseTableView):
     def __init__(self, parent=None, *args):
         super(Index, self).__init__()
-        self.my_model = FilterModel(self)
+        self.my_model = FilterModel(self, 0)
 
         self.setItemDelegateForColumn(0, PairDelegate(self))
         self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
@@ -224,8 +224,8 @@ class Index(BaseTableView):
 
 
     def set_df(self):
-        return dict()
-        return self.mw.index_data.coin_index
+        return self.mw.data.current.ticker_df
+        # return self.mw.index_data.coin_index
 
     def set_widths(self):
         self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)

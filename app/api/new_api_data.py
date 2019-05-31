@@ -38,7 +38,8 @@ class ApiManager:
         worker = Worker(self.store_initial_data)
         worker.signals.finished.connect(self.ui_setup)
         self.threadpool.start(worker)
-
+        print("STARTING KLINE GENERATOR")
+        self.mw.api_manager.kline_generator()
 
         
 
@@ -47,6 +48,7 @@ class ApiManager:
         self.mw.user_data.initial_open_orders()
         self.mw.user_data.initial_history()
         self.mw.user_data.initial_holdings()
+        
         
 
         # while not self.mw.user_data.open_orders or not self.mw.user_data.trade_history or not self.mw.user_data.holdings:
@@ -63,14 +65,20 @@ class ApiManager:
 
         self.mw.gui_mgr.limit_pane_current_values()
 
+        self.mw.index_view.setup()
+
+        #debug
+        print("klines", self.mw.data.klines)
+
 
     def ui_setup(self):
         """Callback from basic api setup; Everything that needs
         ticker or pair values and set in main thread goes here."""
         print("UI SETUP callback:")
         
+        # Start kline socket after ticker data is present
+        self.mw.websocket_manager.start_kline_socket()
 
-        
 
         self.mw.gui_mgr.set_charts(self.mw.data.current.pair)
 

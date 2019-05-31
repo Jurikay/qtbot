@@ -6,7 +6,7 @@ import time
 from datetime import timedelta
 from app.colors import Colors
 import logging
-
+import pandas as pd
 
 """Collection of methods that are called periodically
 to update gui values."""
@@ -41,9 +41,33 @@ class GuiScheduler:
             
             self.new_gui_blink()
 
+
+            nano_1m = self.mw.historical_data.has_data("NANOBTC", "1m")
+            wabi_1m = self.mw.historical_data.has_data("WABIBTC", "1m")
+            print("HAS NECESSARY: nano, wabi:", nano_1m, wabi_1m)
+
+            if nano_1m:
+                self.mw.historical_data.test_indicators()
+
+            df = pd.DataFrame(self.mw.historical_data.klines["NANOBTC"]["1m"])
+            df = df.transpose()
+            try:
+                df.to_csv("klines.csv")
+            except PermissionError as e:
+                print("cannot write csv :(", e)
+
     def new_gui_blink(self):
         self.mw.tradeTable.update()
+        
+        tab_index = self.mw.tabsBotLeft.currentIndex()
 
+        if tab_index == 0:
+            self.mw.index_view.update()
+        elif tab_index == 1:
+            self.mw.open_orders_view.redraw()
+
+
+        # This check should not be necessary
         if self.mw.coin_selector.completed_setup:
             self.mw.coin_selector.update()
         else:
@@ -53,7 +77,7 @@ class GuiScheduler:
 
         # Redraw open orders since dynamic data is displayed
         # by delegates.
-        self.mw.open_orders_view.redraw()
+        
 
 
         if self.timer_count >= 4:

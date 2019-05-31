@@ -153,3 +153,5 @@ update config and stats pages
 save config button
 first time login logic
 save logs to subdir
+add missing coin icon
+load telegram api from file; add file to gitignore

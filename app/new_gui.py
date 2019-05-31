@@ -175,7 +175,7 @@ class GuiMgr:
 
     def hide_tabs(self):
         """Hide disable tabs not ready/suitable for the user."""
-        self.mw.tabsBotLeft.removeTab(1)
+        # self.mw.tabsBotLeft.removeTab(1)
         self.mw.tabsBotLeft.removeTab(0)
 
         self.mw.ChartTabs.removeTab(8)

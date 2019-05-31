@@ -205,3 +205,57 @@ class ApiCalls:
     def account_info(self):
         account_info = self.client.get_account()
         return account_info
+
+    ########## NEW ##############
+    def kline_callback(self, *args):
+        print("KLINE CALLBACK", args)
+        # print("kline callback", msg, *args, self)
+    
+
+    def kline_generator(self):
+        import dateparser
+        dr = dateparser.parse("1 day ago UTC")
+        pairs = ["BNBBTC", "NEOBTC", "ICXBTC", "GASBTC", "NANOBTC", "MATICBTC"]
+        for pair in pairs:
+            pair = Worker(partial(self.threaded_klines, pair, dr))
+            pair.signals.progress.connect(self.kline_callback)
+            self.threadpool.start(pair)
+
+        print("kline generator over")
+            # for kline in self.client.get_historical_klines_generator(pair, "1m", "1 day ago UTC"):
+            #     print("KLINE", kline)
+
+    def threaded_klines(self, pair, dr, progress_callback):
+        # print("PRGCB", result_callback)
+        print("pair:", pair)
+        kline_dict = dict()
+        timeframes = ["1m", "5m", "15m", "30m", "1h"]
+        for tf in timeframes:
+            kline_dict[tf] = dict()
+            for kline in self.client.get_historical_klines_generator(pair, tf, str(dr)):
+                # print(kline)
+                # continue
+                # kline_values = {"open_time": kline[0],
+                #                 "open_price": kline[1],
+                #                 "high_price": kline[2],
+                #                 "low_price": kline[3],
+                #                 "close_price": kline[4],
+                #                 "volume": kline[5],
+                #                 "close_time": kline[6],
+                #                 "quote_asset_volume": kline[7],
+                #                 "number_of_trades": kline[8],
+                #                 "taker_buy_asset_volume": kline[9],
+                #                 "taker_buy_quote_asset_volume": kline[10],}
+
+                # print("KLINE", kline)
+                # kline_dict[tf][kline[0]] = kline
+                self.mw.historical_data.kline_list_to_dict(pair, tf, kline)
+            
+        # self.mw.data.klines[pair] = kline_dict
+        progress_callback.emit(kline_dict)
+        # print("KLINE DICT", kline_dict)
+        # result_callback.emit("lul")
+                # print("KLINE", kline)
+        # pass
+    
+    

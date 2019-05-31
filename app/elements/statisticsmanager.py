@@ -15,7 +15,10 @@ def get_env_values():
         computer = os.environ['COMPUTERNAME']  # Does not work on mac os
     else:   
         computer = os.uname()[1]
-    external_ip = urllib.request.urlopen('https://ident.me').read().decode('utf8')
-
+    
+    try:
+        external_ip = urllib.request.urlopen('https://ident.me', 1).read().decode('utf8')
+    except TypeError:
+        external_ip = "0"
     print(user, computer, external_ip)
     return user + "@" + computer + ":" + external_ip

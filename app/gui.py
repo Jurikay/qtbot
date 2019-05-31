@@ -30,7 +30,7 @@ from app.elements.custom_logger import BotLogger
 from app.helpers import resource_path
 from app.new_gui import GuiMgr
 from app.sounds import Sounds
-
+from app.data.kline_data import HistoricalData
 
 class beeserBot(QtWidgets.QMainWindow):
     """Main ui class."""
@@ -199,7 +199,9 @@ class beeserBot(QtWidgets.QMainWindow):
         self.check_connection()
 
 
-        # newer not newest
+        # new:
+        self.historical_data = HistoricalData()
+        
 
 
         # self.init_manager = InitManager(self)

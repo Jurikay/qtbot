@@ -730,8 +730,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>969</width>
-                  <height>521</height>
+                  <width>981</width>
+                  <height>485</height>
                  </rect>
                 </property>
                </widget>
@@ -1491,7 +1491,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>3</number>
+            <number>1</number>
            </property>
            <property name="movable">
             <bool>false</bool>
@@ -1657,7 +1657,7 @@
              </sizepolicy>
             </property>
             <attribute name="title">
-             <string>Coins</string>
+             <string>Markets</string>
             </attribute>
             <layout class="QHBoxLayout" name="horizontalLayout_51">
              <property name="leftMargin">
@@ -5173,20 +5173,26 @@
             </item>
             <item row="8" column="0">
              <widget class="QLabel" name="label_53">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text">
                <string>UI Updates:</string>
               </property>
              </widget>
             </item>
             <item row="8" column="3">
-             <layout class="QHBoxLayout" name="horizontalLayout_34">
+             <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="0,0,0,0">
               <property name="spacing">
                <number>10</number>
               </property>
               <item>
                <widget class="QLabel" name="label_64">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -5221,7 +5227,7 @@
               <item>
                <widget class="QLabel" name="ui_updates_label">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
@@ -5233,6 +5239,12 @@
               </item>
               <item>
                <widget class="QLabel" name="label_40">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="text">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#666666;&quot;&gt;(Does not include order book and trade history)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
@@ -5480,7 +5492,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>614</width>
-                 <height>479</height>
+                 <height>482</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -5830,7 +5842,7 @@
      <x>0</x>
      <y>0</y>
      <width>1686</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

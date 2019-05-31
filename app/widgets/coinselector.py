@@ -82,7 +82,11 @@ class CoinSelector(QtWidgets.QComboBox):
         # self.clearFocus()  # TODO: Verify
 
     def update(self):
-        self.model.update(self.mw.data.current.ticker_df)
+        df = self.mw.data.current.ticker_df
+
+        # Only select a subset of the tickers dataframe
+        df = df[["Coin", "Price", "Change", "Volume"]]
+        self.model.update(df)
         # TODO: clean up this mess
         # This is a work around. Since the model of the coin
         # selector qcombobox is sortable, the current selection
@@ -115,8 +119,8 @@ class CoinSelector(QtWidgets.QComboBox):
         self.view.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setView(self.view)
 
-        self.model.update(self.mw.data.current.ticker_df)
-        self.setModelColumn(0)
+        # self.model.update(self.mw.data.current.ticker_df)
+        # self.setModelColumn(0)
         self.update()
 
 class SelectorView(QtWidgets.QTableView):
@@ -127,9 +131,9 @@ class SelectorView(QtWidgets.QTableView):
         self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.setSortingEnabled(True)
-        self.setMouseTracking(False)
-        self.setTabletTracking(False)
-        self.viewport().setMouseTracking(False)
+        # self.setMouseTracking(False)
+        # self.setTabletTracking(False)
+        # self.viewport().setMouseTracking(False)
         # self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Preferred)
         self.setMinimumWidth(500)
         self.setShowGrid(False)

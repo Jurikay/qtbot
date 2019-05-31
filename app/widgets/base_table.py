@@ -127,7 +127,7 @@ class BaseTableModel(QtCore.QAbstractTableModel):
         """Return cell data."""
         if role == QtCore.Qt.DisplayRole:
             if index.isValid():
-                return str(self.datatable.iloc[index.row(), index.column()])
+                return str(self.datatable.iat[index.row(), index.column()])
 
 
 class SortModel(BaseTableModel):
@@ -205,7 +205,7 @@ class FilterModel(SortModel):
             for row in range(self.rowCount()):
                 self.parent.setRowHidden(row, False)
 
-                current_coin = str(self.datatable.iloc[row, self.filter_col]).replace("BTC", "")
+                current_coin = str(self.datatable.iat[row, self.filter_col]).replace("BTC", "")
 
                 if str(searchText.upper()) in current_coin:
                     self.parent.setRowHidden(row, False)

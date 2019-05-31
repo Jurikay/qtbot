@@ -72,7 +72,7 @@ class BackgroundTable(QtWidgets.QTableView):
                     #     self.rowH = self.rowHeight(row)
 
                     # Create the painter
-                    value = self.df.iloc[row, self.compare_col]
+                    value = self.df.iat[row, self.compare_col]
 
                     # Set the dataframe dependant on if self.side is present.
                     # If so, it is a bids or asks table and the max value is the total
