@@ -122,19 +122,25 @@ class HistoricalData(QtCore.QObject):
 
     def test_indicators(self):
         nano_close_1m = self.mw.historical_data.klines["NANOBTC"]["1m"]
-        # df = pd.DataFrame(nano_close_1m)
-        df = pd.DataFrame.from_dict(nano_close_1m)
-        df = df.apply(pd.to_numeric, errors='coerce')
-        df = df.transpose()
+        df = pd.DataFrame.from_dict(nano_close_1m, orient="index", dtype=np.float)
 
         # better
         close = df.close_price.values.flatten()
         bbands = ti.bbands(close, period=5, stddev=2)
         print("bbands", bbands)
-        bbandsdf = pd.DataFrame(bbands)
-        bbandsdf = bbandsdf.transpose()
+        bbandsdf = pd.DataFrame(bbands).transpose()
         bbandsdf.columns = ["lower band", "middle band", "upper band"]
+        bbandsdf = bbandsdf.reindex()
+        df = df.reindex()
+        df = df.assign(lower=bbandsdf["lower band"])
+        # df["lower_band"] = pd.Series(bbands["lower band"], index=df.index)
+        # conc = pd.concat([df, bbandsdf], axis=0, sort=True, join="outer", ignore_index=True)
+        
+        df.index.name = bbandsdf.index.name = "index"
+        conc = pd.merge(df, bbandsdf, how="outer", on="index")
+        # conc = df.join(bbandsdf, on="index")
         bbandsdf.to_csv("bbands.csv")
+        df.to_csv("conc.csv")
         # somewhat working
         # print("DF!!!!", df)
         # df = df.apply(pd.to_numeric, errors='coerce')
