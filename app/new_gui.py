@@ -13,24 +13,30 @@ import pandas as pd
 from app.charts import Webpages
 from app.helpers import resource_path
 from app.elements.gui_scheduler import GuiScheduler
-
+import time
 
 class GuiMgr:
 
-    def __init__(self, mw):
+    def __init__(self, mw, tp):
         self.mw = mw
         print("Init new gui mgr")
         self.set_tooltips()
         self.set_timer()
         self.timer_count = 0
 
-        self.scheduler = GuiScheduler(mw)
+        self.scheduler = GuiScheduler(mw, tp)
 
         # tab stuff
         self.hide_tabs()
         self.setup_tabs()
 
 
+    def scheduler_loop(self, progress_callback):
+        while True:
+            print("SCHEDULER LOOP")
+            # do stuff
+            self.scheduler.test_indicators()
+            time.sleep(1)
 
     def set_timer(self):
         self.timer = QtCore.QTimer(self.mw)

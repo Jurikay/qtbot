@@ -56,6 +56,7 @@ class beeserBot(QtWidgets.QMainWindow):
         
         # has to be defined in init
         self.threadpool = QtCore.QThreadPool()
+        print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
         self.mutex = QtCore.QMutex()
         app.threadpool = self.threadpool
         app.mutex = self.mutex
@@ -163,7 +164,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
 
         # new gui
-        self.gui_mgr = GuiMgr(self)
+        self.gui_mgr = GuiMgr(self, self.threadpool)
         self.gui_mgr.set_api_independant()
 
 
@@ -249,6 +250,10 @@ class beeserBot(QtWidgets.QMainWindow):
         self.new_api.threaded_setup()
         # self.new_api.data_setup()
         # self.new_api.api_calls()
+
+
+
+
 
 
     def initialize_tables(self):

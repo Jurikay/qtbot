@@ -33,6 +33,8 @@ class ApiManager:
     def threaded_setup(self):
         """Spawn threads for necessary api information.
         Setup tables once required data has arrived."""
+        print("Starting new scheduler loop")
+        
         # new
         # global_api
         worker = Worker(self.store_initial_data)
@@ -69,6 +71,7 @@ class ApiManager:
 
         #debug
         print("klines", self.mw.data.klines)
+        
 
 
     def ui_setup(self):
@@ -89,6 +92,9 @@ class ApiManager:
         # Set flag to indicate global api data has been stored.
         print("GLOBAL UI FINISHED")
         self.global_data = True
+
+        # new:
+        
 
 
         # live_data

@@ -342,7 +342,7 @@ class WebsocketManager:
 
     
     def kline_callback(self, msg):
-        relevant = msg["data"].get("k")
+        relevant = msg["data"].get("k", dict())
         self.mw.historical_data.set_websocket_klines(relevant)
         # pair = msg["data"]["s"]
         # tf = msg["data"]["k"]["i"]

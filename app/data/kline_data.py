@@ -134,7 +134,9 @@ class HistoricalData(QtCore.QObject):
         bbandsdf = pd.DataFrame(bbands)
         bbandsdf = bbandsdf.transpose()
         bbandsdf.columns = ["lower band", "middle band", "upper band"]
-        bbandsdf.to_csv("bbands.csv")
+        # bbandsdf.to_csv("bbands.csv")
+        return bbandsdf
+       
         # somewhat working
         # print("DF!!!!", df)
         # df = df.apply(pd.to_numeric, errors='coerce')

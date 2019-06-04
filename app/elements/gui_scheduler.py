@@ -4,17 +4,24 @@
 # made by Jirrik
 import time
 from datetime import timedelta
+from PyQt5 import QtCore
+import app
 from app.colors import Colors
 import logging
 import pandas as pd
 
+from app.workers import Worker
+import tulipy as ti
+import pdb
+import timeit
+from functools import partial
 """Collection of methods that are called periodically
 to update gui values."""
 
 
 class GuiScheduler:
 
-    def __init__(self, mw):
+    def __init__(self, mw, tp):
         self.mw = mw
         # self.threadpool = tp
 
@@ -23,6 +30,9 @@ class GuiScheduler:
         self.last_btc_price = 0
         self.update_count = 0
         self.no_updates = 0
+        self.threadpool = tp
+
+    
 
     def update(self):
         """Main public method; Is called periodically;
@@ -30,6 +40,9 @@ class GuiScheduler:
         self.runtime += 1
         self.mw.data.stats.runtime = self.runtime
         self.update_stats()
+
+        # debug
+        print("current thread count:", self.mw.threadpool.activeThreadCount())
 
         if self.mw.is_connected:
             # debug
@@ -41,20 +54,88 @@ class GuiScheduler:
             
             self.new_gui_blink()
 
+            # self.periodic_thread()
+            # worker = Worker(self.test_indicators)
+            # self.threadpool.start(worker)
 
-            nano_1m = self.mw.historical_data.has_data("NANOBTC", "1m")
-            wabi_1m = self.mw.historical_data.has_data("WABIBTC", "1m")
-            print("HAS NECESSARY: nano, wabi:", nano_1m, wabi_1m)
+            # df = pd.DataFrame(self.mw.historical_data.klines["NANOBTC"]["1m"])
+            # df = df.transpose()
 
-            if nano_1m:
-                self.mw.historical_data.test_indicators()
+            if self.mw.threadpool.activeThreadCount() == 0:
+                print("STARTING SCHEDULER")
+                worker0 = Worker(partial(self.test_indicators, self.mw.historical_data.klines["NANOBTC"]["1m"]))
+                self.threadpool.tryStart(worker0)
+            # try:
+            #     df.to_csv("klines.csv")
+            # except PermissionError as e:
+            #     print("cannot write csv :(", e)
 
-            df = pd.DataFrame(self.mw.historical_data.klines["NANOBTC"]["1m"])
-            df = df.transpose()
-            try:
-                df.to_csv("klines.csv")
-            except PermissionError as e:
-                print("cannot write csv :(", e)
+    def periodic_thread(self):
+        """Call methods periodically in a separate thread."""
+        worker = Worker(self.test_indicators)
+        worker.signals.finished.connect(self.calc_callback)
+        self.threadpool.start(worker)
+
+    def calculations(self, progress_callback):
+        """This is not executed in the main thread."""
+        print("CALCULATIONS")
+        time.sleep(1)
+        nano_1m = self.mw.historical_data.has_data("NANOBTC", "1m")
+        # wabi_1m = self.mw.historical_data.has_data("WABIBTC", "1m")
+
+        if nano_1m:
+            bbandsdf = self.test_indicators()
+            progress_callback.emit(bbandsdf)
+
+
+
+
+    def test_indicators(self, dataf, progress_callback=None):
+        startt = timeit.timeit()
+        print("TEST INDICATORS")
+        # nano_close_1m = self.mw.historical_data.klines["NANOBTC"]["1m"].copy()
+        df = pd.DataFrame(dataf)
+        # df = pd.DataFrame.from_dict(nano_close_1m)
+        df = df.apply(pd.to_numeric, errors='coerce')
+        df = df.transpose()
+        close = df.close_price.values.flatten()
+        # bbands = ti.bbands(close, period=5, stddev=2)
+        # bbandsdf = pd.DataFrame(bbands)
+        # bbandsdf = bbandsdf.transpose()
+        # bbandsdf.columns = ["lower band", "middle band", "upper band"]
+        endtt = timeit.timeit()
+        exect = endtt - startt
+        print("EXEC TIME", exect)
+            
+
+        # print("bbands", bbands)
+
+        # bbandsdf.to_csv("bbands.csv")
+        # progress_callback.emit(bbandsdf)
+
+        
+        # pdb.set_trace()
+        # return
+        # df = pd.DataFrame(nano_close_1m)
+        
+        
+
+        # better
+        # close = df.close_price.values.flatten()
+        # bbands = ti.bbands(close, period=5, stddev=2)
+        # print("bbands", bbands)
+        # bbandsdf = pd.DataFrame(bbands)
+        # bbandsdf = bbandsdf.transpose()
+        # bbandsdf.columns = ["lower band", "middle band", "upper band"]
+        # # bbandsdf.to_csv("bbands.csv")
+        # progress_callback.emit(bbandsdf)
+        # return
+        # return bbandsdf
+
+    def calc_callback(self, msg):
+        print("Periodic thread callback:")
+        print("MSG: ", msg)
+
 
     def new_gui_blink(self):
         self.mw.tradeTable.update()

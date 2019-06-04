@@ -58,11 +58,13 @@ def iterate_df_rows(df):
     print("TRADE LIST:", trade_list)
     return traded_pairs
 
+
 def trade_to_excel(trade):
     """Format a historical trade to fint into Binance generated trade history
     spreadsheet."""
     # TODO: Implement
     pass
+
 
 def parse_excel_row(row) -> dict():
     """Receives a row from a Binance TradeHistory xlsx file. Returns a dictionary
