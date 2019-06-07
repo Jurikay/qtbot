@@ -17,7 +17,7 @@ def get_env_values():
         computer = os.uname()[1]
     
     try:
-        external_ip = urllib.request.urlopen('https://ident.me', 1).read().decode('utf8')
+        external_ip = urllib.request.urlopen('https://ident.me', timeout=2.0).read().decode('utf8')
     except TypeError:
         external_ip = "0"
     print(user, computer, external_ip)

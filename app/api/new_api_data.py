@@ -40,8 +40,7 @@ class ApiManager:
         worker = Worker(self.store_initial_data)
         worker.signals.finished.connect(self.ui_setup)
         self.threadpool.start(worker)
-        print("STARTING KLINE GENERATOR")
-        self.mw.api_manager.kline_generator()
+        
 
         
 
@@ -89,6 +88,8 @@ class ApiManager:
         self.mw.data.ticker_df()
         self.mw.coin_selector.setup()
         
+
+
         # Set flag to indicate global api data has been stored.
         print("GLOBAL UI FINISHED")
         self.global_data = True
@@ -97,6 +98,7 @@ class ApiManager:
         
 
 
+        # self.mw.api_manager.kline_generator(self.mw.data.tickers)
         # live_data
         worker1 = Worker(self.new_pair_data)
         worker1.signals.finished.connect(self.process_pair_data)
@@ -107,6 +109,14 @@ class ApiManager:
         worker2.signals.finished.connect(self.process_user_data)
         self.threadpool.start(worker2)
 
+    def start_kline_procedure(self):
+        print("STARTING KLINE GENERATOR")
+        worker = Worker(partial(self.mw.api_manager.kline_generator, self.mw.data.tickers))
+        worker.signals.finished.connect(self.initial_klines_done)
+        self.threadpool.start(worker)
+
+    def initial_klines_done(self):
+        print("ALL KLINES DONE!!!!!!")
 
     def pair_gui(self, progress_callback):
         progress_callback.emit("done")

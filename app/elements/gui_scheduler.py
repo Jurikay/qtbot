@@ -8,6 +8,7 @@ from PyQt5 import QtCore
 import app
 from app.colors import Colors
 import logging
+import dateparser
 import pandas as pd
 
 from app.workers import Worker
@@ -15,6 +16,7 @@ import tulipy as ti
 import pdb
 import timeit
 from functools import partial
+import numpy as np
 """Collection of methods that are called periodically
 to update gui values."""
 
@@ -32,7 +34,15 @@ class GuiScheduler:
         self.no_updates = 0
         self.threadpool = tp
 
+        self.klines_started = False
     
+
+    def less_regular_update(self):
+        """This is not called every second but every 5 seconds."""
+        print("LESS REGULAR UPDATE")
+        worker_indicators = Worker(self.mw.historical_data.calculate_indicators)
+        self.threadpool.start(worker_indicators)
+
 
     def update(self):
         """Main public method; Is called periodically;
@@ -60,11 +70,32 @@ class GuiScheduler:
 
             # df = pd.DataFrame(self.mw.historical_data.klines["NANOBTC"]["1m"])
             # df = df.transpose()
+            if self.mw.threadpool.activeThreadCount() == 0 and not self.klines_started:
+                # self.mw.historical_data.indicator_loop()
+                self.klines_started = True
+                dr = dateparser.parse("2 days, ago UTC")
+                worker_i = Worker(partial(self.mw.historical_data.kline_api_loop, dr))
+                worker_i.signals.progress.connect(self.mw.historical_data.progressbar_callback)
+                self.threadpool.start(worker_i)
 
-            if self.mw.threadpool.activeThreadCount() == 0:
-                print("STARTING SCHEDULER")
-                worker0 = Worker(partial(self.test_indicators, self.mw.historical_data.klines["NANOBTC"]["1m"]))
-                self.threadpool.tryStart(worker0)
+                # too heavy
+                # worker_indicators = Worker(self.mw.historical_data.calculate_indicators)
+                # self.threadpool.start(worker_indicators)
+
+                
+
+                
+            # if self.mw.threadpool.activeThreadCount() == 0 and not self.klines_started:
+            #     print("STARTING SCHEDULER")
+            #     self.klines_started = True
+            #     self.mw.new_api.start_kline_procedure()
+
+            # if self.mw.threadpool.activeThreadCount() <= 6:
+            #     worker0 = Worker(self.test_indicators)
+            #     worker0.signals.progress.connect(self.calc_callback)
+            #     self.threadpool.start(worker0)
+          
+          
             # try:
             #     df.to_csv("klines.csv")
             # except PermissionError as e:
@@ -89,8 +120,78 @@ class GuiScheduler:
 
 
 
+    def pad_left(self, x, n, pad=np.nan):
+        return np.pad(x, (n - x.size, 0), 'constant', constant_values=(pad,))
 
-    def test_indicators(self, dataf, progress_callback=None):
+    def test_indicators(self, progress_callback):
+        """Called once per second."""
+        print("START test_indicators")
+        # pair = self.mw.data.current.pair
+        interval = "1m"
+        for pair in self.mw.data.tickers.keys():
+            
+            if self.mw.historical_data.has_data(pair, interval):
+                dataf = self.mw.historical_data.klines[pair][interval]
+                simple = dict()
+                closel = list()
+                timel = list()
+                for k, v in dataf.items():
+                    simple[k] = v["close_price"]
+                    closel.append(float(v["close_price"]))
+                    timel.append(int(k))
+
+
+                time = np.array(timel)
+                close = np.array(closel)
+
+                bbands = ti.bbands(close, period=20, stddev=2)
+                macd = ti.macd(close, 12, 26, 9)
+
+                # pd.options.display.float_format = '{:,.7f}'.format
+
+                # Dataframe version; too expansive for every pair once a second.
+                # ohlc = pd.DataFrame(time, columns=["time"])
+                # ohlc["close"] = close
+                # ohlc["bbandsl"] = self.pad_left(bbands[0], ohlc.time.size)
+                # ohlc["bbandsm"] = self.pad_left(bbands[1], ohlc.time.size)
+                # ohlc["bbandsh"] = self.pad_left(bbands[2], ohlc.time.size)
+                # ohlc["macd1"] = self.pad_left(macd[0], ohlc.time.size)
+                # ohlc["macd2"] = self.pad_left(macd[1], ohlc.time.size)
+                # ohlc["macd3"] = self.pad_left(macd[2], ohlc.time.size)
+                # ohlc["time"] = pd.to_datetime(ohlc["time"], unit="ms", utc=True)
+                ohlc = dict()
+                ohlc["close"] = close
+                ohlc["time"] = time
+                ohlc["bbandsl"] = self.pad_left(bbands[0], ohlc["time"].size)
+                ohlc["bbandsm"] = self.pad_left(bbands[1], ohlc["time"].size)
+                ohlc["bbandsh"] = self.pad_left(bbands[2], ohlc["time"].size)
+                ohlc["macd1"] = self.pad_left(macd[0], ohlc["time"].size)
+                ohlc["macd2"] = self.pad_left(macd[1], ohlc["time"].size)
+                ohlc["macd3"] = self.pad_left(macd[2], ohlc["time"].size)
+                
+
+                # ohlc["close"] = ohlc["close"] / 10000
+                # ohlc["bbandsl"] = ohlc["bbandsl"] / 10000
+                # ohlc["bbandsm"] = ohlc["bbandsm"] / 10000
+                # ohlc["bbandsh"] = ohlc["bbandsh"] / 10000
+                # ohlc["macd1"] = ohlc["macd1"] / 10000
+                # ohlc["macd2"] = ohlc["macd2"] / 10000
+                # ohlc["macd3"] = ohlc["macd3"] / 10000
+
+                if pair == self.mw.data.current.pair:
+                    result = {"interval": interval, "pair": pair, "time": ohlc["time"][-1], "close": ohlc["close"][-1], "bbandsl": ohlc["bbandsl"][-1], "bbandsm": ohlc["bbandsm"][-1], 
+                    "bbandsh": ohlc["bbandsh"][-1]}
+                    progress_callback.emit(result)
+
+            # ohlc.to_csv("indicators.csv")
+            # bbandsdf = pd.DataFrame(bbands)
+            # bbandsdf = bbandsdf.transpose()
+            # bbandsdf.columns = ["lower band", "middle band", "upper band"]
+        # else:
+        #     print("NOT ENOUGH DATA:", pair, "1m")
+
+        # print("END test_indicators")
+        return
         startt = timeit.timeit()
         print("TEST INDICATORS")
         # nano_close_1m = self.mw.historical_data.klines["NANOBTC"]["1m"].copy()
@@ -99,10 +200,10 @@ class GuiScheduler:
         df = df.apply(pd.to_numeric, errors='coerce')
         df = df.transpose()
         close = df.close_price.values.flatten()
-        # bbands = ti.bbands(close, period=5, stddev=2)
-        # bbandsdf = pd.DataFrame(bbands)
-        # bbandsdf = bbandsdf.transpose()
-        # bbandsdf.columns = ["lower band", "middle band", "upper band"]
+        bbands = ti.bbands(close, period=5, stddev=2)
+        bbandsdf = pd.DataFrame(bbands)
+        bbandsdf = bbandsdf.transpose()
+        bbandsdf.columns = ["lower band", "middle band", "upper band"]
         endtt = timeit.timeit()
         exect = endtt - startt
         print("EXEC TIME", exect)
@@ -133,8 +234,16 @@ class GuiScheduler:
         # return bbandsdf
 
     def calc_callback(self, msg):
-        print("Periodic thread callback:")
-        print("MSG: ", msg)
+        print("CALC CALLBACK")
+        self.mw.lbl_iinterval.setText(msg["interval"])
+        self.mw.lbl_ipair.setText(msg["pair"])
+        self.mw.lbl_itime.setText(str(msg["time"]))
+        self.mw.lbl_iclose.setText(str(msg["close"]))
+
+        self.mw.lbl_iblow.setText(str(msg["bbandsl"]))
+        self.mw.lbl_ibmid.setText(str(msg["bbandsm"]))
+        self.mw.lbl_ibhigh.setText(str(msg["bbandsh"]))
+        
 
 
     def new_gui_blink(self):

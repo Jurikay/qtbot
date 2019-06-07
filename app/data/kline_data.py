@@ -4,7 +4,10 @@ import app
 import numpy as np
 import tulipy as ti
 import pandas as pd
-
+import dateparser
+from functools import partial
+from app.workers import Worker
+import time
 
 import PyQt5.QtCore as QtCore
 
@@ -29,6 +32,7 @@ class HistoricalData(QtCore.QObject):
         self.klines = Dict()
         self.websocket_klines = Dict()
         self.mw = app.mw
+        self.threadpool = app.threadpool
     
     def has_data(self, pair, timeframe):
         """Return true if a pair has evaluable data."""
@@ -44,7 +48,7 @@ class HistoricalData(QtCore.QObject):
 
 
     def kline_list_to_dict(self, symbol, timeframe, kline_list):
-        """Convert kline values in list form to a more readable dict."""
+        """Convert kline values in list form to a better readable dict."""
         kline_values = {"open_time": kline_list[0],
                         "open_price": kline_list[1],
                         "high_price": kline_list[2],
@@ -60,10 +64,14 @@ class HistoricalData(QtCore.QObject):
         # print("ADDING KLINE DATA TO DICT")
         self.klines[symbol][timeframe][kline_list[0]] = kline_values
 
+        # if not isinstance(self.klines[symbol][timeframe][kline_list[0]], dict):
+        #     self.klines[symbol][timeframe][kline_list[0]] = kline_values
+        # else:
+        #     print("ALREADY HAS VALUES", self.klines[symbol][timeframe][kline_list[0]])
+
 
     def set_websocket_klines(self, klines):
-        """Store kline values received from api call."""
-        # print("WEBSOCKET KLINES", klines)
+        """Store kline values received from websocket callback."""
 
         # Map shortended websocket dict keys to full words
         mapping = {"t": "open_time",
@@ -81,11 +89,11 @@ class HistoricalData(QtCore.QObject):
                    "q": "quote_asset_volume",
                    "V": "taker_buy_asset_volume",
                    "Q": "taker_buy_quote_asset_volume",
-                #    "B": "WEBSOCKET"
-                   }
-                #    "x": "bar_is_final",
-                #    "B": "ignore"}
-
+                    # "B": "WEBSOCKET"
+                
+                    # "x": "bar_is_final",
+                    # "B": "ignore"}
+                    }
         pair = klines["s"]
         interval = klines["i"]
         open_time = klines["t"]
@@ -95,10 +103,13 @@ class HistoricalData(QtCore.QObject):
         for k, v in mapping.items():
             output[v] = klines[k]
 
-        # for key, value in klines.items():
-        #     output[mapping[key]] = value
-
+        # Store kline values in dict with open_time as key
         self.klines[pair][interval][open_time] = output
+
+        # if not isinstance(self.klines[pair][interval][open_time], dict):
+        #     self.klines[pair][interval] = output
+        # else:
+        #     print("KLINE DICT NOT YET PRESENT")
 
     def klines_to_csv(self):
         """Store kline values in csv file."""
@@ -156,3 +167,105 @@ class HistoricalData(QtCore.QObject):
         self.klines[coin][tf][time] = {key: value}
 # multiplex socket:
 # conn_key = bm.start_multiplex_socket(['bnbbtc@kline', 'neobtc@kline'], process_m_message)
+
+    ###################################################
+    # indicators loop
+    ###################################################
+
+    def kline_api_loop(self, dr, progress_callback):
+        """Loop over all pairs and fetch 1m kline values."""
+
+        print("STARTING INDICATOR LOOP")
+
+        thread_count = self.threadpool.maxThreadCount()
+        desired_count = thread_count - 2
+
+        pairs = list(self.mw.data.tickers.keys())
+        print("PAIRS", pairs)
+        start_length = len(pairs)
+        progress_callback.emit({"start": len(pairs)})
+        while pairs:
+            while self.threadpool.activeThreadCount() < desired_count:
+                pair = pairs.pop(0)
+                print("PROCESSING", pair, "rest len:", len(pairs))
+                # self.mw.api_manager.api_klines(pair, dr)
+                worker = Worker(partial(self.mw.api_manager.api_klines, [pair, dr]))
+                worker.signals.progress.connect(self.loop_callback)
+                self.threadpool.start(worker)
+                progress_callback.emit(start_length - len(pairs))
+
+                # time.sleep(0.1)
+
+        print("INDICATOR LOOP DONE")
+    
+    def loop_callback(self, msg):
+        print("LOOP CALLBACK", msg)
+        for k, v in msg.items():
+            print("KV", k, v)
+    
+    def calculate_indicators(self, progress_callback):
+        """Loop over all pairs and calculate indicator values if enough data is present."""
+        pairs = list(self.mw.data.tickers.keys())
+        while True:
+            print("BEGINNGING INDICATOR LOOP")
+            for pair in pairs:
+                if self.has_data(pair, "1m"):
+                    print("PAIR", pair, "has data!")
+                    self.pair_indicators(self.klines[pair]["1m"])
+            
+            print("SLEEPING")
+            time.sleep(1)
+
+
+    def pad_left(self, x, n, pad=np.nan):
+        return np.pad(x, (n - x.size, 0), 'constant', constant_values=(pad,))
+
+
+    def pair_indicators(self, dataf):
+        print("CALCULATING PAIR INDICATORS")
+        simple = dict()
+        closel = list()
+        timel = list()
+        for k, v in dataf.items():
+            simple[k] = v["close_price"]
+            closel.append(float(v["close_price"]))
+            timel.append(int(k))
+
+
+        time = np.array(timel)
+        close = np.array(closel)
+
+        bbands = ti.bbands(close, period=20, stddev=2)
+        macd = ti.macd(close, 12, 26, 9)
+
+        ohlc = dict()
+        ohlc["close"] = close
+        ohlc["time"] = time
+        ohlc["bbandsl"] = self.pad_left(bbands[0], ohlc["time"].size)
+        ohlc["bbandsm"] = self.pad_left(bbands[1], ohlc["time"].size)
+        ohlc["bbandsh"] = self.pad_left(bbands[2], ohlc["time"].size)
+        ohlc["macd1"] = self.pad_left(macd[0], ohlc["time"].size)
+        ohlc["macd2"] = self.pad_left(macd[1], ohlc["time"].size)
+        ohlc["macd3"] = self.pad_left(macd[2], ohlc["time"].size)
+
+        # if pair == self.mw.data.current.pair:
+        #     result = {"interval": interval, "pair": pair, "time": ohlc["time"][-1], "close": ohlc["close"][-1], "bbandsl": ohlc["bbandsl"][-1], "bbandsm": ohlc["bbandsm"][-1], 
+        #     "bbandsh": ohlc["bbandsh"][-1]}
+        #     progress_callback.emit(result)
+
+
+    def progressbar_callback(self, progress):
+        """Set max/ advance progress bar callback.""" 
+        if isinstance(progress, dict):
+            self.mw.pb_klines.setMaximum(progress["start"])
+        else:
+            self.mw.pb_klines.setValue(progress)
+
+            # Get progress percent
+            # percent = (self.mw.pb_klines.value() - self.mw.pb_klines.minimum()) / self.mw.pb_klines.maximum() - self.mw.pb_klines.minimum()
+            # print("PERCENT", percent)
+            # if percent >= 0.4:
+            #     self.mw.pb_klines.setStyleSheet("color: 'black';")
+            if self.mw.pb_klines.value() == self.mw.pb_klines.maximum():
+                self.mw.pb_klines.hide()
+            

@@ -145,6 +145,8 @@ class WebsocketManager:
         worker.signals.progress.connect(self.mw.live_data.new_last_price)
         self.threadpool.start(worker)
 
+        
+        
 
     def depth_callback(self, msg):
 

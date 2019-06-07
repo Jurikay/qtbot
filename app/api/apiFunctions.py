@@ -212,50 +212,64 @@ class ApiCalls:
         # print("kline callback", msg, *args, self)
     
 
-    def kline_generator(self):
+    # todo: move to kline data;
+    # keep track of already checked pairs,
+    # if api error, pause for 1 minute 
+    def kline_generator(self, pair_dict=None, progress_callback=None):
         import dateparser
-        dr = dateparser.parse("1 day ago UTC")
-        pairs = ["BNBBTC", "NEOBTC", "ICXBTC", "GASBTC", "NANOBTC", "MATICBTC"]
+        dr = dateparser.parse("2 days, ago UTC")
+        if not pair_dict:
+            pairs = ["BNBBTC", "NEOBTC", "ICXBTC", "GASBTC", "NANOBTC", "MATICBTC"]
+        else:
+            pairs = list(pair_dict.keys())
+
+        print("PAIRS:", pairs)
         for pair in pairs:
             pair = Worker(partial(self.threaded_klines, pair, dr))
             pair.signals.progress.connect(self.kline_callback)
             self.threadpool.start(pair)
+            time.sleep(0.1)
 
+        progress_callback.emit("done")
         print("kline generator over")
             # for kline in self.client.get_historical_klines_generator(pair, "1m", "1 day ago UTC"):
             #     print("KLINE", kline)
 
+    # TODO: Improve; This has to become aware of api limits or
+    # 
     def threaded_klines(self, pair, dr, progress_callback):
         # print("PRGCB", result_callback)
-        print("pair:", pair)
+        print("threaded_klines pair:", pair)
         kline_dict = dict()
-        timeframes = ["1m", "5m", "15m", "30m", "1h"]
+        timeframes = ["1m"]
         for tf in timeframes:
             kline_dict[tf] = dict()
-            for kline in self.client.get_historical_klines_generator(pair, tf, str(dr)):
-                # print(kline)
-                # continue
-                # kline_values = {"open_time": kline[0],
-                #                 "open_price": kline[1],
-                #                 "high_price": kline[2],
-                #                 "low_price": kline[3],
-                #                 "close_price": kline[4],
-                #                 "volume": kline[5],
-                #                 "close_time": kline[6],
-                #                 "quote_asset_volume": kline[7],
-                #                 "number_of_trades": kline[8],
-                #                 "taker_buy_asset_volume": kline[9],
-                #                 "taker_buy_quote_asset_volume": kline[10],}
+            try:
+                for kline in self.client.get_historical_klines_generator(pair, tf, str(dr)):
+                    self.mw.historical_data.kline_list_to_dict(pair, tf, kline)
+            except BinanceAPIException as e:
+                print("THREADED KLINES API EXCEPTION", e)
 
-                # print("KLINE", kline)
-                # kline_dict[tf][kline[0]] = kline
-                self.mw.historical_data.kline_list_to_dict(pair, tf, kline)
-            
         # self.mw.data.klines[pair] = kline_dict
         progress_callback.emit(kline_dict)
         # print("KLINE DICT", kline_dict)
         # result_callback.emit("lul")
                 # print("KLINE", kline)
         # pass
-    
-    
+
+    def api_klines(self, pairdr, progress_callback=None):
+        pair = pairdr[0]
+        dr = pairdr[1]
+        kline_dict = dict()
+        timeframes = ["1m"]
+        for tf in timeframes:
+            kline_dict[tf] = dict()
+            try:
+                for kline in self.client.get_historical_klines_generator(pair, tf, str(dr)):
+                    self.mw.historical_data.kline_list_to_dict(pair, tf, kline)
+            except BinanceAPIException as e:
+                print("THREADED KLINES API EXCEPTION", e)
+
+            if progress_callback:
+                progress_callback.emit(kline_dict)
+            # return kline_dict

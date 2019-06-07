@@ -1,15 +1,31 @@
 
 QToolTip {
-    border: 1px solid white;
-    border-spacing: 15px;
-    background-color: rgb(28, 28, 28);
-    color: #f3f3f3;
-    padding: 6px;                /*remove padding, for fix combobox tooltip.*/
-    opacity: 0.5;
+    font-size: 14px;
+    border: 2px solid #262d33;
     border-radius: 5px;
-    box-shadow: none;
-    box-sizing: border-box;
+    /* border-spacing: 15px; */
+    background-color: rgba(28, 28, 28, 0.33);
+    color: #f3f3f3;
+    padding: 2px;                
 }
+
+QProgressBar {
+    border: 1px solid #262d33;
+    border-radius: 5px;
+    text-align: center;
+    /* height: 30px; */
+    font-weight: bold;
+}
+
+QProgressBar::chunk {
+    background-color: #f3ba2e;
+    /* width: 20px; */
+    width: 3px;
+    margin: 0.5px;
+    /* height: 15px; */
+}
+
+
 QWidget {
     background-color: #262d33;
     font-family: "Source Sans Pro", sans-serif, Arial;

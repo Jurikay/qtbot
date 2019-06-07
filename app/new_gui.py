@@ -30,6 +30,8 @@ class GuiMgr:
         self.hide_tabs()
         self.setup_tabs()
 
+        self.ticks = 0
+
 
     def scheduler_loop(self, progress_callback):
         while True:
@@ -51,10 +53,18 @@ class GuiMgr:
         """Call all periodic ui updates here."""
         self.scheduler.update()
 
+        # if self.ticks >= 4:
+        #     self.scheduler.less_regular_update()
+        #     self.ticks = 0
+            
+        # self.ticks += 1
+
 
     # ######## Setup ##########
     def set_tooltips(self):
         print("Setting tooltips")
+        self.mw.pb_klines.setToolTip("<span style='color: #f3ba2e'>Historical price data</span> is still being loaded.\nIndicators for all pairs will only be available when done.")
+
         # TODO: implement/remove
         # self.mw.limit_buy_input.setStatusTip("BUY TOOLTIP")
         # self.mw.limit_buy_input.setWhatsThis("WHAT TEH FUG")
