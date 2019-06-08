@@ -38,6 +38,58 @@ class HistoricalData(QtCore.QObject):
         """Return true if a pair has evaluable data."""
         return len(self.klines[pair][timeframe].items()) > 10
 
+    def get_hist_values(self, pair):
+        klines = self.klines[pair]["1m"]
+        last_hour = list(klines.items())[-60:]
+        volume_5 = 0
+        volume_15 = 0
+        volume_30 = 0
+        volume_1h = 0
+
+        count_5 = 0
+        count_15 = 0
+        count_30 = 0
+        count_1h = 0
+
+        for i, element in enumerate(last_hour):
+            if i < 5:
+
+                volume_5 += float(element[1]["quote_asset_volume"])
+                count_5 += float(element[1]["number_of_trades"])
+            if i < 15:
+
+                volume_15 += float(element[1]["quote_asset_volume"])
+                count_15 += float(element[1]["number_of_trades"])
+            if i < 30:
+
+                volume_30 += float(element[1]["quote_asset_volume"])
+                count_30 += float(element[1]["number_of_trades"])
+
+            volume_1h += float(element[1]["quote_asset_volume"])
+            count_1h += float(element[1]["number_of_trades"])
+
+
+        return [volume_5, volume_15, volume_30, volume_1h, count_5, count_15, count_30, count_1h]
+
+
+
+    def get_hist_volume(self, pair, minutes):
+        # print("GET HIST VOL", pair)
+        klines = self.klines[pair]["1m"]
+        els = list(klines.items())
+        test = els[-minutes:]
+        volume = 0
+        for ele in test:
+            # print("+= ", ele[1]["quote_asset_volume"])
+            # print("ELE", ele)
+            volume += float(ele[1]["quote_asset_volume"])
+        return volume
+        # test2 = els[0][1]["volume"]
+        # nparray = np.array(klines)
+        # res = np.array([list(item.values()) for item in klines.values()])
+        # import pdb; pdb.set_trace()
+        # print("KLINES", volume)
+
     def update_kline(self, kline):
         """Update a single kline after a websocket update has occured."""
         pass

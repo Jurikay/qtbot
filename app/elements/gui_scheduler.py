@@ -82,7 +82,9 @@ class GuiScheduler:
                 # worker_indicators = Worker(self.mw.historical_data.calculate_indicators)
                 # self.threadpool.start(worker_indicators)
 
-                
+            # TEST
+            worker = Worker(self.mw.data.index_df)
+            self.threadpool.start(worker)
 
                 
             # if self.mw.threadpool.activeThreadCount() == 0 and not self.klines_started:
