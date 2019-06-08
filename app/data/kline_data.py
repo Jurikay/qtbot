@@ -30,6 +30,7 @@ class HistoricalData(QtCore.QObject):
 
         super().__init__(parent=parent)
         self.klines = Dict()
+        self.indicators = Dict()
         self.websocket_klines = Dict()
         self.mw = app.mw
         self.threadpool = app.threadpool
@@ -41,6 +42,7 @@ class HistoricalData(QtCore.QObject):
     def get_hist_values(self, pair):
         klines = self.klines[pair]["1m"]
         last_hour = list(klines.items())[-60:]
+        last_hour.reverse()
         volume_5 = 0
         volume_15 = 0
         volume_30 = 0
@@ -69,8 +71,8 @@ class HistoricalData(QtCore.QObject):
             count_1h += float(element[1]["number_of_trades"])
 
 
-        return [volume_5, volume_15, volume_30, volume_1h, count_5, count_15, count_30, count_1h]
-
+        values = [volume_5, volume_15, volume_30, volume_1h, count_5, count_15, count_30, count_1h]
+        return values
 
 
     def get_hist_volume(self, pair, minutes):
@@ -157,6 +159,19 @@ class HistoricalData(QtCore.QObject):
 
         # Store kline values in dict with open_time as key
         self.klines[pair][interval][open_time] = output
+
+        if interval == "1m":
+            hist_values = self.get_hist_values(pair)
+            self.indicators[pair]["5m volume"] = hist_values[0]
+            self.indicators[pair]["15m volume"] = hist_values[1]
+            self.indicators[pair]["30m volume"] = hist_values[2]
+            self.indicators[pair]["1h volume"] = hist_values[3]
+            self.indicators[pair]["5m count"] = hist_values[4]
+            self.indicators[pair]["15m count"] = hist_values[5]
+            self.indicators[pair]["30m count"] = hist_values[6]
+            self.indicators[pair]["1h count"] = hist_values[7]
+
+
 
         # if not isinstance(self.klines[pair][interval][open_time], dict):
         #     self.klines[pair][interval] = output

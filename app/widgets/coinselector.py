@@ -82,7 +82,7 @@ class CoinSelector(QtWidgets.QComboBox):
         # self.clearFocus()  # TODO: Verify
 
     def update(self):
-        df = self.mw.data.current.ticker_df
+        df = self.mw.data.ticker_df().copy()
 
         # Only select a subset of the tickers dataframe
         df = df[["Coin", "Price", "Change", "Volume"]]

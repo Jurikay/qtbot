@@ -219,7 +219,7 @@ class beeserBot(QtWidgets.QMainWindow):
 
             self.instantiate_api_managers()
             self.initialize_user_data()
-
+            self.gui_mgr.enable_ui()
         else:
             print("NOT CONNECTED!")
             self.gui_mgr.disable_ui()

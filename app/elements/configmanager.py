@@ -85,13 +85,16 @@ class ConfiManager:
             print("Storing received config!")
             self.config = config_obj
             self.save_config()
+            print("debug get key", self.get_config_value("API", "key"))
+            
+            # print("debug: key", self.config.API.key)
 
     def store_stats(self, stats_dict):
         stats_obj = self.dict_to_config(stats_dict)
         self.stats = stats_obj
 
-    def get_config_value(self, key, section):
-        return self.config.get(key, section)
+    def get_config_value(self, section, key):
+        return self.config.get(section, key)
 
 
 
@@ -115,29 +118,37 @@ class ConfiManager:
             for key, value in config.items(section):
                 try:
                     if key == "defaultpair":
+                        print("defaultpair")
                         assert "BTC" in value
                     
                     if key == "rememberdefault":
+                        print("rememberdefault")
                         assert value in ("False", "True")
                     
                     if key == "buttonpercentages":
+                        print("buttonpercentages")
                         assert len(value.split(",")) == 5
                         # for sub_value in value.split(","):
                         #     assert int(sub_value) <= 100
 
                     if key == "defaulttimeframe":
+                        print("defaulttimeframe")
                         assert value in ("1", "3", "5", "15", "30", "60")
                     
                     if key == "btctimeframe":
+                        print("btctimeframe")
                         assert value in ("1", "3", "5", "15", "30", "60")
 
                     if key == "copyprice":
+                        print("copyprice")
                         assert value in ("False", "True")
 
                     if key == "uiscale":
+                        print("uiscale")
                         assert float(value) >= 0.1 and float(value) <= 2
 
                     if key == "key":
+                        print("")
                         assert value != "" and value is not None
                     
                     if key == "secret":

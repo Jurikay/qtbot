@@ -51,8 +51,10 @@ class GuiMgr:
     # This would ensure that functions trigger directly after new ticker data has been received.
     def blink(self):
         """Call all periodic ui updates here."""
-        self.scheduler.update()
-
+        try:
+            self.scheduler.update()
+        except AttributeError as e:
+            print("blink error", e)
         # if self.ticks >= 4:
         #     self.scheduler.less_regular_update()
         #     self.ticks = 0
@@ -79,6 +81,12 @@ class GuiMgr:
         self.setup_config_ui()
         self.store_ui_config_values()
         self.set_ui_stat_values()
+
+        self.mw.limit_buy_warning.setVisible(False)
+        self.mw.limit_sell_warning.setVisible(False)
+
+
+
 
     def hide_placeholders(self):
         """Hide ui text elements until their data arrives."""
@@ -228,11 +236,25 @@ class GuiMgr:
         self.mw.volume_widget.setVisible(False)
         self.mw.volumes_widget.setVisible(False)
 
+
+    def enable_ui(self):
+        self.mw.limit_pane.setEnabled(True)
+        self.mw.websocket_area.setEnabled(True)
+        self.mw.percent_frame.setVisible(True)
+        self.mw.volume_widget.setVisible(True)
+        self.mw.volumes_widget.setVisible(True)
         # Fully expand chart
         # self.mw.splitter_v.setSizes([0, 0])
         # self.mw.splitter_h.setSizes([0, 0])
         
         # self.first_time_setup()
+
+    def current_pair_ui_values(self):
+        """Set corner widget volume values and change values of current pair."""
+        pair = self.mw.data.current.pair
+        onem = self.mw.historical_data.indicators[pair].get("1m")
+        print("onem", onem)
+        # self.mw.volume_1m.text = self.mw.histoircal_data.
 
     # Maybe move this into limit order pane
     def limit_pane_current_values(self):
@@ -305,7 +327,13 @@ class GuiMgr:
     def save_config(self):
         print("save_config")
         config_dict = self.read_ui_config_values()
+        print("SAVE CONFIG DICT", config_dict)
         self.mw.cfg_manager.store_config(config_dict)
+
+        if not self.mw.is_connected:
+            print("TRY TO CONNECT")
+            self.mw.api_manager.init_authentication()
+            self.mw.check_connection()
 
     def save_stats(self):
         """Main public stats method.

@@ -15,7 +15,7 @@ import PyQt5.QtCore as QtCore
 from PyQt5.QtWebEngineWidgets import QWebEngineSettings, QWebEngineView, QWebEnginePage, QWebEngineProfile
 from PyQt5.QtWebChannel import QWebChannel
 import os
-
+import webbrowser
 
 
 class CallbackObject(QtCore.QObject):
@@ -30,7 +30,9 @@ class CallbackObject(QtCore.QObject):
 
     @QtCore.pyqtSlot(str)
     def openLink(self, url):
-        os.startfile(url)
+        # os.startfile(url)
+        webbrowser.open(url)
+
 
 
     @QtCore.pyqtSlot(str)

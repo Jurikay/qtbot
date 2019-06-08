@@ -210,10 +210,15 @@ class Index(BaseTableView):
         super(Index, self).__init__()
         self.my_model = FilterModel(self, 0)
 
-        # self.setItemDelegateForColumn(0, PairDelegate(self))
+        self.setItemDelegateForColumn(0, PairDelegate(self))
         self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
         # self.setItemDelegateForColumn(2, ChangePercentDelegate(self))
-        self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 8, " BTC"))
+        # self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 2, " BTC"))
+        for i in range(3, 7):
+            self.setItemDelegateForColumn(i, RoundFloatDelegate(self, 2, " BTC"))
+        for i in range(8, 11):
+            self.setItemDelegateForColumn(i, RoundFloatDelegate(self, 0))
+
 
         # for i in range(4, 7):
         #     self.setItemDelegateForColumn(i, RoundFloatDelegate(self, 3))
@@ -224,8 +229,13 @@ class Index(BaseTableView):
 
 
     def set_df(self):
-        if self.mw.data.current.index_df is not None:
-            return self.mw.data.current.index_df
+        # if self.mw.data.current.index_df is not None:
+            # return self.mw.data.current.index_df
+        print("RETURNING INDEX DF")
+        return self.mw.data.index_df().copy()
+
+
+
         # return self.mw.index_data.coin_index
 
     def set_widths(self):

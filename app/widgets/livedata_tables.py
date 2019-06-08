@@ -342,7 +342,7 @@ class AsksView(BackgroundTable):
 
 
     def set_df(self):
-        return self.mw.data.current.depth_df[self.side]
+        return self.mw.data.current.depth_df[self.side].copy()
 
 
 class BidsView(BackgroundTable):
@@ -362,7 +362,7 @@ class BidsView(BackgroundTable):
         self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, " BTC"))
 
     def set_df(self):
-        df = self.mw.data.current.depth_df[self.side]
+        df = self.mw.data.current.depth_df[self.side].copy()
         row_count = df.shape[0]
 
         # Fill df with empty data if it contains less than 20 values, to
@@ -393,7 +393,7 @@ class HistView(BackgroundTable):
         self.setItemDelegateForColumn(2, TimeDelegate(self, Colors.color_grey))
 
     def set_df(self):
-        df = self.mw.data.current.history_df
+        df = self.mw.data.current.history_df.copy()
         return df
 
 

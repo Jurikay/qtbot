@@ -24,6 +24,37 @@ class LimitOrderPane(QtWidgets.QWidget):
         new_pair = self.mw.data.current.pair
 
 
+    def determine_warnings(self, depth):
+        """Called from websocket depth callback. Gets passed current depth."""
+        print("DETERMINE WARNINGS")
+
+        if self.buy_allowed:
+            buy_input = self.mw.limit_buy_input.value()
+            best_ask = float(depth["asks"][0][0])
+            if buy_input >= best_ask:
+                self.mw.limit_buy_warning.setVisible(True)
+            else:
+                self.mw.limit_buy_warning.setVisible(False)
+        else:
+            self.mw.limit_buy_warning.setVisible(False)
+
+            
+        if self.sell_allowed:
+            sell_input = self.mw.limit_sell_input.value()
+            best_ask = float(depth["asks"][0][0])
+            best_bid = float(depth["bids"][0][0])
+            if sell_input <= best_bid:
+                self.mw.limit_sell_warning.setVisible(True)
+            else:
+                self.mw.limit_sell_warning.setVisible(False)
+        else:
+            self.mw.limit_sell_warning.setVisible(False)
+
+                
+
+
+
+
     def set_holding_values(self):
         """Update values based on updated holdings."""
         coin = self.mw.data.current.coin
@@ -164,12 +195,15 @@ class LimitOrderPane(QtWidgets.QWidget):
 
 
     def check_buy_amount(self):
-        if float(self.mw.user_data.holdings["BTC"]["free"]) != 0:
-            total = int(((float(self.mw.limit_buy_amount.value()) * float(self.mw.limit_buy_input.value())) / float(self.mw.user_data.holdings["BTC"]["free"])) * 100)
-        else:
-            total = 0
-        # print("check buy")
-        self.calc_total_buy()
+        try:
+            if float(self.mw.user_data.holdings["BTC"]["free"]) != 0:
+                total = int(((float(self.mw.limit_buy_amount.value()) * float(self.mw.limit_buy_input.value())) / float(self.mw.user_data.holdings["BTC"]["free"])) * 100)
+            else:
+                total = 0
+            # print("check buy")
+            self.calc_total_buy()
+        except KeyError as e:
+            print("check_buy_amount KeyError:", e)
 
         try:
             total = float(self.mw.limit_buy_input.value()) * float(self.mw.limit_buy_amount.text())

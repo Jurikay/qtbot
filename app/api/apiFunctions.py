@@ -20,7 +20,7 @@ from binance.client import Client
 from requests.exceptions import ReadTimeout
 import app
 from app.workers import Worker
-from app.charts import welcome_page, time_error_page, Webpages
+from app.charts import welcome_page, time_error_page, api_error_page, Webpages
 
 class ApiCalls:
     """Collection of api related methods."""
@@ -48,8 +48,9 @@ class ApiCalls:
     def authenticate_client(self):
         print("Authenticate client")
         try:
-            api_key = self.mw.cfg_manager.api_key
-            api_secret = self.mw.cfg_manager.api_secret
+            api_key = self.mw.cfg_manager.get_config_value("API", "key")
+            api_secret = self.mw.cfg_manager.get_config_value("API", "secret")
+            print("authenticate_client: key,secret:", api_key, api_secret)
         except Exception as e:
             self.error = "no-api-key"
             print("api key/secret not found!")
@@ -85,11 +86,14 @@ class ApiCalls:
                 elif "code=-2014" in str(e):
 
                     print("API KEY INVALID")
-                    api_key = self.mw.cfg_manager.api_key
-                    api_secret = self.mw.cfg_manager.api_secret
+                    api_key = self.mw.cfg_manager.get_config_value("API", "key")
+                    api_secret = self.mw.cfg_manager.get_config_value("API", "secret")
                     print("key:", api_key, "secret:", api_secret)
+                    print("SOLLTE SEIN", self.mw.cfg_manager.get_config_value("API", "key"))
                     if api_key == "" or api_secret == "" or api_key == "key" or api_secret == "secret":
                         self.error = "no-api-key"
+                    else:
+                        self.error = "key-invalid"
                 elif "code=0" in str(e):
                     print("BINANCE API DOWN!!!")
                 elif "get_products" in str(e):
@@ -97,6 +101,8 @@ class ApiCalls:
                 elif "code=-1021" in str(e):
                     print("ZEITFUCK")
                     self.error = "time"
+                elif "code=-1022" in str(e):
+                    self.error = "signature"
         else:
             print("CLIENT NOT DEFINED! BANNED!")
             if not self.error == "no-api-key":
@@ -108,7 +114,13 @@ class ApiCalls:
         elif self.error == "no-api-key":
             self.mw.chart.setHtml(welcome_page())
             self.mw.gui_mgr.first_time_setup()
+        elif self.error == "key-invalid":
+            self.mw.chart.setHtml(api_error_page())
+        elif self.error == "signature":
+            print("SIGNATURE ERROR DETECTED")
+
         else:
+            print("ERROR:", self.error)
             # If there were no errors, display the chart of the current pair
             pair = self.mw.data.current.pair
             self.mw.chart.setHtml(Webpages.build_chart2(pair, self.mw.cfg_manager.defaultTimeframe))
@@ -207,56 +219,7 @@ class ApiCalls:
         return account_info
 
     ########## NEW ##############
-    def kline_callback(self, *args):
-        print("KLINE CALLBACK", args)
-        # print("kline callback", msg, *args, self)
     
-
-    # todo: move to kline data;
-    # keep track of already checked pairs,
-    # if api error, pause for 1 minute 
-    def kline_generator(self, pair_dict=None, progress_callback=None):
-        import dateparser
-        dr = dateparser.parse("2 days, ago UTC")
-        if not pair_dict:
-            pairs = ["BNBBTC", "NEOBTC", "ICXBTC", "GASBTC", "NANOBTC", "MATICBTC"]
-        else:
-            pairs = list(pair_dict.keys())
-
-        print("PAIRS:", pairs)
-        for pair in pairs:
-            pair = Worker(partial(self.threaded_klines, pair, dr))
-            pair.signals.progress.connect(self.kline_callback)
-            self.threadpool.start(pair)
-            time.sleep(0.1)
-
-        progress_callback.emit("done")
-        print("kline generator over")
-            # for kline in self.client.get_historical_klines_generator(pair, "1m", "1 day ago UTC"):
-            #     print("KLINE", kline)
-
-    # TODO: Improve; This has to become aware of api limits or
-    # 
-    def threaded_klines(self, pair, dr, progress_callback):
-        # print("PRGCB", result_callback)
-        print("threaded_klines pair:", pair)
-        kline_dict = dict()
-        timeframes = ["1m"]
-        for tf in timeframes:
-            kline_dict[tf] = dict()
-            try:
-                for kline in self.client.get_historical_klines_generator(pair, tf, str(dr)):
-                    self.mw.historical_data.kline_list_to_dict(pair, tf, kline)
-            except BinanceAPIException as e:
-                print("THREADED KLINES API EXCEPTION", e)
-
-        # self.mw.data.klines[pair] = kline_dict
-        progress_callback.emit(kline_dict)
-        # print("KLINE DICT", kline_dict)
-        # result_callback.emit("lul")
-                # print("KLINE", kline)
-        # pass
-
     def api_klines(self, pairdr, progress_callback=None):
         pair = pairdr[0]
         dr = pairdr[1]

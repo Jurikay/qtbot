@@ -17,6 +17,11 @@ def time_error_page():
                so the system time can be set correctly on startup."""
     return info_page(title, content)
 
+def api_error_page():
+    title = "Welcome🔥"
+    content = """The <span style="color: #f3f3f3">api-credentials</span> are not valid.<br>
+                 Log into Binance and create valid api credentials <a id="link" href="https://www.binance.com/userCenter/createApi.html">here</a>."""
+    return info_page(title, content)
 
 def welcome_page():
     title = "Welcome🔥"

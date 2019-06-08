@@ -57,7 +57,9 @@ class DataManager():
                 self.tickers[pair] = info
             elif info["symbol"] == "BTCUSDT":
                 self.btc_price = info
-        self.ticker_df()
+
+
+        # self.ticker_df()
 
     @staticmethod
     def set_trades(trades):
@@ -141,7 +143,33 @@ class DataManager():
         self.current.history_df = df
         return df
     
-    def index_df(self, progress_callback):
+
+    def index_df(self, progress_callback=None):
+        print("INDEX DF")
+        if self.tickers:
+            index_list = list()
+
+            for k, v in self.tickers.items():
+                indicators = None
+                if app.mw.historical_data.has_data(k, "1m"):
+                    indicators = app.mw.historical_data.indicators.get(k, None)
+                if indicators is None:
+                    ind = [0,0,0,0,0,0,0, 0]
+                else:
+                    ind = list(indicators.values())
+                pair_data_list = list()
+                pair_data_list.extend([str(v["symbol"]), float(v["lastPrice"]), int(v["count"]), ind[0], ind[1], ind[2], ind[3], ind[4], ind[5], ind[6], ind[7]])
+                index_list.append(pair_data_list)
+                
+                
+            df = pd.DataFrame(index_list, columns=["Coin", "last Price", "Count", "5m volume", "15m volume", "30m volume", "1h volume", "5m count", "15m count", "30m count", "1h count"])
+            # df = df.apply(pd.to_numeric, errors='coerce')
+
+            return df
+                # self.current.index_df = df
+
+
+    def old_index_df(self, progress_callback):
         """Called periodically from thread
         Return a dataframe that will serve as model for the market index table."""
         print("INDEX DF")
@@ -158,22 +186,18 @@ class DataManager():
 
                 pair_data_list.extend([k, v["symbol"], v["lastPrice"], v["count"], 0, 0, 0, 0, 0, 0, 0, 0])
                 if hist_data.has_data(k, "1m"):
-                    # klines = hist_data.get_hist_volume(k, 15)
                     klines = hist_data.get_hist_values(k)
                     
                     try:
-                        # print("COIN", k)
-                        # print("new klines", klines)
-                        # print("df at 10m", self.current.index_df.at[k, "10m volume"])
-                        # print(self.current.index_df.loc[k,:])
-                        self.current.index_df.loc[k, "5m volume"] = klines[0]
-                        self.current.index_df.loc[k, "15m volume"] = klines[1]
-                        self.current.index_df.loc[k, "30m volume"] = klines[2]
-                        self.current.index_df.loc[k, "1h volume"] = klines[3]
-                        self.current.index_df.loc[k, "5m count"] = klines[4]
-                        self.current.index_df.loc[k, "15m count"] = klines[5]
-                        self.current.index_df.loc[k, "30m count"] = klines[6]
-                        self.current.index_df.loc[k, "1h count"] = klines[7]
+                        print("df update skip")
+                        # self.current.index_df.loc[k, "5m volume"] = klines[0]
+                        # self.current.index_df.loc[k, "15m volume"] = klines[1]
+                        # self.current.index_df.loc[k, "30m volume"] = klines[2]
+                        # self.current.index_df.loc[k, "1h volume"] = klines[3]
+                        # self.current.index_df.loc[k, "5m count"] = klines[4]
+                        # self.current.index_df.loc[k, "15m count"] = klines[5]
+                        # self.current.index_df.loc[k, "30m count"] = klines[6]
+                        # self.current.index_df.loc[k, "1h count"] = klines[7]
 
 
 

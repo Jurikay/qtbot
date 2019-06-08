@@ -64,6 +64,7 @@ class GuiScheduler:
             
             self.new_gui_blink()
 
+            self.mw.gui_mgr.current_pair_ui_values()
             # self.periodic_thread()
             # worker = Worker(self.test_indicators)
             # self.threadpool.start(worker)
@@ -83,8 +84,8 @@ class GuiScheduler:
                 # self.threadpool.start(worker_indicators)
 
             # TEST
-            worker = Worker(self.mw.data.index_df)
-            self.threadpool.start(worker)
+            # worker = Worker(self.mw.data.index_df)
+            # self.threadpool.start(worker)
 
                 
             # if self.mw.threadpool.activeThreadCount() == 0 and not self.klines_started:

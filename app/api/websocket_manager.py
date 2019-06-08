@@ -164,6 +164,7 @@ class WebsocketManager:
         worker.signals.finished.connect(self.mw.new_asks.update)
         worker.signals.finished.connect(self.mw.new_bids.update)
 
+        worker.signals.finished.connect(partial(self.mw.limit_pane.determine_warnings, msg))
         # worker.signals.progress.connect(self.mw.asks_view.update)
 
 
