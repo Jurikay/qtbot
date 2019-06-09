@@ -84,8 +84,9 @@ class GuiScheduler:
                 # self.threadpool.start(worker_indicators)
 
             # TEST
-            # worker = Worker(self.mw.data.index_df)
-            # self.threadpool.start(worker)
+            worker = Worker(self.mw.data.index_df)
+            worker.signals.finished.connect(self.mw.index_view.update)
+            self.threadpool.start(worker)
 
                 
             # if self.mw.threadpool.activeThreadCount() == 0 and not self.klines_started:
@@ -255,7 +256,8 @@ class GuiScheduler:
         tab_index = self.mw.tabsBotLeft.currentIndex()
 
         if tab_index == 0:
-            self.mw.index_view.update()
+            pass
+            # self.mw.index_view.update()
         elif tab_index == 1:
             self.mw.open_orders_view.redraw()
 

@@ -34,6 +34,9 @@ class DataManager():
         self.current.tickers = dict()
         # todo: load from cfg
 
+        # debug
+        self.index_list = list()
+
 
     def set_depth(self, depth, progress_callback=None):
         """Receives current bids and asks of selected pair."""
@@ -161,11 +164,10 @@ class DataManager():
                 pair_data_list.extend([str(v["symbol"]), float(v["lastPrice"]), int(v["count"]), ind[0], ind[1], ind[2], ind[3], ind[4], ind[5], ind[6], ind[7]])
                 index_list.append(pair_data_list)
                 
-                
-            df = pd.DataFrame(index_list, columns=["Coin", "last Price", "Count", "5m volume", "15m volume", "30m volume", "1h volume", "5m count", "15m count", "30m count", "1h count"])
-            # df = df.apply(pd.to_numeric, errors='coerce')
+            self.index_list = index_list
+            # df = pd.DataFrame(index_list, columns=["Coin", "last Price", "Count", "5m volume", "15m volume", "30m volume", "1h volume", "5m count", "15m count", "30m count", "1h count"])
 
-            return df
+            # return df
                 # self.current.index_df = df
 
 

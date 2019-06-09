@@ -13,6 +13,7 @@ from app.widgets.base_table import FilterModel, BaseTableView, BasicDelegate
 from app.helpers import resource_path
 from app.colors import Colors
 
+import pandas as pd
 
 class OpenOrders(BaseTableView):
     """Extended TableView."""
@@ -232,7 +233,9 @@ class Index(BaseTableView):
         # if self.mw.data.current.index_df is not None:
             # return self.mw.data.current.index_df
         print("RETURNING INDEX DF")
-        return self.mw.data.index_df().copy()
+        df = pd.DataFrame(self.mw.data.index_list, columns=["Coin", "last Price", "Count", "5m volume", "15m volume", "30m volume", "1h volume", "5m count", "15m count", "30m count", "1h count"])
+        return df.copy()
+        # return self.mw.data.index_df().copy()
 
 
 
