@@ -261,8 +261,9 @@ class GuiMgr:
         # indicator_list.append(indicators.get("30m volume", 0))
         indicator_list.append(indicators.get("1h volume", 0))
 
+        self.mw.limit_buy_slider.setValue(0)
+        self.mw.limit_sell_slider.setValue(0)
         ui_elements = [self.mw.volume_1m, self.mw.volume_5m, self.mw.volume_15m, self.mw.volume_1h]
-
     
         for i, ele in enumerate(ui_elements):
             if indicator_list[3] == 0:
