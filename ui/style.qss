@@ -25,7 +25,6 @@ QProgressBar::chunk {
     /* height: 15px; */
 }
 
-
 QWidget {
     background-color: #262d33;
     font-family: "Source Sans Pro", sans-serif, Arial;
@@ -751,6 +750,27 @@ QGroupBox::indicator:unchecked:disabled {
 #hide_pairs {
     margin-top: 5px;
 }
+
+#btn_feedback {
+    border: 1px solid #f3ba2e;
+    border-radius: 3px;
+    background: transparent;
+    color: #f3ba2e;
+    padding-left: 5px;
+    padding-right: 5px;
+
+    margin-right: 12px;
+}
+
+#btn_feedback:hover{
+    color: white;
+}
+
+#btn_feedback::pressed{
+    border: 1px solid white;
+    color: white;
+}
+
 #btn_cancel_all {
     border: 1px solid #ff007a;
     border-radius: 3px;

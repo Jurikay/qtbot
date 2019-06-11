@@ -203,8 +203,8 @@ class ApiCalls:
 
     def cancel_callback(self, order="empty"):
         if order == "query":
-            print("CANCEL FAILED, doing manually")
-            self.mw.open_orders_view.query_update()
+            print("CANCEL FAILED")
+            # self.mw.open_orders_view.query_update()
             return
         
         print("SUCCESSFULLY CANCELLED ORDER: ", order)

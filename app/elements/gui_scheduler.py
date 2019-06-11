@@ -85,7 +85,10 @@ class GuiScheduler:
 
             # TEST
             worker = Worker(self.mw.data.index_df)
-            worker.signals.finished.connect(self.mw.index_view.update)
+            print("CURRENT INDEX",  self.mw.tabsBotLeft.currentIndex())
+            if self.mw.tabsBotLeft.currentIndex() == 0:
+
+                worker.signals.finished.connect(self.mw.index_view.update)
             self.threadpool.start(worker)
 
                 

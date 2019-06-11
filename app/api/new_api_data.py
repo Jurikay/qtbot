@@ -162,15 +162,10 @@ class ApiManager:
 
 
     def store_pair_data(self, progress_callback=None):
-        print("STORE PAIR DATA")
         """This is called whenever the current pair is changed."""
         symbol = self.data.current.pair
-        print("symbol: debug", symbol)
-
-        print("store_pair_data:", symbol)
 
         self.data.set_hist(self.getTradehistory(symbol))
-
         self.data.set_depth(self.getDepth(symbol))
 
         # !new trade history update
@@ -189,14 +184,14 @@ class ApiManager:
 
 
     def set_thread(self, callback):
-        print("CALLBACK:", callback)
+        # print("CALLBACK:", callback)
         # self.mw.tradeTable.update()
         self.mw.new_asks.update()
         self.mw.new_bids.update()
 
         # !new update
-        self.mw.trade_history_view.update()
-        self.mw.holdings_view.update()
+        self.mw.trade_history_view.websocket_update()
+        self.mw.holdings_view.websocket_update()
 
     # def api_calls(self):
     #     print("apiFunctions api_calls")

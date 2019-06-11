@@ -55,11 +55,11 @@ class UserData(QtCore.QObject):
         progress_callback.emit("1")
 
     # currently not needed
-    def process_initial_data(self):
-        """process user data."""
-        self.mw.open_orders_view.setup()
-        self.mw.holdings_view.setup()
-        self.mw.trade_history_view.setup()
+    # def process_initial_data(self):
+    #     """process user data."""
+    #     self.mw.open_orders_view.setup()
+    #     self.mw.holdings_view.setup()
+    #     self.mw.trade_history_view.setup()
 
     def change_pair(self):
         """This is called when the pair is changed.
@@ -114,13 +114,7 @@ class UserData(QtCore.QObject):
         if not order.get("clientOrderId"):
             order["price"] = order["orderPrice"]
 
-            # if this is the first open order, run setup.
-            # else, update open orders table
-            # TODO: This logic should probably go to the model/view
-            if run_setup:
-                self.mw.open_orders_view.setup()
-
-            self.mw.open_orders_view.websocket_update()
+        self.mw.open_orders_view.websocket_update()
 
 
 
@@ -321,12 +315,12 @@ class UserData(QtCore.QObject):
             final_df = df.apply(pd.to_numeric, errors='ignore')
             # final_df = df
             # print(final_df)
+            print("RETURNING HISTORY DF")
             return final_df
-
+        print("DIDNT CREATE HISTORY DF")
         # TODO: Investigate: This seems to be a race condition
         # where the program just closes without error.
-        print("NO TRADE HIST!new")
-        return
+
         # return pd.DataFrame()
 
         #     order["filled_percent"] = '{number:.{digits}f}'.format(number=(float(order["executedQty"]) / float((order["origQty"])) * 100), digits=2) + "%"

@@ -93,6 +93,8 @@ class LimitOrderPane(QtWidgets.QWidget):
 
 
     def limit_percentage(self):
+        self.mw.sound_manager.play_sound("button")
+
         self.mw.sound_manager.ps2()
         button_number = int(self.mw.sender().objectName()[-1:])
         value = self.percentage_amount(self.mw.user_data.holdings["BTC"]["free"], self.mw.limit_buy_input.value(), int(self.mw.cfg_manager.buttonPercentage[button_number]), self.mw.data.pairs[self.mw.data.current.pair]["assetDecimals"])
@@ -102,6 +104,7 @@ class LimitOrderPane(QtWidgets.QWidget):
 
 
     def limit_percentage_sell(self):
+        self.mw.sound_manager.play_sound("button")
         button_number = int(self.mw.sender().objectName()[-1:])
         coin = self.mw.data.current.coin
         value = float(self.mw.user_data.holdings[coin]["free"]) * (float(self.mw.cfg_manager.buttonPercentage[button_number]) / 100)
@@ -157,6 +160,8 @@ class LimitOrderPane(QtWidgets.QWidget):
     def overbid_undercut(self):
         try:
             print("NAME:", str(self.mw.sender))
+            self.mw.sound_manager.play_sound("button")
+
             if self.mw.sender().text() == "outbid":
                 self.mw.limit_buy_input.setValue(float(self.mw.data.current.orderbook["bids"][0][0]) + float(self.mw.data.pairs[self.mw.data.current.pair]["tickSize"]))
             elif self.mw.sender().text() == "undercut":
@@ -188,8 +193,8 @@ class LimitOrderPane(QtWidgets.QWidget):
                 self.mw.limit_sell_button.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
                 self.sell_allowed = True
 
-        except ValueError:
-            print("val error")
+        except (ValueError, KeyError) as e:
+            print("Check amount error", e)
             # pass
         self.calc_total_sell()
 
@@ -218,7 +223,7 @@ class LimitOrderPane(QtWidgets.QWidget):
                 self.mw.limit_buy_button.setStyleSheet("border: 2px solid transparent;")
                 self.buy_allowed = True
 
-        except ValueError as error:
+        except (ValueError, KeyError) as error:
             print(str(error))
 
 #################################

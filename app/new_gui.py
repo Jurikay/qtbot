@@ -252,8 +252,31 @@ class GuiMgr:
     def current_pair_ui_values(self):
         """Set corner widget volume values and change values of current pair."""
         pair = self.mw.data.current.pair
-        onem = self.mw.historical_data.indicators[pair].get("1m")
-        print("onem", onem)
+        indicators = self.mw.historical_data.indicators[pair]
+
+        indicator_list = list()
+        indicator_list.append(indicators.get("1m volume", 0))
+        indicator_list.append(indicators.get("5m volume", 0))
+        indicator_list.append(indicators.get("15m volume", 0))
+        # indicator_list.append(indicators.get("30m volume", 0))
+        indicator_list.append(indicators.get("1h volume", 0))
+
+        ui_elements = [self.mw.volume_1m, self.mw.volume_5m, self.mw.volume_15m, self.mw.volume_1h]
+
+    
+        for i, ele in enumerate(ui_elements):
+            if indicator_list[3] == 0:
+                ele.setText("<span style='color: #999;'>" + str(round(indicator_list[i], 4))+ " BTC</span>")
+            else:
+                ele.setText(str(round(indicator_list[i], 4))+ " BTC")
+
+
+        # print("current_pair_ui_values:", indicator_list)
+        # self.mw.volume_1m.setText(str(round(indicator_list[0], 4))+ " BTC")
+        # self.mw.volume_5m.setText(str(round(indicator_list[1], 4))+ " BTC")
+        # self.mw.volume_15m.setText(str(round(indicator_list[2], 4))+ " BTC")
+        # self.mw.volume_1h.setText(str(round(indicator_list[4], 4))+ " BTC")
+        
         # self.mw.volume_1m.text = self.mw.histoircal_data.
 
     # Maybe move this into limit order pane
@@ -291,6 +314,13 @@ class GuiMgr:
 
             self.mw.limit_sell_amount.setDecimals(tickers[pair]["assetDecimals"])
             self.mw.limit_sell_amount.setSingleStep(float(tickers[pair]["minTrade"]))
+
+            # Reset values
+            self.mw.limit_buy_input.setValue(0)
+            self.mw.limit_sell_input.setValue(0)
+            self.mw.limit_buy_amount.setValue(0)
+            self.mw.limit_sell_amount.setValue(0)
+
         except KeyError as e:
             print("livedata values key error", e)
 

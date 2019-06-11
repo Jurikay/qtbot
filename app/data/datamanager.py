@@ -113,7 +113,7 @@ class DataManager():
 
     # ############### DATAFRAMES ######################
     def depth_df(self, side):
-        """(Re)creates two pandas dataframes: One for asks and one for bids."""
+        """side can be either bids or asks."""
         # print(self.current.orderbook[side])
         # for side in sides:
         df = pd.DataFrame(self.current.orderbook[side])
@@ -148,6 +148,7 @@ class DataManager():
     
 
     def index_df(self, progress_callback=None):
+        """Prepare data for index dataframe. This is not done in the main thread."""
         print("INDEX DF")
         if self.tickers:
             index_list = list()
@@ -157,91 +158,19 @@ class DataManager():
                 if app.mw.historical_data.has_data(k, "1m"):
                     indicators = app.mw.historical_data.indicators.get(k, None)
                 if indicators is None:
-                    ind = [0,0,0,0,0,0,0, 0]
+                    ind = [0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 0, 0]
                 else:
                     ind = list(indicators.values())
                 pair_data_list = list()
-                pair_data_list.extend([str(v["symbol"]), float(v["lastPrice"]), int(v["count"]), ind[0], ind[1], ind[2], ind[3], ind[4], ind[5], ind[6], ind[7]])
+                pair_data_list.extend([str(v["symbol"]), float(v["lastPrice"]), int(v["count"]), ind[0], ind[1], ind[2], ind[3], ind[4], ind[5], ind[6], ind[7], ind[8], ind[9], ind[10], ind[11], ind[12], ind[13]])
                 index_list.append(pair_data_list)
-                
+
             self.index_list = index_list
             # df = pd.DataFrame(index_list, columns=["Coin", "last Price", "Count", "5m volume", "15m volume", "30m volume", "1h volume", "5m count", "15m count", "30m count", "1h count"])
 
             # return df
                 # self.current.index_df = df
 
-
-    def old_index_df(self, progress_callback):
-        """Called periodically from thread
-        Return a dataframe that will serve as model for the market index table."""
-        print("INDEX DF")
-        hist_data = app.mw.historical_data
-
-        index_list = list()
-
-        if self.tickers:
-            for k, v in self.tickers.items():
-                # print("ITERATING TICKERS", k, len(self.tickers.items()))
-                # print("TICKERDATA", v["symbol"], k)
-
-                pair_data_list = list()
-
-                pair_data_list.extend([k, v["symbol"], v["lastPrice"], v["count"], 0, 0, 0, 0, 0, 0, 0, 0])
-                if hist_data.has_data(k, "1m"):
-                    klines = hist_data.get_hist_values(k)
-                    
-                    try:
-                        print("df update skip")
-                        # self.current.index_df.loc[k, "5m volume"] = klines[0]
-                        # self.current.index_df.loc[k, "15m volume"] = klines[1]
-                        # self.current.index_df.loc[k, "30m volume"] = klines[2]
-                        # self.current.index_df.loc[k, "1h volume"] = klines[3]
-                        # self.current.index_df.loc[k, "5m count"] = klines[4]
-                        # self.current.index_df.loc[k, "15m count"] = klines[5]
-                        # self.current.index_df.loc[k, "30m count"] = klines[6]
-                        # self.current.index_df.loc[k, "1h count"] = klines[7]
-
-
-
-
-                        # self.current.index_df.set_value(k, "10m volume", klines)
-                    except Exception as e:
-                        print("KLINE DF ERROR", e)
-                # else:
-                #     print("HAS NO DATA", k)
-
-
-                #     pair_data_list.append(klines)
-                #     # print("KLINES", k, klines)
-                # else:
-                #     klines = 0
-
-                index_list.append(pair_data_list)
-                
-            
-            print("DF")
-            if not isinstance(self.current.index_df, pd.DataFrame):
-                print("CREATING INDEX DF")
-                self.current.index_df = pd.DataFrame(index_list, columns=["Pair", "Coin", "last Price", "Count", "5m volume", "15m volume", "30m volume", "1h volume", "5m count", "15m count", "30m count", "1h count"])
-                self.current.index_df.set_index("Pair", inplace=True)
-            
-
-
-        return
-
-        if self.current.ticker_df is not None:
-            df = self.current.ticker_df
-            # df = df[["Coin", "Price", "Change"]]
-            for i in df.index:
-                coin = df.get_value(i, "Coin")
-
-                if hist_data.has_data(coin, "1m"):
-
-                # if app.mw.historical_data.klines.get(coin):
-                    # print("FOUND HIST COIN")
-                    klines = hist_data.get_hist_volume(coin, 15)
-                    print("KLINES", coin, klines)
-                # print("INDEX DF", coin)
 
     def ticker_df(self):
         if self.tickers:

@@ -276,7 +276,7 @@
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_48">
             <property name="spacing">
-             <number>5</number>
+             <number>8</number>
             </property>
             <item>
              <widget class="QWidget" name="volumes_widget" native="true">
@@ -361,6 +361,12 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
                     <string>24h Volume:</string>
                    </property>
@@ -405,6 +411,12 @@
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
                    </property>
                    <property name="text">
                     <string>low Price:</string>
@@ -451,6 +463,12 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
                     <string>high Price:</string>
                    </property>
@@ -492,6 +510,12 @@
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
                    </property>
                    <property name="text">
                     <string>last Price:</string>
@@ -535,6 +559,12 @@
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
                     <string>24h change:</string>
                    </property>
@@ -565,9 +595,41 @@
              </widget>
             </item>
             <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="btn_feedback">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Send Feedback:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Feature requests, bug reports and suggestions are very welcome!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>Feedback</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="acc_label">
               <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -700,7 +762,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>9</number>
+            <number>4</number>
            </property>
            <widget class="QWidget" name="chart_tab">
             <property name="sizePolicy">
@@ -804,8 +866,8 @@
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>969</width>
-                  <height>534</height>
+                  <width>981</width>
+                  <height>495</height>
                  </rect>
                 </property>
                </widget>
@@ -901,6 +963,12 @@
                   </property>
                   <item>
                    <widget class="QLabel" name="label_75">
+                    <property name="font">
+                     <font>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
                     <property name="text">
                      <string>1m volume:</string>
                     </property>
@@ -937,6 +1005,12 @@
                   </property>
                   <item>
                    <widget class="QLabel" name="label_73">
+                    <property name="font">
+                     <font>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
                     <property name="text">
                      <string>5m volume:</string>
                     </property>
@@ -973,6 +1047,12 @@
                   </property>
                   <item>
                    <widget class="QLabel" name="label_69">
+                    <property name="font">
+                     <font>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
                     <property name="text">
                      <string>15m volume:</string>
                     </property>
@@ -1009,6 +1089,12 @@
                   </property>
                   <item>
                    <widget class="QLabel" name="label_71">
+                    <property name="font">
+                     <font>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
                     <property name="text">
                      <string>1h volume:</string>
                     </property>
@@ -1088,10 +1174,10 @@
                  <cursorShape>PointingHandCursor</cursorShape>
                 </property>
                 <property name="toolTip">
-                 <string/>
+                 <string>Cancel all currently visible orders!</string>
                 </property>
                 <property name="toolTipDuration">
-                 <number>5</number>
+                 <number>-1</number>
                 </property>
                 <property name="whatsThis">
                  <string>asdasd</string>
@@ -2309,10 +2395,16 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>620</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="maximumSize">
               <size>
-               <width>16777215</width>
-               <height>45</height>
+               <width>620</width>
+               <height>16777215</height>
               </size>
              </property>
              <layout class="QHBoxLayout" name="percent_changes_bar">
@@ -2352,6 +2444,12 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>5m change:</string>
@@ -2401,6 +2499,12 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="text">
                    <string>15m change:</string>
                   </property>
@@ -2448,6 +2552,12 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
                    <string>1h change:</string>
@@ -2497,6 +2607,12 @@
                     <verstretch>0</verstretch>
                    </sizepolicy>
                   </property>
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="text">
                    <string>4h change:</string>
                   </property>
@@ -2542,6 +2658,12 @@
                 </property>
                 <item>
                  <widget class="QLabel" name="label_44">
+                  <property name="font">
+                   <font>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
                   <property name="text">
                    <string>1d change:</string>
                   </property>
@@ -3106,7 +3228,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>4</number>
+           <number>3</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -5321,70 +5443,8 @@
              <number>5</number>
             </property>
             <property name="verticalSpacing">
-             <number>10</number>
+             <number>0</number>
             </property>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_41">
-              <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#f3f3f3;&quot;&gt;Settings:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3">
-             <layout class="QHBoxLayout" name="horizontalLayout_20">
-              <property name="spacing">
-               <number>15</number>
-              </property>
-              <item>
-               <widget class="QCheckBox" name="cfg_remember">
-                <property name="text">
-                 <string>Remember last</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="default_pair_label">
-                <property name="text">
-                 <string/>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>API-Secret:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="3">
-             <widget class="QLineEdit" name="api_secret_label">
-              <property name="inputMethodHints">
-               <set>Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
-              </property>
-              <property name="echoMode">
-               <enum>QLineEdit::PasswordEchoOnEdit</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QLineEdit" name="api_key_label">
-              <property name="echoMode">
-               <enum>QLineEdit::Normal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_32">
-              <property name="text">
-               <string>Percentages:</string>
-              </property>
-             </widget>
-            </item>
             <item row="4" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_22">
               <property name="spacing">
@@ -5433,31 +5493,10 @@
               </item>
              </layout>
             </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_15">
-              <property name="text">
-               <string>Default Pair:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>API-Key:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Default Timeframe:</string>
-              </property>
-             </widget>
-            </item>
             <item row="7" column="3">
              <layout class="QHBoxLayout" name="horizontalLayout_24">
               <property name="spacing">
-               <number>10</number>
+               <number>0</number>
               </property>
               <item>
                <widget class="QDoubleSpinBox" name="sb_uiscale">
@@ -5465,7 +5504,7 @@
                  <string>x</string>
                 </property>
                 <property name="decimals">
-                 <number>1</number>
+                 <number>2</number>
                 </property>
                 <property name="minimum">
                  <double>0.100000000000000</double>
@@ -5547,98 +5586,58 @@
               </item>
              </widget>
             </item>
-            <item row="8" column="0">
-             <widget class="QLabel" name="label_53">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_41">
               <property name="text">
-               <string>UI Updates:</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#f3f3f3;&quot;&gt;Settings:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
               </property>
              </widget>
             </item>
-            <item row="8" column="3">
-             <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="0,0,0,0">
-              <property name="spacing">
-               <number>10</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="label_64">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>Every</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="ui_updates_box">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-                <property name="maximum">
-                 <number>240</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="ui_updates_label">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>second</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_40">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#666666;&quot;&gt;(Does not include order book and trade history)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item row="10" column="3">
-             <widget class="QPushButton" name="save_config">
-              <property name="text">
-               <string>save</string>
+            <item row="1" column="3">
+             <widget class="QLineEdit" name="api_key_label">
+              <property name="echoMode">
+               <enum>QLineEdit::Normal</enum>
               </property>
              </widget>
             </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label_51">
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_32">
               <property name="text">
-               <string>BTC Chart:</string>
+               <string>Percentages:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_15">
+              <property name="text">
+               <string>Default Pair:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>API-Key:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3">
+             <widget class="QLineEdit" name="api_secret_label">
+              <property name="inputMethodHints">
+               <set>Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+              </property>
+              <property name="echoMode">
+               <enum>QLineEdit::PasswordEchoOnEdit</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Default Timeframe:</string>
               </property>
              </widget>
             </item>
@@ -5785,6 +5784,41 @@
               </item>
              </layout>
             </item>
+            <item row="3" column="3">
+             <layout class="QHBoxLayout" name="horizontalLayout_20">
+              <property name="spacing">
+               <number>15</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="cfg_remember">
+                <property name="text">
+                 <string>Remember last</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="default_pair_label">
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_51">
+              <property name="text">
+               <string>BTC Chart:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_14">
+              <property name="text">
+               <string>API-Secret:</string>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="3">
              <widget class="QLabel" name="restart_warning">
               <property name="enabled">
@@ -5805,6 +5839,13 @@
              <widget class="QLabel" name="label_4">
               <property name="text">
                <string>UI Scale</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="3">
+             <widget class="QPushButton" name="save_config">
+              <property name="text">
+               <string>save</string>
               </property>
              </widget>
             </item>
@@ -5868,7 +5909,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>614</width>
-                 <height>479</height>
+                 <height>482</height>
                 </rect>
                </property>
                <property name="sizePolicy">
@@ -6218,7 +6259,7 @@
      <x>0</x>
      <y>0</y>
      <width>1686</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -6355,7 +6396,6 @@
   <tabstop>cfg_remember</tabstop>
   <tabstop>default_pair_label</tabstop>
   <tabstop>default_timeframe_selector</tabstop>
-  <tabstop>ui_updates_box</tabstop>
   <tabstop>save_config</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>session_running</tabstop>

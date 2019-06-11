@@ -225,6 +225,10 @@ class WebsocketManager:
                 worker.signals.progress.connect(self.mw.user_data.add_to_open_orders)
 
 
+
+                self.mw.sound_manager.play_sound("order")
+                # worker.signals.finished.connect(self.mw.sound_manager.order_sound)
+
                 # update new table
                 # worker.signals.progress.connect(self.mw.data_open_orders_table.update)
 
@@ -239,6 +243,8 @@ class WebsocketManager:
                 if float(order["executedQty"]) > 0:
                     # worker.signals.progress.connect(self.mw.history_table.add_to_history)
                     worker.signals.progress.connect(self.mw.trade_history_view.websocket_update)
+
+                self.mw.sound_manager.play_sound("cancel")
 
 
             elif userMsg["X"] == "PARTIALLY_FILLED":
@@ -262,6 +268,13 @@ class WebsocketManager:
                 worker.signals.progress.connect(self.mw.user_data.remove_from_open_orders)
                 worker.signals.progress.connect(self.mw.user_data.add_to_history)
                 worker.signals.progress.connect(self.mw.trade_history_view.websocket_update)
+
+                if userMsg["S"] == "BUY":
+                    self.mw.sound_manager.play_sound("buy")
+                else:
+                    self.mw.sound_manager.play_sound("sell")
+
+
 
             else:
                 # catch and print any other trade callback messages.

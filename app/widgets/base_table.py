@@ -24,22 +24,24 @@ class BaseTableView(QtWidgets.QTableView):
 
     def websocket_update(self):
         if self.my_model.rowCount() == 0:
+
+            # Setup may only be called from main thread
             self.setup()
         else:
             self.update()
 
     def setup(self):
+        print("TABLE SETUP", self.objectName)
         self.update()
 
         # TODO: Improve
-        if isinstance(self.df, pd.DataFrame):
-            if len(self.df) != 0:
-                df_rows = len(self.df)
-                if df_rows > 0:
-                    self.setModel(self.my_model)
-                    self.set_default_widths()
-                    self.set_delegates()
-                    self.sortByColumn(0, QtCore.Qt.DescendingOrder)
+        if self.df is not None:
+            self.setModel(self.my_model)
+            self.set_default_widths()
+            self.set_delegates()
+            self.sortByColumn(0, QtCore.Qt.DescendingOrder)
+        else:
+            print("TABLE SETUP DF == NONE")
 
     def update(self):
         # self.my_model.layoutAboutToBeChanged.emit()

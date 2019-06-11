@@ -36,14 +36,13 @@ class OpenOrders(BaseTableView):
 
 
     # TODO: This should be done somewhere else. Think of this when refactoring user_data
-    def query_update(self):
-        """Update the model by querying the api. This is done in situations where the websocket
-        is not working properly."""
-        print("OPEN ORDERS QUERY UPDATE")
-        app.mw.user_data.initial_open_orders()
+    # def query_update(self):
+    #     """Update the model by querying the api. This is done in situations where the websocket
+    #     is not working properly."""
+    #     print("OPEN ORDERS QUERY UPDATE")
+    #     app.mw.user_data.initial_open_orders()
 
-        self.my_model.update(self.set_df())
-        # self.update()
+    #     self.my_model.update(self.set_df())
 
     def cell_clicked(self, index):
         """Change pair or cancel order"""
@@ -94,6 +93,10 @@ class OpenOrders(BaseTableView):
 class HistoryModel(FilterModel):
     """HistoryModel extends FilterModel and adds additional filter
     capabilities to filter trades by date."""
+
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
 
     def time_in_ms(self):
         hour = 60 * 60000
@@ -149,12 +152,13 @@ class HistoryModel(FilterModel):
 
 
 class History(BaseTableView):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, *args):
         super(History, self).__init__()
-        self.my_model = HistoryModel(self)
-        
+        self.my_model = FilterModel(self)
+        self.parent = parent
 
     def set_df(self):
+
         return self.mw.user_data.create_history_df()
 
     def set_widths(self):
@@ -168,7 +172,7 @@ class History(BaseTableView):
             self.mw.gui_mgr.change_to(coin)
 
     def set_delegates(self):
-        # super().set_delegates()
+        super().set_delegates()
         self.setItemDelegateForColumn(0, DateDelegate(self))
         self.setItemDelegateForColumn(1, PairDelegate(self))
         self.setItemDelegateForColumn(2, BuySellDelegete(self))
@@ -211,16 +215,22 @@ class Index(BaseTableView):
         super(Index, self).__init__()
         self.my_model = FilterModel(self, 0)
 
+        
+
+    def set_delegates(self):
         self.setItemDelegateForColumn(0, PairDelegate(self))
         self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
-        # self.setItemDelegateForColumn(2, ChangePercentDelegate(self))
-        # self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 2, " BTC"))
-        for i in range(3, 7):
+        self.setItemDelegateForColumn(2, RoundFloatDelegate(self, 0))
+        for i in range(3, 8):
             self.setItemDelegateForColumn(i, RoundFloatDelegate(self, 2, " BTC"))
-        for i in range(8, 11):
+        for i in range(8, 13):
             self.setItemDelegateForColumn(i, RoundFloatDelegate(self, 0))
 
+        for i in range(13, 17):
+            self.setItemDelegateForColumn(i, RoundFloatDelegate(self, 8))
 
+        for i in range(15, 17):
+            self.setItemDelegateForColumn(i, ChangePercentDelegate(self))
         # for i in range(4, 7):
         #     self.setItemDelegateForColumn(i, RoundFloatDelegate(self, 3))
 
@@ -230,11 +240,10 @@ class Index(BaseTableView):
 
 
     def set_df(self):
-        # if self.mw.data.current.index_df is not None:
-            # return self.mw.data.current.index_df
-        print("RETURNING INDEX DF")
-        df = pd.DataFrame(self.mw.data.index_list, columns=["Coin", "last Price", "Count", "5m volume", "15m volume", "30m volume", "1h volume", "5m count", "15m count", "30m count", "1h count"])
-        return df.copy()
+        print("INDEX CURRENT THREAD ID:", int(QtCore.QThread.currentThreadId()))
+
+        df = pd.DataFrame(self.mw.data.index_list, columns=["Coin", "last Price", "Count", "1m volume", "5m volume", "15m volume", "30m volume", "1h volume", "1m count", "5m count", "15m count", "30m count", "1h count",  "max15", "max1h", "diff15", "diff1h"])
+        return df
         # return self.mw.data.index_df().copy()
 
 
