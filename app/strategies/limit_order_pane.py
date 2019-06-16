@@ -26,7 +26,7 @@ class LimitOrderPane(QtWidgets.QWidget):
 
     def determine_warnings(self, depth):
         """Called from websocket depth callback. Gets passed current depth."""
-        print("DETERMINE WARNINGS")
+        # print("DETERMINE WARNINGS")
 
         if self.buy_allowed:
             buy_input = self.mw.limit_buy_input.value()

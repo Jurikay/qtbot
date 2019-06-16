@@ -362,6 +362,7 @@ class BidsView(BackgroundTable):
         self.setItemDelegateForColumn(3, RoundFloatDelegate(self, 3, " BTC"))
 
     def set_df(self):
+        # return pd.DataFrame()
         df = self.mw.data.current.depth_df[self.side].copy()
         row_count = df.shape[0]
 
@@ -393,7 +394,7 @@ class HistView(BackgroundTable):
         self.setItemDelegateForColumn(2, TimeDelegate(self, Colors.color_grey))
 
     def set_df(self):
-        df = self.mw.data.current.history_df.copy()
+        df = self.mw.data.history_df()
         return df
 
 

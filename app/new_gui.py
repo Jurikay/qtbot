@@ -251,25 +251,24 @@ class GuiMgr:
 
     def current_pair_ui_values(self):
         """Set corner widget volume values and change values of current pair."""
+        print("current pair ui values")
         pair = self.mw.data.current.pair
         indicators = self.mw.historical_data.indicators[pair]
 
-        indicator_list = list()
-        indicator_list.append(indicators.get("1m volume", 0))
-        indicator_list.append(indicators.get("5m volume", 0))
-        indicator_list.append(indicators.get("15m volume", 0))
-        # indicator_list.append(indicators.get("30m volume", 0))
-        indicator_list.append(indicators.get("1h volume", 0))
+        indicator_list = indicators["volume"]
+        # indicator_list.append(indicators.get("1m volume", 0))
+        # indicator_list.append(indicators.get("5m volume", 0))
+        # indicator_list.append(indicators.get("15m volume", 0))
+        # # indicator_list.append(indicators.get("30m volume", 0))
+        # indicator_list.append(indicators.get("1h volume", 0))
 
-        self.mw.limit_buy_slider.setValue(0)
-        self.mw.limit_sell_slider.setValue(0)
         ui_elements = [self.mw.volume_1m, self.mw.volume_5m, self.mw.volume_15m, self.mw.volume_1h]
-    
-        for i, ele in enumerate(ui_elements):
-            if indicator_list[3] == 0:
-                ele.setText("<span style='color: #999;'>" + str(round(indicator_list[i], 4))+ " BTC</span>")
-            else:
-                ele.setText(str(round(indicator_list[i], 4))+ " BTC")
+        if indicator_list:
+            for i, ele in enumerate(ui_elements):
+                if indicator_list[3] == 0:
+                    ele.setText("<span style='color: #999;'>" + str(round(indicator_list[i], 4))+ " BTC</span>")
+                else:
+                    ele.setText(str(round(indicator_list[i], 2))+ " BTC")
 
 
         # print("current_pair_ui_values:", indicator_list)
@@ -321,6 +320,9 @@ class GuiMgr:
             self.mw.limit_sell_input.setValue(0)
             self.mw.limit_buy_amount.setValue(0)
             self.mw.limit_sell_amount.setValue(0)
+
+            self.mw.limit_buy_slider.setValue(0)
+            self.mw.limit_sell_slider.setValue(0)
 
         except KeyError as e:
             print("livedata values key error", e)

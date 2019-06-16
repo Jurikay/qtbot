@@ -38,7 +38,7 @@ class LiveData(QtWidgets.QWidget):
 
     def new_last_price(self):
         history = self.mw.data.current.history
-        if history:
+        if len(history) > 1:
             if float(history[0]["price"]) > float(history[1]["price"]):
                 arrow = self.arrow_up
                 color = Colors.color_green

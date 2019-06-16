@@ -84,8 +84,8 @@ class GuiScheduler:
                 # self.threadpool.start(worker_indicators)
 
             # TEST
-            worker = Worker(self.mw.data.index_df)
-            print("CURRENT INDEX",  self.mw.tabsBotLeft.currentIndex())
+            worker = Worker(self.mw.data.new_index_df)
+            # print("CURRENT INDEX",  self.mw.tabsBotLeft.currentIndex())
             if self.mw.tabsBotLeft.currentIndex() == 0:
 
                 worker.signals.finished.connect(self.mw.index_view.update)
@@ -261,6 +261,8 @@ class GuiScheduler:
         if tab_index == 0:
             pass
             # self.mw.index_view.update()
+
+
         elif tab_index == 1:
             self.mw.open_orders_view.redraw()
 

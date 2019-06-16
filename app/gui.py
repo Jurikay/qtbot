@@ -56,7 +56,9 @@ class beeserBot(QtWidgets.QMainWindow):
         
         # has to be defined in init
         self.threadpool = QtCore.QThreadPool()
+        
         print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
+        print("CURRENT THREAD ID:", int(QtCore.QThread.currentThreadId()))
         self.mutex = QtCore.QMutex()
         app.threadpool = self.threadpool
         app.mutex = self.mutex
@@ -78,6 +80,7 @@ class beeserBot(QtWidgets.QMainWindow):
         self.sound_manager = None
         self.log_manager = None
         self.user_data = None
+        self.websocket_manager = None
         print("### END GUI INIT ###")
         self.setup()
 
@@ -264,6 +267,9 @@ class beeserBot(QtWidgets.QMainWindow):
         # self.holdings_view.setup()
         # self.trade_history_view.setup()
 
+
+        # DEBUG
+        self.btn_debug_new.clicked.connect(self.index_view.setup)
 
         # self.new_asks.setup()
         # self.new_bids.setup()

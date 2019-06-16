@@ -100,21 +100,26 @@ class UserData(QtCore.QObject):
 
     def add_to_open_orders(self, order):
         """Store order in open orders dictionary.
-        Update concerned ui elements."""
+        """
         order_id = order["orderId"]
-        run_setup = False
+        # run_setup = False
 
         # if no order is open, remember to run setup to initialize table widths
-        if not len(self.open_orders):
-            run_setup = True
-        self.set_save(self.open_orders, order_id, order)
+        # if not len(self.open_orders):
+        #     run_setup = True
+
+        
 
         # if clientOrderId is not present, order information comes
         # from websocket therefore open_orders_table should be updated.
         if not order.get("clientOrderId"):
             order["price"] = order["orderPrice"]
 
-        self.mw.open_orders_view.websocket_update()
+        self.set_save(self.open_orders, order_id, order)
+
+
+        # this causes issues
+        # self.mw.open_orders_view.websocket_update()
 
 
 

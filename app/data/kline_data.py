@@ -40,7 +40,7 @@ class HistoricalData(QtCore.QObject):
         return len(self.klines[pair][timeframe].items()) > 10
 
     def get_hist_values(self, pair):
-        """Calculate historical values that are not result of an indicator."""
+        """Calculate historical values that are not result of an indicator by iterating over 1m candles."""
         klines = self.klines[pair]["1m"]
         last_hour = list(klines.items())[-60:]
         last_hour.reverse()
@@ -50,7 +50,7 @@ class HistoricalData(QtCore.QObject):
         high_price = list()
         low_price = list()
         close_price = list()
-
+        volumes = list()
 
         volume = [0, 0, 0, 0, 0]
         count = [0, 0, 0, 0, 0]
@@ -81,16 +81,53 @@ class HistoricalData(QtCore.QObject):
             high_price.append(float(element[1]["high_price"]))
             low_price.append(float(element[1]["low_price"]))
             close_price.append(float(element[1]["close_price"]))
+            volumes.append(float(element[1]["quote_asset_volume"]))
+
+        mean_volume = list()
+        min_price = list()
+        max_price = list()
+        difference = list()
+
+        intervals = [1, 5, 15, 30, 60]
+        for i, interval in enumerate(intervals):
+            # print("ASSIGN INTERVALS", i)
+            try:
+                mean_volume.append((volume[interval]) / len(volumes[:interval]))
+            except IndexError:
+                mean_volume.append(volumes[0])
+            min_price.append(min(low_price[:interval]))
+            max_price.append(max(high_price[:interval]))
+            difference.append(((close_price[0] / close_price[interval -1]) - 1) * 100)
+        
+        return {"volume": volume, "count": count, "min": min_price, "max": max_price, "difference": difference, "mean_volume": mean_volume}
+        # mean_volume[0] = volumes[:1]
+        # mean_volume[1] = sum(volumes[:5]) / len(volumes[:5])
+        # mean_volume[2] = sum(volumes[:15]) / len(volumes[:15])
+        # mean_volume[3] = sum(volumes[:30]) / len(volumes[:30])
+        # mean_volume[4] = sum(volumes) / len(volumes)
+
+        
+        # min_price[0] = low_price[:1]
+        # min_price[1] = min(low_price[:5])
+        # min_price[2] = min(low_price[:15])
+        # min_price[3] = min(low_price[:30])
+        # min_price[4] = min(low_price)
 
 
-        max15 = max(high_price[:15])
-        max1h = max(high_price)
+        # max_price[0] = high_price[:1]
+        # max_price[1] = max(high_price[:5])
+        # max_price[2] = max(high_price[:15])
+        # max_price[3] = max(high_price[:30])
+        # max_price[4] = max(high_price)
 
-        diff15 = ((close_price[0] / close_price[14]) - 1) * 100
-        diff60 = ((close_price[0] / close_price[-1]) - 1) * 100
+        # difference[0] = ((close_price[0] / close_price[1]) - 1) * 100
+        # difference[1] = ((close_price[0] / close_price[4]) - 1) * 100
+        # difference[2] = ((close_price[0] / close_price[14]) - 1) * 100
+        # difference[3] = ((close_price[0] / close_price[29]) - 1) * 100
+        # difference[4] = ((close_price[0] / close_price[-1]) - 1) * 100
 
-        values = [volume[0], volume[1], volume[2], volume[3], volume[4], count[0], count[1], count[2], count[3], count[4], max15, max1h, diff15, diff60]
-        return values
+        # values = [volume[0], volume[1], volume[2], volume[3], volume[4], count[0], count[1], count[2], count[3], count[4], max15, max1h, diff15, diff60]
+        # return values
 
 
     def get_hist_volume(self, pair, minutes):
@@ -180,25 +217,7 @@ class HistoricalData(QtCore.QObject):
 
         if interval == "1m":
             if self.has_data(pair, "1m"):
-                hist_values = self.get_hist_values(pair)
-
-                self.indicators[pair]["1m volume"] = hist_values[0]
-                self.indicators[pair]["5m volume"] = hist_values[1]
-                self.indicators[pair]["15m volume"] = hist_values[2]
-                self.indicators[pair]["30m volume"] = hist_values[3]
-                self.indicators[pair]["1h volume"] = hist_values[4]
-
-                
-                self.indicators[pair]["1m count"] = hist_values[5]
-                self.indicators[pair]["5m count"] = hist_values[6]
-                self.indicators[pair]["15m count"] = hist_values[7]
-                self.indicators[pair]["30m count"] = hist_values[8]
-                self.indicators[pair]["1h count"] = hist_values[9]
-
-                self.indicators[pair]["15m max"] = hist_values[10]
-                self.indicators[pair]["1h max"] = hist_values[11]
-                self.indicators[pair]["15m diff"] = hist_values[12]
-                self.indicators[pair]["1h diff"] = hist_values[13]
+                 self.indicators[pair] = self.get_hist_values(pair)
 
 
 

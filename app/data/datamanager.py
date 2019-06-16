@@ -15,6 +15,9 @@ class DataManager():
     """
     def __init__(self):
         print("Init new datamanager")
+
+        self.mw = app.mw
+
         self.current = Dict()
         self.user = Dict()
         self.stats = Dict()
@@ -73,6 +76,8 @@ class DataManager():
         # TODO: Verify
         # Websocket: Receive single history entry
         if isinstance(history, dict):
+            if not isinstance(self.current["history"], list):
+                self.current["history"] = list()
             self.current["history"].insert(0, {"price": history["p"], "quantity": history["q"], "maker": bool(history["m"]), "time": history["T"]})
 
             # Keep history size consistent
@@ -138,14 +143,48 @@ class DataManager():
         return df
 
     def history_df(self):
-        df = pd.DataFrame(self.current["history"])
-        df.columns = ["maker", "price", "quantity", "time"]
-        df = df[["price", "quantity", "time"]]
-        # df = df.rename(columns={"price": "Price", "quantity": "Quantity", "time": "Time"})
-        df = df.apply(pd.to_numeric, errors="coerce")
-        self.current.history_df = df
-        return df
+        if self.current["history"]:
+            df = pd.DataFrame(self.current["history"])
+            df.columns = ["maker", "price", "quantity", "time"]
+            df = df[["price", "quantity", "time"]]
+            # df = df.rename(columns={"price": "Price", "quantity": "Quantity", "time": "Time"})
+            df = df.apply(pd.to_numeric, errors="coerce")
+            self.current.history_df = df
+            return df
     
+
+
+    def new_index_df(self, progress_callback=None):
+        if self.tickers:
+            index_data = dict()
+            for pair, ticker_data in self.tickers.items():
+                if app.mw.historical_data.has_data(pair, "1m"):
+                    indicators = app.mw.historical_data.indicators.get(pair, None)
+                    if indicators is not None:
+                        index_data[pair] = {"symbol": str(ticker_data["symbol"]),
+                                            "lastPrice": float(ticker_data["lastPrice"]),
+                                            "count": int(ticker_data["count"]),
+                                            "1m count": int(indicators["count"][0]),
+                                            "5m count": int(indicators["count"][1]),
+                                            "15m count": int(indicators["count"][2]),
+                                            "30m count": int(indicators["count"][3]),
+                                            "1h count": int(indicators["count"][4]),
+
+                                            "1m volume": int(indicators["volume"][0]),
+                                            "5m volume": int(indicators["volume"][1]),
+                                            "15m volume": int(indicators["volume"][2]),
+                                            "30m volume": int(indicators["volume"][3]),
+                                            "1h volume": int(indicators["volume"][4])
+                                            
+                                            }
+            self.index_dict = index_data
+
+            df = pd.DataFrame.from_dict(self.mw.data.index_dict)
+            df = df.transpose()
+            df = df.apply(pd.to_numeric, errors='ignore')
+            self.current.new_index_df = df
+            return df
+
 
     def index_df(self, progress_callback=None):
         """Prepare data for index dataframe. This is not done in the main thread."""
@@ -164,6 +203,9 @@ class DataManager():
                 pair_data_list = list()
                 pair_data_list.extend([str(v["symbol"]), float(v["lastPrice"]), int(v["count"]), ind[0], ind[1], ind[2], ind[3], ind[4], ind[5], ind[6], ind[7], ind[8], ind[9], ind[10], ind[11], ind[12], ind[13]])
                 index_list.append(pair_data_list)
+
+
+
 
             self.index_list = index_list
             # df = pd.DataFrame(index_list, columns=["Coin", "last Price", "Count", "5m volume", "15m volume", "30m volume", "1h volume", "5m count", "15m count", "30m count", "1h count"])

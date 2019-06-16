@@ -145,7 +145,7 @@ class SortModel(BaseTableModel):
     def sort(self, sort_col, sort_order):
         """Sort table by given column number sort_col in the given direction sort_order"""
 
-        if isinstance(self.datatable, pd.DataFrame) and len(self.datatable.index) > 0:
+        if isinstance(self.datatable, pd.DataFrame) and self.rowCount() > 1:
 
             self.layoutAboutToBeChanged.emit()
             # Sort the table

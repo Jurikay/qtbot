@@ -38,6 +38,8 @@ if __name__ == "__main__":
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     main_app = QApplication(sys.argv)
 
+    QtCore.QThread.currentThread().setPriority(QtCore.QThread.HighPriority)
+
     # Splash screen
     splashFont = QFont()
     splashFont.setFamily("Source Sans Pro")

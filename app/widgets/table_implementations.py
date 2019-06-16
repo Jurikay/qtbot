@@ -154,7 +154,7 @@ class HistoryModel(FilterModel):
 class History(BaseTableView):
     def __init__(self, parent=None, *args):
         super(History, self).__init__()
-        self.my_model = FilterModel(self)
+        self.my_model = HistoryModel(self)
         self.parent = parent
 
     def set_df(self):
@@ -218,6 +218,7 @@ class Index(BaseTableView):
         
 
     def set_delegates(self):
+        return
         self.setItemDelegateForColumn(0, PairDelegate(self))
         self.setItemDelegateForColumn(1, RoundFloatDelegate(self, 8, " BTC"))
         self.setItemDelegateForColumn(2, RoundFloatDelegate(self, 0))
@@ -240,13 +241,19 @@ class Index(BaseTableView):
 
 
     def set_df(self):
-        print("INDEX CURRENT THREAD ID:", int(QtCore.QThread.currentThreadId()))
+        print("INDEX SET DF")
+        # if self.mw.data.current.new_index_df is not None:
 
-        df = pd.DataFrame(self.mw.data.index_list, columns=["Coin", "last Price", "Count", "1m volume", "5m volume", "15m volume", "30m volume", "1h volume", "1m count", "5m count", "15m count", "30m count", "1h count",  "max15", "max1h", "diff15", "diff1h"])
+        df = self.mw.data.new_index_df()
+        # df = pd.DataFrame.from_dict(self.mw.data.index_dict).copy()
+        # df = df.transpose()
+        # df = df.apply(pd.to_numeric, errors='ignore')
         return df
         # return self.mw.data.index_df().copy()
 
-
+        # else:
+        #     print("RETURN EMPTY")
+        #     return pd.DataFrame()
 
         # return self.mw.index_data.coin_index
 

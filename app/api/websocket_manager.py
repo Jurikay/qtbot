@@ -241,7 +241,7 @@ class WebsocketManager:
 
                 # if order was canceled but partially filled, add to history
                 if float(order["executedQty"]) > 0:
-                    # worker.signals.progress.connect(self.mw.history_table.add_to_history)
+                    worker.signals.progress.connect(self.mw.user_data.add_to_history)
                     worker.signals.progress.connect(self.mw.trade_history_view.websocket_update)
 
                 self.mw.sound_manager.play_sound("cancel")
@@ -252,7 +252,9 @@ class WebsocketManager:
                 # worker.signals.progress.connect(self.mw.open_orders.update_open_order)
                 # worker.signals.progress.connect(self.mw.user_data.holdings_table.check_add_to_holdings)
 
-                worker.signals.progress.connect(self.mw.user_data.add_to_history)
+
+                # TODO: Verify disable
+                # worker.signals.progress.connect(self.mw.user_data.add_to_history)
                 worker.signals.progress.connect(self.mw.user_data.add_to_open_orders)
 
 
@@ -279,6 +281,9 @@ class WebsocketManager:
             else:
                 # catch and print any other trade callback messages.
                 print("inner else", msg)
+
+
+            worker.signals.finished.connect(self.mw.open_orders_view.websocket_update)
 
             self.threadpool.start(worker)
 
