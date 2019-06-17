@@ -84,12 +84,20 @@ class GuiScheduler:
                 # self.threadpool.start(worker_indicators)
 
             # TEST
-            worker = Worker(self.mw.data.new_index_df)
-            # print("CURRENT INDEX",  self.mw.tabsBotLeft.currentIndex())
-            if self.mw.tabsBotLeft.currentIndex() == 0:
 
-                worker.signals.finished.connect(self.mw.index_view.update)
-            self.threadpool.start(worker)
+            
+            # self.mw.index_view.index_update()
+
+            # worker = Worker(self.mw.data.new_index_df)
+
+
+
+            if self.mw.tabsBotLeft.currentIndex() == 0:
+                worker = Worker(self.mw.data.test_index_dict)
+                worker.signals.progress.connect(self.mw.index_view.ws_update)
+                self.threadpool.start(worker)
+            #     worker.signals.finished.connect(self.mw.index_view.update)
+            # self.threadpool.start(worker)
 
                 
             # if self.mw.threadpool.activeThreadCount() == 0 and not self.klines_started:

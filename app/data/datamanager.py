@@ -153,6 +153,19 @@ class DataManager():
             return df
     
 
+    def test_index_dict(self, progress_callback=None):
+        if self.tickers:
+            index_data = dict()
+            for pair, ticker_data in self.tickers.items():
+                index_data[pair] = {        "symbol": str(ticker_data["symbol"]),
+                                            "volume": float(ticker_data["volume"]),
+                                            "price": float(ticker_data["lastPrice"])
+                                            }
+
+            if progress_callback:
+                progress_callback.emit(index_data)
+            else:
+                return index_data
 
     def new_index_df(self, progress_callback=None):
         if self.tickers:
@@ -177,14 +190,35 @@ class DataManager():
                                             "1h volume": int(indicators["volume"][4])
                                             
                                             }
-            self.index_dict = index_data
+                else:
+                    index_data[pair] = {
+                        "symbol": str(ticker_data["symbol"]),
+                        "lastPrice": float(ticker_data["lastPrice"]),
+                        "count": 0,
+                        "1m count": 0,
+                        "5m count": 0,
+                        "15m count": 0,
+                        "30m count": 0,
+                        "1h count": 0,
+                        "1m volume": 0,
+                        "5m volume": 0,
+                        "15m volume": 0,
+                        "30m volume": 0,
+                        "1h volume": 0,
+                    }
 
-            df = pd.DataFrame.from_dict(self.mw.data.index_dict)
+
+            self.index_dict = index_data
+            # return
+
+            df = pd.DataFrame.from_dict(index_data)
             df = df.transpose()
             df = df.apply(pd.to_numeric, errors='ignore')
             self.current.new_index_df = df
-            return df
-
+            if df is not None:
+                return df
+            else:
+                return pd.DataFrame()
 
     def index_df(self, progress_callback=None):
         """Prepare data for index dataframe. This is not done in the main thread."""

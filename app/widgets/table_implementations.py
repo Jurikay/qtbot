@@ -9,7 +9,7 @@ import PyQt5.QtGui as QtGui
 import PyQt5.QtWidgets as QtWidgets
 import PyQt5.QtCore as QtCore
 import app
-from app.widgets.base_table import FilterModel, BaseTableView, BasicDelegate
+from app.widgets.base_table import FilterModel, BaseTableView, BasicDelegate, NumpyTableModel, DictTableModel
 from app.helpers import resource_path
 from app.colors import Colors
 
@@ -106,14 +106,14 @@ class HistoryModel(FilterModel):
         searchText = app.mw.coinindex_filter.text()
         cb_index = app.mw.cb_history_time.currentIndex()
 
-        
+
         if cb_index == 0:
             consider_timeframes = False
             ms_time_period = 0
         else:
             consider_timeframes = True
             ms_time_period = self.time_in_ms()[cb_index]
-       
+
         now = datetime.utcnow()
         final_time = int((now - datetime(1970, 1, 1)).total_seconds() * 1000) - ms_time_period
 
@@ -152,7 +152,7 @@ class HistoryModel(FilterModel):
 
 
 class History(BaseTableView):
-    def __init__(self, parent=None, *args):
+    def __init__(self, parent=None):
         super(History, self).__init__()
         self.my_model = HistoryModel(self)
         self.parent = parent
@@ -213,9 +213,14 @@ class Holdings(BaseTableView):
 class Index(BaseTableView):
     def __init__(self, parent=None, *args):
         super(Index, self).__init__()
-        self.my_model = FilterModel(self, 0)
+        self.my_model = DictTableModel(self)
 
-        
+
+    def ws_update(self, update):
+        self.my_model.update(update)
+
+    def index_update(self):
+        self.my_model.update(self.mw.data.test_index_dict())
 
     def set_delegates(self):
         return
@@ -241,21 +246,8 @@ class Index(BaseTableView):
 
 
     def set_df(self):
-        print("INDEX SET DF")
-        # if self.mw.data.current.new_index_df is not None:
+        return self.mw.data.test_index_dict()
 
-        df = self.mw.data.new_index_df()
-        # df = pd.DataFrame.from_dict(self.mw.data.index_dict).copy()
-        # df = df.transpose()
-        # df = df.apply(pd.to_numeric, errors='ignore')
-        return df
-        # return self.mw.data.index_df().copy()
-
-        # else:
-        #     print("RETURN EMPTY")
-        #     return pd.DataFrame()
-
-        # return self.mw.index_data.coin_index
 
     def set_widths(self):
         self.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)

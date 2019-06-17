@@ -9,7 +9,8 @@ import PyQt5.QtWidgets as QtWidgets
 import pandas as pd
 import app
 from app.colors import Colors
-
+import numpy as np
+from collections import OrderedDict
 
 class BaseTableView(QtWidgets.QTableView):
 
@@ -83,6 +84,148 @@ class BaseTableView(QtWidgets.QTableView):
 #################################################################
 # BaseTableModel
 #################################################################
+
+class DictTableModel(QtCore.QAbstractTableModel):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.mw = app.mw
+        self.headers = ["price", "volume"]
+
+        self.data_dict = {"BTC": {"price": 0.001, "volume": 3, "symbol": "BTC"}}
+
+        self.sorted_dict = OrderedDict(sorted(self.data_dict.items(), key=lambda x: x[1]['volume'], reverse=False))
+        self.items = list(self.sorted_dict.items())
+
+
+        # store sort order and col
+        self.order_col = 0
+        self.order_dir = QtCore.Qt.AscendingOrder
+    
+    def headerData(self, p_int, orientation, role):
+        if role == QtCore.Qt.DisplayRole:
+            if orientation == QtCore.Qt.Horizontal:
+                print("ITEMS", self.items)
+                return self.headerAssignment(p_int)
+
+    def headerAssignment(self, idx):
+        headerData = {0: "price", 1: "volume"}
+        return headerData[idx]
+
+    def rowCount(self, parent=None):
+        return len(self.sorted_dict.keys())
+
+    def columnCount(self, parent=None):
+        return len(self.items[0])
+
+    def sort(self, sort_col, order=QtCore.Qt.AscendingOrder):
+        self.order_col = sort_col
+        self.order_dir = order
+        self.layoutAboutToBeChanged.emit()
+
+        col = self.headerAssignment(sort_col)
+        order_dir = True
+        if order == QtCore.Qt.AscendingOrder:
+            order_dir = False
+        # else:
+        #     oorder_dir = True
+
+
+        self.sorted_dict = OrderedDict(sorted(self.data_dict.items(), key=lambda x: x[1][col], reverse=order_dir))
+
+
+        self.layoutChanged.emit()
+        
+        
+
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if index.isValid():
+            if role == QtCore.Qt.DisplayRole:
+                # return self._data[index.row(), index.column()]
+
+                col = self.headerAssignment(index.column())
+                data = self.sorted_dict[index.row()][1][self.headerAssignment(index.column())]
+                return data
+
+        return None
+
+    def update(self, dataIn):
+        """Pass a dict of dicts to update
+        Update modeldata and redraw view."""
+        # self.layoutAboutToBeChanged.emit()
+        col = self.headerAssignment(self.order_col)
+
+        self.data_dict = dataIn
+        self.items = list(self.sorted_dict.items())
+        self.sort(self.order_col, self.order_dir)
+
+
+
+class NumpyTableModel(QtCore.QAbstractTableModel):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.mw = app.mw
+        self.datatable = pd.DataFrame()
+        self._data = np.array(self.datatable)
+        self._cols = 0
+        self.r, self.c = np.shape(self._data)
+
+
+        self.order_col = 0
+        self.order_dir = QtCore.Qt.AscendingOrder
+
+    def rowCount(self, parent=None):
+        return self.r
+
+    def columnCount(self, parent=None):
+        return self.c
+    
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if index.isValid():
+            if role == QtCore.Qt.DisplayRole:
+                return self._data[index.row(), index.column()]
+        return None
+
+
+    def headerData(self, p_int, orientation, role):
+        if role == QtCore.Qt.DisplayRole:
+            if orientation == QtCore.Qt.Horizontal:
+                return self._cols[p_int]
+            elif orientation == QtCore.Qt.Vertical:
+                return p_int
+        return None
+
+    def update(self, dataIn):
+        """Update modeldata and redraw view."""
+        # self.layoutAboutToBeChanged.emit()
+        self.datatable = dataIn
+
+        self.sort(self.order_col, self.order_dir)
+
+        self._data = np.array(self.datatable)
+        try:
+            self._cols = dataIn.columns
+        except AttributeError:
+            self._cols = 0
+        
+        self.r, self.c = np.shape(self._data)
+
+        
+        # self.layoutChanged.emit()
+
+    def sort(self, sort_col, order=QtCore.Qt.AscendingOrder):
+        self.layoutAboutToBeChanged.emit()
+
+        # self.layoutAboutToBeChanged.emit()
+        self.datatable = self.datatable.sort_values(self.datatable.columns[sort_col], ascending=not order)
+
+        self.layoutChanged.emit()
+        self.order_col = sort_col
+        self.order_dir = order
+
+        # self._data.sort(axis=sort_col)
+        # self.layoutChanged.emit()
+
 
 class BaseTableModel(QtCore.QAbstractTableModel):
     """TableModel that holds data from a pandas dataframe."""

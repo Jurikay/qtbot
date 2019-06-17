@@ -282,8 +282,8 @@ class beeserBot(QtWidgets.QMainWindow):
             self.trade_history_view.my_model.set_filter)
         self.coinindex_filter.textChanged.connect(
             self.holdings_view.my_model.set_filter)
-        self.coinindex_filter.textChanged.connect(
-            self.index_view.my_model.set_filter)
+        # self.coinindex_filter.textChanged.connect(
+        #     self.index_view.my_model.set_filter)
 
 
         search_text = self.coinindex_filter.text()
